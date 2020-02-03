@@ -91,7 +91,10 @@ export default {
 		return {
 			credentials: {
 				id: "",
-				password: ""
+				password: "",
+				headers: {
+					Authorization: "JWT " + "askdasdfasdgasdgjfhaskd"
+				}
 			},
 			loading: false,
 			errors: []
