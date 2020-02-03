@@ -91,11 +91,11 @@ export default {
 		return {
 			credentials: {
 				id: "",
-				password: "",
-				headers: {
-					Authorization: "JWT " + "askdasdfasdgasdgjfhaskd"
-				}
+				password: ""
 			},
+			// headers: {
+			// 	Authorization: "JWT " + "askdasdfasdgasdgjfhaskd"
+			// },
 			loading: false,
 			errors: []
 		};
@@ -110,15 +110,12 @@ export default {
 			if (this.checkForm()) {
 				this.loading = true;
 				// this.$store.dispatch("startLoading");
-				http.post("/create2/", this.credentials)
+				http.post("/jwt/create2/", this.credentials)
 					.then(res => {
-						this.$session.start();
-						this.$session.set("jwt", res.data);
-						// this.$store.dispatch("endLoading");
-						// this.$store.dispatch("login", res.data);
-						// localStorage.setItem("token", res.data);
-						if (this.$session.get("jwt")) {
-							alert(this.$session.get("jwt"));
+						if (res.data != "fail") {
+							// alert(res.data);
+							this.$session.start();
+							this.$session.set("jwt", res.data);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);

@@ -48,10 +48,10 @@ const routes = [
 	{
 		path: "/newsfeed",
 		name: "newsfeed",
-		component: NewsFeed,
-		meta: {
-			authRequired: true
-		}
+		component: NewsFeed
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "/myPage",
