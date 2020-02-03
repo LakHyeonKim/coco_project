@@ -53,12 +53,18 @@ const routes = [
 	{
 		path: "/myPage",
 		name: "myPage",
-		component: MyPage
+		component: MyPage,
+		meta: {
+			authRequired: true
+		}
 	},
 	{
 		path: "/newpage",
 		name: "newpage",
-		component: NewPage
+		component: NewPage,
+		meta: {
+			authRequired: true
+		}
 	},
 	{
 		path: "*",
@@ -74,4 +80,18 @@ const router = new VueRouter({
 	routes
 });
 
+router.beforeEach(function(to, from, next) {
+	// to: 이동할 url에 해당하는 라우팅 객체
+	if (
+		to.matched.some(function(routeInfo) {
+			return routeInfo.meta.authRequired;
+		})
+	) {
+		// 이동할 페이지에 인증 정보가 필요하면 경고 창을 띄우고 페이지 전환은 하지 않음
+		alert("Login Please!");
+	} else {
+		console.log("routing success : '" + to.path + "'");
+		next(); // 페이지 전환
+	}
+});
 export default router;

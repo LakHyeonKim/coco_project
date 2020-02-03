@@ -114,9 +114,18 @@ export default {
 						// this.$store.dispatch("endLoading");
 						// this.$store.dispatch("login", res.data);
 						// localStorage.setItem("token", res.data);
-						this.loading = false;
-						router.push("/newsfeed");
-						console.log("LOGIN then ", res);
+						if (this.$session.get("jwt")) {
+							alert(this.$session.get("jwt"));
+							this.loading = false;
+							router.push("/newsfeed");
+							console.log("LOGIN then ", res);
+						} else {
+							router.push("/").catch(err => {
+								err;
+							});
+							alert("아이디와 비밀번호를 확인해 주십시오.");
+							this.loading = false;
+						}
 					})
 					.catch(err => {
 						this.loading = false;
@@ -147,10 +156,10 @@ export default {
 			this.$store.state.token = result.credential.accessToken;
 			this.$store.state.user = result.user;
 		}
-	},
-	mounted() {
-		console.log(this.$store.state);
 	}
+	// mounted() {
+	// 	console.log(this.$store.state);
+	// }
 };
 </script>
 
