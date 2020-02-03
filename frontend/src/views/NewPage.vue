@@ -1,7 +1,7 @@
 <template>
-	<v-container>
-		<v-row style="justify-content: center">
-			<v-col class="col-12 col-sm-9 col-md-9">
+	<v-container class="col-12 col-sm-10 col-md-8">
+		<v-row>
+			<v-col>
 				<v-text-field
 					v-model="board.post.postTitle"
 					label="제목"
@@ -10,19 +10,33 @@
 					filled
 					outlined
 				></v-text-field>
-				<v-textarea
-					id="content"
-					v-model="board.post.code"
-					label="내용"
-					hint="더블클릭하여 에디터에서 수정"
-					rows="10"
-					append-icon="mdi-page-layout-body"
-					counter
-					filled
-					auto-grow
-					outlined
-					@dblclick="runStackEdit"
-				></v-textarea>
+			</v-col>
+		</v-row>
+		<v-card>
+			<v-tabs background-color="white" color="deep-purple accent-4" right>
+				<v-tab>글쓰기</v-tab>
+				<v-tab>미리보기</v-tab>
+
+				<v-tab-item>
+					<v-container fluid>
+						<v-textarea v-model="source" label="Input" auto-grow outlined />
+					</v-container>
+				</v-tab-item>
+				<v-tab-item>
+					<v-container fluid>
+						<div class="result">
+							<vue-markdown
+								class="line-numbers match-braces rainbow-braces show-invisibles"
+								:source="source"
+								data-download-link
+							></vue-markdown>
+						</div>
+					</v-container>
+				</v-tab-item>
+			</v-tabs>
+		</v-card>
+		<v-row>
+			<v-col>
 				<tags-input
 					v-model="tags"
 					element-id="tags"
@@ -37,17 +51,15 @@
 </template>
 
 <script>
-import Stackedit from "stackedit-js";
-import http from "../http-common";
+import axios from "axios";
 import router from "../router";
+import Prism from "../prism";
 
 export default {
 	name: "NewPage",
 	components: {},
 	data() {
 		return {
-			el: "",
-			stackedit: "",
 			source: "",
 			result: "",
 
@@ -68,6 +80,11 @@ export default {
 			}
 		};
 	},
+	watch: {
+		source: function() {
+			Prism.highlightAll();
+		}
+	},
 	methods: {
 		test() {
 			for (let i = 0; i < this.tags.length; ++i) {
@@ -77,38 +94,32 @@ export default {
 			}
 			console.log(this.board);
 
-			http.post("/makeTagsFromPost/", this.board).then(res => {
-				console.log(res);
-				router.push("/");
-			});
-		},
-		runStackEdit() {
-			// Open the iframe
-			this.stackedit.openFile({
-				name: "Filename", // with an optional filename
-				content: {
-					text: this.el.value // and the Markdown content.
-					// text: this.board.post.code
-				}
-			});
-
-			// Listen to StackEdit events and apply the changes to the textarea.
-			this.stackedit.on("fileChange", file => {
-				// this.el.value = file.content.text;
-				this.board.post.code = file.content.text;
-				// this.p.innerHTML = file.content.html;
-			});
+			axios
+				.post(
+					"http://192.168.100.95:8888/api/makeTagsFromPost/",
+					this.board
+				)
+				.then(res => {
+					console.log(res);
+					router.push("/");
+				});
 		}
 	},
 	mounted() {
-		this.el = document.querySelector("#content");
-		this.stackedit = new Stackedit();
+		Prism.plugins.autoloader.use_minified = false;
 	}
 };
 </script>
 
 <style>
 @import "~@voerro/vue-tagsinput/dist/style.css";
+@import "../prism.css";
+
+.result {
+	border: 1.5px solid #ccc;
+	border-radius: 5px;
+}
+
 @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap");
 * {
 	font-family: "Noto Sans KR", Courier;
