@@ -24,7 +24,7 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="/">
+				<router-link to="#">
 					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
 				</router-link>
 			</li>
@@ -45,8 +45,9 @@ export default {
 	},
 	methods: {
 		logout() {
-			this.$store.dispatch("logout");
-			router.push("/");
+			// this.$store.dispatch("logout");
+			this.$session.destroy();
+			this.$router.push("/");
 		}
 	}
 };
