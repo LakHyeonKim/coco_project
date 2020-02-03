@@ -59,7 +59,7 @@ export default {
 		MobilePortfolio
 	},
 	mounted() {
-		http.post("/findByAllNewsfeed/", 5)
+		http.post("/api/findByAllNewsfeed/", 5)
 			.then(res => {
 				console.log("getport then ", res.data);
 				this.portfolios = res.data;

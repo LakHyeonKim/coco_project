@@ -134,7 +134,7 @@ export default {
 				this.loading = true;
 				// this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", this.credentials);
-				http.post("/signUp/", this.credentials)
+				http.post("/api/signUp/", this.credentials)
 					.then(res => {
 						console.log("REGISTER then ", res);
 						// this.$store.dispatch("endLoading");

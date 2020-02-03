@@ -60,9 +60,8 @@ export default {
 	},
 	methods: {
 		checkLoggedIn() {
-			this.$session.start();
-			if (!this.$session.has("jwt")) {
-				router.push("/").catch(err => {
+			if (this.$session.has("jwt")) {
+				router.push("/newsfeed").catch(err => {
 					err;
 				});
 			}
