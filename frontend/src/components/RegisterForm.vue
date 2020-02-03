@@ -123,24 +123,28 @@ export default {
 		pwd2: false,
 		passwordConfirm: "",
 		duplicate: [],
-		idcheck: false
+		idcheck: false,
+		loading: false
 	}),
 
 	methods: {
 		register() {
 			// console.log(this.onSubmit());
 			if (this.onSubmit() && this.idcheck) {
-				this.$store.dispatch("startLoading");
+				this.loading = true;
+				// this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", this.credentials);
 				http.post("/signUp/", this.credentials)
 					.then(res => {
 						console.log("REGISTER then ", res);
-						this.$store.dispatch("endLoading");
+						// this.$store.dispatch("endLoading");
+						this.loading = false;
 						alert("회원가입이 성공적으로 완료되었습니다.");
 						router.push("/");
 					})
 					.catch(err => {
-						this.$store.dispatch("endLoading");
+						// this.$store.dispatch("endLoading");
+						this.loading = false;
 						console.log("REGISTER catch ", err);
 					});
 			} else {

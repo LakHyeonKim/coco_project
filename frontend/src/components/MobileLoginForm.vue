@@ -89,27 +89,33 @@ export default {
 				id: "",
 				password: ""
 			},
+			loading: false,
 			errors: []
 		};
 	},
-	computed: {
-		loading: function() {
-			return this.$store.state.loading;
-		}
-	},
+	// computed: {
+	// 	loading: function() {
+	// 		return this.$store.state.loading;
+	// 	}
+	// },
 	methods: {
 		login() {
 			if (this.checkForm()) {
-				this.$store.dispatch("startLoading");
+				this.loading = true;
+				// this.$store.dispatch("startLoading");
 				http.post("/create2/", this.credentials)
 					.then(res => {
-						this.$store.dispatch("endLoading");
-						this.$store.dispatch("login", res.data);
+						// this.$store.dispatch("endLoading");
+						// this.$store.dispatch("login", res.data);
+						this.$session.start();
+						this.$session.set("jwt", res.data.token);
+						this.loading = false;
 						router.push("/newsfeed");
 						console.log("LOGIN then ", res);
 					})
 					.catch(err => {
-						this.$store.dispatch("endLoading");
+						// this.$store.dispatch("endLoading");
+						this.loading = false;
 						console.log("LOGIN err ", err);
 					});
 			} else {
