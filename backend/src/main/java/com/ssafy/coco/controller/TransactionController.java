@@ -1,54 +1,58 @@
 package com.ssafy.coco.controller;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.PostAndMember;
-import com.ssafy.coco.service.JwtService;
+import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.TransactionService;
-import com.ssafy.coco.vo.Alarm;
-import com.ssafy.coco.vo.Comment;
 import com.ssafy.coco.vo.Follow;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.PostWithTag;
-import com.ssafy.coco.vo.Tag;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @Api(tags = { "SSAFY HRM" }, description = "SSAFY HRM resource API (Test)")
 public class TransactionController {
 	
+	private static String path = "/img/user_profile";
+	
 	@Autowired
 	private TransactionService transactionService;
 
-	@ApiOperation(value = "가입 하기", response = List.class)
+	@ApiOperation(value = "프로필 사진과 함께 가입 하기", response = List.class)
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
-	public ResponseEntity<Integer> signUp(@RequestBody Member member) throws Exception {
+	public ResponseEntity<Integer> signUp(@RequestBody SignUpMember singUpMember) throws Exception {
+		System.out.println("save...ok");
+		MultipartFile file = singUpMember.getFile();
+		Member member = singUpMember.getMember();
+		
+		String originFileName = file.getOriginalFilename();
+		String saveFileName = String.format("%s_%s", member.getId(), originFileName);
+		String filePath = path + saveFileName + "";
+		file.transferTo(new File(path, saveFileName));
+		member.setKakaoUrl(filePath);
+		
+		System.out.println("save...ok");
+		
 		int answer = transactionService.signUp(member);
 		if (answer<=0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
