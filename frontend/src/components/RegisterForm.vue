@@ -15,7 +15,7 @@
 					v-slot="{ errors }"
 				>
 					<v-text-field
-						v-model="credentials.nickname"
+						v-model="credentials.member.nickname"
 						:counter="10"
 						label="닉네임"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -27,7 +27,7 @@
 					v-slot="{ errors }"
 				>
 					<v-text-field
-						v-model="credentials.id"
+						v-model="credentials.member.id"
 						:counter="10"
 						label="이름"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -39,7 +39,7 @@
 					v-slot="{ errors }"
 				>
 					<v-text-field
-						v-model="credentials.email"
+						v-model="credentials.member.email"
 						label="이메일"
 						:error-messages="errors[0] ? errors[0] : []"
 					></v-text-field>
@@ -51,7 +51,7 @@
 					v-slot="{ errors }"
 				>
 					<v-text-field
-						v-model="credentials.password"
+						v-model="credentials.member.password"
 						label="비밀번호"
 						:type="pwd1 ? 'text' : 'password'"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -103,20 +103,22 @@ export default {
 	data: () => ({
 		credentials: {
 			profileimg: "",
-			nickname: "",
-			id: "",
-			email: "",
-			password: "",
-			rankId: 1
-			// dateCreated: null,
-			// gitUrl: "",
-			// grade: "",
-			// idmember: 0,
-			// instargramUrl: "",
-			// isDelete: 0,
-			// isManager: 0,
-			// kakaoUrl: "",
-			// updateCreated: null
+			member:{
+				nickname: "",
+				id: "",
+				email: "",
+				password: "",
+				rankId: 1
+				// dateCreated: null,
+				// gitUrl: "",
+				// grade: "",
+				// idmember: 0,
+				// instargramUrl: "",
+				// isDelete: 0,
+				// isManager: 0,
+				// kakaoUrl: "",
+				// updateCreated: null
+			}
 		},
 
 		pwd1: false,
@@ -157,10 +159,10 @@ export default {
 			return true;
 		},
 		clear() {
-			this.credentials.nickname = "";
-			this.credentials.name = "";
-			this.credentials.email = "";
-			this.credentials.password = "";
+			this.credentials.member.nickname = "";
+			this.credentials.member.name = "";
+			this.credentials.member.email = "";
+			this.credentials.member.password = "";
 			this.passwordConfirm = "";
 			// this.$validator.reset();
 		},
@@ -168,14 +170,14 @@ export default {
 			this.$refs.form.validate();
 		},
 		idCheck() {
-			if (this.credentials.id) {
+			if (this.credentials.member.id) {
 				this.duplicate = [];
-				console.log("DUPLICATE ", this.credentials.id);
+				console.log("DUPLICATE ", this.credentials.member.id);
 				http.post("/check/", {
-					id: this.credentials.id
+					id: this.credentials.member.id
 				})
 					.then(res => {
-						console.log("DUPLICATE then ", this.credentials.id);
+						console.log("DUPLICATE then ", this.credentials.member.id);
 						console.log("DUPLICATE then ", res);
 						if (res.data) {
 							this.duplicate.push(
