@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Tag_Mapper">
+	<sql id="select-Tag">
+		select idtag, tag_name, searched_number, included_number,
+		first_time_created, most_recently_mentioned_time, image_path
+		from tag
+	</sql>
+	<sql id="insert-Tag">
+		insert into tag
+		
+		(tag_name, searched_number, included_number,
+		first_time_created, most_recently_mentioned_time,image_path)
+		
+		values(#{tagName},#{searchedNumber},#{includedNumber},
+		now(),now(),#{imagePath})
+	</sql>
+	<sql id="update-Tag">
+		update tag set
+		searched_number=#{searchedNumber},
+		included_number=#{includedNumber},
+		most_recently_mentioned_time=now(),
+		image_path=#{imagePath}
+		where
+		idtag=#{idtag}
+	</sql>
+	<sql id="delete-Tag">
+		delete from tag
+		where idtag=#{idtag}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllTag" resultType="Tag">
+		<include refid="select-Tag"></include>
+	</select>
+	<select id="findTag" resultType="Tag">
+		<include refid="select-Tag"></include>
+		<where>
+			<if test="idtag !=0">
+				idtag = '${idtag}'
+			</if>
+			
+			<if test="tagName !=null">
+			AND
+				tag_name LIKE '%${tagName}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAllTagIncludedPost" parameterType="long" resultType="Tag" >
+		select idtag, tag_name, searched_number, included_number, first_time_created, most_recently_mentioned_time, image_path 
+		from `coco`.`tag` 
+		where idtag in (select tag_id from post_tag where post_id = #{value});
+	</select>
+
+	<insert id="addTag" parameterType="Tag"
+		useGeneratedKeys="true" keyProperty="idtag">
+		<include refid="insert-Tag"></include>
+	</insert>
+
+	<update id="updateTag" parameterType="Tag">
+		<include refid="update-Tag"></include>
+	</update>
+	
+	<update id="updateTagIncludedCount" parameterType="string">
+		update `coco`.`tag` set `included_number` = `included_number` + 1 , `most_recently_mentioned_time` = now() where tag_name = #{value};
+	</update>
+
+	<delete id="deleteTag" parameterType="Tag">
+		<include refid="delete-Tag"></include>
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

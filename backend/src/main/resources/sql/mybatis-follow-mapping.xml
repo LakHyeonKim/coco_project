@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Follow_Mapper">
+	<sql id="select-Follow">
+		select idfollow, member_follower, member_following, access
+		from follow
+	</sql>
+	<sql id="insert-Follow">
+		insert into follow
+		(member_follower, member_following, access)
+		values(#{memberFollower}, #{memberFollowing}, #{access})
+	</sql>
+	<sql id="update-Follow">
+		update follow set
+		member_follower=#{memberFollower},
+		member_following=#{memberFollowing},
+		access=#{access}
+		where
+		idfollow=#{idfollow}
+	</sql>
+	<sql id="delete-Follow">
+		delete from follow
+		where idfollow=#{idfollow}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllFollow" resultType="Follow">
+		<include refid="select-Follow"></include>
+	</select>
+	<select id="findFollow" resultType="Follow"  parameterType="Follow">
+		<include refid="select-Follow"></include>
+		<where>
+		 	access = ${access}
+		 	<if test="idfollow !=0">
+				AND
+				idfollow = '%${idfollow}%'
+			</if>
+			<if test="memberFollower !=0">
+				AND
+				member_follower = '${memberFollower}'
+			</if>
+			<if test="memberFollowing !=0">
+				AND
+				member_following = '${memberFollowing}'
+			</if>
+			
+		</where>
+	</select>
+	
+	<!-- 1. 팔로잉 수 가져오기-->
+	<select id="findFollowingCount" parameterType="long" resultType="long">
+		select count(member_following) as member_following from `coco`.`follow` where member_follower = #{value}
+	</select>
+	
+	<!-- 2. 팔로워 수 가져오기 -->
+	<select id="findFollowerCount"  parameterType="long" resultType="long">
+		select count(member_follower) as member_follower from `coco`.`follow` where member_following = #{value}
+	</select>
+
+	<insert id="addFollow" parameterType="Follow"
+		useGeneratedKeys="true" keyProperty="idfollow">
+		<include refid="insert-Follow"></include>
+	</insert>
+
+	<update id="updateFollow" parameterType="Follow">
+		<include refid="update-Follow"></include>
+	</update>
+
+	<delete id="deleteFollow" parameterType="Follow">
+		<include refid="delete-Follow"></include>
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

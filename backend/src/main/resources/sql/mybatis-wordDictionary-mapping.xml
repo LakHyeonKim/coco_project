@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="WordDictionary_Mapper">
+
+	<sql id="select-WordDictionary">
+		select idword_dictionary, word,	description, link
+		from word_dictionary
+	</sql>
+	<sql id="insert-WordDictionary">
+		insert into word_dictionary
+		(word,	description, link)
+		values(#{word},#{description},#{link})
+	</sql>
+	<sql id="update-WordDictionary">
+		update word_dictionary set
+		word=#{word},
+		description=#{description},
+		link = #{link}
+		where
+		idword_dictionary=#{idwordDictionary}
+	</sql>
+	<sql id="delete-WordDictionary">
+		delete from word_dictionary
+		where idword_dictionary=#{idwordDictionary}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllWordDictionary" resultType="WordDictionary">
+		<include refid="select-WordDictionary"></include>
+	</select>
+	<select id="findWordDictionary" parameterType="WordDictionary" resultType="WordDictionary" >
+		<include refid="select-WordDictionary"></include>
+		<where>
+			<if test="idwordDictionary != 0">
+				idword_dictionary = ${idwordDictionary}
+			</if>
+			AND
+			<if test="word !=null">
+				word LIKE '%${word}%'
+			</if>
+			AND
+			<if test="description !=null">
+				description LIKE '%${description}%'
+			</if>
+		</where>
+	</select>
+
+	<insert id="addWordDictionary" parameterType="WordDictionary"
+		useGeneratedKeys="true" keyProperty="idwordDictionary">
+		<include refid="insert-WordDictionary"></include>
+	</insert>
+
+	<update id="updateWordDictionary" parameterType="WordDictionary">
+		<include refid="update-WordDictionary"></include>
+	</update>
+
+	<delete id="deleteWordDictionary" parameterType="WordDictionary">
+		<include refid="delete-WordDictionary"></include>
+	</delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

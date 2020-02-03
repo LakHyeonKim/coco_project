@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Like_Mapper">
+	<sql id="select-Like">
+		select idlike, post_id, member_id, access
+		from coco.like
+	</sql>
+	<sql id="insert-Like">
+		insert into coco.like
+		(post_id, member_id, access)
+		values(#{postId}, #{memberId}, #{access})
+	</sql>
+	<sql id="update-Like">
+		update coco.like set
+		post_id=#{postId},
+		member_id=#{memberId},
+		access=#{access}
+		where
+		idlike=#{idlike}
+	</sql>
+	<sql id="delete-Like">
+		delete from coco.like
+		where idlike=#{idlike}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllLike" resultType="Like">
+		<include refid="select-Like"></include>
+	</select>
+	<select id="findLike" resultType="Like">
+		<include refid="select-Like"></include>
+		<where>
+			<if test="postId != 0">
+				post_id = '${postId}'
+			</if>
+			<if test="memberId != 0">
+				AND
+				member_id = '${memberId}'
+			</if>
+			<if test="access != 0">
+				AND
+				access = '${access}'
+			</if>
+		</where>
+	</select>
+
+	<insert id="addLike" parameterType="Like"
+		useGeneratedKeys="true" keyProperty="idlike">
+		<include refid="insert-Like"></include>
+	</insert>
+
+	<update id="updateLike" parameterType="Like">
+		<include refid="update-Like"></include>
+	</update>
+
+	<delete id="deleteLike" parameterType="Like">
+		<include refid="delete-Like"></include>
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
