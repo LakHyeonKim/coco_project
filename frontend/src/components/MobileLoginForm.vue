@@ -105,17 +105,18 @@ export default {
 				// this.$store.dispatch("startLoading");
 				http.post("/create2/", this.credentials)
 					.then(res => {
+						this.$session.start();
+						this.$session.set("jwt", res.data);
 						// this.$store.dispatch("endLoading");
 						// this.$store.dispatch("login", res.data);
-						this.$session.start();
-						this.$session.set("jwt", res.data.token);
+						// localStorage.setItem("token", res.data);
 						this.loading = false;
 						router.push("/newsfeed");
 						console.log("LOGIN then ", res);
 					})
 					.catch(err => {
-						// this.$store.dispatch("endLoading");
 						this.loading = false;
+						// this.$store.dispatch("endLoading");
 						console.log("LOGIN err ", err);
 					});
 			} else {
@@ -142,10 +143,10 @@ export default {
 			this.$store.state.token = result.credential.accessToken;
 			this.$store.state.user = result.user;
 		}
-	},
-	mounted() {
-		console.log(this.$store.state);
 	}
+	// mounted() {
+	// 	console.log(this.$store.state);
+	// }
 };
 </script>
 
