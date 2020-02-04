@@ -14,8 +14,7 @@ import MyPage from "./views/MyPage.vue";
 
 Vue.use(VueRouter);
 
-const routes = [
-	{
+const routes = [{
 		path: "/",
 		name: "home",
 		component: Home
@@ -57,17 +56,17 @@ const routes = [
 		path: "/myPage",
 		name: "myPage",
 		component: MyPage,
-		meta: {
-			authRequired: true
-		}
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "/newpage",
 		name: "newpage",
 		component: NewPage,
-		meta: {
-			authRequired: true
-		}
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "*",
@@ -83,10 +82,10 @@ const router = new VueRouter({
 	routes
 });
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (
-		to.matched.some(function(routeInfo) {
+		to.matched.some(function (routeInfo) {
 			return routeInfo.meta.authRequired;
 		})
 	) {

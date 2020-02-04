@@ -15,7 +15,7 @@
 		<v-card>
 			<v-tabs background-color="white" color="deep-purple accent-4" right>
 				<v-tab>글쓰기</v-tab>
-				<v-tab>미리보기</v-tab>
+				<v-tab @click="testt">미리보기</v-tab>
 
 				<v-tab-item>
 					<v-container fluid>
@@ -45,6 +45,7 @@
 					add-tags-on-blur
 				></tags-input>
 				<v-btn @click="test">test</v-btn>
+				<v-btn @click="testt">testt</v-btn>
 			</v-col>
 		</v-row>
 	</v-container>
@@ -80,11 +81,6 @@ export default {
 			}
 		};
 	},
-	watch: {
-		source: function() {
-			Prism.highlightAll();
-		}
-	},
 	methods: {
 		test() {
 			for (let i = 0; i < this.tags.length; ++i) {
@@ -103,6 +99,9 @@ export default {
 					console.log(res);
 					router.push("/");
 				});
+		},
+		testt() {
+			Prism.highlightAll();
 		}
 	},
 	mounted() {
