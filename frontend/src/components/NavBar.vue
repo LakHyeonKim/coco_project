@@ -19,7 +19,7 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="#">
+				<router-link to="/search">
 					<img class="nav_menu_img" src="../assets/icon/search.png" />
 				</router-link>
 			</li>

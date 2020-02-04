@@ -11,6 +11,7 @@ import NewPage from "./views/NewPage";
 import NewsFeed from "./views/NewsFeed.vue";
 import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
+import Search from "./views/Search.vue";
 
 Vue.use(VueRouter);
 
@@ -65,6 +66,14 @@ const routes = [
 		path: "/newpage",
 		name: "newpage",
 		component: NewPage
+		// meta: {
+		// 	authRequired: true
+		// }
+	},
+	{
+		path: "/search",
+		name: "search",
+		component: Search
 		// meta: {
 		// 	authRequired: true
 		// }
