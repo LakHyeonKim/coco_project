@@ -32,9 +32,7 @@
 						/>
 					</div>
 					<button type="submit" class="loginbutton">
-						<p id="logintext">
-							로그인
-						</p>
+						<p id="logintext">로그인</p>
 					</button>
 				</form>
 				<div id="divideLine">
@@ -56,9 +54,7 @@
 				</div>
 			</div>
 			<div v-if="errors.length" id="loginError">
-				<div v-for="(error, idx) in errors" :key="idx">
-					{{ error }}
-				</div>
+				<div v-for="(error, idx) in errors" :key="idx">{{ error }}</div>
 			</div>
 			<div id="forgotpwd">
 				<button>
@@ -70,9 +66,7 @@
 			<div id="regiform">
 				계정이 없으신가요?
 				<router-link to="/register">
-					<button style="color:blue;">
-						가입하기
-					</button>
+					<button style="color:blue;">가입하기</button>
 				</router-link>
 			</div>
 			<div></div>
@@ -109,13 +103,13 @@ export default {
 		login() {
 			if (this.checkForm()) {
 				this.loading = true;
-				// this.$store.dispatch("startLoading");
 				http.post("/jwt/create2/", this.credentials)
 					.then(res => {
 						if (res.data != "fail") {
-							// alert(res.data);
 							this.$session.start();
 							this.$session.set("jwt", res.data);
+							this.$store.state.token = res.data;
+							this.$session.set("id", this.$store.getters.userId);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);

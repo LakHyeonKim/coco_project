@@ -59,7 +59,13 @@ export default {
 		MobilePortfolio
 	},
 	mounted() {
-		http.post("/api/findByAllNewsfeed/", 5)
+		const token = this.$session.get("jwt");
+		const headers = {
+			Authorization: token
+		};
+		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+			headers
+		})
 			.then(res => {
 				console.log("getport then ", res.data);
 				this.portfolios = res.data;

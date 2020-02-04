@@ -11,12 +11,8 @@
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
 						<img class="post_profile" src="../assets/user.png" />
-						<div class="post_nickname">
-							{{ item.post.postWriter }}
-						</div>
-						<div class="post_date">
-							{{ item.post.dateCreated }}
-						</div>
+						<div class="post_nickname">{{ item.post.postWriter }}</div>
+						<div class="post_date">{{ item.post.dateCreated }}</div>
 					</div>
 					<div class="post_code">{{ item.post.code }}</div>
 				</div>
@@ -42,7 +38,8 @@ export default {
 		getPostTag(idx) {}
 	},
 	mounted() {
-		http.post("/findByMyPosts/", 5)
+		alert(this.$session.get("jwt"));
+		http.post("/api/findByMyPosts/", this.$session.get("id"))
 			.then(response => {
 				this.posts = response.data;
 				console.log(this.posts);
