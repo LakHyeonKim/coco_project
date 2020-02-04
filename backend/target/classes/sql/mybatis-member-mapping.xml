@@ -43,11 +43,16 @@
 		where idmember=#{idmember}
 
 	</sql>
+<<<<<<< HEAD
 	
 	<!-- 전체 검색 -->
 	<select id="findIdByRefreshToken" parameterType="string" resultType="int">
 		select idmember from member where refreshToken=#{value}
 	</select>
+=======
+
+	<!-- 전체 검색 -->
+>>>>>>> back_end
 	<select id="findAllMember" resultType="Member">
 		<include refid="select-Member"></include>
 		<where>m.rank_id = r.idrank</where>
