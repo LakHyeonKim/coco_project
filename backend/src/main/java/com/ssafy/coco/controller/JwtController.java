@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,9 +31,9 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/jwt")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "SSAFY HRM" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "JWT Controller" }, description = "SSAFY HRM resource API (Test)")
 public class JwtController {
 
 	@Autowired
@@ -41,15 +42,8 @@ public class JwtController {
 
 	@ApiOperation(value = "jwt 생성", response = List.class)
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createJwt(@RequestBody String id) throws Exception {
-		System.out.println("들어옴 createJwt");
-		String password = "1234";
-		return jwtService.makeJwt(id,password);
-	}
-	
-	@ApiOperation(value = "jwt 생성", response = List.class)
-	@RequestMapping(value = "/create2", method = RequestMethod.POST)
-	public String createJwt(@RequestBody JSONObject input) throws Exception {
+	public String createJwt(@RequestHeader(value="Authorization")String jwt,@RequestBody JSONObject input) throws Exception {
+		System.out.println(jwt);
 		System.out.println("들어옴 createJwt");
 		Map<String, Object> map =  getMapFromJsonObject(input);
 		String id = (String) map.get("id");
@@ -66,7 +60,30 @@ public class JwtController {
 		}
 		else
 		{
-			return null;
+			return "fail";
+		}
+	}
+	
+	@ApiOperation(value = "jwt 생성", response = List.class)
+	@RequestMapping(value = "/create2", method = RequestMethod.POST)
+	public String createJwt(@RequestBody JSONObject input) throws Exception {
+		System.out.println("들어옴 createJwt2");
+		Map<String, Object> map =  getMapFromJsonObject(input);
+		String id = (String) map.get("id");
+		String password = (String) map.get("password");
+		Member m = new Member();
+		m.setId(id);
+		m.setPassword(password);
+		List<Member> list= memberDao.findMember(m);
+		if(list.size()>0) 
+		{
+			m = list.get(0);
+			m.setGrade("아이언");
+			return jwtService.makeJwt(""+m.getIdmember());
+		}
+		else
+		{
+			return "fail";
 		}
 		
 	}
@@ -99,4 +116,5 @@ public class JwtController {
 			return jwtService.checkJwt(jwt);
 		}
 	}
+	
 }

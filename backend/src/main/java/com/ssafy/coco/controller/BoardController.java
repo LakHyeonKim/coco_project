@@ -7,12 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.service.BoardService;
+import com.ssafy.coco.service.JwtService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,20 +22,41 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "SSAFY HRM" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "Board Controller" }, description = "SSAFY HRM resource API (Test)")
 
 public class BoardController {
 	@Autowired
 	private BoardService boardService;
-	
+	@Autowired
+	private JwtService jwtService;
 	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 (뉴스피드 페이지용)", response = List.class)
 	@RequestMapping(value = "/findByAllNewsfeed", method = RequestMethod.POST)
-	public ResponseEntity<List<Board>> findByAllNewsfeed(@RequestBody long idMember) throws Exception {
-		List<Board> answers = boardService.findByAllNewsfeed(idMember);
-		if (answers.isEmpty()) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
+	public ResponseEntity<List<Board>> findByAllNewsfeed(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
+		boolean isAble = jwtService.checkJwt(jwt);
+		if(isAble)
+		{
+			List<Board> answers = boardService.findByAllNewsfeed(idMember);
+			if (answers.isEmpty()) {
+				return new ResponseEntity(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
 		}
-		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+		else return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	}
+	
+	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 (뉴스피드 페이지용)", response = List.class)
+	@RequestMapping(value = "/findByAllNewsfeed2", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByAllNewsfeed2(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
+		HttpStatus httpStatus = jwtService.checkJwt2(jwt);
+		if(httpStatus==HttpStatus.ACCEPTED)
+		{
+			List<Board> answers = boardService.findByAllNewsfeed(idMember);
+			if (answers.isEmpty()) {
+				return new ResponseEntity(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+		}
+		else return new ResponseEntity(httpStatus);
 	}
 	
 	@ApiOperation(value = "사용자의 선호 태그 기반으로 모두 찾아줌 (검색 페이지용)", response = List.class)

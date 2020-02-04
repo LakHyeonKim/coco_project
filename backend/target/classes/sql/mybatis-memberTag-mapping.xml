@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="MemberTag_Mapper">
+
+	<sql id="select-MemberTag">
+		select idmember_tag, member_id, tag_id, access, frequency
+		from member_tag
+	</sql>
+	<sql id="insert-MemberTag">
+		insert into member_tag
+		(member_id, tag_id, access, frequency)
+		values(#{memberId},#{tagId}, #{access}, #{frequency})
+	</sql>
+	<sql id="delete-MemberTag">
+		delete from member_tag
+		where idmember_tag = #{idmemberTag};
+	</sql>
+	<sql id="update-MemberTag">
+		update member_tag set
+		access=#{access},
+		frequency=#{frequency}
+		where
+		idmember_tag=#{idmemberTag}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllMemberTag" resultType="MemberTag">
+		<include refid="select-MemberTag"></include>
+	</select>
+	<select id="findMemberTag" resultType="MemberTag"  parameterType="MemberTag">
+		<include refid="select-MemberTag"></include>
+		<where>
+			access = ${access}
+			<if test="idmemberTag !=0">
+				AND
+				idmember_tag LIKE '%${idmemberTag}%'
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id LIKE '%${memberId}%'
+			</if>
+			<if test="tagId !=0">
+				AND
+				tag_id LIKE '%${tagId}%'
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateMemberTag" parameterType="MemberTag">
+		<include refid="update-MemberTag"></include>
+	</update>
+	
+	<update id="updateMemberTagFrequencyCount" parameterType="hashmap">
+		UPDATE `coco`.`member_tag` SET `frequency` = `frequency` + '1' WHERE member_id = #{idMember} and tag_id = #{idTag};
+	</update>
+	
+	<insert id="addMemberTag" parameterType="MemberTag"
+		useGeneratedKeys="true" keyProperty="idmember_tag">
+		<include refid="insert-MemberTag"></include>
+	</insert>
+
+	<delete id="deleteMemberTag" parameterType="MemberTag">
+		<include refid="delete-MemberTag"></include>
+	</delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

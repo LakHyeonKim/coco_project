@@ -3,6 +3,7 @@ package com.ssafy.coco.service.impl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -55,7 +56,7 @@ public class JwtServiceImpl implements JwtService{
     public String makeJwt(String idmember) throws Exception {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         Date expireTime = new Date();
-        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 1);
+        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 );
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
@@ -121,5 +122,29 @@ public class JwtServiceImpl implements JwtService{
             return false;
         }
     }
+
+	@Override
+	public HttpStatus checkJwt2(String jwt) throws Exception {
+		try {
+        	System.out.println("start");
+            Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
+                    .parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
+            System.out.println("Dd"+claims);
+            logger.info("expireTime :" + claims.getExpiration());
+            logger.info("idmember :" + claims.get("idmember"));
+            return HttpStatus.ACCEPTED;
+        } catch (ExpiredJwtException exception) {
+            logger.info("토큰 만료");
+            return HttpStatus.UNAUTHORIZED;
+        } catch (JwtException exception) {
+            logger.info("토큰 변조");
+            return HttpStatus.BAD_REQUEST;
+        }
+	}
+
+	@Override
+	public boolean getAccessTokenByRefreshToken(String ref) throws Exception {
+		return false;
+	}
 
 }

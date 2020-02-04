@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="PostTag_Mapper">
+
+	<sql id="select-PostTag">
+		select idpost_tag, post_id, tag_id
+		from post_tag
+	</sql>
+	<sql id="insert-PostTag">
+		insert into post_tag
+		(post_id, tag_id)
+		values(#{postId},#{tagId})
+	</sql>
+	<sql id="delete-PostTag">
+		delete from post_tag
+		where idpost_tag = #{idpostTag};
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllPostTag" resultType="PostTag">
+		<include refid="select-PostTag"></include>
+	</select>
+	<select id="findPostTag" resultType="PostTag">
+		<include refid="select-PostTag"></include>
+		<where>
+			<if test="idpostTag !=0">
+				idpost_tag = '${idpostTag}'
+			</if>
+			<if test="postId !=0">
+				AND
+				post_id = '${postId}'
+			</if>
+			<if test="tagId !=0">
+				AND
+				tag_id = '${tagId}'
+			</if>
+		</where>
+	</select>
+
+	<insert id="addPostTag" parameterType="PostTag"
+		useGeneratedKeys="true" keyProperty="idpostTag">
+		<include refid="insert-PostTag"></include>
+	</insert>
+
+	<delete id="deletePostTag" parameterType="PostTag">
+		<include refid="delete-PostTag"></include>
+	</delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
