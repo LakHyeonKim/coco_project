@@ -74,4 +74,14 @@ public class MemberServiceImpl implements MemberService{
 	public List<Member> findWhoPressedTheLikeButton(long idPost) {
 		return memberDao.findWhoPressedTheLikeButton(idPost);
 	}
+
+	@Override
+	public int findIdByRefreshToken(String refToken) {
+		return memberDao.findIdByRefreshToken(refToken);
+	}
+
+	@Override
+	public int updateRefreshToken(Member member) {
+		return memberDao.updateRefreshToken(member);
+	}
 }

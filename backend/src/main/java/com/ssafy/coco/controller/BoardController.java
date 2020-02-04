@@ -29,6 +29,7 @@ public class BoardController {
 	private BoardService boardService;
 	@Autowired
 	private JwtService jwtService;
+	
 	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 (뉴스피드 페이지용)", response = List.class)
 	@RequestMapping(value = "/findByAllNewsfeed", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByAllNewsfeed(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
@@ -36,6 +37,21 @@ public class BoardController {
 		if(isAble)
 		{
 			List<Board> answers = boardService.findByAllNewsfeed(idMember);
+			if (answers.isEmpty()) {
+				return new ResponseEntity(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+		}
+		else return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	}
+	
+	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 (뉴스피드 페이지용)", response = List.class)
+	@RequestMapping(value = "/findPostByNewsfeedOrderByLike", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findPostByNewsfeedOrderByLike(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
+		boolean isAble = jwtService.checkJwt(jwt);
+		if(isAble)
+		{
+			List<Board> answers = boardService.findPostByNewsfeedOrderByLike(idMember);
 			if (answers.isEmpty()) {
 				return new ResponseEntity(HttpStatus.NO_CONTENT);
 			}
@@ -73,6 +89,16 @@ public class BoardController {
 	@RequestMapping(value = "/findByMyPosts", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByMyPosts(@RequestBody long idMember) throws Exception {
 		List<Board> answers = boardService.findByMyPosts(idMember);
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "사용자가 작성한 포스트를 좋아요수로 정렬해서 가져옴", response = List.class)
+	@RequestMapping(value = "/findByMyPostsOrderByLike", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByMyPostsOrderByLike(@RequestBody long idMember) throws Exception {
+		List<Board> answers = boardService.findByMyPostsOrderByLike(idMember);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}

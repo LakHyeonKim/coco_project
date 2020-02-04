@@ -31,9 +31,9 @@ import com.ssafy.coco.vo.PostWithTag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/trc")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "SSAFY HRM" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "Transaction Controller" }, description = "SSAFY HRM resource API (Test)")
 public class TransactionController {
 	
 	private static String path = "/img/user_profile";

@@ -45,9 +45,7 @@
 		<where>
 			<if test="idpost !=0">
 				idpost = '${idpost}'
-				
 			</if>
-			
 			<if test="memberId !=0">
 			AND
 				member_id LIKE '%${memberId}%'
@@ -71,7 +69,11 @@
 			AND
 				access LIKE '%${access}%'
 			</if>
+			
 		</where>
+		<if test="likeCount ==1">
+				order by like_count desc;
+			</if>
 	</select>
 	
 	<!-- complex_post_select -->
@@ -82,6 +84,14 @@
 		where member_id 
 		in (select member_following from `coco`.`follow` where member_follower = #{value}) 
 		order by date_created desc
+	</select>
+	
+	<select id="findPostByNewsfeedOrderByLike" parameterType="long" resultType="Post">
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access 
+		from `coco`.`post` 
+		where member_id 
+		in (select member_following from `coco`.`follow` where member_follower = #{value}) 
+		order by like_count desc, date_created desc
 	</select>
 	
 	<!-- 2. post 전체 검색 (title, post에 포함된 tag, 내용) -->

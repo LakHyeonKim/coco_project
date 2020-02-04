@@ -63,4 +63,14 @@ public class MemberDaoImpl implements MemberDao{
 	public List<Member> findWhoPressedTheLikeButton(long idPost) {
 		return sqlSession.selectList(ns+"findWhoPressedTheLikeButton",idPost);
 	}
+
+	@Override
+	public int findIdByRefreshToken(String refToken) {
+		return sqlSession.selectOne(ns+"findIdByRefreshToken",refToken);
+	}
+
+	@Override
+	public int updateRefreshToken(Member member) {
+		return sqlSession.update(ns+"updateRefreshToken",member);
+	}
 }
