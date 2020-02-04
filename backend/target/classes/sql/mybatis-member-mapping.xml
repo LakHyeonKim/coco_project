@@ -31,8 +31,7 @@
 		password = #{password},
 		email = #{email},
 		git_url = #{gitUrl},
-		kakao_url
-		= #{kakaoUrl},
+		kakao_url = #{kakaoUrl},
 		instagram_url = #{instagramUrl},
 		update_created = now()
 		where
@@ -43,16 +42,17 @@
 		where idmember=#{idmember}
 
 	</sql>
-<<<<<<< HEAD
 	
 	<!-- 전체 검색 -->
-	<select id="findIdByRefreshToken" parameterType="string" resultType="int">
+	<select id="findIdByRefreshToken" parameterType="string" resultType="integer">
 		select idmember from member where refreshToken=#{value}
 	</select>
-=======
-
-	<!-- 전체 검색 -->
->>>>>>> back_end
+	<update id="updateRefreshToken" parameterType="Member">
+		update member set
+		refreshToken = #{refreshToken}
+		where
+		idmember = #{idmember}
+	</update>
 	<select id="findAllMember" resultType="Member">
 		<include refid="select-Member"></include>
 		<where>m.rank_id = r.idrank</where>

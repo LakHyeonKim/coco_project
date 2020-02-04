@@ -38,9 +38,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/trc")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "SSAFY HRM" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "Transaction Controller" }, description = "SSAFY HRM resource API (Test)")
 public class TransactionController {
 	
 	@Autowired

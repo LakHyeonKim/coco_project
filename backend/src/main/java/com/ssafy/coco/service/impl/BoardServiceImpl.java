@@ -67,7 +67,13 @@ public class BoardServiceImpl implements BoardService{
 		List<Post> myPosts = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 0, 0, null, 0));
 		return makeBoardList(myPosts);
 	}
-
+	
+	@Override
+	public List<Board> findByMyPostsOrderByLike(long idMember) {
+		List<Post> myPosts = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 1, 0, null, 0));
+		return makeBoardList(myPosts);
+	}
+	
 	@Override
 	public List<Board> findByAllKeyword(String keyWord) {
 		List<Post> searchedPosts = postDao.findPostByAll(keyWord);
@@ -110,6 +116,12 @@ public class BoardServiceImpl implements BoardService{
 			boards.add(new Board(post, tags, comments, likes, babyPosts, commentCount, likeCount));
 		}
 		return boards;
+	}
+
+	@Override
+	public List<Board> findPostByNewsfeedOrderByLike(long idMemberFollower) {
+		List<Post> newsPosts = postDao.findPostByNewsfeedOrderByLike(idMemberFollower);
+		return makeBoardList(newsPosts);
 	}
 
 }
