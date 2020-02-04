@@ -17,11 +17,38 @@ public class Member {
 	Timestamp dateCreated;
 	Timestamp updateCreated;
 	String grade;
+	String imageUrl;
 	String refreshToken;
 	
 	public Member() {
 		super();
 	}
+	
+	
+
+	public Member(long idmember, long rankId, int isManager, int isDelete, String nickname, String id, String password,
+			String email, String gitUrl, String kakaoUrl, String instagramUrl, Timestamp dateCreated,
+			Timestamp updateCreated, String grade, String imageUrl, String refreshToken) {
+		super();
+		this.idmember = idmember;
+		this.rankId = rankId;
+		this.isManager = isManager;
+		this.isDelete = isDelete;
+		this.nickname = nickname;
+		this.id = id;
+		this.password = password;
+		this.email = email;
+		this.gitUrl = gitUrl;
+		this.kakaoUrl = kakaoUrl;
+		this.instagramUrl = instagramUrl;
+		this.dateCreated = dateCreated;
+		this.updateCreated = updateCreated;
+		this.grade = grade;
+		this.imageUrl = imageUrl;
+		this.refreshToken = refreshToken;
+	}
+
+
 
 	public Member(long idmember, long rankId, int isManager, int isDelete, String nickname, String id, String password,
 			String email, String gitUrl, String kakaoUrl, String instagramUrl, Timestamp dateCreated,
@@ -183,14 +210,25 @@ public class Member {
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
+	
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 
 	@Override
 	public String toString() {
 		return "Member [idmember=" + idmember + ", rankId=" + rankId + ", isManager=" + isManager + ", isDelete="
 				+ isDelete + ", nickname=" + nickname + ", id=" + id + ", password=" + password + ", email=" + email
 				+ ", gitUrl=" + gitUrl + ", kakaoUrl=" + kakaoUrl + ", instagramUrl=" + instagramUrl + ", dateCreated="
-				+ dateCreated + ", updateCreated=" + updateCreated + ", grade=" + grade + ", refreshToken="
-				+ refreshToken + "]";
+				+ dateCreated + ", updateCreated=" + updateCreated + ", grade=" + grade + ", imageUrl=" + imageUrl
+				+ ", refreshToken=" + refreshToken + "]";
 	}
 	
 	

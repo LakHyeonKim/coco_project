@@ -9,7 +9,7 @@
 	<sql id="select-Member">
 		select
 		idmember, rank_id, is_manager,is_delete, nickname, id, password,
-		email, git_url, kakao_url,instagram_url ,date_created,update_created,r.grade
+		email, git_url, kakao_url,instagram_url ,date_created,update_created,r.grade,image_url,refreshToken
 		from `coco`.`member` as m join `coco`.`rank` as r
 	</sql>
 	<sql id="insert-Member">
@@ -101,6 +101,14 @@
 				AND
 				instagram_url = '${instagramUrl}'
 			</if>
+			<if test="imageUrl !=null">
+				AND
+				image_url = '${imageUrl}'
+			</if>
+			<if test="refreshToken !=null">
+				AND
+				refreshToken = '${refreshToken}'
+			</if>
 		</where>
 	</select>
 	
@@ -119,7 +127,7 @@
 	</select>
 	
 	<select id="findWhoPressedTheLikeButton" parameterType="long" resultType="Member">
-		select idmember, rank_id, is_manager,is_delete, nickname, id, password, email, git_url, kakao_url,instagram_url ,date_created,update_created, grade 
+		select idmember, rank_id, is_manager,is_delete, nickname, id, password, email, git_url, kakao_url,instagram_url ,date_created,update_created, grade,image_url,refreshToken  
 		from `coco`.`member` as m join `coco`.`rank` as r 
 		where  m.rank_id = r.idrank and idmember in (select member_id from `coco`.`like` where post_id = #{value});
 	</select>

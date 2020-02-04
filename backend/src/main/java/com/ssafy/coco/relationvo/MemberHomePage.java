@@ -3,12 +3,14 @@ package com.ssafy.coco.relationvo;
 import java.util.List;
 
 import com.ssafy.coco.vo.Mypage;
+import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.Tag;
 
 public class MemberHomePage {
 	private MemberInfo memberInfo;
 	private Mypage mypage;
 	private List<Tag> tags;
+	private List<Post> posts;
 	private long followingCount;
 	private long followerCount;
 	
