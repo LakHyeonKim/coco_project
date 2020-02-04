@@ -56,18 +56,18 @@ const routes = [
 	{
 		path: "/myPage",
 		name: "myPage",
-		component: MyPage,
-		meta: {
-			authRequired: true
-		}
+		component: MyPage
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "/newpage",
 		name: "newpage",
-		component: NewPage,
-		meta: {
-			authRequired: true
-		}
+		component: NewPage
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "*",

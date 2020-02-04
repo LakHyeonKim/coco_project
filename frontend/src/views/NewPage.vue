@@ -19,7 +19,12 @@
 
 				<v-tab-item>
 					<v-container fluid>
-						<v-textarea v-model="source" label="Input" auto-grow outlined />
+						<v-textarea
+							v-model="source"
+							label="Input"
+							auto-grow
+							outlined
+						/>
 					</v-container>
 				</v-tab-item>
 				<v-tab-item>
@@ -45,6 +50,7 @@
 					add-tags-on-blur
 				></tags-input>
 				<v-btn @click="test">test</v-btn>
+				<v-btn @click="testt">testt</v-btn>
 			</v-col>
 		</v-row>
 	</v-container>
@@ -103,6 +109,9 @@ export default {
 					console.log(res);
 					router.push("/");
 				});
+		},
+		testt() {
+			Prism.highlightAll();
 		}
 	},
 	mounted() {
