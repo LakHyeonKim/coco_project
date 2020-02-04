@@ -1,20 +1,65 @@
 <template>
 	<div id="posts">
 		<div id="post_list">
+			<div style="height: 50px; margin-top: 15px;">
+				<img
+					src="../assets/icon/sort_b.png"
+					width="25px"
+					style="float: left; margin-top: 7px; margin-right: 10px; opacity: 0.5;"
+				/>
+				<v-select
+					:items="postSels"
+					v-model="postSel"
+					dense
+					item-color="black"
+					color="rgba(0, 0, 0, 0.5)"
+					@change="chnagePostSel"
+					style="width: 100px; float: left;"
+				></v-select>
+			</div>
 			<div class="post" v-for="item in posts" :key="item.post.idpost">
+				{{ item.post.idpost }}
 				<div style="margin: 10px;">
-					<div>
-						<span class="post_tag">#java</span>
-						<span class="post_tag">#javascript</span>
-						<span class="post_tag">#eclipse</span>
+					<div
+						v-for="tag in item.tags"
+						:key="tag.idtag"
+						style="display: inline-block;"
+					>
+						<span class="post_tag">{{ tag.tagName }}</span>
 					</div>
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
 						<img class="post_profile" src="../assets/user.png" />
-						<div class="post_nickname">{{ item.post.postWriter }}</div>
+						<div class="post_nickname">
+							{{ item.post.postWriter }}
+						</div>
 						<div class="post_date">{{ item.post.dateCreated }}</div>
 					</div>
 					<div class="post_code">{{ item.post.code }}</div>
+					<div class="like_comment">
+						<img
+							:id="item.post.idpost"
+							class="like_img"
+							src="../assets/icon/tack_empty.png"
+							width="35px"
+							@click="like(item.post.idpost)"
+						/>
+						<input
+							type="hidden"
+							:id="item.post.idpost + 'flag'"
+							value="0"
+						/>
+						<div class="like_text">
+							{{ item.likeCount }}
+						</div>
+						<img
+							src="../assets/icon/chat.png"
+							class="comment_img"
+						/>
+						<div class="comment_text">
+							{{ item.commentCount }}
+						</div>
+					</div>
 				</div>
 				<div class="line" />
 			</div>
@@ -31,18 +76,65 @@ export default {
 	data() {
 		return {
 			posts: "",
-			postTags: ""
+			postTags: "",
+			postSel: "최신순",
+			postSels: ["최신순", "오래된순", "좋아요순"],
+			address: ""
 		};
 	},
 	methods: {
-		getPostTag(idx) {}
+		chnagePostSel(idx) {
+			if (idx == "최신순") {
+				console.log("order by new");
+				this.address = "/api/findByMyPosts/";
+			} else if (idx == "오래된순") {
+				console.log("order by old");
+			} else if (idx == "좋아요순") {
+				console.log("order by like");
+				this.address = "/api/findByMyPostsOrderByLike/";
+			}
+			http.post(this.address, this.$session.get("id"))
+				.then(response => {
+					this.posts = response.data;
+					console.log(this.posts);
+					console.log(response);
+				})
+				.catch(error => {
+					console.log(error);
+				})
+				.finally(() => (this.loading = false));
+		},
+		like(idx) {
+			console.log("글번호 : " + idx);
+			console.log(document.getElementById(idx).value);
+			// document.getElementById(idx).innerHTML =
+			// 	"<img src='./img/icons/tack_full.png' width='35px' onclick='unlike(" +
+			// 	idx +
+			// 	")' />";
+		},
+		unlike(idx) {
+			alert("???");
+			// document.getElementById(idx).innerHTML =
+			// 	"<img src='./img/icons/tack_empty.png' width='35px' v-on:click='like(" +
+			// 	idx +
+			// 	")' />";
+		}
 	},
 	mounted() {
-		alert(this.$session.get("jwt"));
 		http.post("/api/findByMyPosts/", this.$session.get("id"))
 			.then(response => {
 				this.posts = response.data;
 				console.log(this.posts);
+				console.log(response);
+			})
+			.catch(error => {
+				console.log(error);
+			})
+			.finally(() => (this.loading = false));
+
+		http.post("/api/findLike/", { memberId: this.$session.get("id") })
+			.then(response => {
+				console.log(response);
 			})
 			.catch(error => {
 				console.log(error);
@@ -57,6 +149,7 @@ export default {
 	margin-bottom: 20px;
 	border-bottom: 1.5px solid rgba(0, 0, 0, 0.06);
 }
+
 .post {
 	margin-top: 20px;
 	font-weight: 300;
@@ -74,6 +167,7 @@ export default {
 	white-space: nowrap;
 }
 .post_tag {
+	float: left;
 	margin-right: 6px;
 	font-size: 13px;
 	border-radius: 8px;
@@ -111,5 +205,30 @@ export default {
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
+	margin-bottom: 5px;
+}
+.like_comment {
+	display: inline-block;
+}
+.like_text,
+.like_img,
+.comment_text,
+.comment_img {
+	float: left;
+}
+
+.like_img {
+	width: 35px;
+}
+.comment_img {
+	width: 30px;
+	margin: 7px 3px 0 10px;
+}
+
+.comment_text,
+.like_text {
+	font-weight: 400;
+	margin-top: 10px;
+	font-size: 15px;
 }
 </style>

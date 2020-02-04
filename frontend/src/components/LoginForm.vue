@@ -103,12 +103,20 @@ export default {
 		login() {
 			if (this.checkForm()) {
 				this.loading = true;
-				http.post("/jwt/create2/", this.credentials)
+				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						if (res.data != "fail") {
+						console.log(res);
+						if (res.status != "204") {
 							this.$session.start();
-							this.$session.set("jwt", res.data);
-							this.$store.state.token = res.data;
+							this.$session.set(
+								"accessToken",
+								res.data.accessToken
+							);
+							this.$session.set(
+								"refreshToken",
+								res.data.refreshToken
+							);
+							this.$store.state.token = res.data.accessToken;
 							this.$session.set("id", this.$store.getters.userId);
 							this.loading = false;
 							router.push("/newsfeed");

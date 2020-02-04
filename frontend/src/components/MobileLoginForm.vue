@@ -102,17 +102,31 @@ export default {
 		login() {
 			if (this.checkForm()) {
 				this.loading = true;
-				// this.$store.dispatch("startLoading");
-				http.post("/create2/", this.credentials)
+				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						this.$session.start();
-						this.$session.set("jwt", res.data);
-						// this.$store.dispatch("endLoading");
-						// this.$store.dispatch("login", res.data);
-						// localStorage.setItem("token", res.data);
-						this.loading = false;
-						router.push("/newsfeed");
-						console.log("LOGIN then ", res);
+						console.log(res);
+						if (res.status != "204") {
+							this.$session.start();
+							this.$session.set(
+								"accessToken",
+								res.data.accessToken
+							);
+							this.$session.set(
+								"refreshToken",
+								res.data.refreshToken
+							);
+							this.$store.state.token = res.data.accessToken;
+							this.$session.set("id", this.$store.getters.userId);
+							this.loading = false;
+							router.push("/newsfeed");
+							console.log("LOGIN then ", res);
+						} else {
+							router.push("/").catch(err => {
+								err;
+							});
+							alert("아이디와 비밀번호를 확인해 주십시오.");
+							this.loading = false;
+						}
 					})
 					.catch(err => {
 						this.loading = false;

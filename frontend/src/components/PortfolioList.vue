@@ -59,7 +59,7 @@ export default {
 		MobilePortfolio
 	},
 	mounted() {
-		const token = this.$session.get("jwt");
+		const token = this.$session.get("accessToken");
 		const headers = {
 			Authorization: token
 		};
