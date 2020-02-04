@@ -7,7 +7,6 @@
 					label="제목"
 					append-icon="mdi-page-layout-header"
 					counter
-					filled
 					outlined
 				></v-text-field>
 			</v-col>
@@ -51,6 +50,15 @@
 					add-tags-on-space
 					add-tags-on-blur
 				></tags-input>
+				<v-file-input v-model="pfiles" placeholder="pfiles" label="첨부파일" ref="pfiles" outlined counter></v-file-input>
+				<img-inputer
+					v-model="profileimg"
+					size="middle"
+					ref="profileimg"
+					placeholder="Drop file here or click"
+					bottomText="Drop file here or click"
+				/>
+				<input type="file" name="myfile" ref="myfile" id="myfile" />
 				<v-btn @click="test">test</v-btn>
 				<v-btn @click="testt">testt</v-btn>
 			</v-col>
@@ -68,6 +76,8 @@ export default {
 	components: {},
 	data() {
 		return {
+			pfiles: null,
+			profileimg: null,
 			tags: [],
 			board: {
 				post: {
@@ -135,6 +145,12 @@ export default {
 		},
 		testt() {
 			Prism.highlightAll();
+
+			console.log(this.$refs);
+			console.log(this.pfiles);
+
+			// console.log(this.$refs.myfile.files[0]);
+			// console.log(this.pfiles.files);
 		}
 	},
 	mounted() {
