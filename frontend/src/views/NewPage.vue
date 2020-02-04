@@ -19,7 +19,14 @@
 
 				<v-tab-item>
 					<v-container fluid>
-						<v-textarea v-model="source" label="Input" auto-grow outlined />
+						<v-textarea
+							id="input"
+							v-model="board.post.code"
+							label="Input"
+							@keydown="insertTab"
+							auto-grow
+							outlined
+						/>
 					</v-container>
 				</v-tab-item>
 				<v-tab-item>
@@ -27,7 +34,7 @@
 						<div class="result">
 							<vue-markdown
 								class="line-numbers match-braces rainbow-braces show-invisibles"
-								:source="source"
+								:source="board.post.code"
 								data-download-link
 							></vue-markdown>
 						</div>
@@ -61,9 +68,6 @@ export default {
 	components: {},
 	data() {
 		return {
-			source: "",
-			result: "",
-
 			tags: [],
 			board: {
 				post: {
@@ -82,6 +86,35 @@ export default {
 		};
 	},
 	methods: {
+		insertTab: function(event) {
+			var kC = event.keyCode
+				? event.keyCode
+				: event.charCode
+				? event.charCode
+				: event.which;
+			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+				var oS = event.target.scrollTop;
+				if (event.target.setSelectionRange) {
+					var sS = event.target.selectionStart;
+					var sE = event.target.selectionEnd;
+					event.target.value =
+						event.target.value.substring(0, sS) +
+						"\t" +
+						event.target.value.substr(sE);
+					event.target.setSelectionRange(sS + 1, sS + 1);
+					event.target.focus();
+				} else if (event.target.createTextRange) {
+					document.selection.createRange().text = "\t";
+					event.returnValue = false;
+				}
+				event.target.scrollTop = oS;
+				if (event.preventDefault) {
+					event.preventDefault();
+				}
+				return false;
+			}
+			return true;
+		},
 		test() {
 			for (let i = 0; i < this.tags.length; ++i) {
 				this.board.tags.push({
