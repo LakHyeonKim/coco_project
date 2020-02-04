@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Mypage_Mapper">
+	<sql id="select-Mypage">
+		select idmypage, member_id, banner_image_path, banner_text,	access
+		from mypage
+	</sql>
+	<sql id="insert-Mypage">
+		insert into mypage
+		(member_id, banner_image_path, banner_text, access)
+		values(#{memberId},#{bannerImagePath},
+		#{bannerText},#{access})
+	</sql>
+	<sql id="update-Mypage">
+		update mypage set
+		member_id=#{memberId},
+		banner_image_path=#{bannerImagePath},
+		banner_text=#{bannerText},
+		access=#{access}
+		where
+		idmypage=#{idmypage}
+	</sql>
+	<sql id="delete-Mypage">
+		delete from mypage
+		where idmypage = #{idmypage}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllMypage" resultType="Mypage">
+		<include refid="select-Mypage"></include>
+	</select>
+	<select id="findMypage" resultType="Mypage">
+		<include refid="select-Mypage"></include>
+		<where>
+			access = '${access}'
+			<if test="idmypage != 0">
+				AND
+				idmypage = ${idmypage}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id LIKE '%${memberId}%'
+			</if>
+			<if test="bannerImagePath !=null">
+				AND
+				banner_image_path LIKE '%${bannerImagePath}%'
+			</if>
+			<if test="bannerText !=null">
+				AND
+				banner_text LIKE '%${bannerText}%'
+			</if>
+		</where>
+	</select>
+
+	<insert id="addMypage" parameterType="Mypage"
+		useGeneratedKeys="true" keyProperty="idmypage">
+		<include refid="insert-Mypage"></include>
+	</insert>
+
+	<update id="updateMypage" parameterType="Mypage">
+		<include refid="update-Mypage"></include>
+	</update>
+	
+	<update id="updateMypageVisitedCount" parameterType="long">
+		UPDATE `coco`.`mypage` SET `today_visited_count` = `today_visited_count` + 1, `total_visited_count` = `total_visited_count` + 1 
+		WHERE member_id = #{value}
+	</update>
+
+	<delete id="deleteMypage" parameterType="Mypage">
+		<include refid="delete-Mypage"></include>
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

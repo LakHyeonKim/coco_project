@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Comment_Mapper">
+	<sql id="select-Comment">
+		select idcomment, member_id, post_id, comment_writer,
+		contents, date_created, update_created, access
+		from comment
+	</sql>
+	<sql id="insert-Comment">
+		insert into comment
+		(member_id, post_id, comment_writer,
+		contents, date_created, update_created, access)
+
+		values(#{memberId},#{postId},
+		#{commentWriter},#{contents},now(),now(),#{access})
+	</sql>
+	<sql id="update-Comment">
+		update comment set
+		comment_writer=#{commentWriter},
+		update_created=now(),
+		contents=#{contents},
+		access=#{access}
+		where
+		idcomment=#{idcomment}
+	</sql>
+	<sql id="delete-Comment">
+		delete from comment
+		where idcomment=#{idcomment}
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllComment" resultType="Comment">
+		<include refid="select-Comment"></include>
+	</select>
+	<select id="findComment" resultType="Comment">
+		<include refid="select-Comment"></include>
+		<where>
+			access = '${access}'
+			<if test="idcomment !=0">
+				AND
+				idcomment = '${idcomment}'
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = '${memberId}'
+			</if>
+			<if test="postId != 0">
+				AND
+				post_id = '${postId}'
+			</if>
+			<if test="commentWriter !=null">
+				AND
+				comment_writer = '${commentWriter}'
+			</if>
+			<if test="contents !=null">
+				AND
+				contents LIKE '%${contents}%'
+			</if>
+		</where>
+	</select>
+
+	<insert id="addComment" parameterType="Comment"
+		useGeneratedKeys="true" keyProperty="idcomment">
+		<include refid="insert-Comment"></include>
+	</insert>
+
+	<update id="updateComment" parameterType="Comment">
+		<include refid="update-Comment"></include>
+	</update>
+
+	<delete id="deleteComment" parameterType="Comment">
+		<include refid="delete-Comment"></include>
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
