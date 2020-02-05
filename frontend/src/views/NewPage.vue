@@ -50,17 +50,28 @@
 					add-tags-on-space
 					add-tags-on-blur
 				></tags-input>
-				<v-file-input v-model="pfiles" placeholder="pfiles" label="첨부파일" ref="pfiles" outlined counter></v-file-input>
-				<img-inputer
-					v-model="profileimg"
-					size="middle"
-					ref="profileimg"
-					placeholder="Drop file here or click"
-					bottomText="Drop file here or click"
-				/>
-				<input type="file" name="myfile" ref="myfile" id="myfile" />
+			</v-col>
+		</v-row>
+		<v-row>
+			<v-col>
+				<form name="fileinfo" enctype="multipart/form-data" method="post">
+					<v-file-input v-model="pfiles" placeholder="pfiles" label="첨부파일" ref="pfiles" outlined counter></v-file-input>
+					<img-inputer
+						v-model="profileimg"
+						size="middle"
+						ref="profileimg"
+						placeholder="Drop file here or click"
+						bottomText="Drop file here or click"
+					/>
+					<input type="file" name="myfile" ref="myfile" />
+				</form>
+			</v-col>
+		</v-row>
+		<v-row>
+			<v-col>
 				<v-btn @click="test">test</v-btn>
 				<v-btn @click="testt">testt</v-btn>
+				<v-btn @click="filetest">테스트</v-btn>
 			</v-col>
 		</v-row>
 	</v-container>
@@ -145,9 +156,15 @@ export default {
 		},
 		testt() {
 			Prism.highlightAll();
-
+		},
+		filetest() {
 			console.log(this.$refs);
-			console.log(this.pfiles);
+			let fileinfo = new FormData(document.querySelector("form"));
+			fileinfo.append("test", this.$refs.profileimg.file);
+			// fileinfo.set("file", this.$refs.profileimg.file);
+			for (var p of fileinfo.entries()) {
+				console.log(p);
+			}
 
 			// console.log(this.$refs.myfile.files[0]);
 			// console.log(this.pfiles.files);
