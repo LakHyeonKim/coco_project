@@ -71,9 +71,18 @@
 			</if>
 			
 		</where>
-		<if test="likeCount ==1">
+		<if test="order == 1">
+				order by like_count asc;
+		</if>
+		<if test="order == 2">
 				order by like_count desc;
-			</if>
+		</if>
+		<if test="order == 3">
+				order by date_created asc;
+		</if>
+		<if test="order == 4">
+				order by date_created desc;
+		</if>
 	</select>
 	
 	<!-- complex_post_select -->
@@ -148,6 +157,8 @@
 		from `coco`.`post` where idpost in (select post_child from baby_post where post_parents = #{value}) 
 		order by date_created desc;
 	</select>
+	
+	
 
 	<insert id="addPost" parameterType="Post"
 		useGeneratedKeys="true" keyProperty="idpost">

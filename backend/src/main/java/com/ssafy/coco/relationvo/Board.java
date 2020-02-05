@@ -14,15 +14,13 @@ public class Board {
 	private List<Member> likes;
 	private List<Post> babyPosts;
 	private long commentCount;
-	private long likeCount;
-	
 	
 	public Board() {
 		super();
 	}
 
 	public Board(Post post, List<Tag> tags, List<Comment> comments, List<Member> likes, List<Post> babyPosts,
-			long commentCount, long likeCount) {
+			long commentCount) {
 		super();
 		this.post = post;
 		this.tags = tags;
@@ -30,9 +28,8 @@ public class Board {
 		this.likes = likes;
 		this.babyPosts = babyPosts;
 		this.commentCount = commentCount;
-		this.likeCount = likeCount;
 	}
-
+	
 	public Post getPost() {
 		return post;
 	}
@@ -81,18 +78,11 @@ public class Board {
 		this.commentCount = commentCount;
 	}
 
-	public long getLikeCount() {
-		return likeCount;
-	}
-
-	public void setLikeCount(long likeCount) {
-		this.likeCount = likeCount;
-	}
-
 	@Override
 	public String toString() {
 		return "Board [post=" + post + ", tags=" + tags + ", comments=" + comments + ", likes=" + likes + ", babyPosts="
-				+ babyPosts + ", commentCount=" + commentCount + ", likeCount=" + likeCount + "]";
+				+ babyPosts + ", commentCount=" + commentCount + "]";
 	}
+	
 	
 }

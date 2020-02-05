@@ -18,6 +18,17 @@ public class MemberHomePage {
 		super();
 	}
 
+	public MemberHomePage(MemberInfo memberInfo, Mypage mypage, List<Tag> tags, List<Post> posts, long followingCount,
+			long followerCount) {
+		super();
+		this.memberInfo = memberInfo;
+		this.mypage = mypage;
+		this.tags = tags;
+		this.posts = posts;
+		this.followingCount = followingCount;
+		this.followerCount = followerCount;
+	}
+
 	public MemberHomePage(MemberInfo memberInfo, Mypage mypage, List<Tag> tags, long followingCount,
 			long followerCount) {
 		super();
@@ -26,6 +37,16 @@ public class MemberHomePage {
 		this.tags = tags;
 		this.followingCount = followingCount;
 		this.followerCount = followerCount;
+	}
+	
+	
+
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
 	}
 
 	public MemberInfo getMemberInfo() {
@@ -70,7 +91,7 @@ public class MemberHomePage {
 
 	@Override
 	public String toString() {
-		return "MemberHomePage [memberInfo=" + memberInfo + ", mypage=" + mypage + ", tags=" + tags
+		return "MemberHomePage [memberInfo=" + memberInfo + ", mypage=" + mypage + ", tags=" + tags + ", posts=" + posts
 				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + "]";
 	}
 	
