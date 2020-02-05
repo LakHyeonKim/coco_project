@@ -106,9 +106,13 @@ export default {
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
 			if (this.posts[index].post.likeCheck == 1) {
-				this.address = "";
+				this.address = "/trc/unLike/";
+				this.posts[index].post.likeCheck = 0;
+				this.posts[index].post.likeCount--;
 			} else {
 				this.address = "/trc/pushLike/";
+				this.posts[index].post.likeCheck = 1;
+				this.posts[index].post.likeCount++;
 			}
 			console.log(this.address);
 			http.post(this.address, {
@@ -119,7 +123,9 @@ export default {
 					idpost: postNum
 				}
 			})
-				.then(response => {
+				.then(response => {})
+				.catch(error => {
+					console.log(error);
 					if (this.posts[index].post.likeCheck == 1) {
 						this.posts[index].post.likeCheck = 0;
 						this.posts[index].post.likeCount--;
@@ -127,9 +133,6 @@ export default {
 						this.posts[index].post.likeCheck = 1;
 						this.posts[index].post.likeCount++;
 					}
-				})
-				.catch(error => {
-					console.log(error);
 				});
 		}
 	},
