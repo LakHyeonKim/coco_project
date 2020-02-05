@@ -48,7 +48,8 @@ export default {
 		alert(this.$session.get("id"));
 		http.post("/api/findByMemberHomePageUserID/", this.$session.get("id"))
 			.then(response => {
-				this.pouserInfo = response.data;
+				this.userInfo = response.data;
+				store.state.tags = this.userInfo.tags;
 				console.log(this.userInfo);
 			})
 			.catch(error => {

@@ -2,36 +2,14 @@
 	<div id="menu">
 		<img
 			id="imgMenu"
-			@click="isHidden = !isHidden"
+			@click="toggleMenu()"
 			:src="
 				isHidden ? './img/icons/menu_w.png' : './img/icons/close_w.png'
 			"
 			width="25px"
 		/>
+		<!-- blur 생각해보기 -->
 		<div id="open" v-if="!isHidden">
-			<ul id="list">
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-				<li>#java</li>
-				<li>#vue</li>
-				<li>#안녕하세요안녕하세요안녕안녕하세요안녕하세요안녕</li>
-			</ul>
 			<div id="search">
 				<v-select
 					label="검색조건"
@@ -44,6 +22,9 @@
 				<input type="text" id="search_text" />
 				<img id="search_img" src="../assets/icon/search_b.png" />
 			</div>
+			<ul id="list" v-for="item in tags" :key="item">
+				<li>#{{ item }}</li>
+			</ul>
 		</div>
 		<div></div>
 	</div>
@@ -56,16 +37,26 @@ export default {
 	data() {
 		return {
 			items: ["전체", "#", "글제목", "글내용"],
-			isHidden: true
+			isHidden: true,
+			tags: ""
 		};
+	},
+	methods: {
+		toggleMenu() {
+			this.isHidden = !this.isHidden;
+			this.tags = store.state.tags;
+			console.log(this.tags);
+		}
 	}
+	// updated() {
+	// 	console.log("태그가 오나,,?");
+	// 	console.log(store.state.tags);
+	// }
 };
 </script>
 
 <style>
 #search {
-	position: relative;
-	top: -20px;
 	margin-left: 10px;
 	display: inline-block;
 	width: 300px;
@@ -132,14 +123,11 @@ export default {
 	list-style: none;
 	text-overflow: ellipsis;
 	overflow: scroll;
-	width: 280px;
-	height: 250px;
+	float: left;
 }
 #list > li {
-	display: inline-block;
-	margin: 5px;
 	padding: 4px 8px 4px 8px;
-	background-color: rgb(146, 79, 163);
+	background-color: rgba(160, 23, 98, 0.5);
 	border-radius: 10px;
 	color: white;
 }
