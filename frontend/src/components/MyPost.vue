@@ -15,6 +15,7 @@
 					color="rgba(0, 0, 0, 0.5)"
 					@change="chnagePostSel"
 					style="width: 100px; float: left;"
+					label="정렬기준"
 				></v-select>
 			</div>
 			<div
@@ -28,7 +29,7 @@
 						:key="tag.idtag"
 						style="display: inline-block;"
 					>
-						<span class="post_tag">{{ tag.tagName }}</span>
+						<span class="post_tag">{{ tag }}</span>
 					</div>
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
@@ -78,46 +79,48 @@ export default {
 		return {
 			posts: "",
 			postTags: "",
-			postSel: "최신순",
-			postSels: ["최신순", "오래된순", "좋아요순"],
+			postSel: "정렬기준",
+			postSels: [
+				{ text: "최신순", value: "4" },
+				{ text: "오래된순", value: "3" },
+				{ text: "좋아요순", value: "2" }
+			],
 			address: ""
 		};
 	},
 	methods: {
 		chnagePostSel(idx) {
-			if (idx == "최신순") {
-				console.log("order by new");
-				this.address = "/api/findByMyPosts/";
-			} else if (idx == "오래된순") {
-				console.log("order by old");
-				// 바꿔라아ㅏ아아아ㅏ아아아ㅏ
-				this.address = "/api/findByMyPosts/";
-				return;
-			} else if (idx == "좋아요순") {
-				console.log("order by like");
-				this.address = "/api/findByMyPostsOrderByLike/";
-			}
-			console.log(this.posts);
-			http.post(this.address, this.$session.get("id"))
+			console.log(idx);
+			http.post("/api/findByMyPosts/", {
+				idMember: this.$session.get("id"),
+				order: idx
+			})
 				.then(response => {
 					this.posts = response.data;
 					console.log(this.posts);
-					console.log(response);
 				})
 				.catch(error => {
 					console.log(error);
-				})
-				.finally(() => (this.loading = false));
+				});
 		},
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
-			this.posts[index].post.likeCheck == 1
-				? (this.posts[index].post.likeCheck = 0)
-				: (this.posts[index].post.likeCheck = 1);
+			if (this.posts[index].post.likeCheck == 1) {
+				this.posts[index].post.likeCheck = 0;
+				this.posts[index].post.likeCount--;
+				this.address = "";
+			} else {
+				this.posts[index].post.likeCheck = 1;
+				this.posts[index].post.likeCount++;
+				this.address = "";
+			}
 		}
 	},
 	mounted() {
-		http.post("/api/findByMyPosts/", this.$session.get("id"))
+		http.post("/api/findByMyPosts/", {
+			idMember: this.$session.get("id"),
+			order: 4
+		})
 			.then(response => {
 				this.posts = response.data;
 				console.log(this.posts);
@@ -125,8 +128,8 @@ export default {
 			})
 			.catch(error => {
 				console.log(error);
-			})
-			.finally(() => (this.loading = false));
+			});
+		// .finally(() => (this.loading = false));
 	}
 };
 </script>
