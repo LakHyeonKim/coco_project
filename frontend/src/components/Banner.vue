@@ -12,7 +12,9 @@
 			<div id="info_desc">
 				<img id="imgUser" src="../assets/user.png" />
 				<div id="info_desc_bottom">
-					<div id="nickname">닉네임</div>
+					<div id="nickname">
+						닉네임 <img src="settings" width="30px"
+					</div>
 					<div id="counting">팔로잉 101 · 팔로워 22 · 게시글 333</div>
 				</div>
 			</div>
