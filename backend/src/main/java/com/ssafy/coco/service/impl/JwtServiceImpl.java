@@ -180,10 +180,7 @@ public class JwtServiceImpl implements JwtService{
     }
 	
 	@Override
-	public Tokens login(JSONObject input) throws Exception {
-		Map<String, Object> map =  getMapFromJsonObject(input);
-		String id = (String) map.get("id");
-		String password = (String) map.get("password");
+	public Tokens login(String id, String password) throws Exception {
 		Member m = new Member();
 		m.setId(id);
 		m.setPassword(password);
