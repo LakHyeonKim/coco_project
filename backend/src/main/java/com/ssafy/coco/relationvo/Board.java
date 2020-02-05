@@ -7,8 +7,8 @@ import com.ssafy.coco.vo.Post;
 
 public class Board {
 	private Post post;
-	List<String> tags;
-	int commentCount;
+	private List<String> tags;
+	private int commentCount;
 	public Board(Post post, List<String> tags, int commentCount) {
 		super();
 		this.post = post;

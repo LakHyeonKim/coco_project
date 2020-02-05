@@ -48,7 +48,7 @@
 			</if>
 			<if test="memberId !=0">
 			AND
-				member_id LIKE '%${memberId}%'
+				member_id = '%${memberId}%'
 			</if>
 			
 			<if test="postTitle !=null">
