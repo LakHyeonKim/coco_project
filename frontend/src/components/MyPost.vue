@@ -17,8 +17,11 @@
 					style="width: 100px; float: left;"
 				></v-select>
 			</div>
-			<div class="post" v-for="item in posts" :key="item.post.idpost">
-				{{ item.post.idpost }}
+			<div
+				class="post"
+				v-for="(item, index) in posts"
+				:key="item.post.idpost"
+			>
 				<div style="margin: 10px;">
 					<div
 						v-for="tag in item.tags"
@@ -40,17 +43,16 @@
 						<img
 							:id="item.post.idpost"
 							class="like_img"
-							src="../assets/icon/tack_empty.png"
+							:src="
+								item.post.likeCheck == 1
+									? './img/icons/tack_full.png'
+									: './img/icons/tack_empty.png'
+							"
 							width="35px"
-							@click="like(item.post.idpost)"
-						/>
-						<input
-							type="hidden"
-							:id="item.post.idpost + 'flag'"
-							value="0"
+							@click="like(item.post.idpost, index)"
 						/>
 						<div class="like_text">
-							{{ item.likeCount }}
+							{{ item.post.likeCount }}
 						</div>
 						<img
 							src="../assets/icon/chat.png"
@@ -66,7 +68,6 @@
 		</div>
 	</div>
 </template>
-
 <script>
 import http from "../http-common";
 import store from "../store";
@@ -89,10 +90,14 @@ export default {
 				this.address = "/api/findByMyPosts/";
 			} else if (idx == "오래된순") {
 				console.log("order by old");
+				// 바꿔라아ㅏ아아아ㅏ아아아ㅏ
+				this.address = "/api/findByMyPosts/";
+				return;
 			} else if (idx == "좋아요순") {
 				console.log("order by like");
 				this.address = "/api/findByMyPostsOrderByLike/";
 			}
+			console.log(this.posts);
 			http.post(this.address, this.$session.get("id"))
 				.then(response => {
 					this.posts = response.data;
@@ -104,20 +109,11 @@ export default {
 				})
 				.finally(() => (this.loading = false));
 		},
-		like(idx) {
-			console.log("글번호 : " + idx);
-			console.log(document.getElementById(idx).value);
-			// document.getElementById(idx).innerHTML =
-			// 	"<img src='./img/icons/tack_full.png' width='35px' onclick='unlike(" +
-			// 	idx +
-			// 	")' />";
-		},
-		unlike(idx) {
-			alert("???");
-			// document.getElementById(idx).innerHTML =
-			// 	"<img src='./img/icons/tack_empty.png' width='35px' v-on:click='like(" +
-			// 	idx +
-			// 	")' />";
+		like(postNum, index) {
+			console.log("글번호 : " + postNum + "| index : " + index);
+			this.posts[index].post.likeCheck == 1
+				? (this.posts[index].post.likeCheck = 0)
+				: (this.posts[index].post.likeCheck = 1);
 		}
 	},
 	mounted() {
@@ -125,16 +121,7 @@ export default {
 			.then(response => {
 				this.posts = response.data;
 				console.log(this.posts);
-				console.log(response);
-			})
-			.catch(error => {
-				console.log(error);
-			})
-			.finally(() => (this.loading = false));
-
-		http.post("/api/findLike/", { memberId: this.$session.get("id") })
-			.then(response => {
-				console.log(response);
+				// console.log(response);
 			})
 			.catch(error => {
 				console.log(error);
