@@ -1,57 +1,41 @@
 <template>
 	<div style="display: flex ; align-itmes: center; justify-content: center;">
 		<validation-observer ref="form">
-			<form @submit.prevent="register">
+			<form @submit.prevent="register" id="formData" enctype="multipart/form-data">
 				<img-inputer
-					v-model="credentials.profileimg"
+					name="profile"
+					v-model="infos.file"
 					size="middle"
 					placeholder="Drop file here or click"
 					bottomText="Drop file here or click"
+					ref="profile"
 				/>
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
-				<validation-provider
-					name="닉네임 "
-					rules="required|alpha"
-					v-slot="{ errors }"
-				>
+				<!-- <input type="hidden" name="rankId" :value="this.singUpMember.rankId" />
+				<input type="hidden" name="grade" :value="this.singUpMember.grade" />
+				<input type="hidden" name="idmember" :value="this.singUpMember.idmember" />
+				<input type="hidden" name="isDelete" :value="this.singUpMember.isDelete" />
+				<input type="hidden" name="isManager" :value="this.singUpMember.isManager" />-->
+
+				<validation-provider name="아이디 " rules="required|email" v-slot="{ errors }">
+					<v-text-field v-model="infos.id" label="아이디" :error-messages="errors[0] ? errors[0] : []"></v-text-field>
+				</validation-provider>
+				<validation-provider name="닉네임 " :rules="{ required: true }" v-slot="{ errors }">
 					<v-text-field
-						v-model="credentials.nickname"
+						v-model="infos.nickname"
 						:counter="10"
 						label="닉네임"
 						:error-messages="errors[0] ? errors[0] : []"
 					></v-text-field>
 				</validation-provider>
 				<validation-provider
-					name="이름 "
-					rules="required|alpha"
-					v-slot="{ errors }"
-				>
-					<v-text-field
-						v-model="credentials.id"
-						:counter="10"
-						label="이름"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
-				<validation-provider
-					name="이메일 "
-					rules="required|email"
-					v-slot="{ errors }"
-				>
-					<v-text-field
-						v-model="credentials.email"
-						label="이메일"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
-				<validation-provider
 					name="비밀번호 "
 					vid="confirmation"
-					rules="required|min:8"
+					rules="required|min:8|max:16|password"
 					v-slot="{ errors }"
 				>
 					<v-text-field
-						v-model="credentials.password"
+						v-model="infos.password"
 						label="비밀번호"
 						:type="pwd1 ? 'text' : 'password'"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -61,7 +45,7 @@
 				</validation-provider>
 				<validation-provider
 					name="비밀번호 확인 "
-					rules="confirmed:confirmation"
+					rules="required|confirmed:confirmation"
 					v-slot="{ errors }"
 				>
 					<v-text-field
@@ -73,6 +57,27 @@
 						@click:append="pwd2 = !pwd2"
 					></v-text-field>
 				</validation-provider>
+				<validation-provider name="Git url " rules="alpha" v-slot="{ errors }">
+					<v-text-field
+						v-model="infos.gitUrl"
+						label="Git url(선택)"
+						:error-messages="errors[0] ? errors[0] : []"
+					></v-text-field>
+				</validation-provider>
+				<validation-provider name="Kakao url " rules="alpha" v-slot="{ errors }">
+					<v-text-field
+						v-model="infos.kakaoUrl"
+						label="Kakao url(선택)"
+						:error-messages="errors[0] ? errors[0] : []"
+					></v-text-field>
+				</validation-provider>
+				<validation-provider name="Instagram url " rules="alpha" v-slot="{ errors }">
+					<v-text-field
+						v-model="infos.instagramUrl"
+						label="Instagram url(선택)"
+						:error-messages="errors[0] ? errors[0] : []"
+					></v-text-field>
+				</validation-provider>
 
 				<v-btn class="mr-4" type="submit">회원가입</v-btn>
 				<v-btn @click="clear">초기화</v-btn>
@@ -80,9 +85,7 @@
 			<div>
 				<button v-on:click="idCheck">중복확인</button>
 				<div v-if="duplicate">
-					<div v-for="(message, idx) in duplicate" :key="idx">
-						{{ message }}
-					</div>
+					<div v-for="(message, idx) in duplicate" :key="idx">{{ message }}</div>
 				</div>
 			</div>
 		</validation-observer>
@@ -92,7 +95,12 @@
 <script>
 import http from "../http-common";
 import router from "../router";
-import { ValidationProvider, ValidationObserver } from "vee-validate";
+import {
+	ValidationProvider,
+	ValidationObserver,
+	extend,
+	validate
+} from "vee-validate";
 
 export default {
 	name: "RegisterForm",
@@ -101,50 +109,41 @@ export default {
 		ValidationObserver
 	},
 	data: () => ({
-		credentials: {
-			profileimg: "",
-			nickname: "",
+		infos: {
+			file: "",
 			id: "",
-			email: "",
+			nickname: "",
 			password: "",
-			rankId: 1
-			// dateCreated: null,
-			// gitUrl: "",
-			// grade: "",
-			// idmember: 0,
-			// instargramUrl: "",
-			// isDelete: 0,
-			// isManager: 0,
-			// kakaoUrl: "",
-			// updateCreated: null
+			email: "",
+			gitUrl: "",
+			kakaoUrl: "",
+			instagramUrl: ""
 		},
 
 		pwd1: false,
 		pwd2: false,
 		passwordConfirm: "",
 		duplicate: [],
-		idcheck: false,
-		loading: false
+		idcheck: false
 	}),
 
 	methods: {
 		register() {
-			// console.log(this.onSubmit());
+			let formData = new FormData(document.getElementById("formData"));
+			formData.set("file", this.$refs.profile.file);
+
 			if (this.onSubmit() && this.idcheck) {
-				this.loading = true;
-				// this.$store.dispatch("startLoading");
-				console.log("REGISTER beforeaxios ", this.credentials);
-				http.post("/api/signUp/", this.credentials)
+				this.$store.dispatch("startLoading");
+				console.log("REGISTER beforeaxios ", formData);
+				http.post("/trc/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
-						// this.$store.dispatch("endLoading");
-						this.loading = false;
+						this.$store.dispatch("endLoading");
 						alert("회원가입이 성공적으로 완료되었습니다.");
 						router.push("/");
 					})
 					.catch(err => {
-						// this.$store.dispatch("endLoading");
-						this.loading = false;
+						this.$store.dispatch("endLoading");
 						console.log("REGISTER catch ", err);
 					});
 			} else {
@@ -161,25 +160,20 @@ export default {
 			return true;
 		},
 		clear() {
-			this.credentials.nickname = "";
-			this.credentials.name = "";
-			this.credentials.email = "";
-			this.credentials.password = "";
-			this.passwordConfirm = "";
-			// this.$validator.reset();
+			this.$refs.form.reset();
 		},
 		valid() {
 			this.$refs.form.validate();
 		},
 		idCheck() {
-			if (this.credentials.id) {
+			if (this.infos.id) {
 				this.duplicate = [];
-				console.log("DUPLICATE ", this.credentials.id);
-				http.post("/check/", {
-					id: this.credentials.id
+				console.log("DUPLICATE ", this.infos.id);
+				http.post("/api/check", {
+					id: this.infos.id
 				})
 					.then(res => {
-						console.log("DUPLICATE then ", this.credentials.id);
+						console.log("DUPLICATE then ", this.infos.id);
 						console.log("DUPLICATE then ", res);
 						if (res.data) {
 							this.duplicate.push(
@@ -210,35 +204,4 @@ export default {
 </script>
 
 <style scoped>
-#regiform {
-	display: flex;
-	/* align-items: center; */
-	justify-content: center;
-	vertical-align: middle;
-}
-#nickname {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#id {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#email {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#password {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#pwdcheck {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
 </style>

@@ -7,7 +7,8 @@ import {
 	alpha,
 	email,
 	confirmed,
-	min
+	min,
+	max
 } from "vee-validate/dist/rules";
 import {
 	i18n
@@ -36,3 +37,17 @@ extend("confirmed", confirmed);
 
 // Install min rule and message.
 extend("min", min);
+
+// Install max rule and message.
+extend("max", max);
+
+// Custom password rule and message.
+extend("password", {
+	validate: str => {
+		var pattern = new RegExp(
+			"^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&]"
+		);
+		return !!pattern.test(str);
+	},
+	message: "대·소문자, 숫자, 특수문자가 최소 하나 포함되어야 합니다"
+});
