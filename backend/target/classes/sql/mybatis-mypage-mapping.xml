@@ -44,15 +44,15 @@
 			</if>
 			<if test="memberId !=0">
 				AND
-				member_id LIKE '%${memberId}%'
+				member_id = ${memberId}
 			</if>
 			<if test="bannerImagePath !=null">
 				AND
-				banner_image_path LIKE '%${bannerImagePath}%'
+				banner_image_path = ${bannerImagePath}
 			</if>
 			<if test="bannerText !=null">
 				AND
-				banner_text LIKE '%${bannerText}%'
+				banner_text = ${bannerText}
 			</if>
 		</where>
 	</select>

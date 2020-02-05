@@ -38,15 +38,15 @@
 			access = ${access}
 			<if test="idmemberTag !=0">
 				AND
-				idmember_tag LIKE '%${idmemberTag}%'
+				idmember_tag = ${idmemberTag}
 			</if>
 			<if test="memberId !=0">
 				AND
-				member_id LIKE '%${memberId}%'
+				member_id = ${memberId}
 			</if>
 			<if test="tagId !=0">
 				AND
-				tag_id LIKE '%${tagId}%'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</select>
