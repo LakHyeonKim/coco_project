@@ -70,6 +70,12 @@ public class TagDaoImpl implements TagDao{
 		return sqlSession.selectList(ns+"findAllTagIncludedPost", idPost);
 	}
 
+	@Override
+	public List<Tag> findAllTagIncludedMypage(long idMypage) {
+		
+		return sqlSession.selectList(ns+"findAllTagIncludedMypage",idMypage);
+	}
+
 
 
 }

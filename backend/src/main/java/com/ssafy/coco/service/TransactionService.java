@@ -15,5 +15,6 @@ public interface TransactionService {
 	public void postClick(Post post, long idMember);
 	public void makeFollow(long idMemberFollower, long idMemberFollowing);
 	public void pushLike(long idPost, long idMember);
+	public void unLike(long idPost, long idMember);
 	public void makeTagsFromPost(Post post, List<Tag> tags);
 }

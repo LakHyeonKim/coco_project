@@ -25,7 +25,6 @@
 	</sql>
 	<sql id="delete-Like">
 		delete from coco.like
-		where idlike=#{idlike}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -60,6 +59,19 @@
 
 	<delete id="deleteLike" parameterType="Like">
 		<include refid="delete-Like"></include>
+		<where>
+			<if test="postId != 0">
+				post_id = '${postId}'
+			</if>
+			<if test="memberId != 0">
+				AND
+				member_id = '${memberId}'
+			</if>
+			<if test="access != 0">
+				AND
+				access = '${access}'
+			</if>
+		</where>
 	</delete>
 </mapper>
 

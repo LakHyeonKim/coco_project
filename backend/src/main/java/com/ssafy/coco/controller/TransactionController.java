@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.coco.relationvo.Board;
+import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.relationvo.SignUpMember;
@@ -77,14 +78,14 @@ public class TransactionController {
 	
 	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/makeComment", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeComment(@RequestBody Board board) throws Exception {
+	public ResponseEntity<Integer> makeComment(@RequestBody BoardDetail board) throws Exception {
 		transactionService.makeComment(board.getComments().get(0),board.getPost().getMemberId());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "포스트 달기 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/makeTagsFromPost", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeTagsFromPost(@RequestBody Board board) throws Exception {
+	public ResponseEntity<Integer> makeTagsFromPost(@RequestBody BoardDetail board) throws Exception {
 		transactionService.makeTagsFromPost(board.getPost(),board.getTags());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
@@ -117,7 +118,12 @@ public class TransactionController {
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
-	
+	@ApiOperation(value = "좋아요 취소 (Transaction) ", response = List.class)
+	@RequestMapping(value = "/unLike", method = RequestMethod.POST)
+	public ResponseEntity<Integer> unLike(@RequestBody PostAndMember pam) throws Exception {
+		transactionService.unLike(pam.getPost().getIdpost(),pam.getMember().getIdmember());
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
 	
 	
 	

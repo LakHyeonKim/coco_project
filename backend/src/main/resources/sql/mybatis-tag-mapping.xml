@@ -57,6 +57,12 @@
 		from `coco`.`tag` 
 		where idtag in (select tag_id from post_tag where post_id = #{value});
 	</select>
+	
+	<select id="findAllTagIncludedMypage" parameterType="long" resultType="Tag">
+		select idtag, tag_name, searched_number, included_number, first_time_created, most_recently_mentioned_time, image_path 
+		from `coco`.`tag` 
+		where idtag in (select tag_id from mypage_tag where mypage_id = #{value});
+	</select>
 
 	<insert id="addTag" parameterType="Tag"
 		useGeneratedKeys="true" keyProperty="idtag">

@@ -33,7 +33,6 @@
 	</sql>
 	<sql id="delete-Alarm">
 		delete from alarm
-		where idalarm=#{idalarm}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -86,6 +85,37 @@
 
 	<delete id="deleteAlarm" parameterType="Alarm">
 		<include refid="delete-Alarm"></include>
+		<where>
+			access = access
+			<if test="idalarm !=0">
+				AND
+				idalarm = '${idalarm}'
+			</if>
+			<if test="memberCaller !=0">
+				AND
+				member_caller = '${memberCaller}'
+			</if>
+			<if test="memberReceiver !=0">
+				AND
+				member_receiver = '${memberReceiver}'
+			</if>
+			<if test="postId !=0">
+				AND
+				post_id = '${postId}'
+			</if>
+			<if test="likeId !=0">
+				AND
+				like_id = '${likeId}'
+			</if>
+			<if test="followId !=0">
+				AND
+				follow_id = '${followId}'
+			</if>
+			<if test="isRead !=0">
+				AND
+				is_read = '${isRead}'
+			</if>
+		</where>
 	</delete>
 </mapper>
 
