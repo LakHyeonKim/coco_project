@@ -49,16 +49,8 @@
 						<img src="../assets/google_logo.png" class="logos" />
 					</button>
 				</div>
-				<div style="display:inline;">
-					<a
-						href="https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code"
-						target="#"
-					>
-						<img src="../assets/kakao_logo.png" class="logos" />
-					</a>
-				</div>
-				<div v-on:click.prevent="loginWithKakao">
-					<img src="../assets/kakao_logo.png" class="logos" />
+				<div style="display:inline-block">
+					<LoginFormForKakao></LoginFormForKakao>
 				</div>
 			</div>
 			<div v-if="errors.length" id="loginError" style="display:inline;">
@@ -90,10 +82,14 @@
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
+import LoginFormForKakao from "./LoginFormForKakao";
 // import axios from "axios";
 
 export default {
 	name: "LoginForm",
+	components: {
+		LoginFormForKakao
+	},
 	data() {
 		return {
 			credentials: {
@@ -172,9 +168,6 @@ export default {
 			this.$session.start();
 			this.$session.set("accessToken", result.credential.accessToken);
 			router.push("/newsfeed");
-		},
-		loginWithKakao() {
-			window.location.replace("https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code");
 		}
 	}
 	// mounted() {

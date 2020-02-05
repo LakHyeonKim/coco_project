@@ -29,7 +29,7 @@ import SearchList from "../components/SearchList";
 import http from "../http-common";
 
 export default {
-	name: "Search",
+	name: "SearchPage",
 	data() {
 		return {
 			searches: [],

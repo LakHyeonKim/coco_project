@@ -17,7 +17,7 @@
 						id="id"
 						placeholder="  아이디"
 						style="margin-bottom:5px;"
-						v-model="credentials.username"
+						v-model="credentials.id"
 					/>
 				</div>
 				<div>
@@ -48,10 +48,8 @@
 					<img src="../assets/google_logo.png" class="logos" />
 				</button>
 			</div>
-			<div style="display:inline;">
-				<button v-on:click="loginWithGoogle">
-					<img src="../assets/kakao_logo.png" class="logos" />
-				</button>
+			<div style="display:inline-block">
+				<LoginFormForKakao></LoginFormForKakao>
 			</div>
 		</div>
 		<div v-if="errors.length" id="loginError">
@@ -80,9 +78,13 @@
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
+import LoginFormForKakao from "./LoginFormForKakao";
 
 export default {
 	name: "MobileLoginForm",
+	components: {
+		LoginFormForKakao
+	},
 	data() {
 		return {
 			credentials: {
@@ -140,7 +142,7 @@ export default {
 		checkForm() {
 			this.errors = [];
 			// 사용자가 ID를 입력하지 않은 경우
-			if (!this.credentials.username) {
+			if (!this.credentials.id) {
 				this.errors.push("아이디를 입력해주세요");
 			}
 			// password가 8글자 미만인 경우
@@ -154,8 +156,10 @@ export default {
 		},
 		async loginWithGoogle() {
 			const result = await FirebaseService.loginWithGoogle();
-			this.$store.state.token = result.credential.accessToken;
-			this.$store.state.user = result.user;
+			console.log(result);
+			this.$session.start();
+			this.$session.set("accessToken", result.credential.accessToken);
+			router.push("/newsfeed");
 		}
 	}
 	// mounted() {

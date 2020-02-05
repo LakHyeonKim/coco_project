@@ -8,7 +8,12 @@ export default new Vuex.Store({
 	state: {
 		token: null,
 		user: "",
-		loading: false
+		loading: false,
+		postDetail: [],
+		init: true,
+		memberemail: "",
+		acessToken: "",
+		refreshToken: ""
 	},
 	getters: {
 		isLoggedIn: function(state) {
@@ -31,6 +36,26 @@ export default new Vuex.Store({
 		},
 		setLoading: function(state, status) {
 			state.loading = status;
+		},
+		setPostDetail: function(state, data) {
+			state.postDetail = [];
+			state.postDetail = data;
+		},
+		setInit: function(state, status) {
+			state.init = status;
+		},
+		setMemberEmail: function(state, data) {
+			state.memberemail = data;
+		},
+		setTokens: function(state, acess, refresh) {
+			state.acessToken = acess;
+			state.refreshToken = refresh;
+			this.$session.start();
+			this.$session.set("acessToken", state.acessToken);
+			this.$session.set("refreshToken", state.refreshToken);
+			// this.$session.start();
+			// this.$session.set("acessToken", acess);
+			// this.$session.set("refreshToken", refresh);
 		}
 	},
 	actions: {
@@ -45,6 +70,18 @@ export default new Vuex.Store({
 		},
 		endLoading: function(context) {
 			context.commit("setLoading", false);
+		},
+		savePostDetail: function(context, data) {
+			context.commit("setPostDetail", data);
+		},
+		saveInit: function(context) {
+			context.commit("setInit", false);
+		},
+		saveMemberEmail: function(context, data) {
+			context.commit("setMemberEmail", data);
+		},
+		saveTokens: function(context, acess, refresh) {
+			context.commit("setTokens", acess, refresh);
 		}
 	}
 });

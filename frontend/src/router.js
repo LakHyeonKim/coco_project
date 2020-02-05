@@ -11,7 +11,9 @@ import NewPage from "./views/NewPage";
 import NewsFeed from "./views/NewsFeed.vue";
 import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
-import Search from "./views/Search.vue";
+import SearchPage from "./views/SearchPage.vue";
+import DetailPage from "./views/DetailPage.vue";
+import BrokerPageForKakao from "./views/BrokerPageForKakao.vue";
 
 Vue.use(VueRouter);
 
@@ -49,10 +51,10 @@ const routes = [
 	{
 		path: "/newsfeed",
 		name: "newsfeed",
-		component: NewsFeed
-		// meta: {
-		// 	authRequired: true
-		// }
+		component: NewsFeed,
+		meta: {
+			authRequired: true
+		}
 	},
 	{
 		path: "/myPage",
@@ -73,10 +75,23 @@ const routes = [
 	{
 		path: "/search",
 		name: "search",
-		component: Search
+		component: SearchPage
 		// meta: {
 		// 	authRequired: true
 		// }
+	},
+	{
+		path: "/detail",
+		name: "detail",
+		component: DetailPage
+		// meta: {
+		// 	authRequired: true
+		// }
+	},
+	{
+		path: "/broker",
+		name: "broker",
+		component: BrokerPageForKakao
 	},
 	{
 		path: "*",
@@ -101,6 +116,9 @@ router.beforeEach(function(to, from, next) {
 	) {
 		// 이동할 페이지에 인증 정보가 필요하면 경고 창을 띄우고 페이지 전환은 하지 않음
 		alert("Login Please!");
+		if (this.$session.has("acessToken")) {
+			next("/newsfeed");
+		}
 		next("/");
 	} else {
 		console.log("routing success : '" + to.path + "'");
