@@ -22,11 +22,11 @@ export default {
 	},
 	data() {
 		return {
-			isAuthenticated: this.$session.get("jwt")
+			isAuthenticated: this.$session.get("accessToken")
 		};
 	},
 	updated() {
-		this.isAuthenticated = this.$session.get("jwt");
+		this.isAuthenticated = this.$session.get("accessToken");
 	}
 	// computed: {
 	// 	isLoggedIn: function() {

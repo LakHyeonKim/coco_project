@@ -11,10 +11,12 @@ import NewPage from "./views/NewPage";
 import NewsFeed from "./views/NewsFeed.vue";
 import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
+import Search from "./views/Search.vue";
 
 Vue.use(VueRouter);
 
-const routes = [{
+const routes = [
+	{
 		path: "/",
 		name: "home",
 		component: Home
@@ -55,7 +57,7 @@ const routes = [{
 	{
 		path: "/myPage",
 		name: "myPage",
-		component: MyPage,
+		component: MyPage
 		// meta: {
 		// 	authRequired: true
 		// }
@@ -63,7 +65,15 @@ const routes = [{
 	{
 		path: "/newpage",
 		name: "newpage",
-		component: NewPage,
+		component: NewPage
+		// meta: {
+		// 	authRequired: true
+		// }
+	},
+	{
+		path: "/search",
+		name: "search",
+		component: Search
 		// meta: {
 		// 	authRequired: true
 		// }
@@ -82,10 +92,10 @@ const router = new VueRouter({
 	routes
 });
 
-router.beforeEach(function (to, from, next) {
+router.beforeEach(function(to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (
-		to.matched.some(function (routeInfo) {
+		to.matched.some(function(routeInfo) {
 			return routeInfo.meta.authRequired;
 		})
 	) {

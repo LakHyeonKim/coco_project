@@ -50,12 +50,18 @@
 					</button>
 				</div>
 				<div style="display:inline;">
-					<button v-on:click="loginWithGoogle">
+					<a
+						href="https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code"
+						target="#"
+					>
 						<img src="../assets/kakao_logo.png" class="logos" />
-					</button>
+					</a>
+				</div>
+				<div v-on:click.prevent="loginWithKakao">
+					<img src="../assets/kakao_logo.png" class="logos" />
 				</div>
 			</div>
-			<div v-if="errors.length" id="loginError">
+			<div v-if="errors.length" id="loginError" style="display:inline;">
 				<div v-for="(error, idx) in errors" :key="idx">
 					{{ error }}
 				</div>
@@ -84,6 +90,7 @@
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
+// import axios from "axios";
 
 export default {
 	name: "LoginForm",
@@ -110,12 +117,20 @@ export default {
 			if (this.checkForm()) {
 				this.loading = true;
 				// this.$store.dispatch("startLoading");
-				http.post("/jwt/create2/", this.credentials)
+				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						if (res.data != "fail") {
+						console.log("before", res);
+						if (res.status != "204") {
 							// alert(res.data);
 							this.$session.start();
-							this.$session.set("jwt", res.data);
+							this.$session.set(
+								"accessToken",
+								res.data.accessToken
+							);
+							this.$session.set(
+								"refreshToken",
+								res.data.refreshToken
+							);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);
@@ -153,8 +168,13 @@ export default {
 		},
 		async loginWithGoogle() {
 			const result = await FirebaseService.loginWithGoogle();
-			this.$store.state.token = result.credential.accessToken;
-			this.$store.state.user = result.user;
+			console.log(result);
+			this.$session.start();
+			this.$session.set("accessToken", result.credential.accessToken);
+			router.push("/newsfeed");
+		},
+		loginWithKakao() {
+			window.location.replace("https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code");
 		}
 	}
 	// mounted() {
