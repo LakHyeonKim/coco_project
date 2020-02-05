@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.KeywordSearch;
+import com.ssafy.coco.relationvo.OrderSearch;
 import com.ssafy.coco.service.BoardService;
 import com.ssafy.coco.service.JwtService;
 
@@ -71,16 +72,16 @@ public class BoardController {
 		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
 	}
 	
-	/* 수정 해야 할 부분*/
-//	@ApiOperation(value = "사용자가 작성한 포스트를 가져옴", response = List.class)
-//	@RequestMapping(value = "/findByMyPosts", method = RequestMethod.POST)
-//	public ResponseEntity<List<Board>> findByMyPosts(@RequestBody long idMember) throws Exception {
-//		List<Board> answers = boardService.findByMyPosts();
-//		if (answers.isEmpty()) {
-//			return new ResponseEntity(HttpStatus.NO_CONTENT);
-//		}
-//		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
-//	}
+
+	@ApiOperation(value = "사용자가 작성한 포스트를 가져옴([order param] 1: 좋아요 오름차순, 2: 좋아요 내림차순, 3: 날짜 오래된 순서, 4: 날짜 최신 순서)", response = List.class)
+	@RequestMapping(value = "/findByMyPosts", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByMyPosts(@RequestBody OrderSearch orderSearch) throws Exception {
+		List<Board> answers = boardService.findByMyPosts(orderSearch.getIdMember(),orderSearch.getOrder());
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
 	
 
 	@ApiOperation(value = "포스트 전체 검색 (태그, 포스트 제목, 포스트 내용, 작성자 구분 없이 가져옴)", response = List.class)

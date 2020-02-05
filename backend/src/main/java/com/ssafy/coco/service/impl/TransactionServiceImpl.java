@@ -155,7 +155,7 @@ public class TransactionServiceImpl implements TransactionService{
 	 * @param idPost 좋아요 누른 포스트 아이디
 	 * @param idMember 누른 사람의 사용자 아이디
 	 * 
-	 * 좋아요 테이블에 좋아요 정보 저장 후 알람 까지 트랜젝셙
+	 * 좋아요 테이블에 좋아요 정보 저장 후 알람 까지 트랜젝션
 	 * 
 	 */
 	
@@ -163,8 +163,22 @@ public class TransactionServiceImpl implements TransactionService{
 	public void pushLike(long idPost, long idMember) {
 		likeDao.addLike(new Like(0, idPost, idMember, 0));
 		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
-		long likeId = likeDao.findLike(new Like(0, idPost, memberId, 0)).get(0).getIdlike();
+		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
+	}
+	
+	/**
+	 * @param idPost 좋아요 누른 포스트 아이디
+	 * @param idMember 누른 사람의 사용자 아이디
+	 * 
+	 * 좋아요 취소 알람 취소 까지 트랜잭션
+	 */
+	@Transactional
+	public void unLike(long idPost, long idMember) {
+		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
+		likeDao.deleteLike(new Like(0, idPost, idMember, 0));
+		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
+		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
 	
 	/**
@@ -192,4 +206,6 @@ public class TransactionServiceImpl implements TransactionService{
 			}
 		}
 	}
+	
+	
 }
