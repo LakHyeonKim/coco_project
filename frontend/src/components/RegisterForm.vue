@@ -2,14 +2,19 @@
 	<div style="display: flex ; align-itmes: center; justify-content: center;">
 		<validation-observer ref="form">
 			<form @submit.prevent="register" id="formData" enctype="multipart/form-data">
-				<img-inputer
-					name="profile"
-					v-model="infos.file"
-					size="middle"
-					placeholder="Drop file here or click"
-					bottomText="Drop file here or click"
-					ref="profile"
-				/>
+				<validation-provider name="프로필 이미지 ">
+					<img-inputer
+						name="profile"
+						v-model="infos.file"
+						size="middle"
+						placeholder="Drop file here or click"
+						bottomText="Drop file here or click"
+						exceedSizeText="사진의 크기가 초과하였습니다"
+						maxSize="10240"
+						ref="profile"
+					/>
+				</validation-provider>
+
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
 				<!-- <input type="hidden" name="rankId" :value="this.singUpMember.rankId" />
 				<input type="hidden" name="grade" :value="this.singUpMember.grade" />
