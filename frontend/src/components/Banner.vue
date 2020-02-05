@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import http from "../http-common";
 import store from "../store";
 import PWCheck from "./PWCheck.vue";
 export default {
@@ -39,8 +40,20 @@ export default {
 	data() {
 		return {
 			showModal: false,
-			isUser: true
+			isUser: true,
+			userInfo: ""
 		};
+	},
+	mounted() {
+		alert(this.$session.get("id"));
+		http.post("/api/findByMemberHomePageUserID/", this.$session.get("id"))
+			.then(response => {
+				this.pouserInfo = response.data;
+				console.log(this.userInfo);
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	}
 };
 </script>

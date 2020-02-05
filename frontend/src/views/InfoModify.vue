@@ -1,9 +1,13 @@
 <template>
-	<div>안뇽 ㅎ</div>
+	<div id="modify">안뇽 ㅎ</div>
 </template>
 
 <script>
 export default {};
 </script>
 
-<style lang="scss" scoped></style>
+<style>
+#modify {
+	margin: 0 auto;
+}
+</style>
