@@ -52,6 +52,7 @@
 				<div style="display:inline;">
 					<a
 						href="https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code"
+						target="#"
 					>
 						<img src="../assets/kakao_logo.png" class="logos" />
 					</a>
@@ -89,7 +90,7 @@
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
-import axios from "axios";
+// import axios from "axios";
 
 export default {
 	name: "LoginForm",
@@ -173,17 +174,7 @@ export default {
 			router.push("/newsfeed");
 		},
 		loginWithKakao() {
-			// console.log("abs");
-			axios
-				.get(
-					"https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code"
-				)
-				.then(res => {
-					console.log(res);
-				})
-				.catch(err => {
-					console.log(err);
-				});
+			window.location.replace("https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code");
 		}
 	}
 	// mounted() {
