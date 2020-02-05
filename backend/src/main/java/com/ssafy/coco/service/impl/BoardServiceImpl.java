@@ -20,6 +20,7 @@ import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.service.BoardService;
 import com.ssafy.coco.vo.Comment;
+import com.ssafy.coco.vo.Like;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.Tag;
@@ -53,75 +54,72 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public List<Board> findByAllNewsfeed(long idMember) {
 		List<Post> newsPosts = postDao.findPostByNewsfeed(idMember);
-		return makeBoardList(newsPosts);
+		return makeBoardList(idMember, newsPosts);
 	}
 
 	@Override
 	public List<Board> findByAllDefaultSearch(long idMember) {
 		List<Post> defaultPosts = postDao.findPostByFrequency(idMember);
-		return makeBoardList(defaultPosts);
+		return makeBoardList(idMember, defaultPosts);
 	}
 	
 	@Override
-	public List<Board> findByMyPosts(long idMember) {
-		List<Post> myPosts = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 0, 0, null, 0));
-		return makeBoardList(myPosts);
+	public List<Board> findByMyPosts(long idMember, int order) {
+		List<Post> myPosts = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 0, 0, null, 0, 0, order));
+		return makeBoardList(idMember, myPosts);
 	}
 	
 	@Override
-	public List<Board> findByMyPostsOrderByLike(long idMember) {
-		List<Post> myPosts = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 1, 0, null, 0));
-		return makeBoardList(myPosts);
-	}
-	
-	@Override
-	public List<Board> findByAllKeyword(String keyWord) {
+	public List<Board> findByAllKeyword(long idMember, String keyWord) {
 		List<Post> searchedPosts = postDao.findPostByAll(keyWord);
-		return makeBoardList(searchedPosts);
+		return makeBoardList(idMember, searchedPosts);
 	}
 	
 	@Override
-	public List<Board> findByTagKeyword(String keyWord) {
+	public List<Board> findByTagKeyword(long idMember, String keyWord) {
 		List<Post> searchedPosts = postDao.findPostByTag(keyWord);
-		return makeBoardList(searchedPosts);
+		return makeBoardList(idMember, searchedPosts);
 	}
 
 	@Override
-	public List<Board> findByPostTitleKeyword(String keyWord) {
+	public List<Board> findByPostTitleKeyword(long idMember, String keyWord) {
 		List<Post> searchedPosts = postDao.findPostByTitle(keyWord);
-		return makeBoardList(searchedPosts);
+		return makeBoardList(idMember, searchedPosts);
 	}
 
 	@Override
-	public List<Board> findByPostCodeKeyword(String keyWord) {
+	public List<Board> findByPostCodeKeyword(long idMember, String keyWord) {
 		List<Post> searchedPosts = postDao.findPostByCode(keyWord);
-		return makeBoardList(searchedPosts);
+		return makeBoardList(idMember, searchedPosts);
 	}
 
 	@Override
-	public List<Board> findByPostWriterKeyword(String keyWord) {
+	public List<Board> findByPostWriterKeyword(long idMember, String keyWord) {
 		List<Post> searchedPosts = postDao.findPostByPostWriter(keyWord);
-		return makeBoardList(searchedPosts);
+		return makeBoardList(idMember, searchedPosts);
 	}
 	
-	private List<Board> makeBoardList(List<Post> posts){
+
+	@Override
+	public List<Board> findPostByNewsfeedOrderByLike(long idMember) {
+		List<Post> newsPosts = postDao.findPostByNewsfeedOrderByLike(idMember);
+		return makeBoardList(idMember, newsPosts);
+	}
+
+	private List<Board> makeBoardList(long idMember, List<Post> posts){
 		List<Board> boards = new ArrayList<>();
 		for(Post post : posts) {
+			List<Like> isPostLike = likeDao.findLike(new Like(0, post.getIdpost(), idMember, 0));
+			if(isPostLike.size() != 0) {
+				post.setLikeCheck(1);
+			}
 			List<Post> babyPosts = postDao.findPostByPostComment(post.getIdpost());
 			List<Tag> tags = tagDao.findAllTagIncludedPost(post.getIdpost());
 			List<Comment> comments = commentDao.findComment(new Comment(0, 0, post.getIdpost(), null, null, null, null, 0));
 			List<Member> likes = memberDao.findWhoPressedTheLikeButton(post.getIdpost());
 			long commentCount = comments.size();
-			long likeCount = likes.size();
-			boards.add(new Board(post, tags, comments, likes, babyPosts, commentCount, likeCount));
+			boards.add(new Board(post, tags, comments, likes, babyPosts, commentCount));
 		}
 		return boards;
 	}
-
-	@Override
-	public List<Board> findPostByNewsfeedOrderByLike(long idMemberFollower) {
-		List<Post> newsPosts = postDao.findPostByNewsfeedOrderByLike(idMemberFollower);
-		return makeBoardList(newsPosts);
-	}
-
 }

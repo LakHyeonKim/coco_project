@@ -3,17 +3,30 @@ package com.ssafy.coco.relationvo;
 import java.util.List;
 
 import com.ssafy.coco.vo.Mypage;
+import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.Tag;
 
 public class MemberHomePage {
 	private MemberInfo memberInfo;
 	private Mypage mypage;
 	private List<Tag> tags;
+	private List<Post> posts;
 	private long followingCount;
 	private long followerCount;
 	
 	public MemberHomePage() {
 		super();
+	}
+
+	public MemberHomePage(MemberInfo memberInfo, Mypage mypage, List<Tag> tags, List<Post> posts, long followingCount,
+			long followerCount) {
+		super();
+		this.memberInfo = memberInfo;
+		this.mypage = mypage;
+		this.tags = tags;
+		this.posts = posts;
+		this.followingCount = followingCount;
+		this.followerCount = followerCount;
 	}
 
 	public MemberHomePage(MemberInfo memberInfo, Mypage mypage, List<Tag> tags, long followingCount,
@@ -24,6 +37,16 @@ public class MemberHomePage {
 		this.tags = tags;
 		this.followingCount = followingCount;
 		this.followerCount = followerCount;
+	}
+	
+	
+
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
 	}
 
 	public MemberInfo getMemberInfo() {
@@ -68,7 +91,7 @@ public class MemberHomePage {
 
 	@Override
 	public String toString() {
-		return "MemberHomePage [memberInfo=" + memberInfo + ", mypage=" + mypage + ", tags=" + tags
+		return "MemberHomePage [memberInfo=" + memberInfo + ", mypage=" + mypage + ", tags=" + tags + ", posts=" + posts
 				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + "]";
 	}
 	

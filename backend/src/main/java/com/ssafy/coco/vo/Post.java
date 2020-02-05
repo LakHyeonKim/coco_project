@@ -14,7 +14,57 @@ public class Post {
 	int views;
 	String imagePath;
 	int access;
+	int likeCheck;
+	int order;
 	
+	public int getOrder() {
+		return order;
+	}
+	public void setOrder(int order) {
+		this.order = order;
+	}
+	public int getLikeCheck() {
+		return likeCheck;
+	}
+	public void setLikeCheck(int likeCheck) {
+		this.likeCheck = likeCheck;
+	}
+	
+	public Post(long idpost, long memberId, String postTitle, String postWriter, Timestamp dateCreated,
+			Timestamp updateCreated, String code, int likeCount, int views, String imagePath, int access, int likeCheck,
+			int order) {
+		super();
+		this.idpost = idpost;
+		this.memberId = memberId;
+		this.postTitle = postTitle;
+		this.postWriter = postWriter;
+		this.dateCreated = dateCreated;
+		this.updateCreated = updateCreated;
+		this.code = code;
+		this.likeCount = likeCount;
+		this.views = views;
+		this.imagePath = imagePath;
+		this.access = access;
+		this.likeCheck = likeCheck;
+		this.order = order;
+	}
+	public Post(long idpost, long memberId, String postTitle, String postWriter, Timestamp dateCreated,
+			Timestamp updateCreated, String code, int likeCount, int views, String imagePath, int access,
+			int likeCheck) {
+		super();
+		this.idpost = idpost;
+		this.memberId = memberId;
+		this.postTitle = postTitle;
+		this.postWriter = postWriter;
+		this.dateCreated = dateCreated;
+		this.updateCreated = updateCreated;
+		this.code = code;
+		this.likeCount = likeCount;
+		this.views = views;
+		this.imagePath = imagePath;
+		this.access = access;
+		this.likeCheck = likeCheck;
+	}
 	public Post() {
 		super();
 	}
@@ -89,7 +139,7 @@ public class Post {
 		return "Post [idpost=" + idpost + ", memberId=" + memberId + ", postTitle=" + postTitle + ", postWriter="
 				+ postWriter + ", dateCreated=" + dateCreated + ", updateCreated=" + updateCreated + ", code=" + code
 				+ ", likeCount=" + likeCount + ", views=" + views + ", imagePath=" + imagePath + ", access=" + access
-				+ "]";
+				+ ", likeCheck=" + likeCheck + ", order=" + order + "]";
 	}
 	public Post(long idpost, long memberId, String postTitle, String postWriter, Timestamp dateCreated,
 			Timestamp updateCreated, String code, int likeCount, int views, String imagePath, int access) {
