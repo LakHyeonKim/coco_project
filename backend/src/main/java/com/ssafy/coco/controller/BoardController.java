@@ -63,16 +63,15 @@ public class BoardController {
 	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 (뉴스피드 페이지용)", response = List.class)
 	@RequestMapping(value = "/findByAllNewsfeed2", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByAllNewsfeed2(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
-		HttpStatus httpStatus = jwtService.checkJwt2(jwt);
-		if(httpStatus==HttpStatus.ACCEPTED)
-		{
-			List<Board> answers = boardService.findByAllNewsfeed(idMember);
-			if (answers.isEmpty()) {
-				return new ResponseEntity(HttpStatus.NO_CONTENT);
-			}
-			return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
-		}
-		else return new ResponseEntity(httpStatus);
+		/*
+		 * //HttpStatus httpStatus = jwtService.checkJwt2(jwt);
+		 * if(httpStatus==HttpStatus.ACCEPTED) { List<Board> answers =
+		 * boardService.findByAllNewsfeed(idMember); if (answers.isEmpty()) { return new
+		 * ResponseEntity(HttpStatus.NO_CONTENT); } return new
+		 * ResponseEntity<List<Board>>(answers, HttpStatus.OK); } else return new
+		 * ResponseEntity(httpStatus);
+		 */
+		return new ResponseEntity(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "사용자의 선호 태그 기반으로 모두 찾아줌 (검색 페이지용)", response = List.class)

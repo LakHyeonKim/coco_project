@@ -60,7 +60,7 @@ public class SnsConnectionControlloer {
     }
 	
 	@ApiOperation(value = "jwt 생성", response = String.class)
-	@RequestMapping(value = "/login")
+	@RequestMapping(value = "/login2")
     public String login(@RequestParam("code") String code) {
 		System.out.println(code);
         String access_Token = snsApiService.getAccessToken(code);

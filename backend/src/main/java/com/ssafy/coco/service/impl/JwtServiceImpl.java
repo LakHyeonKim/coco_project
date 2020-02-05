@@ -202,6 +202,16 @@ public class JwtServiceImpl implements JwtService{
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isUsable(String token) throws Exception {
+		HttpStatus status = checkJwt2(token);
+		if(status==HttpStatus.ACCEPTED)
+		{
+			return true;
+		}
+		else return false;
+	}
 	
 
 	
