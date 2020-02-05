@@ -47,7 +47,10 @@ public class JwtController {
 	@ApiOperation(value = "jwt 생성", response = List.class)
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity login(@RequestBody JSONObject input) throws Exception {
-		Tokens tokens = jwtService.login(input);
+		Map<String, Object> map =  getMapFromJsonObject(input);
+		String id = (String) map.get("id");
+		String password = (String) map.get("password");
+		Tokens tokens = jwtService.login(id,password);
 		if (tokens != null) {
 			return new ResponseEntity(tokens, HttpStatus.OK);
 		} else {

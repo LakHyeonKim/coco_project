@@ -15,5 +15,6 @@ public interface JwtService {
 	public boolean checkJwt(String jwt) throws Exception;
 	public HttpStatus checkJwt2(String jwt) throws Exception;
 	public boolean getAccessTokenByRefreshToken(@PathVariable String tt) throws Exception;
-	public Tokens login(JSONObject input) throws Exception;
+	public Tokens login(String id, String password) throws Exception;
+	public boolean isUsable(String token)throws Exception;
 }

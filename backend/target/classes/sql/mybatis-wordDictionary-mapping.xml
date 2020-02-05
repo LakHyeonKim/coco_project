@@ -41,11 +41,11 @@
 			</if>
 			AND
 			<if test="word !=null">
-				word LIKE '%${word}%'
+				word = ${word}
 			</if>
 			AND
 			<if test="description !=null">
-				description LIKE '%${description}%'
+				description = ${description}
 			</if>
 		</where>
 	</select>

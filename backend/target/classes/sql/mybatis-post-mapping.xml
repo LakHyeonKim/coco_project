@@ -48,26 +48,26 @@
 			</if>
 			<if test="memberId !=0">
 			AND
-				member_id LIKE '%${memberId}%'
+				member_id = ${memberId}
 			</if>
 			
 			<if test="postTitle !=null">
 			AND
-				post_title LIKE '%${postTitle}%'
+				post_title = ${postTitle}
 			</if>
 			
 			<if test="postWriter !=null">
 			AND
-				post_writer LIKE '%${postWriter}%'
+				post_writer = ${postWriter}
 			</if>
 			
 			<if test="code !=null">
 			AND
-				code LIKE '%${code}%'
+				code = ${code}
 			</if>
 			<if test="access !=0">
 			AND
-				access LIKE '%${access}%'
+				access = ${access}
 			</if>
 			
 		</where>

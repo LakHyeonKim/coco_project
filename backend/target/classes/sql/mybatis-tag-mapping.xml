@@ -47,7 +47,7 @@
 			
 			<if test="tagName !=null">
 			AND
-				tag_name LIKE '%${tagName}%'
+				tag_name = ${tagName}
 			</if>
 		</where>
 	</select>
