@@ -14,8 +14,8 @@
 					item-color="black"
 					color="rgba(0, 0, 0, 0.5)"
 					@change="chnagePostSel"
-					style="width: 100px; float: left;"
-					label="정렬기준"
+					placeholder="검색조건"
+					style="width: 100px; float: left; font-size: 15px;"
 				></v-select>
 			</div>
 			<div

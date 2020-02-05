@@ -1,5 +1,5 @@
 <template>
-	<div></div>
+	<div>안뇽 ㅎ</div>
 </template>
 
 <script>

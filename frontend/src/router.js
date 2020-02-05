@@ -12,6 +12,7 @@ import NewsFeed from "./views/NewsFeed.vue";
 import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
 import Search from "./views/Search.vue";
+import InfoModify from "./views/InfoModify";
 
 Vue.use(VueRouter);
 
@@ -77,6 +78,11 @@ const routes = [
 		// meta: {
 		// 	authRequired: true
 		// }
+	},
+	{
+		path: "/infoModify",
+		name: "infoModify",
+		component: InfoModify
 	},
 	{
 		path: "*",
