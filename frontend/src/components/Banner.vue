@@ -111,6 +111,9 @@ export default {
 	#infoBox {
 		top: -140px;
 	}
+	#banner {
+		height: 50vw;
+	}
 }
 @media screen and (max-width: 320px) {
 	#nickname {
@@ -118,6 +121,9 @@ export default {
 	}
 	#counting {
 		font-size: 11px;
+	}
+	#banner {
+		height: 50vw;
 	}
 }
 </style>

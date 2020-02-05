@@ -1,12 +1,35 @@
 <template>
 	<div id="posts">
 		<div id="post_list">
-			<div class="post" v-for="item in posts" :key="item.post.idpost">
+			<div style="height: 50px; margin-top: 15px;">
+				<img
+					src="../assets/icon/sort_b.png"
+					width="25px"
+					style="float: left; margin-top: 7px; margin-right: 10px; opacity: 0.5;"
+				/>
+				<v-select
+					:items="postSels"
+					v-model="postSel"
+					dense
+					item-color="black"
+					color="rgba(0, 0, 0, 0.5)"
+					@change="chnagePostSel"
+					style="width: 100px; float: left;"
+					label="정렬기준"
+				></v-select>
+			</div>
+			<div
+				class="post"
+				v-for="(item, index) in posts"
+				:key="item.post.idpost"
+			>
 				<div style="margin: 10px;">
-					<div>
-						<span class="post_tag">#java</span>
-						<span class="post_tag">#javascript</span>
-						<span class="post_tag">#eclipse</span>
+					<div
+						v-for="tag in item.tags"
+						:key="tag.idtag"
+						style="display: inline-block;"
+					>
+						<span class="post_tag">{{ tag }}</span>
 					</div>
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
@@ -14,18 +37,38 @@
 						<div class="post_nickname">
 							{{ item.post.postWriter }}
 						</div>
-						<div class="post_date">
-							{{ item.post.dateCreated }}
-						</div>
+						<div class="post_date">{{ item.post.dateCreated }}</div>
 					</div>
 					<div class="post_code">{{ item.post.code }}</div>
+					<div class="like_comment">
+						<img
+							:id="item.post.idpost"
+							class="like_img"
+							:src="
+								item.post.likeCheck == 1
+									? './img/icons/tack_full.png'
+									: './img/icons/tack_empty.png'
+							"
+							width="35px"
+							@click="like(item.post.idpost, index)"
+						/>
+						<div class="like_text">
+							{{ item.post.likeCount }}
+						</div>
+						<img
+							src="../assets/icon/chat.png"
+							class="comment_img"
+						/>
+						<div class="comment_text">
+							{{ item.commentCount }}
+						</div>
+					</div>
 				</div>
 				<div class="line" />
 			</div>
 		</div>
 	</div>
 </template>
-
 <script>
 import http from "../http-common";
 import store from "../store";
@@ -35,22 +78,58 @@ export default {
 	data() {
 		return {
 			posts: "",
-			postTags: ""
+			postTags: "",
+			postSel: "정렬기준",
+			postSels: [
+				{ text: "최신순", value: "4" },
+				{ text: "오래된순", value: "3" },
+				{ text: "좋아요순", value: "2" }
+			],
+			address: ""
 		};
 	},
 	methods: {
-		getPostTag(idx) {}
+		chnagePostSel(idx) {
+			console.log(idx);
+			http.post("/api/findByMyPosts/", {
+				idMember: this.$session.get("id"),
+				order: idx
+			})
+				.then(response => {
+					this.posts = response.data;
+					console.log(this.posts);
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
+		like(postNum, index) {
+			console.log("글번호 : " + postNum + "| index : " + index);
+			if (this.posts[index].post.likeCheck == 1) {
+				this.posts[index].post.likeCheck = 0;
+				this.posts[index].post.likeCount--;
+				this.address = "";
+			} else {
+				this.posts[index].post.likeCheck = 1;
+				this.posts[index].post.likeCount++;
+				this.address = "";
+			}
+		}
 	},
 	mounted() {
-		http.post("/findByMyPosts/", 5)
+		http.post("/api/findByMyPosts/", {
+			idMember: this.$session.get("id"),
+			order: 4
+		})
 			.then(response => {
 				this.posts = response.data;
 				console.log(this.posts);
+				// console.log(response);
 			})
 			.catch(error => {
 				console.log(error);
-			})
-			.finally(() => (this.loading = false));
+			});
+		// .finally(() => (this.loading = false));
 	}
 };
 </script>
@@ -60,6 +139,7 @@ export default {
 	margin-bottom: 20px;
 	border-bottom: 1.5px solid rgba(0, 0, 0, 0.06);
 }
+
 .post {
 	margin-top: 20px;
 	font-weight: 300;
@@ -77,6 +157,7 @@ export default {
 	white-space: nowrap;
 }
 .post_tag {
+	float: left;
 	margin-right: 6px;
 	font-size: 13px;
 	border-radius: 8px;
@@ -114,5 +195,30 @@ export default {
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
+	margin-bottom: 5px;
+}
+.like_comment {
+	display: inline-block;
+}
+.like_text,
+.like_img,
+.comment_text,
+.comment_img {
+	float: left;
+}
+
+.like_img {
+	width: 35px;
+}
+.comment_img {
+	width: 30px;
+	margin: 7px 3px 0 10px;
+}
+
+.comment_text,
+.like_text {
+	font-weight: 400;
+	margin-top: 10px;
+	font-size: 15px;
 }
 </style>

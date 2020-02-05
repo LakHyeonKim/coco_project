@@ -63,7 +63,9 @@ export default {
 		const headers = {
 			Authorization: token
 		};
-		http.post("/api/findByAllNewsfeed/", 5, { headers })
+		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+			headers
+		})
 			.then(res => {
 				console.log("getport then ", res.data);
 				this.portfolios = res.data;
