@@ -106,14 +106,31 @@ export default {
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
 			if (this.posts[index].post.likeCheck == 1) {
-				this.posts[index].post.likeCheck = 0;
-				this.posts[index].post.likeCount--;
-				this.address = "";
+				// this.posts[index].post.likeCheck = 0;
+				// this.posts[index].post.likeCount--;
+				this.address = "/trc/pushLike/";
 			} else {
-				this.posts[index].post.likeCheck = 1;
-				this.posts[index].post.likeCount++;
+				// this.posts[index].post.likeCheck = 1;
+				// this.posts[index].post.likeCount++;
 				this.address = "";
 			}
+
+			http.post(this.address, {
+				member: {
+					idmember: this.$session.get("id")
+				},
+				post: {
+					idpost: postNum
+				}
+			})
+				.then(response => {
+					this.posts = response.data;
+					console.log(response);
+					console.log(this.posts);
+				})
+				.catch(error => {
+					console.log(error);
+				});
 		}
 	},
 	mounted() {
