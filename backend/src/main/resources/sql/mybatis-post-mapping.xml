@@ -9,15 +9,15 @@
 
 	<sql id="select-Post">
 		select idpost, member_id, post_title, post_writer,
-		date_created, update_created, code, like_count, views, image_path, access
+		date_created, update_created, code, like_count, views, image_path, file_path, access
 		from post
 	</sql>
 	<sql id="insert-Post">
 		insert into post
 		(member_id, post_title, post_writer,
-		date_created, update_created, code, like_count, views, image_path, access)
+		date_created, update_created, code, like_count, views, image_path, file_path, access)
 		values(#{memberId},#{postTitle},#{postWriter},now(),
-		now(), #{code}, #{likeCount}, #{views}, #{imagePath}, #{access})
+		now(), #{code}, #{likeCount}, #{views}, #{imagePath}, #{filePath}, #{access})
 	</sql>
 	<sql id="update-Post">
 		update post set
@@ -27,6 +27,7 @@
 		like_count = #{likeCount},
 		views = #{views},
 		image_path = #{imagePath},
+		file_path = #{filePath}
 		access = #{access}
 		where
 		idpost=#{idpost}
@@ -42,7 +43,7 @@
 		<include refid="select-Post"></include>
 		<where>
 			<if test="idpost !=0">
-				idpost = '${idpost}'
+				idpost = ${idpost}
 			</if>
 			<if test="memberId !=0">
 			AND
@@ -94,7 +95,7 @@
 	</select>
 	
 	<select id="findPostByNewsfeedOrderByLike" parameterType="long" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access 
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
 		from `coco`.`post` 
 		where member_id 
 		in (select member_following from `coco`.`follow` where member_follower = #{value}) 
@@ -103,7 +104,7 @@
 	
 	<!-- 2. post 전체 검색 (title, post에 포함된 tag, 내용) -->
 	<select id="findPostByAll" parameterType="string" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access  
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access  
 		from `coco`.`post` 
 		where idpost in (select post_id from `coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag` where tag_name like '%${value}%')) or post_title like '%${value}%' or code like '%${value}%' or post_writer like '%${value}%' 
 		order by date_created desc
@@ -111,7 +112,7 @@
 	
 	<!-- 3. post tag로 검색 -->
 	<select id="findPostByTag" parameterType="string" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access 
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
 		from `coco`.`post` where idpost 
 		in (select post_id from `coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag` where tag_name like '%${value}%'))
 		order by date_created desc
@@ -119,7 +120,7 @@
 	
 	<!-- 4. post title로 검색 -->
 	<select id="findPostByTitle" parameterType="string" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access 
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
 		from `coco`.`post` 
 		where post_title like '%${value}%'
 		order by date_created desc
@@ -127,7 +128,7 @@
 	
 	<!-- 5. post 내용(code)에서 만 검색 -->
 	<select id="findPostByCode" parameterType="string" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access  
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access  
 		from `coco`.`post` 
 		where code like '%${value}%'
 		order by date_created desc
@@ -135,7 +136,7 @@
 	
 	<!-- 6. post 아이디로 검색 -->
 	<select id="findPostByPostWriter" parameterType="string" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access  
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access  
 		from `coco`.`post` 
 		where post_writer like '%${value}%'
 		order by date_created desc
@@ -143,7 +144,7 @@
 	
 	<!-- 7. 사용자가 자주 찾아본 태그 빈도수 기반으로 검색 화면 디폴트로 post 가져오기 -->
 	<select id="findPostByFrequency" parameterType="long" resultType="Post">
-		select p.idpost, p.member_id, p.post_title, p.post_writer, p.date_created, p.update_created, p.code, p.like_count, p.views, p.image_path, p.access
+		select p.idpost, p.member_id, p.post_title, p.post_writer, p.date_created, p.update_created, p.code, p.like_count, p.views, p.image_path, p.file_path, p.access
 		from member_tag as mt inner join tag as t inner join post_tag as pt inner join post as p 
 		on mt.tag_id = t.idtag and t.idtag = pt.tag_id and pt.post_id = p.idpost and mt.member_id = #{value} 
 		order by frequency desc
@@ -151,7 +152,7 @@
 	
 	<!-- 8. 포스트 상세페이지 가면 포스트로 작성된 포스트 가져오기-->
 	<select id="findPostByPostComment" parameterType="long" resultType="Post">
-		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access 
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
 		from `coco`.`post` where idpost in (select post_child from baby_post where post_parents = #{value}) 
 		order by date_created desc;
 	</select>
@@ -177,7 +178,7 @@
 		<include refid="delete-Post"></include>
 		<where>
 			<if test="idpost !=0">
-				idpost = '${idpost}'
+				idpost = ${idpost}
 			</if>
 			<if test="memberId !=0">
 			AND
@@ -186,17 +187,17 @@
 			
 			<if test="postTitle !=null">
 			AND
-				post_title = ${postTitle}
+				post_title = '${postTitle}'
 			</if>
 			
 			<if test="postWriter !=null">
 			AND
-				post_writer = ${postWriter}
+				post_writer = '${postWriter}'
 			</if>
 			
 			<if test="code !=null">
 			AND
-				code = ${code}
+				code = '${code}'
 			</if>
 			<if test="access !=0">
 			AND

@@ -16,11 +16,11 @@
 		insert into member
 		(rank_id, is_manager,is_delete, nickname,
 		id, password,
-		email, git_url, kakao_url,instagram_url ,date_created,update_created)
+		email, git_url, kakao_url,instagram_url ,date_created,update_created,image_url,refreshToken)
 		values(#{rankId},#{isManager},#{isDelete},
 		#{nickname}, #{id},
 		#{password}, #{email}, #{gitUrl}, #{kakaoUrl},
-		#{instagramUrl},now(),now())
+		#{instagramUrl},now(),now(),#{imageUrl},#{refreshToken})
 	</sql>
 	<sql id="update-Member">
 		update member set
@@ -33,7 +33,9 @@
 		git_url = #{gitUrl},
 		kakao_url = #{kakaoUrl},
 		instagram_url = #{instagramUrl},
-		update_created = now()
+		update_created = now(),
+		image_url = #{imageUrl},
+		refreshToken = #{refreshToken}
 		where
 		idmember=#{idmember}
 	</sql>
@@ -59,12 +61,12 @@
 		<include refid="select-Member"></include>
 		<where>
 			
-			is_manager = '${isManager}'
+			is_manager = ${isManager}
 			AND
-			is_delete = '${isDelete}'
+			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
-				idmember = '${idmember}'
+				idmember = ${idmember}
 			</if>
 			<if test="id !=null">
 				AND
@@ -76,7 +78,7 @@
 			</if>
 			<if test="rankId !=0">
 				AND
-				rank_id = '${rankId}'
+				rank_id = ${rankId}
 				AND
 				m.rank_id = r.idrank
 			</if>
@@ -145,12 +147,12 @@
 		<where>
 			m.rank_id = r.idrank
 			AND
-			is_manager = '${isManager}'
+			is_manager = ${isManager}
 			AND
-			is_delete = '${isDelete}'
+			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
-				idmember = '${idmember}'
+				idmember = ${idmember}
 			</if>
 			<if test="id !=null">
 				AND
@@ -162,11 +164,11 @@
 			</if>
 			<if test="rankId !=0">
 				AND
-				rank_id = '${rankId}'
+				rank_id = ${rankId}
 			</if>
 			<if test="nickname !=null">
 				AND
-				nickname = '%{nickname}'
+				nickname = '${nickname}'
 			</if>
 			<if test="email !=null">
 				AND

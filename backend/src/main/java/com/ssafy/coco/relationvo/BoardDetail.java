@@ -2,6 +2,9 @@ package com.ssafy.coco.relationvo;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.coco.vo.Comment;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
@@ -14,7 +17,30 @@ public class BoardDetail {
 	private List<Member> likes;
 	private List<Post> babyPosts;
 	private long commentCount;
+	@JsonIgnore
+	private MultipartFile attachments;
 	
+	
+	public MultipartFile getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(MultipartFile attachments) {
+		this.attachments = attachments;
+	}
+
+	public BoardDetail(Post post, List<Tag> tags, List<Comment> comments, List<Member> likes, List<Post> babyPosts,
+			long commentCount, MultipartFile attachments) {
+		super();
+		this.post = post;
+		this.tags = tags;
+		this.comments = comments;
+		this.likes = likes;
+		this.babyPosts = babyPosts;
+		this.commentCount = commentCount;
+		this.attachments = attachments;
+	}
+
 	public BoardDetail() {
 		super();
 	}
@@ -80,7 +106,7 @@ public class BoardDetail {
 
 	@Override
 	public String toString() {
-		return "Board [post=" + post + ", tags=" + tags + ", comments=" + comments + ", likes=" + likes + ", babyPosts="
-				+ babyPosts + ", commentCount=" + commentCount + "]";
+		return "BoardDetail [post=" + post + ", tags=" + tags + ", comments=" + comments + ", likes=" + likes
+				+ ", babyPosts=" + babyPosts + ", commentCount=" + commentCount + ", attachments=" + attachments + "]";
 	}
 }

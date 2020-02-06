@@ -13,6 +13,34 @@ public class Post {
 	int likeCount;
 	int views;
 	String imagePath;
+	String filePath;
+	
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	
+	public Post(long idpost, long memberId, String postTitle, String postWriter, Timestamp dateCreated,
+			Timestamp updateCreated, String code, int likeCount, int views, String imagePath, String filePath,
+			int access, int likeCheck, int order) {
+		super();
+		this.idpost = idpost;
+		this.memberId = memberId;
+		this.postTitle = postTitle;
+		this.postWriter = postWriter;
+		this.dateCreated = dateCreated;
+		this.updateCreated = updateCreated;
+		this.code = code;
+		this.likeCount = likeCount;
+		this.views = views;
+		this.imagePath = imagePath;
+		this.filePath = filePath;
+		this.access = access;
+		this.likeCheck = likeCheck;
+		this.order = order;
+	}
 	int access;
 	int likeCheck;
 	int order;
@@ -138,8 +166,8 @@ public class Post {
 	public String toString() {
 		return "Post [idpost=" + idpost + ", memberId=" + memberId + ", postTitle=" + postTitle + ", postWriter="
 				+ postWriter + ", dateCreated=" + dateCreated + ", updateCreated=" + updateCreated + ", code=" + code
-				+ ", likeCount=" + likeCount + ", views=" + views + ", imagePath=" + imagePath + ", access=" + access
-				+ ", likeCheck=" + likeCheck + ", order=" + order + "]";
+				+ ", likeCount=" + likeCount + ", views=" + views + ", imagePath=" + imagePath + ", filePath="
+				+ filePath + ", access=" + access + ", likeCheck=" + likeCheck + ", order=" + order + "]";
 	}
 	public Post(long idpost, long memberId, String postTitle, String postWriter, Timestamp dateCreated,
 			Timestamp updateCreated, String code, int likeCount, int views, String imagePath, int access) {

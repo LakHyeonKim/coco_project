@@ -76,7 +76,7 @@ public class BoardController {
 	@ApiOperation(value = "사용자가 작성한 포스트를 가져옴([order param] 1: 좋아요 오름차순, 2: 좋아요 내림차순, 3: 날짜 오래된 순서, 4: 날짜 최신 순서)", response = List.class)
 	@RequestMapping(value = "/findByMyPosts", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByMyPosts(@RequestBody OrderSearch orderSearch) throws Exception {
-		List<Board> answers = boardService.findByMyPosts(orderSearch.getIdMember(),orderSearch.getOrder());
+		List<Board> answers = boardService.findByMyPosts(orderSearch.getMyIdMember(), orderSearch.getYouIdMember(), orderSearch.getOrder());
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}

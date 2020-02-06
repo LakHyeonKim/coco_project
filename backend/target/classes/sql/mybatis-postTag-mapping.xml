@@ -28,15 +28,15 @@
 		<include refid="select-PostTag"></include>
 		<where>
 			<if test="idpostTag !=0">
-				idpost_tag = '${idpostTag}'
+				idpost_tag = ${idpostTag}
 			</if>
 			<if test="postId !=0">
 				AND
-				post_id = '${postId}'
+				post_id = ${postId}
 			</if>
 			<if test="tagId !=0">
 				AND
-				tag_id = '${tagId}'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</select>
@@ -50,15 +50,15 @@
 		<include refid="delete-PostTag"></include>
 		<where>
 			<if test="idpostTag !=0">
-				idpost_tag = '${idpostTag}'
+				idpost_tag = ${idpostTag}
 			</if>
 			<if test="postId !=0">
 				AND
-				post_id = '${postId}'
+				post_id = ${postId}
 			</if>
 			<if test="tagId !=0">
 				AND
-				tag_id = '${tagId}'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</delete>
