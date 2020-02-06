@@ -10,8 +10,9 @@
 						placeholder="Drop file here or click"
 						bottomText="Drop file here or click"
 						exceedSizeText="사진의 크기가 초과하였습니다"
-						maxSize="10240"
+						:maxSize="10240"
 						ref="profile"
+						@onExceed="exceedHandler"
 					/>
 				</validation-provider>
 
@@ -62,27 +63,9 @@
 						@click:append="pwd2 = !pwd2"
 					></v-text-field>
 				</validation-provider>
-				<validation-provider name="Git url " rules="alpha" v-slot="{ errors }">
-					<v-text-field
-						v-model="infos.gitUrl"
-						label="Git url(선택)"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
-				<validation-provider name="Kakao url " rules="alpha" v-slot="{ errors }">
-					<v-text-field
-						v-model="infos.kakaoUrl"
-						label="Kakao url(선택)"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
-				<validation-provider name="Instagram url " rules="alpha" v-slot="{ errors }">
-					<v-text-field
-						v-model="infos.instagramUrl"
-						label="Instagram url(선택)"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
+				<v-text-field v-model="infos.gitUrl" label="Git url(선택)"></v-text-field>
+				<v-text-field v-model="infos.kakaoUrl" label="Kakao url(선택)"></v-text-field>
+				<v-text-field v-model="infos.instagramUrl" label="Instagram url(선택)"></v-text-field>
 
 				<v-btn class="mr-4" type="submit">회원가입</v-btn>
 				<v-btn @click="clear">초기화</v-btn>
@@ -195,6 +178,11 @@ export default {
 			} else {
 				this.duplicate.push("아이디를 입력해 주십시오.");
 			}
+		},
+		exceedHandler(file) {
+			console.log(this.$refs.profile);
+			console.warn("onExceed -> file", file);
+			// this.$refs.profile.reset();
 		}
 	},
 	mounted() {

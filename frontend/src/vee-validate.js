@@ -45,7 +45,7 @@ extend("max", max);
 extend("password", {
 	validate: str => {
 		var pattern = new RegExp(
-			"^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&]"
+			"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]"
 		);
 		return !!pattern.test(str);
 	},
