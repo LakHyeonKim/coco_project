@@ -12,14 +12,14 @@ public class MemberHomePage {
 	private long followingCount;
 	private long followerCount;
 	private int totalPostCount;
-	private int isFollew;
+	private int isFollow;
 	
 	public int getIsFollew() {
-		return isFollew;
+		return isFollow;
 	}
 
 	public void setIsFollew(int isFollew) {
-		this.isFollew = isFollew;
+		this.isFollow = isFollew;
 	}
 
 	public MemberHomePage(Member member, Mypage mypage, List<String> tags, long followingCount, long followerCount,
@@ -31,7 +31,7 @@ public class MemberHomePage {
 		this.followingCount = followingCount;
 		this.followerCount = followerCount;
 		this.totalPostCount = totalPostCount;
-		this.isFollew = isFollew;
+		this.isFollow = isFollew;
 	}
 
 	public MemberHomePage() {
@@ -102,7 +102,7 @@ public class MemberHomePage {
 	public String toString() {
 		return "MemberHomePage [member=" + member + ", mypage=" + mypage + ", tags=" + tags + ", followingCount="
 				+ followingCount + ", followerCount=" + followerCount + ", totalPostCount=" + totalPostCount
-				+ ", isFollew=" + isFollew + "]";
+				+ ", isFollew=" + isFollow + "]";
 	}
 	
 	

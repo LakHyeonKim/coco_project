@@ -1,5 +1,7 @@
 package com.ssafy.coco.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.coco.dao.AlarmDao;
 import com.ssafy.coco.dao.BabyPostDao;
@@ -19,6 +22,8 @@ import com.ssafy.coco.dao.MyPageDao;
 import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
+import com.ssafy.coco.relationvo.BoardDetail;
+import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.BabyPost;
@@ -63,14 +68,40 @@ public class TransactionServiceImpl implements TransactionService{
 	 * @param member 회원정보
 	 * 
 	 * 사용자가 회원 가입 했을 때 마이페이지 까지 자동으로 만들어지는 트랜잭션
+	 * @throws IOException 
+	 * @throws IllegalStateException 
 	 */
 	@Transactional
-	public int signUp(Member member){
+	public long signUp(SignUpMember signUpMember) throws IllegalStateException, IOException{
+		Member member = new Member(signUpMember.getIdmember(), 
+				signUpMember.getRankId(), 
+				signUpMember.getIsManager(), 
+				signUpMember.getIsDelete(), 
+				signUpMember.getNickname(), 
+				signUpMember.getId(), 
+				signUpMember.getPassword(), 
+				signUpMember.getEmail(), 
+				signUpMember.getGitUrl(), 
+				signUpMember.getKakaoUrl(), 
+				signUpMember.getInstagramUrl(), 
+				signUpMember.getDateCreated(), 
+				signUpMember.getUpdateCreated(), 
+				signUpMember.getGrade());
+		member.setRankId(1L);
+		if(signUpMember.getFile() != null) {
+			MultipartFile file = signUpMember.getFile();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
+			String imageFilePath = path + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			member.setImageUrl(imageFilePath);
+		}
 		memberDao.addMember(member);
 		Mypage mypage= new Mypage();
 		mypage.setMemberId(member.getIdmember());
 		myPageDao.addMypage(mypage);
-		return (int) member.getIdmember();
+		return member.getIdmember();
 	}
 	
 	/**
@@ -187,10 +218,23 @@ public class TransactionServiceImpl implements TransactionService{
 	 * @param tagName 태그 
 	 * 
 	 * 포스트 작성 시 트랜잭션
+	 * @throws IOException 
+	 * @throws IllegalStateException 
 	 */
 	
 	@Transactional
-	public void makeTagsFromPost(Post post, List<Tag> tags) {
+	public void makePost(BoardDetail board) throws IllegalStateException, IOException {
+		Post post = board.getPost();
+		List<Tag> tags = board.getTags();
+		if(board.getAttachments() != null) {
+			MultipartFile file = board.getAttachments();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
+			String filePath = path + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			post.setFilePath(filePath);
+		}
 		postDao.addPost(post);
 		for(Tag tag:tags) {
 			String tName = tag.getTagName();
@@ -206,6 +250,5 @@ public class TransactionServiceImpl implements TransactionService{
 			}
 		}
 	}
-	
-	
+
 }
