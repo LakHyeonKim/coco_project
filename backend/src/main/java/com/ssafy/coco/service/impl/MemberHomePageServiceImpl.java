@@ -33,17 +33,28 @@ public class MemberHomePageServiceImpl implements MemberHomePageService{
 	private FollowDao followDao;
 	
 	@Override
-	public MemberHomePage findByMemberHomePageUserID(long idMember) {
-		List<Mypage> myPageList = mypageDao.findMypage(new Mypage(0, idMember, null, null, 0, 0, 0));
+	public MemberHomePage findByMemberHomePageUserID(long myIdMember, long youIdMember) {
+		List<Mypage> myPageList = mypageDao.findMypage(new Mypage(0, youIdMember, null, null, 0, 0, 0));
 		Mypage mypage = myPageList.get(0);
 		List<Tag> myPageTagList = TagDao.findAllTagIncludedMypage(mypage.getIdmypage());
 		List<String> tags = new ArrayList<>();
 		for(Tag tag : myPageTagList) {
 			tags.add(tag.getTagName());
 		}
-		long followingCount = followDao.findFollowingCount(idMember);
-		long followerCount = followDao.findFollowerCount(idMember);
-		int totalPostCount = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 0, 0, null, 0, 0, 0)).size();
-		return new MemberHomePage(mypage, tags, followingCount, followerCount, totalPostCount);
+		long followingCount = followDao.findFollowingCount(youIdMember);
+		long followerCount = followDao.findFollowerCount(youIdMember);
+		int totalPostCount = postDao.findPost(new Post(0, youIdMember, null, null, null, null, null, 0, 0, null, 0, 0, 0)).size();
+		Member findMember = new Member();
+		findMember.setIdmember(youIdMember);
+		List<Member> member = memberDao.findMember(findMember);
+		List<Member> myFollowingMember = memberDao.findFollowingMemberList(myIdMember);
+		int isFollew = 0;
+		for(Member followMember : myFollowingMember) {
+			if(followMember.getIdmember() == youIdMember) {
+				isFollew = 1;
+				break;
+			}
+		}
+		return new MemberHomePage(member.get(0), mypage, tags, followingCount, followerCount, totalPostCount, isFollew);
 	}
 }
