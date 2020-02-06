@@ -32,7 +32,7 @@
 						:error-messages="errors[0] ? errors[0] : []"
 					></v-text-field>
 				</validation-provider>
-				<validation-provider name="닉네임 " :rules="{ required: true }" v-slot="{ errors }">
+				<validation-provider name="닉네임 " rules="required|max:10" v-slot="{ errors }">
 					<v-text-field
 						name="nickname"
 						v-model="signUpMember.nickname"
@@ -51,6 +51,7 @@
 						name="password"
 						v-model="signUpMember.password"
 						label="비밀번호"
+						:counter="16"
 						:type="pwd1 ? 'text' : 'password'"
 						:error-messages="errors[0] ? errors[0] : []"
 						:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
@@ -99,7 +100,7 @@ import {
 } from "vee-validate";
 
 export default {
-	name: 'RegisterForm',
+	name: "RegisterForm",
 	components: {
 		ValidationProvider,
 		ValidationObserver
@@ -122,7 +123,7 @@ export default {
 		},
 		pwd1: false,
 		pwd2: false,
-		passwordConfirm: '',
+		passwordConfirm: "",
 		duplicate: [],
 		idcheck: false
 	}),
@@ -147,33 +148,33 @@ export default {
 						console.log("REGISTER catch ", err);
 					});
 			} else {
-				console.log('REGISTER ', '검증 실패')
+				console.log("REGISTER ", "검증 실패");
 			}
 		},
-		previewImage: function (event) {
-			var input = event.target
+		previewImage: function(event) {
+			var input = event.target;
 			if (input.files && input.files[0]) {
-				var reader = new FileReader()
+				var reader = new FileReader();
 				reader.onload = e => {
-					this.singUpMember.file = e.target.result
-				}
-				reader.readAsDataURL(input.files[0])
+					this.singUpMember.file = e.target.result;
+				};
+				reader.readAsDataURL(input.files[0]);
 			}
 		},
-		onSubmit () {
+		onSubmit() {
 			this.$refs.form.validate().then(success => {
 				if (!success) {
-					alert('제출양식에 맞지 않습니다.')
-					return false
+					alert("제출양식에 맞지 않습니다.");
+					return false;
 				}
-			})
-			return true
+			});
+			return true;
 		},
 		clear() {
 			this.$refs.form.reset();
 		},
-		valid () {
-			this.$refs.form.validate()
+		valid() {
+			this.$refs.form.validate();
 		},
 		idCheck() {
 			if (this.signUpMember.id) {
@@ -186,17 +187,19 @@ export default {
 						console.log("DUPLICATE then ", this.signUpMember.id);
 						console.log("DUPLICATE then ", res);
 						if (res.data) {
-							this.duplicate.push('사용하실수 있는 아이디입니다.')
-							this.idcheck = true
+							this.duplicate.push(
+								"사용하실수 있는 아이디입니다."
+							);
+							this.idcheck = true;
 						} else {
-							this.duplicate.push('아이디가 중복되었습니다.')
+							this.duplicate.push("아이디가 중복되었습니다.");
 						}
 					})
 					.catch(err => {
-						console.log('DUPLICATE catch ', err)
-					})
+						console.log("DUPLICATE catch ", err);
+					});
 			} else {
-				this.duplicate.push('아이디를 입력해 주십시오.')
+				this.duplicate.push("아이디를 입력해 주십시오.");
 			}
 		},
 		exceedHandler(file) {
@@ -205,15 +208,15 @@ export default {
 			// this.$refs.profile.reset();
 		}
 	},
-	mounted () {
+	mounted() {
 		// this.localize("ko", this.dictionary)
 	},
 	computed: {
-		loading: function () {
-			return this.$store.state.loading
+		loading: function() {
+			return this.$store.state.loading;
 		}
 	}
-}
+};
 </script>
 
 <style scoped>
