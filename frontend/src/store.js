@@ -12,7 +12,7 @@ export default new Vuex.Store({
 		postDetail: [],
 		init: true,
 		memberemail: "",
-		acessToken: "",
+		accessToken: "",
 		refreshToken: ""
 	},
 	getters: {
@@ -47,12 +47,12 @@ export default new Vuex.Store({
 		setMemberEmail: function(state, data) {
 			state.memberemail = data;
 		},
-		setTokens: function(state, acess, refresh) {
-			state.acessToken = acess;
-			state.refreshToken = refresh;
-			this.$session.start();
-			this.$session.set("acessToken", state.acessToken);
-			this.$session.set("refreshToken", state.refreshToken);
+		setTokens: function(state, data) {
+			state.accessToken = data.accessToken;
+			state.refreshToken = data.refreshToken;
+			// this.$session.start();
+			// this.$session.set("accessToken", state.accessToken);
+			// this.$session.set("refreshToken", state.refreshToken);
 			// this.$session.start();
 			// this.$session.set("acessToken", acess);
 			// this.$session.set("refreshToken", refresh);
@@ -80,8 +80,8 @@ export default new Vuex.Store({
 		saveMemberEmail: function(context, data) {
 			context.commit("setMemberEmail", data);
 		},
-		saveTokens: function(context, acess, refresh) {
-			context.commit("setTokens", acess, refresh);
+		saveTokens: function(context, data) {
+			context.commit("setTokens", data);
 		}
 	}
 });

@@ -49,9 +49,12 @@
 						<img src="../assets/google_logo.png" class="logos" />
 					</button>
 				</div>
-				<div style="display:inline-block">
+				<!-- <div style="display:inline-block">
 					<LoginFormForKakao></LoginFormForKakao>
-				</div>
+				</div> -->
+				<a @click.prevent="getCode">
+					<img src="../assets/kakao_logo.png" class="logos" />
+				</a>
 			</div>
 			<div v-if="errors.length" id="loginError" style="display:inline;">
 				<div v-for="(error, idx) in errors" :key="idx">
@@ -82,14 +85,10 @@
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
-import LoginFormForKakao from "./LoginFormForKakao";
 // import axios from "axios";
 
 export default {
 	name: "LoginForm",
-	components: {
-		LoginFormForKakao
-	},
 	data() {
 		return {
 			credentials: {
@@ -103,11 +102,6 @@ export default {
 			errors: []
 		};
 	},
-	// computed: {
-	// 	loading: function() {
-	// 		return this.$store.state.loading;
-	// 	}
-	// },
 	methods: {
 		login() {
 			if (this.checkForm()) {
@@ -168,11 +162,39 @@ export default {
 			this.$session.start();
 			this.$session.set("accessToken", result.credential.accessToken);
 			router.push("/newsfeed");
+		},
+		getCode() {
+			window.location.href =
+				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://192.168.100.94:8080&response_type=code";
+		}
+	},
+	mounted() {
+		const code = document.location.href.split("code");
+		if (code[1]) {
+			const sendCode = code[1].slice(1);
+			// alert(sendCode);
+			http.get("/test/kakaologin2", { params: { code: sendCode } })
+				.then(res => {
+					console.log("kakao res", res.data);
+					console.log("kakao res", res.data.accessToken);
+					if (res.data.accessToken) {
+						this.$session.start();
+						this.$session.set("accessToken", res.data.accessToken);
+						this.$session.set(
+							"refreshToken",
+							res.data.refreshToken
+						);
+						router.push("/newsfeed");
+					} else {
+						console.log("kakao res else", res);
+						router.push("/register");
+					}
+				})
+				.catch(err => {
+					console.log("kakao err", err);
+				});
 		}
 	}
-	// mounted() {
-	// 	console.log(this.$store.state);
-	// }
 };
 </script>
 

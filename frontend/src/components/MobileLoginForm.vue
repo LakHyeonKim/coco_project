@@ -48,9 +48,9 @@
 					<img src="../assets/google_logo.png" class="logos" />
 				</button>
 			</div>
-			<div style="display:inline-block">
-				<LoginFormForKakao></LoginFormForKakao>
-			</div>
+			<a @click.prevent="getCode">
+				<img src="../assets/kakao_logo.png" class="logos" />
+			</a>
 		</div>
 		<div v-if="errors.length" id="loginError">
 			<div v-for="(error, idx) in errors" :key="idx">
@@ -78,13 +78,10 @@
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
-import LoginFormForKakao from "./LoginFormForKakao";
 
 export default {
 	name: "MobileLoginForm",
-	components: {
-		LoginFormForKakao
-	},
+
 	data() {
 		return {
 			credentials: {
@@ -160,10 +157,27 @@ export default {
 			this.$session.start();
 			this.$session.set("accessToken", result.credential.accessToken);
 			router.push("/newsfeed");
+		},
+		getCode() {
+			window.location.href =
+				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://192.168.100.94:8080&response_type=code";
 		}
 	}
 	// mounted() {
-	// 	console.log(this.$store.state);
+	// 	const code = document.location.href.split("code");
+	// 	if (code[1]) {
+	// 		const sendCode = code[1].slice(1);
+	// 		alert(sendCode);
+	// 		http.get("/test/kakaologin2", { params: { code: sendCode } })
+	// 			.then(res => {
+	// 				console.log("kakao res", res);
+	// 				router.push("/");
+	// 			})
+	// 			.catch(err => {
+	// 				console.log("kakao err", err);
+	// 				router.push("/");
+	// 			});
+	// }
 	// }
 };
 </script>

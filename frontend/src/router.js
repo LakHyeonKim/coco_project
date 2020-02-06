@@ -51,10 +51,10 @@ const routes = [
 	{
 		path: "/newsfeed",
 		name: "newsfeed",
-		component: NewsFeed,
-		meta: {
-			authRequired: true
-		}
+		component: NewsFeed
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "/myPage",
@@ -116,9 +116,9 @@ router.beforeEach(function(to, from, next) {
 	) {
 		// 이동할 페이지에 인증 정보가 필요하면 경고 창을 띄우고 페이지 전환은 하지 않음
 		alert("Login Please!");
-		if (this.$session.has("acessToken")) {
-			next("/newsfeed");
-		}
+		// if (this.$session.has("acessToken")) {
+		// 	next();
+		// }
 		next("/");
 	} else {
 		console.log("routing success : '" + to.path + "'");

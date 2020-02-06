@@ -25,6 +25,12 @@ export default {
 		},
 		memberemail: function() {
 			return store.state.memberemail;
+		},
+		accessToken: function() {
+			return store.state.accessToken;
+		},
+		refreshToken: function() {
+			return store.state.refreshToken;
 		}
 	},
 	mounted() {
@@ -36,15 +42,25 @@ export default {
 	},
 	methods: {
 		kakaoLogin() {
+			const retval = this.kakaoLoginCheck();
+			if (retval == "200") {
+				if (this.accessToken && this.refreshToken) {
+					this.$session.set("accessToken", this.accessToken);
+					this.$session.set("refreshToken", this.refreshToken);
+					router.push("/newsfeed");
+				}
+			} else {
+				router.push("/register");
+			}
+		},
+		kakaoLoginCheck() {
 			// console.log("kakao login");
-			console.log("15165496846513135", this.test);
 			// 로그인 창을 띄웁니다.
 			Kakao.Auth.loginForm({
 				success: function(authObj) {
 					console.log("카카오 로그인 성공! access token 받아옴!");
 					// console.log(JSON.stringify(authObj));
-					// console.log(authObj);
-					console.log("testestestestes", this.test);
+					console.log(authObj);
 					store.dispatch("saveMemberEmail", "asdfasdf");
 					console.log("memberemail", store.state.memberemail);
 					// console.log(authObj.access_token);
@@ -53,7 +69,6 @@ export default {
 						url: "/v2/user/me",
 						success: function(res) {
 							// console.log("res success ", JSON.stringify(res));
-							console.log("asjkdfhkajsdhfkajsdf", this.test);
 							// console.log("res success ", res);
 							// console.log(
 							// 	"res success email",
@@ -66,28 +81,22 @@ export default {
 									if (res.status == "200") {
 										// alert(res.data);
 										console.log(res.data);
-										const acessToken = res.data.acessToken;
-										const refreshToken =
-											res.data.refreshToken;
-										store.dispatch(
-											"saveTokens",
-											acessToken,
-											refreshToken
-										);
+										store.dispatch("saveTokens", res.data);
 										console.log(
-											"vuex",
-											store.state.acessToken,
+											"Access",
+											store.state.accessToken,
+											"Refresh",
 											store.state.refreshToken
 										);
-										router.push("/newsfeed");
 										console.log("SNSLOGIN then ", res);
+										return "200";
 									} else {
 										store.dispatch(
 											"saveMemberEmail",
 											email
 										);
 										console.log(store.state.memberemail);
-										router.push("/register");
+										return "not200";
 									}
 								})
 								.catch(err => {
