@@ -5,15 +5,18 @@
 			<img id="imgBanner" src="../assets/back.jpg" />
 		</div>
 		<div id="infoBox">
-			<div id="today">today 30 · total 300</div>
+			<div id="today">
+				today {{ userInfo.mypage.todayVisitedCount }} · total
+				{{ userInfo.mypage.totalVisitedCount }}
+			</div>
 			<div id="info_title">
-				TITLE
+				{{ userInfo.mypage.bannerText }}
 			</div>
 			<div id="info_desc">
-				<img id="imgUser" src="../assets/user.png" />
+				<img id="imgUser" :src="userInfo.member.imageUrl" />
 				<div id="info_desc_bottom">
 					<div id="nickname">
-						닉네임
+						{{ userInfo.member.nickname }}
 						<img
 							v-if="isUser"
 							src="../assets/icon/settings.png"
@@ -21,7 +24,11 @@
 							@click="showModal = true"
 						/>
 					</div>
-					<div id="counting">팔로잉 101 · 팔로워 22 · 게시글 333</div>
+					<div id="counting">
+						팔로잉 {{ userInfo.followingCount }} · 팔로워
+						{{ userInfo.followerCount }} · 게시글
+						{{ userInfo.totalPostCount }}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -45,12 +52,12 @@ export default {
 		};
 	},
 	mounted() {
-		alert(this.$session.get("id"));
 		http.post("/api/findByMemberHomePageUserID/", this.$session.get("id"))
 			.then(response => {
 				this.userInfo = response.data;
 				store.state.tags = this.userInfo.tags;
-				console.log(this.userInfo);
+				console.log("Banner mounted()");
+				console.log(response);
 			})
 			.catch(error => {
 				console.log(error);

@@ -9,7 +9,6 @@
 				/>
 				<v-select
 					:items="postSels"
-					v-model="postSel"
 					dense
 					item-color="black"
 					color="rgba(0, 0, 0, 0.5)"
