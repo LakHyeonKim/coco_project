@@ -49,11 +49,25 @@ public class KakaoAccessToken {
 	MailService2 mailService;
 	
 	@ApiOperation(value = "메일 테스트", response = List.class)
-	@RequestMapping(value = "/mailTest", produces = "application/json", method = { RequestMethod.GET,
+	@RequestMapping(value = "/mailTest", method = {
 			RequestMethod.POST })
-	public void mailTest() throws Exception {
+	public ResponseEntity mailTest(@RequestBody Member member) throws Exception {
 		//사용자의 id를 받아서 
-		mailService.findPwd("a13975@naver.com", "지노짱짱맨", "@2");
+		System.out.println("감초"+member);
+		List<Member> list = memberService.findMember(member);
+		if(list.size()>0)
+		{
+			Member m = list.get(0);
+			String newpwd = mailService.findPwd(m.getId(), m.getNickname(), "@2");
+			m.setPassword(newpwd);
+			memberService.updateMember(m);
+			return new ResponseEntity(HttpStatus.OK);
+		}
+		else//존재 x
+		{
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		
 	}
 	
 	@ApiOperation(value = "sns 로그인을 통한 토큰 받아오기3", response = List.class)

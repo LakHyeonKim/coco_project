@@ -96,6 +96,8 @@ public class BaseController {
         }
         return map;
     }
+	
+	
 	// 알람
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved list"),
 			@ApiResponse(code = 401, message = "인증 오류 입니다"),
@@ -110,7 +112,17 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Alarm>>(answers, HttpStatus.OK);
 	}
-
+	
+	@ApiOperation(value = "비밀 번호 체크", response = List.class)
+	@RequestMapping(value = "/checkPwd", method = RequestMethod.POST)
+	public ResponseEntity<List<Alarm>> checkPwd(@RequestBody Member member) throws Exception {
+		int size = memberService.findMember(member).size();
+		if (size ==0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
 	public ResponseEntity<List<Alarm>> findAlarm(@RequestBody Alarm alarm) throws Exception {

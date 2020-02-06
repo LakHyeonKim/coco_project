@@ -57,7 +57,7 @@ public class MailServiceImpl implements MailService2{
 		mail.setHtmlMsg(msg);
 		mail.send();
 	}
-	public void findPwd(String mem_email, String mem_id, String inputCode)
+	public String findPwd(String mem_email, String mem_id, String inputCode)
 	{
 		try {
 			String subject = "[SEE-SAW] 임시 비밀번호 발급 안내";
@@ -69,9 +69,11 @@ public class MailServiceImpl implements MailService2{
 			msg += "<p> 임시 비밀번호 : <strong>"+ keyCode +"</strong></p></div>";
 			
 			sendMail(mem_email, subject, msg);
+			return keyCode;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return "";
 	}
 }
