@@ -66,11 +66,11 @@
 			</if>
 			AND
 			<if test="word !=null">
-				word = ${word}
+				word = '${word}'
 			</if>
 			AND
 			<if test="description !=null">
-				description = ${description}
+				description = '${description}'
 			</if>
 		</where>
 	</delete>

@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
+import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.relationvo.SignUpMember;
@@ -43,6 +45,7 @@ public class TransactionController {
 	@ApiOperation(value = "프로필 사진과 함께 가입 하기", response = List.class)
 	@PostMapping("/signUp")
 	public ResponseEntity<Integer> signUp(SignUpMember signUpMember, HttpServletRequest request) throws Exception {
+		System.out.println(signUpMember);
 		int answer = (int) transactionService.signUp(signUpMember);
 		if (answer<=0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -58,8 +61,8 @@ public class TransactionController {
 	}
 	
 	@ApiOperation(value = "포스트 달기 (Transaction) ", response = List.class)
-	@RequestMapping(value = "/makePost", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makePost(BoardDetail board) throws Exception {
+	@PostMapping("/makePost")
+	public ResponseEntity<Integer> makePost(BoardWrite board) throws Exception {
 		transactionService.makePost(board);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
@@ -82,6 +85,13 @@ public class TransactionController {
 	@RequestMapping(value = "/makeFollow", method = RequestMethod.POST)
 	public ResponseEntity<Integer> makeFollow(@RequestBody Follow follow) throws Exception {
 		transactionService.makeFollow(follow.getMemberFollower(),follow.getMemberFollowing());
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "팔로우 취소(Transaction) ", response = List.class)
+	@RequestMapping(value = "/makeUnFollow", method = RequestMethod.POST)
+	public ResponseEntity<Integer> makeUnFollow(@RequestBody Follow follow) throws Exception {
+		transactionService.makeUnFollow(follow.getMemberFollower(),follow.getMemberFollowing());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	

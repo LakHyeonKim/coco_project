@@ -62,12 +62,12 @@
 		<where>
 			m.rank_id = r.idrank
 			AND
-			is_manager = '${isManager}'
+			is_manager = ${isManager}
 			AND
-			is_delete = '${isDelete}'
+			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
-				idmember = '${idmember}'
+				idmember = ${idmember}
 			</if>
 			<if test="id !=null">
 				AND
@@ -79,11 +79,11 @@
 			</if>
 			<if test="rankId !=0">
 				AND
-				rank_id = '${rankId}'
+				rank_id = ${rankId}
 			</if>
 			<if test="nickname !=null">
 				AND
-				nickname = '%{nickname}'
+				nickname = '${nickname}'
 			</if>
 			<if test="email !=null">
 				AND
@@ -146,12 +146,12 @@
 		<where>
 			m.rank_id = r.idrank
 			AND
-			is_manager = '${isManager}'
+			is_manager = ${isManager}
 			AND
-			is_delete = '${isDelete}'
+			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
-				idmember = '${idmember}'
+				idmember = ${idmember}
 			</if>
 			<if test="id !=null">
 				AND
@@ -163,11 +163,11 @@
 			</if>
 			<if test="rankId !=0">
 				AND
-				rank_id = '${rankId}'
+				rank_id = ${rankId}
 			</if>
 			<if test="nickname !=null">
 				AND
-				nickname = '%{nickname}'
+				nickname = '${nickname}'
 			</if>
 			<if test="email !=null">
 				AND

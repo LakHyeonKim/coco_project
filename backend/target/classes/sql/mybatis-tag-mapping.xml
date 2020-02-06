@@ -41,12 +41,12 @@
 		<include refid="select-Tag"></include>
 		<where>
 			<if test="idtag !=0">
-				idtag = '${idtag}'
+				idtag = ${idtag}
 			</if>
 			
 			<if test="tagName !=null">
 			AND
-				tag_name = ${tagName}
+				tag_name = '${tagName}'
 			</if>
 		</where>
 	</select>
@@ -80,12 +80,12 @@
 		<include refid="delete-Tag"></include>
 		<where>
 			<if test="idtag !=0">
-				idtag = '${idtag}'
+				idtag = ${idtag}
 			</if>
 			
 			<if test="tagName !=null">
 			AND
-				tag_name = ${tagName}
+				tag_name = '${tagName}'
 			</if>
 		</where>
 	</delete>

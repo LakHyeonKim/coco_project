@@ -2,6 +2,7 @@ package com.ssafy.coco.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.BoardDetail;
+import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Alarm;
@@ -183,6 +185,19 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	/**
 	 * 
+	 * @param idMemberFollower 팔로우 한 주체 아이디
+	 * @param idMemberFollowing 팔로우 한 대상 아이디
+	 * 
+	 * 팔로우 취소
+	 */
+	
+	@Transactional
+	public void makeUnFollow(long idMemberFollower, long idMemberFollowing) {
+		followDao.deleteFollow(new Follow(0, idMemberFollower, idMemberFollowing, 0));
+	}
+	
+	/**
+	 * 
 	 * @param idPost 좋아요 누른 포스트 아이디
 	 * @param idMember 누른 사람의 사용자 아이디
 	 * 
@@ -206,10 +221,10 @@ public class TransactionServiceImpl implements TransactionService{
 	 */
 	@Transactional
 	public void unLike(long idPost, long idMember) {
-		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
+		//long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		likeDao.deleteLike(new Like(0, idPost, idMember, 0));
-		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
-		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
+//		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
+//		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
 	
 	/**
@@ -223,9 +238,15 @@ public class TransactionServiceImpl implements TransactionService{
 	 */
 	
 	@Transactional
-	public void makePost(BoardDetail board) throws IllegalStateException, IOException {
-		Post post = board.getPost();
-		List<Tag> tags = board.getTags();
+	public void makePost(BoardWrite board) throws IllegalStateException, IOException {
+		Post post = new Post();
+		post.setCode(board.getCode());
+		post.setMemberId(board.getMemberId());
+		post.setPostTitle(board.getPostTitle());
+		post.setPostWriter(board.getPostWriter());
+		
+		String[] splitTag = board.getTags().split(",");
+		
 		if(board.getAttachments() != null) {
 			MultipartFile file = board.getAttachments();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
@@ -236,19 +257,20 @@ public class TransactionServiceImpl implements TransactionService{
 			post.setFilePath(filePath);
 		}
 		postDao.addPost(post);
-		for(Tag tag:tags) {
-			String tName = tag.getTagName();
-			int size = tagDao.findTag(new Tag(0, tName , 0, 0, null, null, null)).size();
+		for(String splitedTag : splitTag) {
+			if(splitedTag.equals("")) break;
+			int size = tagDao.findTag(new Tag(0, splitedTag , 0, 0, null, null, null)).size();
 			if(size == 0) {
-				tagDao.addTag(new Tag(0, tName, 0, 1, null, null, null));
-				long tagId = tagDao.findTag(new Tag(0, tName, 0, 0, null, null, null)).get(0).getIdtag();
+				tagDao.addTag(new Tag(0, splitedTag, 0, 1, null, null, null));
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
 			}else {
-				tagDao.updateTagIncludedCount(tName);
-				long tagId = tagDao.findTag(new Tag(0, tName, 0, 0, null, null, null)).get(0).getIdtag();
+				tagDao.updateTagIncludedCount(splitedTag);
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
 			}
 		}
 	}
+
 
 }

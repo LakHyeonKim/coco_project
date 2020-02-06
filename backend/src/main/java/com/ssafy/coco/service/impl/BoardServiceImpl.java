@@ -66,9 +66,9 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public List<Board> findByMyPosts(long idMember, int order) {
-		List<Post> myPosts = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 0, 0, null, 0, 0, order));
-		return makeBoardList(idMember, myPosts);
+	public List<Board> findByMyPosts(long myIdMember, long youIdMember, int order) {
+		List<Post> myPosts = postDao.findPost(new Post(0, youIdMember, null, null, null, null, null, 0, 0, null, 0, 0, order));
+		return makeBoardList(myIdMember, myPosts);
 	}
 
 	@Override

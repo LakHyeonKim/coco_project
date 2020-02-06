@@ -35,18 +35,18 @@
 		<include refid="select-Like"></include>
 		<where>
 			<if test="idlike != 0">
-				idlike = '${idlike}'
+				idlike = ${idlike}
 			</if>
 			<if test="postId != 0">
-				post_id = '${postId}'
+				post_id = ${postId}
 			</if>
 			<if test="memberId != 0">
 				AND
-				member_id = '${memberId}'
+				member_id = ${memberId}
 			</if>
 			<if test="access != 0">
 				AND
-				access = '${access}'
+				access = ${access}
 			</if>
 		</where>
 	</select>
@@ -63,16 +63,19 @@
 	<delete id="deleteLike" parameterType="Like">
 		<include refid="delete-Like"></include>
 		<where>
+			<if test="idlike != 0">
+				idlike = ${idlike}
+			</if>
 			<if test="postId != 0">
-				post_id = '${postId}'
+				post_id = ${postId}
 			</if>
 			<if test="memberId != 0">
 				AND
-				member_id = '${memberId}'
+				member_id = ${memberId}
 			</if>
 			<if test="access != 0">
 				AND
-				access = '${access}'
+				access = ${access}
 			</if>
 		</where>
 	</delete>

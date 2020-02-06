@@ -38,7 +38,7 @@
 	<select id="findMypage" resultType="Mypage">
 		<include refid="select-Mypage"></include>
 		<where>
-			access = '${access}'
+			access = ${access}
 			<if test="idmypage != 0">
 				AND
 				idmypage = ${idmypage}
@@ -49,11 +49,11 @@
 			</if>
 			<if test="bannerImagePath !=null">
 				AND
-				banner_image_path = ${bannerImagePath}
+				banner_image_path = '${bannerImagePath}'
 			</if>
 			<if test="bannerText !=null">
 				AND
-				banner_text = ${bannerText}
+				banner_text = '${bannerText}'
 			</if>
 		</where>
 	</select>
@@ -75,7 +75,7 @@
 	<delete id="deleteMypage" parameterType="Mypage">
 		<include refid="delete-Mypage"></include>
 		<where>
-			access = '${access}'
+			access = ${access}
 			<if test="idmypage != 0">
 				AND
 				idmypage = ${idmypage}
@@ -86,11 +86,11 @@
 			</if>
 			<if test="bannerImagePath !=null">
 				AND
-				banner_image_path = ${bannerImagePath}
+				banner_image_path = '${bannerImagePath}'
 			</if>
 			<if test="bannerText !=null">
 				AND
-				banner_text = ${bannerText}
+				banner_text = '${bannerText}'
 			</if>
 		</where>
 	</delete>

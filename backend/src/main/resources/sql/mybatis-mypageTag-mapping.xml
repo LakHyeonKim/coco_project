@@ -29,15 +29,15 @@
 		<include refid="select-MypageTag"></include>
 		<where>
 			<if test="idmypageTag !=0">
-				idmypage_tag = '${idmypageTag}'
+				idmypage_tag = ${idmypageTag}
 			</if>
 			<if test="mypageId != 0">
 			AND
-				mypage_id = '${mypageId}'
+				mypage_id = ${mypageId}
 			</if>
 			<if test="tagId != 0">
 			AND
-				tag_id = '${tagId}'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</select>
@@ -51,15 +51,15 @@
 		<include refid="delete-MypageTag"></include>
 		<where>
 			<if test="idmypageTag !=0">
-				idmypage_tag = '${idmypageTag}'
+				idmypage_tag = ${idmypageTag}
 			</if>
 			<if test="mypageId != 0">
 			AND
-				mypage_id = '${mypageId}'
+				mypage_id = ${mypageId}
 			</if>
 			<if test="tagId != 0">
 			AND
-				tag_id = '${tagId}'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</delete>

@@ -36,15 +36,15 @@
 		<include refid="select-BabyPost"></include>
 		<where>
 			<if test="idbabyPost !=0">
-				idbaby_post = '${idbabyPost}'
+				idbaby_post = ${idbabyPost}
 			</if>
 			<if test="postParents !=0">
 				AND
-				post_parents = '${postParents}'
+				post_parents = ${postParents}
 			</if>
 			<if test="postChild !=0">
 				AND
-				post_child = '${postChild}'
+				post_child = ${postChild}
 			</if>
 		</where>
 	</select>
@@ -62,15 +62,15 @@
 		<include refid="delete-BabyPost"></include>
 		<where>
 			<if test="idbabyPost !=0">
-				idbaby_post = '${idbabyPost}'
+				idbaby_post = ${idbabyPost}
 			</if>
 			<if test="postParents !=0">
 				AND
-				post_parents = '${postParents}'
+				post_parents = ${postParents}
 			</if>
 			<if test="postChild !=0">
 				AND
-				post_child = '${postChild}'
+				post_child = ${postChild}
 			</if>
 		</where>
 	</delete>

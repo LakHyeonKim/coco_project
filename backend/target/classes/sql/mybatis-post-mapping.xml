@@ -43,7 +43,7 @@
 		<include refid="select-Post"></include>
 		<where>
 			<if test="idpost !=0">
-				idpost = '${idpost}'
+				idpost = ${idpost}
 			</if>
 			<if test="memberId !=0">
 			AND
@@ -178,7 +178,7 @@
 		<include refid="delete-Post"></include>
 		<where>
 			<if test="idpost !=0">
-				idpost = '${idpost}'
+				idpost = ${idpost}
 			</if>
 			<if test="memberId !=0">
 			AND
@@ -187,17 +187,17 @@
 			
 			<if test="postTitle !=null">
 			AND
-				post_title = ${postTitle}
+				post_title = '${postTitle}'
 			</if>
 			
 			<if test="postWriter !=null">
 			AND
-				post_writer = ${postWriter}
+				post_writer = '${postWriter}'
 			</if>
 			
 			<if test="code !=null">
 			AND
-				code = ${code}
+				code = '${code}'
 			</if>
 			<if test="access !=0">
 			AND
