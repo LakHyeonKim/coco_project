@@ -189,7 +189,34 @@ export default {
 			// 	});
 		},
 		follow() {
-			alert("왓다리");
+			let address = "";
+			if (this.userInfo.isFollew == 1) {
+				address = "";
+				this.userInfo.isFollew = 0;
+				this.f_current = "팔로우";
+			} else {
+				address = "/trc/makeFollow/";
+				this.userInfo.isFollew = 1;
+				this.f_current = "팔로잉";
+			}
+
+			http.post(address, {
+				memberFollower: this.$session.get("id"),
+				memberFollowing: this.$session.get("targetId")
+			})
+				.then(response => {
+					console.log(response);
+				})
+				.catch(error => {
+					console.log(error);
+					if (this.userInfo.isFollew == 1) {
+						this.userInfo.isFollew = 0;
+						this.f_current = "팔로우";
+					} else {
+						this.userInfo.isFollew = 1;
+						this.f_current = "팔로잉";
+					}
+				});
 		}
 	},
 	mounted() {
