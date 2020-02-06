@@ -66,7 +66,7 @@ public class TransactionController {
 		String saveFileName = String.format("%s_%s", member.getId(), originFileName);
 		String filePath = path + saveFileName + "";
 		file.transferTo(new File(path, saveFileName));
-		member.setKakaoUrl(filePath);
+		member.setImageUrl(filePath);
 		System.out.println("save...ok");
 		
 		int answer = transactionService.signUp(member);
