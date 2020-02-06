@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.coco.service.MailService2;
 import com.ssafy.coco.service.MemberService;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Tokens;
@@ -44,7 +45,17 @@ import io.swagger.annotations.ApiOperation;
 public class KakaoAccessToken {
 	@Autowired
 	MemberService memberService;
-
+	@Autowired
+	MailService2 mailService;
+	
+	@ApiOperation(value = "메일 테스트", response = List.class)
+	@RequestMapping(value = "/mailTest", produces = "application/json", method = { RequestMethod.GET,
+			RequestMethod.POST })
+	public void mailTest() throws Exception {
+		//사용자의 id를 받아서 
+		mailService.findPwd("a13975@naver.com", "지노짱짱맨", "@2");
+	}
+	
 	@ApiOperation(value = "sns 로그인을 통한 토큰 받아오기3", response = List.class)
 	@RequestMapping(value = "/kakaologin2", produces = "application/json", method = { RequestMethod.GET,
 			RequestMethod.POST })
