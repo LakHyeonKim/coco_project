@@ -8,17 +8,18 @@ export default new Vuex.Store({
 	state: {
 		token: null,
 		user: "",
-		loading: false
+		loading: false,
+		tags: null
 	},
 	getters: {
-		userId: function (state) {
+		userId: function(state) {
 			console.log(jwtDecode(state.token));
 			return jwtDecode(state.token).idmember;
 		},
-		isLoggedIn: function (state) {
+		isLoggedIn: function(state) {
 			return state.token ? true : false;
 		},
-		requestHeader: function (state) {
+		requestHeader: function(state) {
 			return {
 				headers: {
 					Authorization: "JWT " + state.token
@@ -27,24 +28,24 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
-		setToken: function (state, token) {
+		setToken: function(state, token) {
 			state.token = token;
 		},
-		setLoading: function (state, status) {
+		setLoading: function(state, status) {
 			state.loading = status;
 		}
 	},
 	actions: {
-		login: function (context, token) {
+		login: function(context, token) {
 			context.commit("setToken", token);
 		},
-		logout: function (context) {
+		logout: function(context) {
 			context.commit("setToken", null);
 		},
-		startLoading: function (context) {
+		startLoading: function(context) {
 			context.commit("setLoading", true);
 		},
-		endLoading: function (context) {
+		endLoading: function(context) {
 			context.commit("setLoading", false);
 		}
 	}

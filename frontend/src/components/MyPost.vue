@@ -14,8 +14,8 @@
 					item-color="black"
 					color="rgba(0, 0, 0, 0.5)"
 					@change="chnagePostSel"
-					style="width: 100px; float: left;"
-					label="정렬기준"
+					placeholder="정렬조건"
+					style="width: 100px; float: left; font-size: 15px;"
 				></v-select>
 			</div>
 			<div
@@ -79,7 +79,6 @@ export default {
 		return {
 			posts: "",
 			postTags: "",
-			postSel: "정렬기준",
 			postSels: [
 				{ text: "최신순", value: "4" },
 				{ text: "오래된순", value: "3" },
@@ -106,14 +105,34 @@ export default {
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
 			if (this.posts[index].post.likeCheck == 1) {
+				this.address = "/trc/unLike/";
 				this.posts[index].post.likeCheck = 0;
 				this.posts[index].post.likeCount--;
-				this.address = "";
 			} else {
+				this.address = "/trc/pushLike/";
 				this.posts[index].post.likeCheck = 1;
 				this.posts[index].post.likeCount++;
-				this.address = "";
 			}
+			console.log(this.address);
+			http.post(this.address, {
+				member: {
+					idmember: this.$session.get("id")
+				},
+				post: {
+					idpost: postNum
+				}
+			})
+				.then(response => {})
+				.catch(error => {
+					console.log(error);
+					if (this.posts[index].post.likeCheck == 1) {
+						this.posts[index].post.likeCheck = 0;
+						this.posts[index].post.likeCount--;
+					} else {
+						this.posts[index].post.likeCheck = 1;
+						this.posts[index].post.likeCount++;
+					}
+				});
 		}
 	},
 	mounted() {
@@ -123,7 +142,6 @@ export default {
 		})
 			.then(response => {
 				this.posts = response.data;
-				console.log(this.posts);
 				// console.log(response);
 			})
 			.catch(error => {

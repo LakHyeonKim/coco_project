@@ -7,31 +7,64 @@
 		<div id="infoBox">
 			<div id="today">today 30 · total 300</div>
 			<div id="info_title">
-				<a href="#">TITLE</a>
+				TITLE
 			</div>
 			<div id="info_desc">
 				<img id="imgUser" src="../assets/user.png" />
 				<div id="info_desc_bottom">
-					<div id="nickname">닉네임</div>
+					<div id="nickname">
+						닉네임
+						<img
+							v-if="isUser"
+							src="../assets/icon/settings.png"
+							id="settings"
+							@click="showModal = true"
+						/>
+					</div>
 					<div id="counting">팔로잉 101 · 팔로워 22 · 게시글 333</div>
 				</div>
 			</div>
 		</div>
+		<PWCheck v-if="showModal" @close="showModal = false"> </PWCheck>
 	</div>
 </template>
 
 <script>
+import http from "../http-common";
 import store from "../store";
+import PWCheck from "./PWCheck.vue";
 export default {
 	name: "banner",
+	components: { PWCheck },
 	store,
 	data() {
-		return {};
+		return {
+			showModal: false,
+			isUser: true,
+			userInfo: ""
+		};
+	},
+	mounted() {
+		alert(this.$session.get("id"));
+		http.post("/api/findByMemberHomePageUserID/", this.$session.get("id"))
+			.then(response => {
+				this.userInfo = response.data;
+				store.state.tags = this.userInfo.tags;
+				console.log(this.userInfo);
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	}
 };
 </script>
 
 <style>
+#settings {
+	width: 17px;
+	opacity: 0.6;
+	cursor: pointer;
+}
 #imgBannerBox {
 	height: 35vw;
 	overflow: hidden;
@@ -87,6 +120,9 @@ export default {
 	font-weight: 300;
 }
 @media screen and (max-width: 600px) {
+	#settings {
+		width: 15px;
+	}
 	#imgBannerBox {
 		height: 50vw;
 	}
