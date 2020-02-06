@@ -31,7 +31,6 @@
 	</sql>
 	<sql id="delete-Tag">
 		delete from tag
-		where idtag=#{idtag}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -79,6 +78,16 @@
 
 	<delete id="deleteTag" parameterType="Tag">
 		<include refid="delete-Tag"></include>
+		<where>
+			<if test="idtag !=0">
+				idtag = '${idtag}'
+			</if>
+			
+			<if test="tagName !=null">
+			AND
+				tag_name = ${tagName}
+			</if>
+		</where>
 	</delete>
 </mapper>
 

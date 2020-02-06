@@ -33,8 +33,6 @@
 	</sql>
 	<sql id="delete-Post">
 		delete from post
-		where idpost=#{idpost}
-		
 	</sql>
 	<!-- 전체 검색 -->
 	<select id="findAllPost" resultType="Post">
@@ -53,17 +51,17 @@
 			
 			<if test="postTitle !=null">
 			AND
-				post_title = ${postTitle}
+				post_title like '%${postTitle}%'
 			</if>
 			
 			<if test="postWriter !=null">
 			AND
-				post_writer = ${postWriter}
+				post_writer like '%${postWriter}%'
 			</if>
 			
 			<if test="code !=null">
 			AND
-				code = ${code}
+				code like '%${code}%'
 			</if>
 			<if test="access !=0">
 			AND
@@ -177,6 +175,35 @@
 
 	<delete id="deletePost" parameterType="Post">
 		<include refid="delete-Post"></include>
+		<where>
+			<if test="idpost !=0">
+				idpost = '${idpost}'
+			</if>
+			<if test="memberId !=0">
+			AND
+				member_id = ${memberId}
+			</if>
+			
+			<if test="postTitle !=null">
+			AND
+				post_title = ${postTitle}
+			</if>
+			
+			<if test="postWriter !=null">
+			AND
+				post_writer = ${postWriter}
+			</if>
+			
+			<if test="code !=null">
+			AND
+				code = ${code}
+			</if>
+			<if test="access !=0">
+			AND
+				access = ${access}
+			</if>
+			
+		</where>
 	</delete>
 
 </mapper>

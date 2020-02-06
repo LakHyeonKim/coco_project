@@ -39,8 +39,6 @@
 	</sql>
 	<sql id="delete-Member">
 		delete from member
-		where idmember=#{idmember}
-
 	</sql>
 	
 	<!-- 전체 검색 -->
@@ -143,6 +141,57 @@
 
 	<delete id="deleteMember" parameterType="Member">
 		<include refid="delete-Member"></include>
+		<where>
+			m.rank_id = r.idrank
+			AND
+			is_manager = '${isManager}'
+			AND
+			is_delete = '${isDelete}'
+			<if test="idmember !=0">
+				AND
+				idmember = '${idmember}'
+			</if>
+			<if test="id !=null">
+				AND
+				id = '${id}'
+			</if>
+			<if test="password !=null">
+				AND
+				password = '${password}'
+			</if>
+			<if test="rankId !=0">
+				AND
+				rank_id = '${rankId}'
+			</if>
+			<if test="nickname !=null">
+				AND
+				nickname = '%{nickname}'
+			</if>
+			<if test="email !=null">
+				AND
+				email = '${email}'
+			</if>
+			<if test="gitUrl !=null">
+				AND
+				git_url = '${gitUrl}'
+			</if>
+			<if test="kakaoUrl !=null">
+				AND
+				kakao_url = '${kakaoUrl}'
+			</if>
+			<if test="instagramUrl !=null">
+				AND
+				instagram_url = '${instagramUrl}'
+			</if>
+			<if test="imageUrl !=null">
+				AND
+				image_url = '${imageUrl}'
+			</if>
+			<if test="refreshToken !=null">
+				AND
+				refreshToken = '${refreshToken}'
+			</if>
+		</where>
 	</delete>
 
 </mapper>

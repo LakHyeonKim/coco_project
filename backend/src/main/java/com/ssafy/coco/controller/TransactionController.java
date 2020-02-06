@@ -44,29 +44,30 @@ public class TransactionController {
 
 	@ApiOperation(value = "프로필 사진과 함께 가입 하기", response = List.class)
 	@PostMapping("/signUp")
-	public ResponseEntity<Integer> signUp(SignUpMember singUpMember, HttpServletRequest request) throws Exception {
-		MultipartFile file = singUpMember.getFile();
-		System.out.println(singUpMember);
-		Member member = new Member(singUpMember.getIdmember(), 
-				singUpMember.getRankId(), 
-				singUpMember.getIsManager(), 
-				singUpMember.getIsDelete(), 
-				singUpMember.getNickname(), 
-				singUpMember.getId(), 
-				singUpMember.getPassword(), 
-				singUpMember.getEmail(), 
-				singUpMember.getGitUrl(), 
-				singUpMember.getKakaoUrl(), 
-				singUpMember.getInstagramUrl(), 
-				singUpMember.getDateCreated(), 
-				singUpMember.getUpdateCreated(), 
-				singUpMember.getGrade());
+	public ResponseEntity<Integer> signUp(SignUpMember signUpMember, HttpServletRequest request) throws Exception {
+		MultipartFile file = signUpMember.getFile();
+		System.out.println(signUpMember);
+		Member member = new Member(signUpMember.getIdmember(), 
+				signUpMember.getRankId(), 
+				signUpMember.getIsManager(), 
+				signUpMember.getIsDelete(), 
+				signUpMember.getNickname(), 
+				signUpMember.getId(), 
+				signUpMember.getPassword(), 
+				signUpMember.getEmail(), 
+				signUpMember.getGitUrl(), 
+				signUpMember.getKakaoUrl(), 
+				signUpMember.getInstagramUrl(), 
+				signUpMember.getDateCreated(), 
+				signUpMember.getUpdateCreated(), 
+				signUpMember.getGrade());
+		System.out.println(member);
 		String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 		String originFileName = file.getOriginalFilename();
 		String saveFileName = String.format("%s_%s", member.getId(), originFileName);
 		String filePath = path + saveFileName + "";
 		file.transferTo(new File(path, saveFileName));
-		member.setKakaoUrl(filePath);
+		member.setImageUrl(filePath);
 		System.out.println("save...ok");
 		
 		int answer = transactionService.signUp(member);

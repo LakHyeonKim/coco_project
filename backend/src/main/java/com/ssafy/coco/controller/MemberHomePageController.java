@@ -16,6 +16,7 @@ import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardDetailSearch;
 import com.ssafy.coco.relationvo.MemberHomePage;
+import com.ssafy.coco.relationvo.MemberHomePageSearch;
 import com.ssafy.coco.service.BoardDetailSerivce;
 import com.ssafy.coco.service.MemberHomePageService;
 
@@ -32,8 +33,8 @@ public class MemberHomePageController {
 	
 	@ApiOperation(value = "멤버의 id(String)을 가지고 mypage정보를 가지고 옴", response = List.class)
 	@RequestMapping(value = "/findByMemberHomePageUserID", method = RequestMethod.POST)
-	public ResponseEntity<MemberHomePage> findByMemberHomePageUserID(@RequestBody String id) {
-		MemberHomePage answer = memberHomePageService.findByMemberHomePageUserID(id);
+	public ResponseEntity<MemberHomePage> findByMemberHomePageUserID(@RequestBody MemberHomePageSearch memberHomePageSearch) {
+		MemberHomePage answer = memberHomePageService.findByMemberHomePageUserID(memberHomePageSearch.getMyIdMemeber(), memberHomePageSearch.getYouIdMember());
 		if (answer == null) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
