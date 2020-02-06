@@ -58,8 +58,7 @@
 	<select id="findMember" resultType="Member">
 		<include refid="select-Member"></include>
 		<where>
-			m.rank_id = r.idrank
-			AND
+			
 			is_manager = '${isManager}'
 			AND
 			is_delete = '${isDelete}'
@@ -78,10 +77,12 @@
 			<if test="rankId !=0">
 				AND
 				rank_id = '${rankId}'
+				AND
+				m.rank_id = r.idrank
 			</if>
 			<if test="nickname !=null">
 				AND
-				nickname = '%{nickname}'
+				nickname = '${nickname}'
 			</if>
 			<if test="email !=null">
 				AND
