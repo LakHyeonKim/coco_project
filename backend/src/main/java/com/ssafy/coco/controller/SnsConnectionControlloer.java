@@ -49,6 +49,7 @@ public class SnsConnectionControlloer {
 		
 		List<Member> list = memberService.findMember(m);
 		int size = list.size();
+		
 		if(size == 0)//존재하지않으면
 		{
 			return new ResponseEntity<Tokens>(HttpStatus.NO_CONTENT);

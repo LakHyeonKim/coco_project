@@ -23,6 +23,13 @@
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+		<!-- 메일 보내기 commons email -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
+			<version>1.5</version>
+		</dependency>
+		
 		<!-- 자동 configuration 등록 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
