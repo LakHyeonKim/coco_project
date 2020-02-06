@@ -4,8 +4,8 @@
 			<form @submit.prevent="register" id="formData" enctype="multipart/form-data">
 				<validation-provider name="프로필 이미지 ">
 					<img-inputer
-						name="profile"
-						v-model="infos.file"
+						name="file"
+						v-model="signUpMember.file"
 						size="middle"
 						placeholder="Drop file here or click"
 						bottomText="Drop file here or click"
@@ -17,18 +17,25 @@
 				</validation-provider>
 
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
-				<!-- <input type="hidden" name="rankId" :value="this.singUpMember.rankId" />
-				<input type="hidden" name="grade" :value="this.singUpMember.grade" />
-				<input type="hidden" name="idmember" :value="this.singUpMember.idmember" />
-				<input type="hidden" name="isDelete" :value="this.singUpMember.isDelete" />
-				<input type="hidden" name="isManager" :value="this.singUpMember.isManager" />-->
+				<input type="hidden" name="rankId" :value="this.signUpMember.rankId" />
+				<input type="hidden" name="grade" :value="this.signUpMember.grade" />
+				<input type="hidden" name="idmember" :value="this.signUpMember.idmember" />
+				<input type="hidden" name="isDelete" :value="this.signUpMember.isDelete" />
+				<input type="hidden" name="isManager" :value="this.signUpMember.isManager" />
+				<input type="hidden" name="email" :value="this.signUpMember.email" />
 
 				<validation-provider name="아이디 " rules="required|email" v-slot="{ errors }">
-					<v-text-field v-model="infos.id" label="아이디" :error-messages="errors[0] ? errors[0] : []"></v-text-field>
+					<v-text-field
+						name="id"
+						v-model="signUpMember.id"
+						label="아이디"
+						:error-messages="errors[0] ? errors[0] : []"
+					></v-text-field>
 				</validation-provider>
 				<validation-provider name="닉네임 " :rules="{ required: true }" v-slot="{ errors }">
 					<v-text-field
-						v-model="infos.nickname"
+						name="nickname"
+						v-model="signUpMember.nickname"
 						:counter="10"
 						label="닉네임"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -41,7 +48,8 @@
 					v-slot="{ errors }"
 				>
 					<v-text-field
-						v-model="infos.password"
+						name="password"
+						v-model="signUpMember.password"
 						label="비밀번호"
 						:type="pwd1 ? 'text' : 'password'"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -63,9 +71,9 @@
 						@click:append="pwd2 = !pwd2"
 					></v-text-field>
 				</validation-provider>
-				<v-text-field v-model="infos.gitUrl" label="Git url(선택)"></v-text-field>
-				<v-text-field v-model="infos.kakaoUrl" label="Kakao url(선택)"></v-text-field>
-				<v-text-field v-model="infos.instagramUrl" label="Instagram url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.gitUrl" label="Git url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.kakaoUrl" label="Kakao url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.instagramUrl" label="Instagram url(선택)"></v-text-field>
 
 				<v-btn class="mr-4" type="submit">회원가입</v-btn>
 				<v-btn @click="clear">초기화</v-btn>
@@ -97,7 +105,12 @@ export default {
 		ValidationObserver
 	},
 	data: () => ({
-		infos: {
+		signUpMember: {
+			rankId: 1,
+			grade: 0,
+			idmember: 0,
+			isDelete: 0,
+			isManager: 0,
 			file: "",
 			id: "",
 			nickname: "",
@@ -154,14 +167,14 @@ export default {
 			this.$refs.form.validate();
 		},
 		idCheck() {
-			if (this.infos.id) {
+			if (this.signUpMember.id) {
 				this.duplicate = [];
-				console.log("DUPLICATE ", this.infos.id);
+				console.log("DUPLICATE ", this.signUpMember.id);
 				http.post("/api/check", {
-					id: this.infos.id
+					id: this.signUpMember.id
 				})
 					.then(res => {
-						console.log("DUPLICATE then ", this.infos.id);
+						console.log("DUPLICATE then ", this.signUpMember.id);
 						console.log("DUPLICATE then ", res);
 						if (res.data) {
 							this.duplicate.push(
