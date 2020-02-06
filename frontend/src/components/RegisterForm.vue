@@ -1,122 +1,55 @@
 <template>
 	<div style="display: flex ; align-itmes: center; justify-content: center;">
 		<validation-observer ref="form">
-			<form
-				@submit.prevent="register"
-				id="formData"
-				enctype="multipart/form-data"
-			>
-				<!-- 안되는 코드 -->
-				<!-- <img-inputer
-					name="file"
-					v-model="singUpMember.file"
-					size="middle"
-					placeholder="Drop file here or click"
-					bottomText="Drop file here or click"
-				/> -->
-				<div>
-					<div>
-						<label>Profile Image</label>
-						<input
-							type="file"
-							@change="previewImage"
-							accept="image/*"
-							name="file"
-							class="w3-input w3-border"
-						/>
-					</div>
-					<div class="image-preview" v-if="singUpMember.file.length > 0">
-						<img class="preview" :src="singUpMember.file" />
-					</div>
-				</div>
+			<form @submit.prevent="register" id="formData" enctype="multipart/form-data">
+				<validation-provider name="프로필 이미지 ">
+					<img-inputer
+						name="file"
+						v-model="signUpMember.file"
+						size="middle"
+						placeholder="Drop file here or click"
+						bottomText="Drop file here or click"
+						exceedSizeText="사진의 크기가 초과하였습니다"
+						:maxSize="10240"
+						ref="profile"
+						@onExceed="exceedHandler"
+					/>
+				</validation-provider>
+
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
-				<input
-					type="hidden"
-					name="rankId"
-					:value="this.singUpMember.rankId"
-				/>
-				<input
-					type="hidden"
-					name="gitUrl"
-					:value="this.singUpMember.gitUrl"
-				/>
-				<input
-					type="hidden"
-					name="grade"
-					:value="this.singUpMember.grade"
-				/>
-				<input
-					type="hidden"
-					name="idmember"
-					:value="this.singUpMember.idmember"
-				/>
-				<input
-					type="hidden"
-					name="instargramUrl"
-					:value="this.singUpMember.instargramUrl"
-				/>
-				<input
-					type="hidden"
-					name="isDelete"
-					:value="this.singUpMember.isDelete"
-				/>
-				<input
-					type="hidden"
-					name="isManager"
-					:value="this.singUpMember.isManager"
-				/>
-				<input
-					type="hidden"
-					name="kakaoUrl"
-					:value="this.singUpMember.kakaoUrl"
-				/>
-				<validation-provider
-					name="닉네임 "
-					rules="required|alpha"
-					v-slot="{ errors }"
-				>
+				<input type="hidden" name="rankId" :value="this.signUpMember.rankId" />
+				<input type="hidden" name="grade" :value="this.signUpMember.grade" />
+				<input type="hidden" name="idmember" :value="this.signUpMember.idmember" />
+				<input type="hidden" name="isDelete" :value="this.signUpMember.isDelete" />
+				<input type="hidden" name="isManager" :value="this.signUpMember.isManager" />
+				<input type="hidden" name="email" :value="this.signUpMember.email" />
+
+				<validation-provider name="아이디 " rules="required|email" v-slot="{ errors }">
+					<v-text-field
+						name="id"
+						v-model="signUpMember.id"
+						label="아이디"
+						:error-messages="errors[0] ? errors[0] : []"
+					></v-text-field>
+				</validation-provider>
+				<validation-provider name="닉네임 " :rules="{ required: true }" v-slot="{ errors }">
 					<v-text-field
 						name="nickname"
-						v-model="singUpMember.nickname"
+						v-model="signUpMember.nickname"
 						:counter="10"
 						label="닉네임"
 						:error-messages="errors[0] ? errors[0] : []"
 					></v-text-field>
 				</validation-provider>
 				<validation-provider
-					name="이름 "
-					rules="required|alpha"
-					v-slot="{ errors }"
-				>
-					<v-text-field
-						name="id"
-						v-model="singUpMember.id"
-						:counter="10"
-						label="이름"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
-				<validation-provider
-					name="이메일 "
-					rules="required|email"
-					v-slot="{ errors }"
-				>
-					<v-text-field
-						name="email"
-						v-model="singUpMember.email"
-						label="이메일"
-						:error-messages="errors[0] ? errors[0] : []"
-					></v-text-field>
-				</validation-provider>
-				<validation-provider
 					name="비밀번호 "
 					vid="confirmation"
-					rules="required|min:8"
+					rules="required|min:8|max:16|password"
 					v-slot="{ errors }"
 				>
 					<v-text-field
 						name="password"
-						v-model="singUpMember.password"
+						v-model="signUpMember.password"
 						label="비밀번호"
 						:type="pwd1 ? 'text' : 'password'"
 						:error-messages="errors[0] ? errors[0] : []"
@@ -126,7 +59,7 @@
 				</validation-provider>
 				<validation-provider
 					name="비밀번호 확인 "
-					rules="confirmed:confirmation"
+					rules="required|confirmed:confirmation"
 					v-slot="{ errors }"
 				>
 					<v-text-field
@@ -138,6 +71,9 @@
 						@click:append="pwd2 = !pwd2"
 					></v-text-field>
 				</validation-provider>
+				<v-text-field v-model="signUpMember.gitUrl" label="Git url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.kakaoUrl" label="Kakao url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.instagramUrl" label="Instagram url(선택)"></v-text-field>
 
 				<v-btn class="mr-4" type="submit">회원가입</v-btn>
 				<v-btn @click="clear">초기화</v-btn>
@@ -145,9 +81,7 @@
 			<div>
 				<button v-on:click="idCheck">중복확인</button>
 				<div v-if="duplicate">
-					<div v-for="(message, idx) in duplicate" :key="idx">
-						{{ message }}
-					</div>
+					<div v-for="(message, idx) in duplicate" :key="idx">{{ message }}</div>
 				</div>
 			</div>
 		</validation-observer>
@@ -155,9 +89,14 @@
 </template>
 
 <script>
-import http from '../http-common'
-import router from '../router'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import http from "../http-common";
+import router from "../router";
+import {
+	ValidationProvider,
+	ValidationObserver,
+	extend,
+	validate
+} from "vee-validate";
 
 export default {
 	name: 'RegisterForm',
@@ -166,49 +105,47 @@ export default {
 		ValidationObserver
 	},
 	data: () => ({
-		singUpMember: {
-			file: '',
-			idmember: 0,
+		signUpMember: {
 			rankId: 1,
-			isManager: 0,
+			grade: 0,
+			idmember: 0,
 			isDelete: 0,
-			nickname: '',
-			id: '',
-			password: '',
-			email: '',
-			gitUrl: '',
-			kakaoUrl: '',
-			instagramUrl: '',
-			grade: ''
+			isManager: 0,
+			file: "",
+			id: "",
+			nickname: "",
+			password: "",
+			email: "",
+			gitUrl: "",
+			kakaoUrl: "",
+			instagramUrl: ""
 		},
 		pwd1: false,
 		pwd2: false,
 		passwordConfirm: '',
 		duplicate: [],
-		idcheck: false,
-		loading: false
+		idcheck: false
 	}),
 
 	methods: {
-		register () {
-			let formData = new FormData(document.getElementById('formData'))
-			window.console.log(this.singUpMember.file)
-			// console.log(this.onSubmit());
+		register() {
+			let formData = new FormData(document.getElementById("formData"));
+			formData.set("file", this.$refs.profile.file);
+
 			if (this.onSubmit() && this.idcheck) {
-				this.$store.dispatch('startLoading')
-				console.log('REGISTER beforeaxios ', formData)
-				http
-					.post('http://localhost:8888/api/signUp/', formData)
+				this.$store.dispatch("startLoading");
+				console.log("REGISTER beforeaxios ", formData);
+				http.post("/trc/signUp/", formData)
 					.then(res => {
-						console.log('REGISTER then ', res)
-						this.$store.dispatch('endLoading')
-						alert('회원가입이 성공적으로 완료되었습니다.')
-						router.push('/')
+						console.log("REGISTER then ", res);
+						this.$store.dispatch("endLoading");
+						alert("회원가입이 성공적으로 완료되었습니다.");
+						router.push("/");
 					})
 					.catch(err => {
-						this.$store.dispatch('endLoading')
-						console.log('REGISTER catch ', err)
-					})
+						this.$store.dispatch("endLoading");
+						console.log("REGISTER catch ", err);
+					});
 			} else {
 				console.log('REGISTER ', '검증 실패')
 			}
@@ -232,27 +169,22 @@ export default {
 			})
 			return true
 		},
-		clear () {
-			this.singUpMember.nickname = ''
-			this.singUpMember.name = ''
-			this.singUpMember.email = ''
-			this.singUpMember.password = ''
-			this.passwordConfirm = ''
-			// this.$validator.reset();
+		clear() {
+			this.$refs.form.reset();
 		},
 		valid () {
 			this.$refs.form.validate()
 		},
-		idCheck () {
-			if (this.singUpMember.id) {
-				this.duplicate = []
-				console.log('DUPLICATE ', this.singUpMember.id)
-				http.post('/check/', {
-					id: this.singUpMember.id
+		idCheck() {
+			if (this.signUpMember.id) {
+				this.duplicate = [];
+				console.log("DUPLICATE ", this.signUpMember.id);
+				http.post("/api/check", {
+					id: this.signUpMember.id
 				})
 					.then(res => {
-						console.log('DUPLICATE then ', this.singUpMember.id)
-						console.log('DUPLICATE then ', res)
+						console.log("DUPLICATE then ", this.signUpMember.id);
+						console.log("DUPLICATE then ", res);
 						if (res.data) {
 							this.duplicate.push('사용하실수 있는 아이디입니다.')
 							this.idcheck = true
@@ -266,6 +198,11 @@ export default {
 			} else {
 				this.duplicate.push('아이디를 입력해 주십시오.')
 			}
+		},
+		exceedHandler(file) {
+			console.log(this.$refs.profile);
+			console.warn("onExceed -> file", file);
+			// this.$refs.profile.reset();
 		}
 	},
 	mounted () {
@@ -280,41 +217,4 @@ export default {
 </script>
 
 <style scoped>
-#regiform {
-	display: flex;
-	/* align-items: center; */
-	justify-content: center;
-	vertical-align: middle;
-}
-#nickname {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#id {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#email {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#password {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-#pwdcheck {
-	background-color: #e9cde7;
-	border: 1px black;
-	border-radius: 5px;
-}
-img.preview {
-  width: 200px;
-  background-color: white;
-  border: 1px solid #ddd;
-  padding: 5px;
-}
 </style>
