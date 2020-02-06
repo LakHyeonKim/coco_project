@@ -38,6 +38,8 @@ public class SnsConnectionControlloer {
 	@Autowired
 	MemberService memberService;
 	
+	
+	
 	@ApiOperation(value = "sns 로그인을 id 받아오기", response = List.class)
 	@RequestMapping(value = "/snsLogin", method = RequestMethod.POST)
     public ResponseEntity<Tokens> snsLogin(@RequestBody String id) throws Exception {

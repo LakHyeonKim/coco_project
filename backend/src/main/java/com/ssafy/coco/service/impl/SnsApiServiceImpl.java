@@ -115,7 +115,6 @@ public class SnsApiServiceImpl implements SnsApiService{
  
             // JSON 형태 반환값 처리
             ObjectMapper mapper = new ObjectMapper();
- 
             returnNode = mapper.readTree(response.getEntity().getContent());
  
         } catch (UnsupportedEncodingException e) {
