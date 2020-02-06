@@ -69,7 +69,7 @@ export default {
 <style>
 #settings {
 	width: 17px;
-	opacity: 0.6;
+	opacity: 0.5;
 	cursor: pointer;
 }
 #imgBannerBox {
@@ -78,6 +78,7 @@ export default {
 }
 #imgBanner {
 	width: 100%;
+	filter: brightness(95%);
 }
 #today {
 	font-size: 15px;
@@ -88,6 +89,8 @@ export default {
 	margin: 0 auto;
 	text-align: center;
 	height: 35vw;
+	color: white;
+	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 }
 #infoBox {
 	position: relative;
