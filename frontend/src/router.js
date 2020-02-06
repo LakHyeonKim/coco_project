@@ -13,7 +13,7 @@ import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
 import SearchPage from "./views/SearchPage.vue";
 import DetailPage from "./views/DetailPage.vue";
-import BrokerPageForKakao from "./views/BrokerPageForKakao.vue";
+import FindPassword from "./views/FindPassword.vue";
 
 Vue.use(VueRouter);
 
@@ -89,14 +89,14 @@ const routes = [
 		// }
 	},
 	{
-		path: "/broker",
-		name: "broker",
-		component: BrokerPageForKakao
+		path: "/findpwd",
+		name: "findpwd",
+		component: FindPassword
 	},
 	{
 		path: "*",
 		name: "notfound",
-		component: Home
+		component: NewsFeed
 	}
 ];
 

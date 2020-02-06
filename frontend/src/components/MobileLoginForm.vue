@@ -116,6 +116,12 @@ export default {
 								"refreshToken",
 								res.data.refreshToken
 							);
+							this.$store.state.token = res.data.accessToken;
+							this.$session.set(
+								"id",
+								Number(this.$store.getters.userId)
+							);
+							this.$session.set("targetId", 10);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);
@@ -167,17 +173,28 @@ export default {
 	// 	const code = document.location.href.split("code");
 	// 	if (code[1]) {
 	// 		const sendCode = code[1].slice(1);
-	// 		alert(sendCode);
+	// 		// alert(sendCode);
 	// 		http.get("/test/kakaologin2", { params: { code: sendCode } })
 	// 			.then(res => {
-	// 				console.log("kakao res", res);
-	// 				router.push("/");
+	// 				console.log("kakao res", res.data);
+	// 				console.log("kakao res", res.data.accessToken);
+	// 				if (res.data.accessToken) {
+	// 					this.$session.start();
+	// 					this.$session.set("accessToken", res.data.accessToken);
+	// 					this.$session.set(
+	// 						"refreshToken",
+	// 						res.data.refreshToken
+	// 					);
+	// 					router.push("/newsfeed");
+	// 				} else {
+	// 					console.log("kakao res else", res);
+	// 					router.push("/register");
+	// 				}
 	// 			})
 	// 			.catch(err => {
 	// 				console.log("kakao err", err);
-	// 				router.push("/");
 	// 			});
-	// }
+	// 	}
 	// }
 };
 </script>

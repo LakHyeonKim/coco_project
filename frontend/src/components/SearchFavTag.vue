@@ -31,17 +31,17 @@ export default {
 	mounted() {
 		http.post("/api/findByAllDefaultSearch/", 7)
 			.then(res => {
-				// console.log(res);
+				console.log("findByAlldefault", res);
 				// console.log(res.data);
 				for (let i = 0; i < res.data.length; ++i) {
 					// console.log(res.data[i].tags);
 					// console.log(res.data[i].tags.length);
 					for (let j = 0; j < res.data[i].tags.length; ++j) {
-						// console.log(res.data[i].tags[j].tagName);
-						if (res.data[i].tags[j].tagName in this.tags) {
-							this.tags[`${res.data[i].tags[j].tagName}`] += 1;
+						// console.log(res.data[i].tags[j]);
+						if (res.data[i].tags[j] in this.tags) {
+							this.tags[`${res.data[i].tags[j]}`] += 1;
 						} else {
-							this.tags[`${res.data[i].tags[j].tagName}`] = 1;
+							this.tags[`${res.data[i].tags[j]}`] = 1;
 						}
 					}
 				}

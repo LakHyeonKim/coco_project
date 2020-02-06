@@ -7,18 +7,22 @@
 						<img src="../assets/user.png" id="userImg" />
 					</div>
 					<div id="userTitle">
-						<p id="userId">{{ postWriter }}</p>
+						<p id="userId">
+							{{ postWriter }}
+						</p>
 						<p id="date">{{ dateCreated }}</p>
 					</div>
 				</div>
 				<div id="cardTitle">
-					<div class="line-clamp-title">
+					<div class="line-clamp-title" @click.prevent="goDetail()">
 						<b>{{ postTitle }}</b>
 					</div>
 				</div>
 				<div id="cardHash">
 					<div v-for="tag in tags" :key="`${tag}`">
-						<a href="#" id="hashTag"> #{{ tag }} </a>
+						<a id="hashTag" @click.prevent="goSearch(`${tag}`)">
+							#{{ tag }}
+						</a>
 					</div>
 				</div>
 				<div id="cardBody">
@@ -52,28 +56,46 @@
 </template>
 
 <script>
+import router from "../router";
+import store from "../store";
+
 export default {
 	name: "Portfolio",
 	props: {
-		dateCreated: {},
-		postTitle: {},
-		code: {},
-		// imagePath: {},
-		postWriter: {},
-		likeCount: {},
-		commentCount: {},
-		tags: {},
 		idPost: {},
 		memberId: {},
+		postTitle: {},
+		postWriter: {},
+		dateCreated: {},
 		updateCreated: {},
+		code: {},
+		likeCount: {},
 		views: {},
+		imagePath: {},
+		filePath: {},
 		access: {},
-		order: {}
+		likeCheck: {},
+		order: {},
+		tags: {},
+		commentCount: {}
 	},
 	data() {
 		return {
 			//
 		};
+	},
+	methods: {
+		goDetail() {
+			// console.log("alsdkfjlaskdfj", this.idPost);
+			store.dispatch("saveIdPost", this.idPost);
+			// console.log("idPOst", store.state.idPost);
+			router.push("/detail");
+		},
+		goSearch(word) {
+			// console.log(word);
+			store.dispatch("saveSearchWord", word);
+			router.push("/search");
+		}
 	}
 };
 </script>

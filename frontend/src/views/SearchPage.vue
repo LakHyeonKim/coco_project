@@ -5,17 +5,24 @@
 			<searchFavTag @favtag="searchwords"></searchFavTag>
 			<div>
 				<div v-for="i in searches.length" :key="i">
-					<SearchList
+					<SearchCard
+						:idPost="searches[i - 1].post.idPost"
+						:memberId="searches[i - 1].post.memberId"
+						:postTitle="searches[i - 1].post.postTitle"
 						:postWriter="searches[i - 1].post.postWriter"
 						:dateCreated="searches[i - 1].post.dateCreated"
-						:postTitle="searches[i - 1].post.postTitle"
+						:updateCreated="searches[i - 1].post.updateCreated"
 						:code="searches[i - 1].post.code"
 						:likeCount="searches[i - 1].likeCount"
-						:commentCount="searches[i - 1].commentCount"
+						:views="searches[i - 1].post.views"
+						:access="searches[i - 1].post.access"
+						:likeCheck="searches[i - 1].post.likeCheck"
+						:order="searches[i - 1].post.order"
 						:tags="searches[i - 1].tags"
+						:commentCount="searches[i - 1].commentCount"
 						id="searches"
 						@searchtag="searchwords"
-					></SearchList>
+					></SearchCard>
 				</div>
 			</div>
 		</div>
@@ -25,7 +32,7 @@
 <script>
 import SearchBar from "../components/SearchBar";
 import SearchFavTag from "../components/SearchFavTag";
-import SearchList from "../components/SearchList";
+import SearchCard from "../components/SearchCard";
 import http from "../http-common";
 
 export default {
@@ -33,13 +40,14 @@ export default {
 	data() {
 		return {
 			searches: [],
-			keyword: ""
+			keyword: "",
+			idMember: 0
 		};
 	},
 	components: {
 		SearchBar,
 		SearchFavTag,
-		SearchList
+		SearchCard
 	},
 	methods: {
 		searchwords(word) {
@@ -50,7 +58,12 @@ export default {
 			// 	Authorization: token
 			// };
 			if (word) {
-				http.post("/api/findByAllKeyword/", word)
+				const searchword = {
+					idMember: this.idMember,
+					keyWord: word
+				};
+				console.log(searchword);
+				http.post("/api/findByAllKeyword/", searchword)
 					.then(res => {
 						console.log("searchwords then ", res);
 						this.searches = res.data;
@@ -64,7 +77,30 @@ export default {
 		}
 	},
 	mounted() {
-		http.post("/api/findByAllDefaultSearch/", 7)
+		this.idMember = this.$session.get("id");
+		console.log("mounted", this.idMember);
+		// if (this.searchword) {
+		// 	const requestForm = {
+		// 		idMember: this.idMember,
+		// 		keyWord: this.searchword
+		// 	};
+		// 	console.log(requestForm);
+		// 	http.post("/api/findByAllKeyword/", requestForm)
+		// 		.then(res => {
+		// 			console.log("searchwords then ", res);
+		// 			this.searches = res.data;
+		// 			this.$store.state.searchword = "";
+		// 			console.log(
+		// 				"asdfasdgasdfgasdfasdfgas",
+		// 				this.$store.state.searchword
+		// 			);
+		// 			return;
+		// 		})
+		// 		.catch(err => {
+		// 			console.log("searchwords catch ", err);
+		// 		});
+		// }
+		http.post("/api/findByAllDefaultSearch/", this.idMember)
 			.then(res => {
 				console.log("search mounted then", res);
 				this.searches = res.data;
