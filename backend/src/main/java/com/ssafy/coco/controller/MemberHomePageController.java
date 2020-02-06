@@ -32,8 +32,8 @@ public class MemberHomePageController {
 	
 	@ApiOperation(value = "멤버의 id(String)을 가지고 mypage정보를 가지고 옴", response = List.class)
 	@RequestMapping(value = "/findByMemberHomePageUserID", method = RequestMethod.POST)
-	public ResponseEntity<MemberHomePage> findByMemberHomePageUserID(@RequestBody String id) {
-		MemberHomePage answer = memberHomePageService.findByMemberHomePageUserID(id);
+	public ResponseEntity<MemberHomePage> findByMemberHomePageUserID(@RequestBody long idMember) {
+		MemberHomePage answer = memberHomePageService.findByMemberHomePageUserID(idMember);
 		if (answer == null) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}

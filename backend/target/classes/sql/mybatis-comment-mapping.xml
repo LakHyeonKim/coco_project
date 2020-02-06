@@ -30,7 +30,6 @@
 	</sql>
 	<sql id="delete-Comment">
 		delete from comment
-		where idcomment=#{idcomment}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -55,7 +54,7 @@
 			</if>
 			<if test="commentWriter !=null">
 				AND
-				comment_writer = '${commentWriter}'
+				comment_writer LIKE '%${commentWriter}%'
 			</if>
 			<if test="contents !=null">
 				AND
@@ -75,6 +74,29 @@
 
 	<delete id="deleteComment" parameterType="Comment">
 		<include refid="delete-Comment"></include>
+		<where>
+			access = '${access}'
+			<if test="idcomment !=0">
+				AND
+				idcomment = '${idcomment}'
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = '${memberId}'
+			</if>
+			<if test="postId != 0">
+				AND
+				post_id = '${postId}'
+			</if>
+			<if test="commentWriter !=null">
+				AND
+				comment_writer = '${commentWriter}'
+			</if>
+			<if test="contents !=null">
+				AND
+				contents = ${contents}
+			</if>
+		</where>
 	</delete>
 </mapper>
 

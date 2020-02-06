@@ -27,7 +27,6 @@
 	</sql>
 	<sql id="delete-Mypage">
 		delete from mypage
-		where idmypage = #{idmypage}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -73,6 +72,25 @@
 
 	<delete id="deleteMypage" parameterType="Mypage">
 		<include refid="delete-Mypage"></include>
+		<where>
+			access = '${access}'
+			<if test="idmypage != 0">
+				AND
+				idmypage = ${idmypage}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = ${memberId}
+			</if>
+			<if test="bannerImagePath !=null">
+				AND
+				banner_image_path = ${bannerImagePath}
+			</if>
+			<if test="bannerText !=null">
+				AND
+				banner_text = ${bannerText}
+			</if>
+		</where>
 	</delete>
 </mapper>
 

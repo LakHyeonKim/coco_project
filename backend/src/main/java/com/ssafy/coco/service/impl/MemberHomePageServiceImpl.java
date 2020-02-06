@@ -33,22 +33,17 @@ public class MemberHomePageServiceImpl implements MemberHomePageService{
 	private FollowDao followDao;
 	
 	@Override
-	public MemberHomePage findByMemberHomePageUserID(String id) {
-		Member inputMember = new Member(); inputMember.setId(id);
-		List<Member> memberList = memberDao.findMember(inputMember);
-		Member member = memberList.get(0);
-		List<Mypage> myPageList = mypageDao.findMypage(new Mypage(0, member.getIdmember(), null, null, 0, 0, 0));
+	public MemberHomePage findByMemberHomePageUserID(long idMember) {
+		List<Mypage> myPageList = mypageDao.findMypage(new Mypage(0, idMember, null, null, 0, 0, 0));
 		Mypage mypage = myPageList.get(0);
-		System.out.println(myPageList);
 		List<Tag> myPageTagList = TagDao.findAllTagIncludedMypage(mypage.getIdmypage());
 		List<String> tags = new ArrayList<>();
 		for(Tag tag : myPageTagList) {
 			tags.add(tag.getTagName());
 		}
-		long followingCount = followDao.findFollowingCount(member.getIdmember());
-		long followerCount = followDao.findFollowerCount(member.getIdmember());
-		int totalPostCount = postDao.findPost(new Post(0, member.getIdmember(), null, null, null, null, null, 0, 0, null, 0, 0, 0)).size();
+		long followingCount = followDao.findFollowingCount(idMember);
+		long followerCount = followDao.findFollowerCount(idMember);
+		int totalPostCount = postDao.findPost(new Post(0, idMember, null, null, null, null, null, 0, 0, null, 0, 0, 0)).size();
 		return new MemberHomePage(mypage, tags, followingCount, followerCount, totalPostCount);
 	}
-	
 }
