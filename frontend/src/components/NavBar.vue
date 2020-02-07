@@ -9,7 +9,6 @@
 					@click="getMypage()"
 					id="profile"
 					src="../assets/user.png"
-					@click="getMypage()"
 				/>
 				<!-- </router-link> -->
 			</li>
