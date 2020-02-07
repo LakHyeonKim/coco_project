@@ -11,7 +11,7 @@ export default new Vuex.Store({
 		loading: false,
 		postDetail: [],
 		idPost: 0,
-		searchword: ""
+		searchtag: ""
 		// init: true,
 		// memberemail: "",
 		// accessToken: "",
@@ -46,8 +46,8 @@ export default new Vuex.Store({
 		setIdPost: function(state, data) {
 			state.idPost = data;
 		},
-		setSearchWord: function(state, data) {
-			state.searchword = data;
+		setSearchTag: function(state, data) {
+			state.searchtag = data;
 		}
 		// // 아래로 카카오 로그인 kakao API에 사용
 		// setInit: function(state, status) {
@@ -86,8 +86,8 @@ export default new Vuex.Store({
 		saveIdPost: function(context, data) {
 			context.commit("setIdPost", data);
 		},
-		saveSearchWord: function(context, data) {
-			context.commit("setSearchWord", data);
+		saveSearchTag: function(context, data) {
+			context.commit("setSearchTag", data);
 		}
 		// saveInit: function(context) {
 		// 	context.commit("setInit", false);

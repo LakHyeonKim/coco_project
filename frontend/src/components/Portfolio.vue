@@ -91,9 +91,9 @@ export default {
 			// console.log("idPOst", store.state.idPost);
 			router.push("/detail");
 		},
-		goSearch(word) {
+		goSearch(tag) {
 			// console.log(word);
-			store.dispatch("saveSearchWord", word);
+			store.dispatch("saveSearchTag", tag);
 			router.push("/search");
 		}
 	}

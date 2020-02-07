@@ -79,35 +79,34 @@ export default {
 	mounted() {
 		this.idMember = this.$session.get("id");
 		console.log("mounted", this.idMember);
-		// if (this.searchword) {
-		// 	const requestForm = {
-		// 		idMember: this.idMember,
-		// 		keyWord: this.searchword
-		// 	};
-		// 	console.log(requestForm);
-		// 	http.post("/api/findByAllKeyword/", requestForm)
-		// 		.then(res => {
-		// 			console.log("searchwords then ", res);
-		// 			this.searches = res.data;
-		// 			this.$store.state.searchword = "";
-		// 			console.log(
-		// 				"asdfasdgasdfgasdfasdfgas",
-		// 				this.$store.state.searchword
-		// 			);
-		// 			return;
-		// 		})
-		// 		.catch(err => {
-		// 			console.log("searchwords catch ", err);
-		// 		});
-		// }
-		http.post("/api/findByAllDefaultSearch/", this.idMember)
-			.then(res => {
-				console.log("search mounted then", res);
-				this.searches = res.data;
-			})
-			.catch(err => {
-				console.log("search mounted catch", err);
-			});
+		const tagforsearch = this.$store.state.searchtag;
+		if (tagforsearch) {
+			const requestForm = {
+				idMember: this.idMember,
+				keyWord: tagforsearch
+			};
+			console.log(requestForm);
+			http.post("/api/findByAllKeyword/", requestForm)
+				.then(res => {
+					console.log("searchtags then ", res);
+					this.searches = res.data;
+					this.$store.state.searchtag = "";
+					console.log("tagforsearch then res change", tagforsearch);
+					return;
+				})
+				.catch(err => {
+					console.log("searchtags catch ", err);
+				});
+		} else {
+			http.post("/api/findByAllDefaultSearch/", this.idMember)
+				.then(res => {
+					console.log("search mounted then", res);
+					this.searches = res.data;
+				})
+				.catch(err => {
+					console.log("search mounted catch", err);
+				});
+		}
 	}
 };
 </script>
