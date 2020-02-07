@@ -34,6 +34,7 @@ import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService2;
 import com.ssafy.coco.service.MemberService;
 import com.ssafy.coco.vo.Member;
+import com.ssafy.coco.vo.Tokens;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
