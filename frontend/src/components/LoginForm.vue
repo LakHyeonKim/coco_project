@@ -166,11 +166,15 @@ export default {
 					console.log("google login res ", res);
 					if (res.data.accessToken) {
 						console.log("google login if ", res);
-						this.$session.start();
 						this.$session.set("accessToken", res.data.accessToken);
 						this.$session.set(
 							"refreshToken",
 							res.data.refreshToken
+						);
+						this.$store.state.token = res.data.accessToken;
+						this.$session.set(
+							"id",
+							Number(this.$store.getters.userId)
 						);
 						router.push("/newsfeed");
 					} else {
@@ -200,12 +204,12 @@ export default {
 					console.log("kakao res", res.data);
 					console.log("kakao res", res.data.accessToken);
 					if (res.data.accessToken) {
-						this.$session.start();
 						this.$session.set("accessToken", res.data.accessToken);
 						this.$session.set(
 							"refreshToken",
 							res.data.refreshToken
 						);
+						this.$session.set("id", res.data.Member.idmember);
 						router.push("/newsfeed");
 					} else {
 						console.log("kakao res else", res);
