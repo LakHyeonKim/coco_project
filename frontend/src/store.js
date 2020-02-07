@@ -9,7 +9,14 @@ export default new Vuex.Store({
 		token: null,
 		user: "",
 		loading: false,
+		postDetail: [],
+		idPost: 0,
+		searchtag: "",
 		tags: null
+		// init: true,
+		// memberemail: "",
+		// accessToken: "",
+		// refreshToken: "",
 	},
 	getters: {
 		userId: function(state) {
@@ -33,7 +40,34 @@ export default new Vuex.Store({
 		},
 		setLoading: function(state, status) {
 			state.loading = status;
+		},
+		setPostDetail: function(state, data) {
+			state.postDetail = [];
+			state.postDetail = data;
+		},
+		setIdPost: function(state, data) {
+			state.idPost = data;
+		},
+		setSearchTag: function(state, data) {
+			state.searchtag = data;
 		}
+		// // 아래로 카카오 로그인 kakao API에 사용
+		// setInit: function(state, status) {
+		// 	state.init = status;
+		// },
+		// setMemberEmail: function(state, data) {
+		// 	state.memberemail = data;
+		// },
+		// setTokens: function(state, data) {
+		// 	state.accessToken = data.accessToken;
+		// 	state.refreshToken = data.refreshToken;
+		// this.$session.start();
+		// this.$session.set("accessToken", state.accessToken);
+		// this.$session.set("refreshToken", state.refreshToken);
+		// this.$session.start();
+		// this.$session.set("acessToken", acess);
+		// this.$session.set("refreshToken", refresh);
+		// }
 	},
 	actions: {
 		login: function(context, token) {
@@ -47,6 +81,24 @@ export default new Vuex.Store({
 		},
 		endLoading: function(context) {
 			context.commit("setLoading", false);
+		},
+		savePostDetail: function(context, data) {
+			context.commit("setPostDetail", data);
+		},
+		saveIdPost: function(context, data) {
+			context.commit("setIdPost", data);
+		},
+		saveSearchTag: function(context, data) {
+			context.commit("setSearchTag", data);
 		}
+		// saveInit: function(context) {
+		// 	context.commit("setInit", false);
+		// },
+		// saveMemberEmail: function(context, data) {
+		// 	context.commit("setMemberEmail", data);
+		// },
+		// saveTokens: function(context, data) {
+		// 	context.commit("setTokens", data);
+		// },
 	}
 });

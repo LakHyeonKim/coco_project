@@ -17,12 +17,12 @@
 					</div>
 				</div>
 				<div id="cardHash">
-					<div v-for="tag in tags" :key="`${tag.idtag}`">
+					<div v-for="tag in tags" :key="`${tag}`">
 						<button
-							v-on:click.prevent="searchtag(tag.tagName)"
+							v-on:click.prevent="searchtag(tag)"
 							id="hashTag"
 						>
-							#{{ tag.tagName }}
+							#{{ tag }}
 						</button>
 						<!-- <a href="#" id="hashTag"> #{{ tag.tagName }} </a> -->
 					</div>
@@ -61,14 +61,21 @@
 export default {
 	name: "SearchList",
 	props: {
-		dateCreated: {},
-		postTitle: {},
-		code: {},
 		// imagePath: {},
+		idPost: {},
+		memberId: {},
+		postTitle: {},
 		postWriter: {},
+		dateCreated: {},
+		updateCreated: {},
+		code: {},
 		likeCount: {},
-		commentCount: {},
-		tags: {}
+		views: {},
+		access: {},
+		likeCheck: {},
+		order: {},
+		tags: {},
+		commentCount: {}
 	},
 	data() {
 		return {
@@ -76,9 +83,9 @@ export default {
 		};
 	},
 	methods: {
-		searchtag(tagName) {
-			console.log(tagName);
-			this.$emit("searchtag", tagName);
+		searchtag(tag) {
+			console.log(tag);
+			this.$emit("searchtag", tag);
 			// this.tagforsearch = "";
 		}
 	}

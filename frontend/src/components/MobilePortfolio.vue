@@ -17,8 +17,8 @@
 					</div>
 				</div>
 				<div id="cardHash">
-					<div v-for="tag in tags" :key="`${tag.idtag}`">
-						<a href="#" id="hashTag"> #{{ tag.tagName }} </a>
+					<div v-for="tag in tags" :key="`${tag}`">
+						<a href="#" id="hashTag"> #{{ tag }} </a>
 					</div>
 				</div>
 				<!-- <div id="imgBox" v-if="imagePath">
@@ -62,7 +62,13 @@ export default {
 		postWriter: {},
 		likeCount: {},
 		commentCount: {},
-		tags: {}
+		tags: {},
+		idPost: {},
+		memberId: {},
+		updateCreated: {},
+		views: {},
+		access: {},
+		order: {}
 	},
 	data() {
 		return {

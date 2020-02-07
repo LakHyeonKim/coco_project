@@ -41,7 +41,9 @@ import router from "../router";
 export default {
 	name: "NavBar",
 	data() {
-		return {};
+		return {
+			preUrl: ""
+		};
 	},
 	methods: {
 		logout() {
