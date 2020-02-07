@@ -19,5 +19,6 @@ public interface PostService {
 	public int addPost(Post post);
 	public int updatePost(Post post);
 	public int updatePostViewCount(long idPost);
+	public int updatePostUnlikeCount(long idPost);
 	public int deletePost(Post post);
 }
