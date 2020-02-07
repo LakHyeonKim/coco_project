@@ -31,7 +31,7 @@ export default {
 	mounted() {
 		http.post("/api/findByAllDefaultSearch/", 7)
 			.then(res => {
-				console.log("findByAlldefault", res);
+				console.log("findByAlldefault for tag ", res);
 				// console.log(res.data);
 				for (let i = 0; i < res.data.length; ++i) {
 					// console.log(res.data[i].tags);
