@@ -73,7 +73,6 @@
 	<delete id="deleteFollow" parameterType="Follow">
 		<include refid="delete-Follow"></include>
 		<where>
-		 	access = ${access}
 		 	<if test="idfollow !=0">
 				AND
 				idfollow = ${idfollow}
