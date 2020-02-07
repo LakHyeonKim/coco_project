@@ -215,6 +215,7 @@ export default {
 					} else {
 						this.userInfo.isFollew = 1;
 						this.f_current = "팔로잉";
+						//sdds
 					}
 				});
 		}
