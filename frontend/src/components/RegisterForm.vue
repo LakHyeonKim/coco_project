@@ -17,12 +17,6 @@
 				</validation-provider>
 
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
-				<!-- <input type="hidden" name="rankId" :value="this.signUpMember.rankId" />
-				<input type="hidden" name="grade" :value="this.signUpMember.grade" />
-				<input type="hidden" name="idmember" :value="this.signUpMember.idmember" />
-				<input type="hidden" name="isDelete" :value="this.signUpMember.isDelete" />
-				<input type="hidden" name="isManager" :value="this.signUpMember.isManager" />
-				<input type="hidden" name="email" :value="this.signUpMember.email" />-->
 
 				<validation-provider name="아이디 " rules="required|email" v-slot="{ errors }">
 					<v-text-field
@@ -107,12 +101,6 @@ export default {
 	},
 	data: () => ({
 		signUpMember: {
-			// rankId: 1,
-			// grade: 0,
-			// idmember: 0,
-			// isDelete: 0,
-			// isManager: 0,
-
 			file: "",
 			id: "",
 			nickname: "",
