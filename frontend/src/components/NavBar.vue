@@ -6,6 +6,7 @@
 			<li>
 				<!-- <router-link to="/mypage"> -->
 				<img
+					@click="getMypage()"
 					id="profile"
 					src="../assets/user.png"
 					@click="getMypage()"
@@ -86,6 +87,7 @@ export default {
 	background-color: white;
 	margin-bottom: 20px;
 	width: 40px;
+	cursor: pointer;
 }
 
 #navbar > ul > li {
