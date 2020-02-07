@@ -104,6 +104,7 @@ export default {
 		},
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
+			console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.posts[index].post.likeCheck == 1) {
 				this.address = "/trc/unLike/";
 				this.posts[index].post.likeCheck = 0;
