@@ -4,9 +4,13 @@
 	<div id="navbar">
 		<ul>
 			<li>
-				<router-link to="/mypage">
-					<img id="profile" src="../assets/user.png" />
-				</router-link>
+				<!-- <router-link to="/mypage"> -->
+				<img
+					id="profile"
+					src="../assets/user.png"
+					@click="getMypage()"
+				/>
+				<!-- </router-link> -->
 			</li>
 			<li class="nav_menu">
 				<router-link to="/newsfeed">
@@ -49,6 +53,10 @@ export default {
 		logout() {
 			this.$session.destroy();
 			router.push("/");
+		},
+		getMypage() {
+			this.$session.set("targetId", this.$session.get("id"));
+			router.push("/mypage");
 		}
 	}
 };
@@ -128,6 +136,7 @@ export default {
 }
 @media screen and (max-width: 330px) {
 	#profile {
+		cursor: pointer;
 		width: 30px;
 	}
 	.nav_menu_img {
