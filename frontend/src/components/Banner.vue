@@ -91,7 +91,7 @@
 				</span>
 			</div>
 			<div slot="footer">
-				<button class="modal-default-button" @click="pwCheck()">
+				<button class="modal-default-button" @click="follow()">
 					확인
 				</button>
 				<button
@@ -165,14 +165,6 @@ export default {
 		};
 	},
 	methods: {
-		clickFollow() {
-			this.checkFollow = !this.checkFollow;
-			if (this.userInfo.isFollew == 1) {
-				// confirm("정말 팔로우를 취소하시겠습니까?");
-			} else {
-				console.log("");
-			}
-		},
 		pwCheck() {
 			alert(this.input_pw);
 			this.$router.push("/infoModify");
@@ -191,7 +183,7 @@ export default {
 		follow() {
 			let address = "";
 			if (this.userInfo.isFollew == 1) {
-				address = "";
+				address = "/trc/makeUnFollow/";
 				this.userInfo.isFollew = 0;
 				this.f_current = "팔로우";
 			} else {
@@ -199,6 +191,7 @@ export default {
 				this.userInfo.isFollew = 1;
 				this.f_current = "팔로잉";
 			}
+			this.showModal_f = false;
 
 			http.post(address, {
 				memberFollower: this.$session.get("id"),
@@ -215,7 +208,6 @@ export default {
 					} else {
 						this.userInfo.isFollew = 1;
 						this.f_current = "팔로잉";
-						//sdds
 					}
 				});
 		}
