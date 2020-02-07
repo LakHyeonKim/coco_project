@@ -219,10 +219,12 @@ public class TransactionServiceImpl implements TransactionService{
 	 * 
 	 * 좋아요 취소 알람 취소 까지 트랜잭션
 	 */
+	
 	@Transactional
 	public void unLike(long idPost, long idMember) {
 		//long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		likeDao.deleteLike(new Like(0, idPost, idMember, 0));
+		postDao.updatePostUnlikeCount(idPost);
 //		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
 //		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}

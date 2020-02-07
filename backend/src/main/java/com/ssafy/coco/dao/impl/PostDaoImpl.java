@@ -106,4 +106,9 @@ public class PostDaoImpl implements PostDao {
 		return sqlSession.selectList(ns + "findPostByNewsfeedOrderByLike", idMemberFollower);
 	}
 
+	@Override
+	public int updatePostUnlikeCount(long idPost) {
+		return sqlSession.update(ns + "updatePostUnlikeCount",idPost);
+	}
+
 }

@@ -44,9 +44,10 @@ class BackendApplicationTests {
 
 	@Autowired
 	MailService2 mailService;
-	@Test void transactionContextLoads() throws Exception{
-		mailService.test();
-	}
+	
+	//@Test void transactionContextLoads() throws Exception{
+	//	mailService.test();
+	//}
 		  
 		 
 	/*
