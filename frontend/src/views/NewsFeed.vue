@@ -23,18 +23,18 @@
 		</div>
 		<div id="blankBox"></div>
 		<div id="mainBox">
-			<PortfolioList id="subBox"></PortfolioList>
+			<PostList id="subBox"></PostList>
 		</div>
 	</div>
 </template>
 
 <script>
-import PortfolioList from "../components/PortfolioList";
+import PostList from "../components/PostList";
 
 export default {
 	name: "NewsFeed",
 	components: {
-		PortfolioList
+		PostList
 	},
 	methods: {
 		onInput(e) {

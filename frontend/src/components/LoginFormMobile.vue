@@ -80,7 +80,7 @@ import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
 
 export default {
-	name: "MobileLoginForm",
+	name: "LoginFormMobile",
 
 	data() {
 		return {

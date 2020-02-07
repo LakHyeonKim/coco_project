@@ -46,7 +46,7 @@
 </template>
 
 <script>
-export default { name: "Footer" };
+export default { name: "MypageFooter" };
 </script>
 
 <style>
