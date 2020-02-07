@@ -72,7 +72,7 @@
 import http from "../http-common";
 import store from "../store";
 export default {
-	name: "mypost",
+	name: "MypageMyPost",
 	store,
 	data() {
 		return {

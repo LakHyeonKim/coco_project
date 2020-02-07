@@ -32,7 +32,7 @@
 <script>
 import store from "../store";
 export default {
-	name: "mymenu",
+	name: "MypageMyMenu",
 	store,
 	data() {
 		return {
