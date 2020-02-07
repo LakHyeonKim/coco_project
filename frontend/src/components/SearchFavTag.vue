@@ -29,7 +29,7 @@ export default {
 		}
 	},
 	mounted() {
-		http.post("/api/findByAllDefaultSearch/", 7)
+		http.post("/api/findByAllDefaultSearch/", this.$session.get("id"))
 			.then(res => {
 				console.log("findByAlldefault for tag ", res);
 				// console.log(res.data);
