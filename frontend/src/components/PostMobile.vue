@@ -1,5 +1,5 @@
 <template>
-	<div style="background-color:rgba(0, 0, 0,0.0);" class="portfolioBox">
+	<div style="background-color:white;" class="postBox">
 		<div id="cardBox">
 			<div id="contentBox">
 				<div id="cardHead">
@@ -7,57 +7,68 @@
 						<img src="../assets/user.png" id="userImg" />
 					</div>
 					<div id="userTitle">
-						<p id="userId">아이디 적을거임</p>
-						<p id="date">{{ date }}</p>
+						<p id="userId">{{ postWriter }}</p>
+						<p id="date">{{ dateCreated }}</p>
 					</div>
 				</div>
 				<div id="cardTitle">
 					<div class="line-clamp-title">
-						<b>{{ title }}</b>
+						<b>{{ postTitle }}</b>
 					</div>
 				</div>
 				<div id="cardHash">
-					<a href="#" id="hashTag">#LALALAND</a>
+					<div v-for="tag in tags" :key="`${tag}`">
+						<a href="#" id="hashTag"> #{{ tag }} </a>
+					</div>
 				</div>
-				<div id="cardBody">
-					<span class="line-clamp-body">{{ body }}</span>
+				<!-- <div id="imgBox" v-if="imagePath">
+					<v-img :src="imagePath" height="150px" width="100%"></v-img>
+					<div id="stackImg">
+						<div v-for="tag in tags" :key="`${tag.idtag}`">
+							{{ tag.imagePath }}
+						</div>
+						<img src="../assets/css.png" alt="" class="stackImgs" />
+						<img src="../assets/JS.png" alt="" class="stackImgs" />
+						<img src="../assets/vue.png" alt="" class="stackImgs" />
+					</div>
 				</div>
-				<div id="cardFooter">
-					<div id="like">좋아요 123개</div>
-					<div id="comment">댓글 1234개</div>
-				</div>
-			</div>
-			<div id="imgBox" v-if="imgSrc">
-				<v-img :src="imgSrc" height="220px" width="220px"></v-img>
-				<div id="stackImg">
-					<img src="../assets/css.png" alt class="stackImgs" />
-					<img src="../assets/JS.png" alt class="stackImgs" />
-					<img src="../assets/vue.png" alt class="stackImgs" />
-				</div>
-			</div>
-			<div id="noStackImg" v-else>
-				<img src="../assets/css.png" alt class="stackImgs" />
-				<img src="../assets/JS.png" alt class="stackImgs" />
-				<img src="../assets/vue.png" alt class="stackImgs" />
-			</div>
-			<!-- <div id="noImgBox" v-else>
-				<div id="noStackImg">
+				<div id="noStackImg" v-else>
 					<img src="../assets/css.png" alt="" class="stackImgs" />
 					<img src="../assets/JS.png" alt="" class="stackImgs" />
 					<img src="../assets/vue.png" alt="" class="stackImgs" />
+				</div> -->
+				<div id="cardBody">
+					<span class="line-clamp-body">
+						{{ code }}
+					</span>
 				</div>
-			</div>-->
+				<div id="cardFooter">
+					<div id="like">좋아요 {{ likeCount }}개</div>
+					<div id="comment">댓글 {{ commentCount }}개</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
+
 <script>
 export default {
-	name: "Portfolio",
+	name: "PostMobile",
 	props: {
-		date: { type: String },
-		title: { type: String },
-		body: { type: String },
-		imgSrc: { type: String }
+		dateCreated: {},
+		postTitle: {},
+		code: {},
+		// imagePath: {},
+		postWriter: {},
+		likeCount: {},
+		commentCount: {},
+		tags: {},
+		idPost: {},
+		memberId: {},
+		updateCreated: {},
+		views: {},
+		access: {},
+		order: {}
 	},
 	data() {
 		return {
@@ -66,15 +77,17 @@ export default {
 	}
 };
 </script>
+
 <style scoped>
-.portfolioBox {
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-	height: 250px;
+.postBox {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
+	/* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
+	/* height: 250px; */
 }
 #cardBox {
-	margin: 13px 13px 13px 13px;
-	display: flex;
+	margin: 10px;
+	/* display: flex; */
 }
 #contentBox {
 	flex: 1;
@@ -118,16 +131,16 @@ export default {
 	-webkit-box-orient: vertical;
 }
 #cardHash {
+	display: flex;
 	margin-bottom: 7px;
 }
 #hashTag {
 	font-size: 16px;
 	color: blue;
 	text-decoration: none;
-	/* padding-left: 20px; */
+	margin-right: 5px;
 }
 #cardBody {
-	min-height: 75px;
 	margin-bottom: 10px;
 	/* margin-left: 10px; */
 }
@@ -138,8 +151,6 @@ export default {
 	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 }
-#cardFooter {
-}
 #like {
 	display: inline-block;
 	/* margin-left: 20px; */
@@ -148,9 +159,10 @@ export default {
 #comment {
 	display: inline-block;
 }
+
 #imgBox {
-	margin-left: 10px;
-	width: 200px;
+	/* margin-left: 10px; */
+	height: 160px;
 }
 #stackImg {
 	position: relative;
@@ -162,11 +174,6 @@ export default {
 	height: 35px;
 	border-radius: 50%;
 	background-color: white;
-}
-#noImgBox {
-	/* position: relative;
-	text-align: end;
-	width: 10px; */
 }
 #noStackImg {
 	position: relative;

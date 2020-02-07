@@ -1,6 +1,5 @@
 <template>
 	<div id="banner">
-		<!-- <ImgBanner imgSrc="bg_home.jpg" /> -->
 		<div id="imgBannerBox">
 			<img id="imgBanner" src="../assets/back.jpg" />
 		</div>
@@ -110,7 +109,7 @@ import http from "../http-common";
 import store from "../store";
 import Modal from "./Modal.vue";
 export default {
-	name: "banner",
+	name: "MypageBanner",
 	components: { Modal },
 	store,
 	data() {

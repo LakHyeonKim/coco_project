@@ -1,12 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 // import HomePage from "./views/HomePage.vue";
-import PostPage from "./views/PostPage.vue";
-import PortfolioPage from "./views/PortfolioPage.vue";
+// import PostPage from "./views/PostPage.vue";
+// import PortfolioPage from "./views/PortfolioPage.vue";
 // import LoginPage from "./views/LoginPage.vue";
-import Login from "./views/Login.vue";
+// import Login from "./views/Login.vue";
 import Register from "./views/Register";
-import Start from "./views/Home.vue";
+// import Start from "./views/Home.vue";
 import NewPage from "./views/NewPage";
 import NewsFeed from "./views/NewsFeed.vue";
 import Home from "./views/Home.vue";
@@ -24,31 +24,31 @@ const routes = [
 		name: "home",
 		component: Home
 	},
-	{
-		path: "/post",
-		name: "post",
-		component: PostPage
-	},
-	{
-		path: "/portfolio",
-		name: "portfolio",
-		component: PortfolioPage
-	},
-	{
-		path: "/login",
-		name: "login",
-		component: Login
-	},
+	// {
+	// 	path: "/post",
+	// 	name: "post",
+	// 	component: PostPage
+	// },
+	// {
+	// 	path: "/portfolio",
+	// 	name: "portfolio",
+	// 	component: PortfolioPage
+	// },
+	// {
+	// 	path: "/login",
+	// 	name: "login",
+	// 	component: Login
+	// },
 	{
 		path: "/register",
 		name: "register",
 		component: Register
 	},
-	{
-		path: "/start",
-		name: "start",
-		component: Start
-	},
+	// {
+	// 	path: "/start",
+	// 	name: "start",
+	// 	component: Start
+	// },
 	{
 		path: "/newsfeed",
 		name: "newsfeed",
