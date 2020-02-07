@@ -1,6 +1,6 @@
 <div align="center">
-    <img src="https://user-images.githubusercontent.com/48546542/73995432-f22cc400-499b-11ea-9dd2-2125c260121b.png" width=15%
-
+ <img src="https://user-images.githubusercontent.com/48546542/73995432-f22cc400-499b-11ea-9dd2-2125c260121b.png" width=15%>
+</div>
 # 목차
 1. [Overview](#overview)
 
