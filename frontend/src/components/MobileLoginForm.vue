@@ -17,7 +17,7 @@
 						id="id"
 						placeholder="  아이디"
 						style="margin-bottom:5px;"
-						v-model="credentials.username"
+						v-model="credentials.id"
 					/>
 				</div>
 				<div>
@@ -48,11 +48,9 @@
 					<img src="../assets/google_logo.png" class="logos" />
 				</button>
 			</div>
-			<div style="display:inline;">
-				<button v-on:click="loginWithGoogle">
-					<img src="../assets/kakao_logo.png" class="logos" />
-				</button>
-			</div>
+			<a @click.prevent="getCode">
+				<img src="../assets/kakao_logo.png" class="logos" />
+			</a>
 		</div>
 		<div v-if="errors.length" id="loginError">
 			<div v-for="(error, idx) in errors" :key="idx">
@@ -83,33 +81,59 @@ import FirebaseService from "@/services/FirebaseService";
 
 export default {
 	name: "MobileLoginForm",
+
 	data() {
 		return {
 			credentials: {
 				id: "",
 				password: ""
 			},
+			loading: false,
 			errors: []
 		};
 	},
-	computed: {
-		loading: function() {
-			return this.$store.state.loading;
-		}
-	},
+	// computed: {
+	// 	loading: function() {
+	// 		return this.$store.state.loading;
+	// 	}
+	// },
 	methods: {
 		login() {
 			if (this.checkForm()) {
-				this.$store.dispatch("startLoading");
-				http.post("/create2/", this.credentials)
+				this.loading = true;
+				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						this.$store.dispatch("endLoading");
-						this.$store.dispatch("login", res.data);
-						router.push("/newsfeed");
-						console.log("LOGIN then ", res);
+						console.log(res);
+						if (res.status != "204") {
+							this.$session.start();
+							this.$session.set(
+								"accessToken",
+								res.data.accessToken
+							);
+							this.$session.set(
+								"refreshToken",
+								res.data.refreshToken
+							);
+							this.$store.state.token = res.data.accessToken;
+							this.$session.set(
+								"id",
+								Number(this.$store.getters.userId)
+							);
+							this.$session.set("targetId", 10);
+							this.loading = false;
+							router.push("/newsfeed");
+							console.log("LOGIN then ", res);
+						} else {
+							router.push("/").catch(err => {
+								err;
+							});
+							alert("아이디와 비밀번호를 확인해 주십시오.");
+							this.loading = false;
+						}
 					})
 					.catch(err => {
-						this.$store.dispatch("endLoading");
+						this.loading = false;
+						// this.$store.dispatch("endLoading");
 						console.log("LOGIN err ", err);
 					});
 			} else {
@@ -119,7 +143,7 @@ export default {
 		checkForm() {
 			this.errors = [];
 			// 사용자가 ID를 입력하지 않은 경우
-			if (!this.credentials.username) {
+			if (!this.credentials.id) {
 				this.errors.push("아이디를 입력해주세요");
 			}
 			// password가 8글자 미만인 경우
@@ -133,13 +157,43 @@ export default {
 		},
 		async loginWithGoogle() {
 			const result = await FirebaseService.loginWithGoogle();
-			this.$store.state.token = result.credential.accessToken;
-			this.$store.state.user = result.user;
+			console.log(result);
+			this.$session.start();
+			this.$session.set("accessToken", result.credential.accessToken);
+			router.push("/newsfeed");
+		},
+		getCode() {
+			window.location.href =
+				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://192.168.100.94:8080&response_type=code";
 		}
-	},
-	mounted() {
-		console.log(this.$store.state);
 	}
+	// mounted() {
+	// 	const code = document.location.href.split("code");
+	// 	if (code[1]) {
+	// 		const sendCode = code[1].slice(1);
+	// 		// alert(sendCode);
+	// 		http.get("/test/kakaologin2", { params: { code: sendCode } })
+	// 			.then(res => {
+	// 				console.log("kakao res", res.data);
+	// 				console.log("kakao res", res.data.accessToken);
+	// 				if (res.data.accessToken) {
+	// 					this.$session.start();
+	// 					this.$session.set("accessToken", res.data.accessToken);
+	// 					this.$session.set(
+	// 						"refreshToken",
+	// 						res.data.refreshToken
+	// 					);
+	// 					router.push("/newsfeed");
+	// 				} else {
+	// 					console.log("kakao res else", res);
+	// 					router.push("/register");
+	// 				}
+	// 			})
+	// 			.catch(err => {
+	// 				console.log("kakao err", err);
+	// 			});
+	// 	}
+	// }
 };
 </script>
 

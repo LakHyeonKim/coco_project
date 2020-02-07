@@ -1,5 +1,5 @@
 <template>
-	<div style="background-color:white;" class="portfolioBox">
+	<div style="background-color:rgba(0, 0, 0,0.0);" class="portfolioBox">
 		<div id="cardBox">
 			<div id="contentBox">
 				<div id="cardHead">
@@ -18,25 +18,15 @@
 				</div>
 				<div id="cardHash">
 					<div v-for="tag in tags" :key="`${tag}`">
-						<a href="#" id="hashTag"> #{{ tag }} </a>
+						<button
+							v-on:click.prevent="searchtag(tag)"
+							id="hashTag"
+						>
+							#{{ tag }}
+						</button>
+						<!-- <a href="#" id="hashTag"> #{{ tag.tagName }} </a> -->
 					</div>
 				</div>
-				<!-- <div id="imgBox" v-if="imagePath">
-					<v-img :src="imagePath" height="150px" width="100%"></v-img>
-					<div id="stackImg">
-						<div v-for="tag in tags" :key="`${tag.idtag}`">
-							{{ tag.imagePath }}
-						</div>
-						<img src="../assets/css.png" alt="" class="stackImgs" />
-						<img src="../assets/JS.png" alt="" class="stackImgs" />
-						<img src="../assets/vue.png" alt="" class="stackImgs" />
-					</div>
-				</div>
-				<div id="noStackImg" v-else>
-					<img src="../assets/css.png" alt="" class="stackImgs" />
-					<img src="../assets/JS.png" alt="" class="stackImgs" />
-					<img src="../assets/vue.png" alt="" class="stackImgs" />
-				</div> -->
 				<div id="cardBody">
 					<span class="line-clamp-body">
 						{{ code }}
@@ -47,47 +37,71 @@
 					<div id="comment">댓글 {{ commentCount }}개</div>
 				</div>
 			</div>
+			<!-- <div id="imgBox" v-if="imagePath">
+				<v-img :src="imagePath" height="220px" width="220px"></v-img>
+				<div id="stackImg">
+					<div v-for="tag in tags" :key="`${tag.idtag}`">
+						{{ tag.imagePath }}
+					</div>
+					<img src="../assets/css.png" alt="" class="stackImgs" />
+					<img src="../assets/JS.png" alt="" class="stackImgs" />
+					<img src="../assets/vue.png" alt="" class="stackImgs" />
+				</div>
+			</div>
+			<div id="noStackImg" v-else>
+				<img src="../assets/css.png" alt="" class="stackImgs" />
+				<img src="../assets/JS.png" alt="" class="stackImgs" />
+				<img src="../assets/vue.png" alt="" class="stackImgs" />
+			</div> -->
 		</div>
 	</div>
 </template>
 
 <script>
 export default {
-	name: "MobilePortfolio",
+	name: "SearchList",
 	props: {
-		dateCreated: {},
-		postTitle: {},
-		code: {},
 		// imagePath: {},
-		postWriter: {},
-		likeCount: {},
-		commentCount: {},
-		tags: {},
 		idPost: {},
 		memberId: {},
+		postTitle: {},
+		postWriter: {},
+		dateCreated: {},
 		updateCreated: {},
+		code: {},
+		likeCount: {},
 		views: {},
 		access: {},
-		order: {}
+		likeCheck: {},
+		order: {},
+		tags: {},
+		commentCount: {}
 	},
 	data() {
 		return {
-			//
+			tagforsearch: ""
 		};
+	},
+	methods: {
+		searchtag(tag) {
+			console.log(tag);
+			this.$emit("searchtag", tag);
+			// this.tagforsearch = "";
+		}
 	}
 };
 </script>
 
 <style scoped>
 .portfolioBox {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-	border-top: 1px solid rgba(0, 0, 0, 0.2);
-	/* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
-	/* height: 250px; */
+	width: 80vw;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	height: 250px;
 }
 #cardBox {
-	margin: 10px;
-	/* display: flex; */
+	margin: 13px 13px 13px 13px;
+	display: flex;
 }
 #contentBox {
 	flex: 1;
@@ -141,6 +155,7 @@ export default {
 	margin-right: 5px;
 }
 #cardBody {
+	min-height: 75px;
 	margin-bottom: 10px;
 	/* margin-left: 10px; */
 }
@@ -161,8 +176,8 @@ export default {
 }
 
 #imgBox {
-	/* margin-left: 10px; */
-	height: 160px;
+	margin-left: 10px;
+	width: 200px;
 }
 #stackImg {
 	position: relative;

@@ -50,12 +50,25 @@
 <script>
 import LoginForm from "../components/LoginForm";
 import MobileLoginForm from "../components/MobileLoginForm";
+import router from "../router";
 
 export default {
 	name: "home",
 	components: {
 		LoginForm,
 		MobileLoginForm
+	},
+	methods: {
+		checkLoggedIn() {
+			if (this.$session.has("jwt")) {
+				router.push("/newsfeed").catch(err => {
+					err;
+				});
+			}
+		}
+	},
+	mounted() {
+		this.checkLoggedIn();
 	}
 };
 </script>

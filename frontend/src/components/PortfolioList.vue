@@ -1,40 +1,47 @@
 <template>
 	<v-layout mt-5 wrap>
-		<v-flex
-			v-for="i in portfolios.length > limits ? limits : portfolios.length"
-			:key="i"
-			class="portList"
-		>
+		<v-flex v-for="i in portfolios.length" :key="i" class="portList">
 			<Portfolio
 				class="ma-3"
+				:idPost="portfolios[i - 1].post.idpost"
+				:memberId="portfolios[i - 1].post.memberId"
+				:postTitle="portfolios[i - 1].post.postTitle"
 				:postWriter="portfolios[i - 1].post.postWriter"
 				:dateCreated="portfolios[i - 1].post.dateCreated"
-				:postTitle="portfolios[i - 1].post.postTitle"
+				:updateCreated="portfolios[i - 1].post.updateCreated"
 				:code="portfolios[i - 1].post.code"
-				:likeCount="portfolios[i - 1].likeCount"
-				:commentCount="portfolios[i - 1].commentCount"
+				:likeCount="portfolios[i - 1].post.likeCount"
+				:views="portfolios[i - 1].post.views"
+				:imagePath="portfolios[i - 1].post.imagePath"
+				:filePath="portfolios[i - 1].post.filePath"
+				:access="portfolios[i - 1].post.access"
+				:likeCheck="portfolios[i - 1].post.likeCheck"
+				:order="portfolios[i - 1].post.order"
 				:tags="portfolios[i - 1].tags"
+				:commentCount="portfolios[i - 1].commentCount"
 				id="portfolio"
 			></Portfolio>
 			<MobilePortfolio
 				class="ma-3"
+				:idPost="portfolios[i - 1].post.idpost"
+				:memberId="portfolios[i - 1].post.memberId"
+				:postTitle="portfolios[i - 1].post.postTitle"
 				:postWriter="portfolios[i - 1].post.postWriter"
 				:dateCreated="portfolios[i - 1].post.dateCreated"
-				:postTitle="portfolios[i - 1].post.postTitle"
+				:updateCreated="portfolios[i - 1].post.updateCreated"
 				:code="portfolios[i - 1].post.code"
-				:likeCount="portfolios[i - 1].likeCount"
-				:commentCount="portfolios[i - 1].commentCount"
+				:likeCount="portfolios[i - 1].post.likeCount"
+				:views="portfolios[i - 1].post.views"
+				:imagePath="portfolios[i - 1].post.imagePath"
+				:filePath="portfolios[i - 1].post.filePath"
+				:access="portfolios[i - 1].post.access"
+				:likeCheck="portfolios[i - 1].post.likeCheck"
+				:order="portfolios[i - 1].post.order"
 				:tags="portfolios[i - 1].tags"
+				:commentCount="portfolios[i - 1].commentCount"
 				id="mobilePortfolio"
 			>
-				<!-- :imagePath="portfolios[i - 1].post.imagePath" -->
 			</MobilePortfolio>
-		</v-flex>
-
-		<v-flex xs12 text-xs-center round my-5 v-if="loadMore">
-			<v-btn color="info" dark v-on:click="loadMorePortfolios">
-				<v-icon size="25" class="mr-2">fa-plus</v-icon>더 보기
-			</v-btn>
 		</v-flex>
 	</v-layout>
 </template>
@@ -45,10 +52,6 @@ import http from "../http-common";
 
 export default {
 	name: "PortfoliosList",
-	props: {
-		limits: { type: Number },
-		loadMore: { type: Boolean, default: false }
-	},
 	data() {
 		return {
 			portfolios: []
@@ -59,19 +62,23 @@ export default {
 		MobilePortfolio
 	},
 	mounted() {
-		http.post("/findByAllNewsfeed/", 5)
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+			headers
+		})
 			.then(res => {
-				console.log("getport then ", res.data);
+				console.log("getport then 1", res.data);
+				console.log("getport then 2", res.data[0].post.idpost);
 				this.portfolios = res.data;
-				console.log("getport then ", this.portfolios);
+				console.log("getport then 3", this.portfolios);
 				// console.log("getport then ", this.portfolios.tags);
 			})
 			.catch(err => {
 				console.log("getport catch ", err);
 			});
-	},
-	methods: {
-		loadMorePortfolios() {}
 	}
 };
 </script>

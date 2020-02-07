@@ -19,18 +19,18 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="#">
+				<router-link to="/search">
 					<img class="nav_menu_img" src="../assets/icon/search.png" />
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="/">
+				<router-link to="#">
 					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
 				</router-link>
 			</li>
-			<li class="nav_menu">
+			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
-			</li>
+			</li> -->
 		</ul>
 	</div>
 </template>
@@ -41,11 +41,13 @@ import router from "../router";
 export default {
 	name: "NavBar",
 	data() {
-		return {};
+		return {
+			preUrl: ""
+		};
 	},
 	methods: {
 		logout() {
-			this.$store.dispatch("logout");
+			this.$session.destroy();
 			router.push("/");
 		}
 	}
