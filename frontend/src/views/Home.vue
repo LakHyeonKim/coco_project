@@ -43,20 +43,20 @@
 			<!-- <RegisterForm id="regiForm"></RegisterForm> -->
 			<LoginForm id="loginForm"></LoginForm>
 		</div>
-		<MobileLoginForm id="mobileloginForm"></MobileLoginForm>
+		<LoginFormMobile id="mobileloginForm"></LoginFormMobile>
 	</div>
 </template>
 
 <script>
 import LoginForm from "../components/LoginForm";
-import MobileLoginForm from "../components/MobileLoginForm";
+import LoginFormMobile from "../components/LoginFormMobile";
 import router from "../router";
 
 export default {
 	name: "home",
 	components: {
 		LoginForm,
-		MobileLoginForm
+		LoginFormMobile
 	},
 	methods: {
 		checkLoggedIn() {

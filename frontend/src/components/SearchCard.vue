@@ -1,5 +1,5 @@
 <template>
-	<div style="background-color:rgba(0, 0, 0,0.0);" class="portfolioBox">
+	<div style="background-color:rgba(0, 0, 0,0.0);" class="postBox">
 		<div id="cardBox">
 			<div id="contentBox">
 				<div id="cardHead">
@@ -93,7 +93,7 @@ export default {
 </script>
 
 <style scoped>
-.portfolioBox {
+.postBox {
 	width: 80vw;
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);

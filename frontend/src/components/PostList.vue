@@ -1,71 +1,97 @@
 <template>
 	<v-layout mt-5 wrap>
-		<v-flex
-			v-for="i in posts.length > limits ? limits : posts.length"
-			:key="i"
-			class="postList"
-		>
-			<Post
+		<v-flex v-for="i in posts.length" :key="i" class="portList">
+			<post
 				class="ma-3"
-				:date="posts[i - 1].created_at"
-				:title="posts[i - 1].title"
-				:body="posts[i - 1].body"
-			></Post>
-		</v-flex>
-		<v-flex xs12 text-xs-center round my-5 v-if="loadMore">
-			<v-btn color="info" dark v-on:click="loadMorePosts">
-				<v-icon size="25" class="mr-2">fa-plus</v-icon>더 보기
-			</v-btn>
+				:idPost="posts[i - 1].post.idpost"
+				:memberId="posts[i - 1].post.memberId"
+				:postTitle="posts[i - 1].post.postTitle"
+				:postWriter="posts[i - 1].post.postWriter"
+				:dateCreated="posts[i - 1].post.dateCreated"
+				:updateCreated="posts[i - 1].post.updateCreated"
+				:code="posts[i - 1].post.code"
+				:likeCount="posts[i - 1].post.likeCount"
+				:views="posts[i - 1].post.views"
+				:imagePath="posts[i - 1].post.imagePath"
+				:filePath="posts[i - 1].post.filePath"
+				:access="posts[i - 1].post.access"
+				:likeCheck="posts[i - 1].post.likeCheck"
+				:order="posts[i - 1].post.order"
+				:tags="posts[i - 1].tags"
+				:commentCount="posts[i - 1].commentCount"
+				id="post"
+			></post>
+			<PostMobile
+				class="ma-3"
+				:idPost="posts[i - 1].post.idpost"
+				:memberId="posts[i - 1].post.memberId"
+				:postTitle="posts[i - 1].post.postTitle"
+				:postWriter="posts[i - 1].post.postWriter"
+				:dateCreated="posts[i - 1].post.dateCreated"
+				:updateCreated="posts[i - 1].post.updateCreated"
+				:code="posts[i - 1].post.code"
+				:likeCount="posts[i - 1].post.likeCount"
+				:views="posts[i - 1].post.views"
+				:imagePath="posts[i - 1].post.imagePath"
+				:filePath="posts[i - 1].post.filePath"
+				:access="posts[i - 1].post.access"
+				:likeCheck="posts[i - 1].post.likeCheck"
+				:order="posts[i - 1].post.order"
+				:tags="posts[i - 1].tags"
+				:commentCount="posts[i - 1].commentCount"
+				id="postmobile"
+			>
+			</PostMobile>
 		</v-flex>
 	</v-layout>
 </template>
 <script>
 import Post from "@/components/Post";
-import FirebaseService from "@/services/FirebaseService";
+import PostMobile from "@/components/PostMobile";
+import http from "../http-common";
 
 export default {
 	name: "PostList",
-	props: {
-		column: { type: Number, default: 1 },
-		limits: { type: Number, default: 4 },
-		loadMore: { type: Boolean, default: false }
-	},
 	data() {
 		return {
 			posts: []
 		};
 	},
 	components: {
-		Post
+		Post,
+		PostMobile
 	},
 	mounted() {
-		this.getPosts();
-	},
-	methods: {
-		async getPosts() {
-			this.posts = await FirebaseService.getPosts();
-		},
-		loadMorePosts() {}
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+			headers
+		})
+			.then(res => {
+				console.log("getpost then 1", res.data);
+				console.log("getpost then 2", res.data[0].post.idpost);
+				this.posts = res.data;
+				console.log("getpost then 3", this.posts);
+			})
+			.catch(err => {
+				console.log("getpost catch ", err);
+			});
 	}
 };
 </script>
+
 <style>
-@media screen and (min-width: 800px) {
-	.postList {
-		flex: 25%;
-		max-width: 25%;
-	}
-}
-@media screen and (max-width: 800px) {
-	.postList {
-		flex: 50%;
-		max-width: 50%;
-	}
+#postmobile {
+	display: none;
 }
 @media screen and (max-width: 600px) {
-	.postList {
-		flex: 100%;
-		max-width: 100%;
+	#post {
+		display: none;
+	}
+	#postmobile {
+		display: block;
 	}
 }
 </style>
