@@ -32,6 +32,10 @@ export default new Vuex.Store({
 					Authorization: "JWT " + state.token
 				}
 			};
+		},
+		userNickname: function(state) {
+			console.log(jwtDecode(state.token));
+			return jwtDecode(state.token).nickname;
 		}
 	},
 	mutations: {

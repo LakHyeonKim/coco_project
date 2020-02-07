@@ -86,9 +86,9 @@ export default {
 			tags: [],
 			board: {
 				code: "",
-				memberId: 7,
+				memberId: 0,
 				postTitle: "",
-				postWriter: "tester",
+				postWriter: "",
 				tags: [],
 				attachments: null
 			}
@@ -139,7 +139,8 @@ export default {
 			http.post("/trc/makePost/", formData)
 				.then(res => {
 					alert("글이 성공적으로 작성되었습니다.");
-					router.push("/");
+					this.$session.set("targetId", this.$session.get("id"))
+					router.push("/mypage");
 				})
 				.catch(err => {
 					alert("글 작성 중 문제가 생겼습니다.");
@@ -148,6 +149,13 @@ export default {
 	},
 	mounted() {
 		Prism.plugins.autoloader.use_minified = false;
+		this.board.memberId = this.$session.get("id")
+		console.log("memberId newpage mounted ", this.board.memberId)
+		// 닉네임 재확인 안할방법 찾아보기
+		this.$store.state.token = this.$session.get("accessToken");
+		this.board.postWriter = this.$store.getters.userNickname;
+		console.log("nickname this ", this.board.postWriter)
+		console.log("nickname vuex ", this.$store.getters.userNickname)
 	}
 };
 </script>
