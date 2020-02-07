@@ -30,10 +30,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService2;
 import com.ssafy.coco.service.MemberService;
 import com.ssafy.coco.vo.Member;
-import com.ssafy.coco.vo.Tokens;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +47,8 @@ public class KakaoAccessToken {
 	MemberService memberService;
 	@Autowired
 	MailService2 mailService;
-	
+	@Autowired
+	JwtService jwtService;
 	@ApiOperation(value = "메일 테스트", response = List.class)
 	@RequestMapping(value = "/mailTest", method = {
 			RequestMethod.POST })
@@ -87,13 +88,18 @@ public class KakaoAccessToken {
 		System.out.println(searchMember);
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<Member> list = memberService.findMember(searchMember);
+		
 		boolean isExist = list.size() != 0 ? true : false;
 		if (isExist)// 계정 존재시에
 		{
 			Member result = list.get(0);
+			Tokens tokens2 = jwtService.login(result.getId(), result.getPassword());
+			
+			System.out.println("tokens2:"+tokens2.getAccessToken());
+			System.out.println("kkao:"+token.path("access_token").toString());
 			String memberJson = "{\"Member\":" + objectMapper.writeValueAsString(result) + ",";
-			memberJson += "\"accessToken\":" + token.path("access_token").toString();
-			memberJson += ",\"refreshToken\":" + token.path("refresh_token").toString() + "}";
+			memberJson += "\"accessToken\":" +'"'+ tokens2.getAccessToken()+'"';
+			memberJson += ",\"refreshToken\":\"" + tokens2.getRefreshToken() + "\"}";
 			System.out.println("멤버제이슨" + memberJson);
 			
 			return new ResponseEntity<String>(memberJson, HttpStatus.OK);
