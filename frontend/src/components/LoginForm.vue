@@ -127,6 +127,7 @@ export default {
 							);
 							this.$store.state.token = res.data.accessToken;
 							this.$session.set("id", this.$store.getters.userId);
+							this.$session.set("targetId", 10);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);
@@ -170,7 +171,9 @@ export default {
 			router.push("/newsfeed");
 		},
 		loginWithKakao() {
-			window.location.replace("https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code");
+			window.location.replace(
+				"https://kauth.kakao.com/oauth/authorize?client_id=41ced2884f7e3fbdee26ed46e0de8d47&redirect_uri=http://192.168.100.95:8888/sns/login&response_type=code"
+			);
 		}
 	}
 	// mounted() {

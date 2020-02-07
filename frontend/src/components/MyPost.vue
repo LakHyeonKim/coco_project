@@ -9,7 +9,6 @@
 				/>
 				<v-select
 					:items="postSels"
-					v-model="postSel"
 					dense
 					item-color="black"
 					color="rgba(0, 0, 0, 0.5)"
@@ -91,8 +90,9 @@ export default {
 		chnagePostSel(idx) {
 			console.log(idx);
 			http.post("/api/findByMyPosts/", {
-				idMember: this.$session.get("id"),
-				order: idx
+				myIdMember: this.$session.get("id"),
+				order: idx,
+				youIdMember: this.$session.get("targetId")
 			})
 				.then(response => {
 					this.posts = response.data;
@@ -104,6 +104,7 @@ export default {
 		},
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
+			console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.posts[index].post.likeCheck == 1) {
 				this.address = "/trc/unLike/";
 				this.posts[index].post.likeCheck = 0;
@@ -137,8 +138,9 @@ export default {
 	},
 	mounted() {
 		http.post("/api/findByMyPosts/", {
-			idMember: this.$session.get("id"),
-			order: 4
+			myIdMember: this.$session.get("id"),
+			order: 4,
+			youIdMember: this.$session.get("targetId")
 		})
 			.then(response => {
 				this.posts = response.data;
@@ -227,6 +229,16 @@ export default {
 
 .like_img {
 	width: 35px;
+	border-radius: 50%;
+	transition: all ease-in-out 0.3s;
+}
+
+.like_img:hover {
+	background-color: rgba(128, 128, 128, 0.2);
+	transition: all ease-in 0.2s;
+}
+.like_img:active {
+	background-color: rgba(128, 128, 128, 0.5);
 }
 .comment_img {
 	width: 30px;
