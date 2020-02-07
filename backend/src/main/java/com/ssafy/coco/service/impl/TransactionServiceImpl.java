@@ -1,5 +1,8 @@
 package com.ssafy.coco.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.coco.dao.AlarmDao;
 import com.ssafy.coco.dao.BabyPostDao;
@@ -19,6 +23,9 @@ import com.ssafy.coco.dao.MyPageDao;
 import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
+import com.ssafy.coco.relationvo.BoardDetail;
+import com.ssafy.coco.relationvo.BoardWrite;
+import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.BabyPost;
@@ -63,14 +70,40 @@ public class TransactionServiceImpl implements TransactionService{
 	 * @param member 회원정보
 	 * 
 	 * 사용자가 회원 가입 했을 때 마이페이지 까지 자동으로 만들어지는 트랜잭션
+	 * @throws IOException 
+	 * @throws IllegalStateException 
 	 */
 	@Transactional
-	public int signUp(Member member){
+	public long signUp(SignUpMember signUpMember) throws IllegalStateException, IOException{
+		Member member = new Member(signUpMember.getIdmember(), 
+				signUpMember.getRankId(), 
+				signUpMember.getIsManager(), 
+				signUpMember.getIsDelete(), 
+				signUpMember.getNickname(), 
+				signUpMember.getId(), 
+				signUpMember.getPassword(), 
+				signUpMember.getEmail(), 
+				signUpMember.getGitUrl(), 
+				signUpMember.getKakaoUrl(), 
+				signUpMember.getInstagramUrl(), 
+				signUpMember.getDateCreated(), 
+				signUpMember.getUpdateCreated(), 
+				signUpMember.getGrade());
+		member.setRankId(1L);
+		if(signUpMember.getFile() != null) {
+			MultipartFile file = signUpMember.getFile();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
+			String imageFilePath = path + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			member.setImageUrl(imageFilePath);
+		}
 		memberDao.addMember(member);
 		Mypage mypage= new Mypage();
 		mypage.setMemberId(member.getIdmember());
 		myPageDao.addMypage(mypage);
-		return (int) member.getIdmember();
+		return member.getIdmember();
 	}
 	
 	/**
@@ -152,10 +185,23 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	/**
 	 * 
+	 * @param idMemberFollower 팔로우 한 주체 아이디
+	 * @param idMemberFollowing 팔로우 한 대상 아이디
+	 * 
+	 * 팔로우 취소
+	 */
+	
+	@Transactional
+	public void makeUnFollow(long idMemberFollower, long idMemberFollowing) {
+		followDao.deleteFollow(new Follow(0, idMemberFollower, idMemberFollowing, 0));
+	}
+	
+	/**
+	 * 
 	 * @param idPost 좋아요 누른 포스트 아이디
 	 * @param idMember 누른 사람의 사용자 아이디
 	 * 
-	 * 좋아요 테이블에 좋아요 정보 저장 후 알람 까지 트랜젝셙
+	 * 좋아요 테이블에 좋아요 정보 저장 후 알람 까지 트랜젝션
 	 * 
 	 */
 	
@@ -163,8 +209,24 @@ public class TransactionServiceImpl implements TransactionService{
 	public void pushLike(long idPost, long idMember) {
 		likeDao.addLike(new Like(0, idPost, idMember, 0));
 		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
-		long likeId = likeDao.findLike(new Like(0, idPost, memberId, 0)).get(0).getIdlike();
+		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
+	}
+	
+	/**
+	 * @param idPost 좋아요 누른 포스트 아이디
+	 * @param idMember 누른 사람의 사용자 아이디
+	 * 
+	 * 좋아요 취소 알람 취소 까지 트랜잭션
+	 */
+	
+	@Transactional
+	public void unLike(long idPost, long idMember) {
+		//long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
+		likeDao.deleteLike(new Like(0, idPost, idMember, 0));
+		postDao.updatePostUnlikeCount(idPost);
+//		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
+//		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
 	
 	/**
@@ -173,23 +235,44 @@ public class TransactionServiceImpl implements TransactionService{
 	 * @param tagName 태그 
 	 * 
 	 * 포스트 작성 시 트랜잭션
+	 * @throws IOException 
+	 * @throws IllegalStateException 
 	 */
 	
 	@Transactional
-	public void makeTagsFromPost(Post post, List<Tag> tags) {
+	public void makePost(BoardWrite board) throws IllegalStateException, IOException {
+		Post post = new Post();
+		post.setCode(board.getCode());
+		post.setMemberId(board.getMemberId());
+		post.setPostTitle(board.getPostTitle());
+		post.setPostWriter(board.getPostWriter());
+		
+		String[] splitTag = board.getTags().split(",");
+		
+		if(board.getAttachments() != null) {
+			MultipartFile file = board.getAttachments();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
+			String filePath = path + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			post.setFilePath(filePath);
+		}
 		postDao.addPost(post);
-		for(Tag tag:tags) {
-			String tName = tag.getTagName();
-			int size = tagDao.findTag(new Tag(0, tName , 0, 0, null, null, null)).size();
+		for(String splitedTag : splitTag) {
+			if(splitedTag.equals("")) break;
+			int size = tagDao.findTag(new Tag(0, splitedTag , 0, 0, null, null, null)).size();
 			if(size == 0) {
-				tagDao.addTag(new Tag(0, tName, 0, 1, null, null, null));
-				long tagId = tagDao.findTag(new Tag(0, tName, 0, 0, null, null, null)).get(0).getIdtag();
+				tagDao.addTag(new Tag(0, splitedTag, 0, 1, null, null, null));
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
 			}else {
-				tagDao.updateTagIncludedCount(tName);
-				long tagId = tagDao.findTag(new Tag(0, tName, 0, 0, null, null, null)).get(0).getIdtag();
+				tagDao.updateTagIncludedCount(splitedTag);
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
 			}
 		}
 	}
+
+
 }

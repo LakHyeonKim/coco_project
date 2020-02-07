@@ -15,8 +15,10 @@ public interface PostService {
 	public List<Post> findPostByPostWriter(String keyWord);
 	public List<Post> findPostByFrequency(long idMember);
 	public List<Post> findPostByPostComment(long idPostParents);
+	public List<Post> findPostByNewsfeedOrderByLike(long idMemberFollower);
 	public int addPost(Post post);
 	public int updatePost(Post post);
 	public int updatePostViewCount(long idPost);
+	public int updatePostUnlikeCount(long idPost);
 	public int deletePost(Post post);
 }

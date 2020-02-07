@@ -25,7 +25,6 @@
 	</sql>
 	<sql id="delete-Follow">
 		delete from follow
-		where idfollow=#{idfollow}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -38,15 +37,15 @@
 		 	access = ${access}
 		 	<if test="idfollow !=0">
 				AND
-				idfollow = '%${idfollow}%'
+				idfollow = ${idfollow}
 			</if>
 			<if test="memberFollower !=0">
 				AND
-				member_follower = '${memberFollower}'
+				member_follower = ${memberFollower}
 			</if>
 			<if test="memberFollowing !=0">
 				AND
-				member_following = '${memberFollowing}'
+				member_following = ${memberFollowing}
 			</if>
 			
 		</where>
@@ -73,6 +72,21 @@
 
 	<delete id="deleteFollow" parameterType="Follow">
 		<include refid="delete-Follow"></include>
+		<where>
+		 	<if test="idfollow !=0">
+				AND
+				idfollow = ${idfollow}
+			</if>
+			<if test="memberFollower !=0">
+				AND
+				member_follower = ${memberFollower}
+			</if>
+			<if test="memberFollowing !=0">
+				AND
+				member_following = ${memberFollowing}
+			</if>
+			
+		</where>
 	</delete>
 </mapper>
 

@@ -19,7 +19,6 @@
 	</sql>
 	<sql id="delete-MypageTag">
 		delete from mypage_tag
-		where idmypage_tag = #{idmypageTag};
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -30,15 +29,15 @@
 		<include refid="select-MypageTag"></include>
 		<where>
 			<if test="idmypageTag !=0">
-				idmypage_tag = '${idmypageTag}'
+				idmypage_tag = ${idmypageTag}
 			</if>
 			<if test="mypageId != 0">
 			AND
-				mypage_id = '${mypageId}'
+				mypage_id = ${mypageId}
 			</if>
 			<if test="tagId != 0">
 			AND
-				tag_id = '${tagId}'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</select>
@@ -50,6 +49,19 @@
 
 	<delete id="deleteMypageTag" parameterType="MypageTag">
 		<include refid="delete-MypageTag"></include>
+		<where>
+			<if test="idmypageTag !=0">
+				idmypage_tag = ${idmypageTag}
+			</if>
+			<if test="mypageId != 0">
+			AND
+				mypage_id = ${mypageId}
+			</if>
+			<if test="tagId != 0">
+			AND
+				tag_id = ${tagId}
+			</if>
+		</where>
 	</delete>
 
 </mapper>

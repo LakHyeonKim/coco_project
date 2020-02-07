@@ -18,7 +18,6 @@
 	</sql>
 	<sql id="delete-PostTag">
 		delete from post_tag
-		where idpost_tag = #{idpostTag};
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -29,15 +28,15 @@
 		<include refid="select-PostTag"></include>
 		<where>
 			<if test="idpostTag !=0">
-				idpost_tag = '${idpostTag}'
+				idpost_tag = ${idpostTag}
 			</if>
 			<if test="postId !=0">
 				AND
-				post_id = '${postId}'
+				post_id = ${postId}
 			</if>
 			<if test="tagId !=0">
 				AND
-				tag_id = '${tagId}'
+				tag_id = ${tagId}
 			</if>
 		</where>
 	</select>
@@ -49,6 +48,19 @@
 
 	<delete id="deletePostTag" parameterType="PostTag">
 		<include refid="delete-PostTag"></include>
+		<where>
+			<if test="idpostTag !=0">
+				idpost_tag = ${idpostTag}
+			</if>
+			<if test="postId !=0">
+				AND
+				post_id = ${postId}
+			</if>
+			<if test="tagId !=0">
+				AND
+				tag_id = ${tagId}
+			</if>
+		</where>
 	</delete>
 
 </mapper>

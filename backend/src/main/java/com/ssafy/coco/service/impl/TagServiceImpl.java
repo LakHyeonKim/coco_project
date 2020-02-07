@@ -48,4 +48,9 @@ public class TagServiceImpl implements TagService{
 		return tagDao.findAllTagIncludedPost(idPost);
 	}
 
+	@Override
+	public List<Tag> findAllTagIncludedMypage(long idMypage) {
+		return tagDao.findAllTagIncludedMypage(idMypage);
+	}
+
 }

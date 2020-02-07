@@ -7,27 +7,28 @@
 
 <mapper namespace="Mypage_Mapper">
 	<sql id="select-Mypage">
-		select idmypage, member_id, banner_image_path, banner_text,	access
+		select idmypage, member_id, banner_image_path, banner_text,	access, today_visited_count, total_visited_count
 		from mypage
 	</sql>
 	<sql id="insert-Mypage">
 		insert into mypage
-		(member_id, banner_image_path, banner_text, access)
+		(member_id, banner_image_path, banner_text, access, today_visited_count, total_visited_count)
 		values(#{memberId},#{bannerImagePath},
-		#{bannerText},#{access})
+		#{bannerText},#{access},#{todayVisitedCount},#{totalVisitedCount})
 	</sql>
 	<sql id="update-Mypage">
 		update mypage set
 		member_id=#{memberId},
 		banner_image_path=#{bannerImagePath},
 		banner_text=#{bannerText},
-		access=#{access}
+		access=#{access},
+		today_visited_count=#{todayVisitedCount},
+		total_visited_count=#{totalVisitedCount}
 		where
 		idmypage=#{idmypage}
 	</sql>
 	<sql id="delete-Mypage">
 		delete from mypage
-		where idmypage = #{idmypage}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -37,22 +38,22 @@
 	<select id="findMypage" resultType="Mypage">
 		<include refid="select-Mypage"></include>
 		<where>
-			access = '${access}'
+			access = ${access}
 			<if test="idmypage != 0">
 				AND
 				idmypage = ${idmypage}
 			</if>
 			<if test="memberId !=0">
 				AND
-				member_id LIKE '%${memberId}%'
+				member_id = ${memberId}
 			</if>
 			<if test="bannerImagePath !=null">
 				AND
-				banner_image_path LIKE '%${bannerImagePath}%'
+				banner_image_path = '${bannerImagePath}'
 			</if>
 			<if test="bannerText !=null">
 				AND
-				banner_text LIKE '%${bannerText}%'
+				banner_text = '${bannerText}'
 			</if>
 		</where>
 	</select>
@@ -73,6 +74,25 @@
 
 	<delete id="deleteMypage" parameterType="Mypage">
 		<include refid="delete-Mypage"></include>
+		<where>
+			access = ${access}
+			<if test="idmypage != 0">
+				AND
+				idmypage = ${idmypage}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = ${memberId}
+			</if>
+			<if test="bannerImagePath !=null">
+				AND
+				banner_image_path = '${bannerImagePath}'
+			</if>
+			<if test="bannerText !=null">
+				AND
+				banner_text = '${bannerText}'
+			</if>
+		</where>
 	</delete>
 </mapper>
 

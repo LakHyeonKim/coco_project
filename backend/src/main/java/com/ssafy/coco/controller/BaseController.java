@@ -96,6 +96,8 @@ public class BaseController {
         }
         return map;
     }
+	
+	
 	// 알람
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved list"),
 			@ApiResponse(code = 401, message = "인증 오류 입니다"),
@@ -110,7 +112,17 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Alarm>>(answers, HttpStatus.OK);
 	}
-
+	
+	@ApiOperation(value = "비밀 번호 체크", response = List.class)
+	@RequestMapping(value = "/checkPwd", method = RequestMethod.POST)
+	public ResponseEntity<List<Alarm>> checkPwd(@RequestBody Member member) throws Exception {
+		int size = memberService.findMember(member).size();
+		if (size ==0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
 	public ResponseEntity<List<Alarm>> findAlarm(@RequestBody Alarm alarm) throws Exception {
@@ -725,7 +737,7 @@ public class BaseController {
 		return new ResponseEntity<List<WordDictionary>>(answers, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "포스트 태그 삭제", response = List.class)
+	@ApiOperation(value = "선택 워드 사전 삭제", response = List.class)
 	@RequestMapping(value = "/addWordDictionary", method = RequestMethod.POST)
 	public ResponseEntity<Integer> addWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
 		Integer answers = wordDictionaryService.addWordDictionary(wordDictionary);
@@ -735,7 +747,7 @@ public class BaseController {
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "포스트 태그 수정", response = List.class)
+	@ApiOperation(value = "선택 워드 사전 수정", response = List.class)
 	@RequestMapping(value = "/updateWordDictionary", method = RequestMethod.PUT)
 	public ResponseEntity<Integer> updateWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
 		Integer answers = wordDictionaryService.updateWordDictionary(wordDictionary);
@@ -745,7 +757,7 @@ public class BaseController {
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "포스트 태그 삭제", response = List.class)
+	@ApiOperation(value = "선택 워드 사전 삭제", response = List.class)
 	@RequestMapping(value = "/deleteWordDictionary", method = RequestMethod.DELETE)
 	public ResponseEntity<Integer> deleteWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
 		Integer answers = wordDictionaryService.deleteWordDictionary(wordDictionary);

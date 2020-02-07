@@ -26,7 +26,6 @@
 	</sql>
 	<sql id="delete-WordDictionary">
 		delete from word_dictionary
-		where idword_dictionary=#{idwordDictionary}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -41,11 +40,11 @@
 			</if>
 			AND
 			<if test="word !=null">
-				word LIKE '%${word}%'
+				word like '%${word}%'
 			</if>
 			AND
 			<if test="description !=null">
-				description LIKE '%${description}%'
+				description like '%${description}%'
 			</if>
 		</where>
 	</select>
@@ -61,6 +60,19 @@
 
 	<delete id="deleteWordDictionary" parameterType="WordDictionary">
 		<include refid="delete-WordDictionary"></include>
+		<where>
+			<if test="idwordDictionary != 0">
+				idword_dictionary = ${idwordDictionary}
+			</if>
+			AND
+			<if test="word !=null">
+				word = '${word}'
+			</if>
+			AND
+			<if test="description !=null">
+				description = '${description}'
+			</if>
+		</where>
 	</delete>
 
 </mapper>

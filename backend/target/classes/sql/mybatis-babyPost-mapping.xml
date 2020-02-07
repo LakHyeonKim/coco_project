@@ -26,7 +26,6 @@
 	</sql>
 	<sql id="delete-BabyPost">
 		delete from baby_post
-		where idbaby_post=#{idbabyPost}
 	</sql>
 
 	<!-- 전체 검색 -->
@@ -37,15 +36,15 @@
 		<include refid="select-BabyPost"></include>
 		<where>
 			<if test="idbabyPost !=0">
-				idbaby_post = '${idbabyPost}'
+				idbaby_post = ${idbabyPost}
 			</if>
 			<if test="postParents !=0">
 				AND
-				post_parents = '${postParents}'
+				post_parents = ${postParents}
 			</if>
 			<if test="postChild !=0">
 				AND
-				post_child = '${postChild}'
+				post_child = ${postChild}
 			</if>
 		</where>
 	</select>
@@ -61,6 +60,19 @@
 
 	<delete id="deleteBabyPost" parameterType="BabyPost">
 		<include refid="delete-BabyPost"></include>
+		<where>
+			<if test="idbabyPost !=0">
+				idbaby_post = ${idbabyPost}
+			</if>
+			<if test="postParents !=0">
+				AND
+				post_parents = ${postParents}
+			</if>
+			<if test="postChild !=0">
+				AND
+				post_child = ${postChild}
+			</if>
+		</where>
 	</delete>
 </mapper>
 
