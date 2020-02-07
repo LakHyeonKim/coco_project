@@ -13,7 +13,7 @@
 						:dateCreated="searches[i - 1].post.dateCreated"
 						:updateCreated="searches[i - 1].post.updateCreated"
 						:code="searches[i - 1].post.code"
-						:likeCount="searches[i - 1].likeCount"
+						:likeCount="searches[i - 1].post.likeCount"
 						:views="searches[i - 1].post.views"
 						:access="searches[i - 1].post.access"
 						:likeCheck="searches[i - 1].post.likeCheck"

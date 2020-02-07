@@ -7,7 +7,7 @@
 						<img src="../assets/user.png" id="userImg" />
 					</div>
 					<div id="userTitle">
-						<p id="userId">
+						<p id="userId" @click.prevent="goYourPage(memberId)">
 							{{ postWriter }}
 						</p>
 						<p id="date">{{ dateCreated }}</p>
@@ -95,6 +95,10 @@ export default {
 			// console.log(word);
 			store.dispatch("saveSearchTag", tag);
 			router.push("/search");
+		},
+		goYourPage(memberId) {
+			this.$session.set("targetId", memberId);
+			router.push("/mypage");
 		}
 	}
 };
