@@ -28,9 +28,9 @@
 					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
 				</router-link>
 			</li>
-			<li class="nav_menu">
+			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
-			</li>
+			</li> -->
 		</ul>
 	</div>
 </template>

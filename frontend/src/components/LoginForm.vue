@@ -32,9 +32,7 @@
 						/>
 					</div>
 					<button type="submit" class="loginbutton">
-						<p id="logintext">
-							로그인
-						</p>
+						<p id="logintext">로그인</p>
 					</button>
 				</form>
 				<div id="divideLine">
@@ -71,9 +69,7 @@
 			<div id="regiform">
 				계정이 없으신가요?
 				<router-link to="/register">
-					<button style="color:blue;">
-						가입하기
-					</button>
+					<button style="color:blue;">가입하기</button>
 				</router-link>
 			</div>
 			<div></div>
@@ -106,12 +102,10 @@ export default {
 		login() {
 			if (this.checkForm()) {
 				this.loading = true;
-				// this.$store.dispatch("startLoading");
 				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						console.log("before", res);
+						console.log(res);
 						if (res.status != "204") {
-							// alert(res.data);
 							this.$session.start();
 							this.$session.set(
 								"accessToken",

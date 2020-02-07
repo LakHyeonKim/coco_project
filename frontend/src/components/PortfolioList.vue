@@ -66,9 +66,9 @@ export default {
 		const headers = {
 			Authorization: token
 		};
-		const idMember = this.$session.get("id");
-		// console.log(idMember);
-		http.post("/api/findByAllNewsfeed/", idMember, { headers })
+		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+			headers
+		})
 			.then(res => {
 				console.log("getport then 1", res.data);
 				console.log("getport then 2", res.data[0].post.idpost);

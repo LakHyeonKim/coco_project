@@ -11,13 +11,18 @@ export default new Vuex.Store({
 		loading: false,
 		postDetail: [],
 		idPost: 0,
-		searchtag: ""
+		searchtag: "",
+		tags: null
 		// init: true,
 		// memberemail: "",
 		// accessToken: "",
 		// refreshToken: "",
 	},
 	getters: {
+		userId: function(state) {
+			console.log(jwtDecode(state.token));
+			return jwtDecode(state.token).idmember;
+		},
 		isLoggedIn: function(state) {
 			return state.token ? true : false;
 		},
@@ -27,9 +32,6 @@ export default new Vuex.Store({
 					Authorization: "JWT " + state.token
 				}
 			};
-		},
-		userId: function(state) {
-			return jwtDecode(state.token).idmember;
 		}
 	},
 	mutations: {

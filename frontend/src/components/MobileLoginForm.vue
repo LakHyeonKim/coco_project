@@ -101,12 +101,10 @@ export default {
 		login() {
 			if (this.checkForm()) {
 				this.loading = true;
-				// this.$store.dispatch("startLoading");
 				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						console.log("before", res);
+						console.log(res);
 						if (res.status != "204") {
-							// alert(res.data);
 							this.$session.start();
 							this.$session.set(
 								"accessToken",

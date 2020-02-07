@@ -14,6 +14,7 @@ import MyPage from "./views/MyPage.vue";
 import SearchPage from "./views/SearchPage.vue";
 import DetailPage from "./views/DetailPage.vue";
 import FindPassword from "./views/FindPassword.vue";
+import InfoModify from "./views/InfoModify";
 
 Vue.use(VueRouter);
 
@@ -92,6 +93,11 @@ const routes = [
 		path: "/findpwd",
 		name: "findpwd",
 		component: FindPassword
+	},
+	{
+		path: "/infoModify",
+		name: "infoModify",
+		component: InfoModify
 	},
 	{
 		path: "*",
