@@ -15,7 +15,7 @@
 		<v-card>
 			<v-tabs background-color="white" color="deep-purple accent-4" right>
 				<v-tab>글쓰기</v-tab>
-				<v-tab @click="testt">미리보기</v-tab>
+				<v-tab @click="highlighting">미리보기</v-tab>
 				<v-tab-item>
 					<v-container fluid>
 						<v-textarea
@@ -61,9 +61,7 @@
 			</v-row>
 			<v-row>
 				<v-col>
-					<v-btn @click="test">test</v-btn>
-					<v-btn @click="testt">testt</v-btn>
-					<v-btn @click="filetest">테스트</v-btn>
+					<v-btn @click="posting">글 작성</v-btn>
 				</v-col>
 			</v-row>
 			<input type="hidden" name="postTitle" v-model="board.postTitle" />
@@ -76,7 +74,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import router from "../router";
 import Prism from "../prism";
 import http from "../http-common";
@@ -127,40 +124,26 @@ export default {
 			}
 			return true;
 		},
-		test() {
-			for (let i = 0; i < this.tags.length; ++i) {
-				this.board.tags.push({
-					tagName: this.tags[i].value
-				});
-			}
-			console.log(this.board);
-
-			axios
-				.post(
-					"http://192.168.100.95:8888/api/makeTagsFromPost/",
-					this.board
-				)
-				.then(res => {
-					console.log(res);
-					router.push("/");
-				});
-		},
-		testt() {
+		highlighting() {
 			Prism.highlightAll();
 		},
-		filetest() {
+		posting() {
+			this.board.tags = [];
 			for (let i = 0; i < this.tags.length; ++i) {
 				this.board.tags.push(this.tags[i].value);
-				// this.board.tags += this.tags[i] + ",";
 			}
 
 			let formData = new FormData(document.forms.namedItem("board"));
 			formData.append("tags", this.board.tags);
 
-			http.post("/trc/makePost/", formData).then(res => {
-				console.log(res);
-				router.push("/");
-			});
+			http.post("/trc/makePost/", formData)
+				.then(res => {
+					alert("글이 성공적으로 작성되었습니다.");
+					router.push("/");
+				})
+				.catch(err => {
+					alert("글 작성 중 문제가 생겼습니다.");
+				});
 		}
 	},
 	mounted() {
