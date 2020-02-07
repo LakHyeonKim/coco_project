@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Alarm_Mapper">
+	<sql id="select-Alarm">
+		select idalarm, member_caller, member_receiver, post_id,
+		like_id, follow_id, is_read, access
+		from coco.alarm
+	</sql>
+	<sql id="insert-Alarm">
+		insert into coco.alarm
+		(member_caller,member_receiver, post_id,
+		like_id, follow_id, is_read, access)
+
+		values(#{memberCaller},#{memberReceiver},
+		#{postId},#{likeId},#{followId},#{isRead},#{access})
+	</sql>
+	<sql id="update-Alarm">
+		update alarm set
+		member_caller=#{memberCaller},
+		member_receiver=#{memberReceiver},
+		post_id=#{postId},
+		like_id=#{likeId},
+		follow_id=#{followId},
+		is_read=#{isRead},
+		access=#{access}
+		where
+		idalarm=#{idalarm}
+	</sql>
+	<sql id="delete-Alarm">
+		delete from alarm
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllAlarm" resultType="Alarm">
+		<include refid="select-Alarm"></include>
+	</select>
+	<select id="findAlarm" resultType="Alarm" parameterType="Alarm">
+		<include refid="select-Alarm"></include>
+		<where>
+			access = access
+			<if test="idalarm !=0">
+				AND
+				idalarm = ${idalarm}
+			</if>
+			<if test="memberCaller !=0">
+				AND
+				member_caller = ${memberCaller}
+			</if>
+			<if test="memberReceiver !=0">
+				AND
+				member_receiver = ${memberReceiver}
+			</if>
+			<if test="postId !=0">
+				AND
+				post_id = ${postId}
+			</if>
+			<if test="likeId !=0">
+				AND
+				like_id = ${likeId}
+			</if>
+			<if test="followId !=0">
+				AND
+				follow_id = ${followId}
+			</if>
+			<if test="isRead !=0">
+				AND
+				is_read = ${isRead}
+			</if>
+		</where>
+	</select>
+
+	<insert id="addAlarm" parameterType="Alarm"
+		useGeneratedKeys="true" keyProperty="idalarm">
+		<include refid="insert-Alarm"></include>
+	</insert>
+
+	<update id="updateAlarm" parameterType="Alarm">
+		<include refid="update-Alarm"></include>
+	</update>
+
+	<delete id="deleteAlarm" parameterType="Alarm">
+		<include refid="delete-Alarm"></include>
+		<where>
+			access = access
+			<if test="idalarm !=0">
+				AND
+				idalarm = ${idalarm}
+			</if>
+			<if test="memberCaller !=0">
+				AND
+				member_caller = ${memberCaller}
+			</if>
+			<if test="memberReceiver !=0">
+				AND
+				member_receiver = ${memberReceiver}
+			</if>
+			<if test="postId !=0">
+				AND
+				post_id = ${postId}
+			</if>
+			<if test="likeId !=0">
+				AND
+				like_id = ${likeId}
+			</if>
+			<if test="followId !=0">
+				AND
+				follow_id = ${followId}
+			</if>
+			<if test="isRead !=0">
+				AND
+				is_read = ${isRead}
+			</if>
+		</where>
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

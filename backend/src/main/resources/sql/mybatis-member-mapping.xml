@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="Member_Mapper">
+	<sql id="select-Member">
+		select
+		idmember, rank_id, is_manager,is_delete, nickname, id, password,
+		email, git_url, kakao_url,instagram_url ,date_created,update_created,r.grade,image_url,refreshToken
+		from `coco`.`member` as m join `coco`.`rank` as r
+	</sql>
+	<sql id="insert-Member">
+		insert into member
+		(rank_id, is_manager,is_delete, nickname,
+		id, password,
+		email, git_url, kakao_url,instagram_url ,date_created,update_created,image_url,refreshToken)
+		values(#{rankId},#{isManager},#{isDelete},
+		#{nickname}, #{id},
+		#{password}, #{email}, #{gitUrl}, #{kakaoUrl},
+		#{instagramUrl},now(),now(),#{imageUrl},#{refreshToken})
+	</sql>
+	<sql id="update-Member">
+		update member set
+		rank_id=#{rankId},
+		is_manager=#{isManager},
+		is_delete=#{isDelete},
+		nickname = #{nickname},
+		password = #{password},
+		email = #{email},
+		git_url = #{gitUrl},
+		kakao_url = #{kakaoUrl},
+		instagram_url = #{instagramUrl},
+		update_created = now(),
+		image_url = #{imageUrl},
+		refreshToken = #{refreshToken}
+		where
+		idmember=#{idmember}
+	</sql>
+	<sql id="delete-Member">
+		delete from member
+	</sql>
+	
+	<!-- 전체 검색 -->
+	<select id="findIdByRefreshToken" parameterType="string" resultType="integer">
+		select idmember from member where refreshToken=#{value}
+	</select>
+	<update id="updateRefreshToken" parameterType="Member">
+		update member set
+		refreshToken = #{refreshToken}
+		where
+		idmember = #{idmember}
+	</update>
+	<select id="findAllMember" resultType="Member">
+		<include refid="select-Member"></include>
+		<where>m.rank_id = r.idrank</where>
+	</select>
+	<select id="findMember" resultType="Member">
+		<include refid="select-Member"></include>
+		<where>
+			is_manager = ${isManager}
+			AND
+			is_delete = ${isDelete}
+			<if test="idmember !=0">
+				AND
+				idmember = ${idmember}
+			</if>
+			<if test="id !=null">
+				AND
+				id = '${id}'
+			</if>
+			<if test="password !=null">
+				AND
+				password = '${password}'
+			</if>
+			<if test="rankId !=0">
+				AND
+				rank_id = ${rankId}
+				AND
+				m.rank_id = r.idrank
+			</if>
+			<if test="nickname !=null">
+				AND
+				nickname = '${nickname}'
+			</if>
+			<if test="email !=null">
+				AND
+				email = '${email}'
+			</if>
+			<if test="gitUrl !=null">
+				AND
+				git_url = '${gitUrl}'
+			</if>
+			<if test="kakaoUrl !=null">
+				AND
+				kakao_url = '${kakaoUrl}'
+			</if>
+			<if test="instagramUrl !=null">
+				AND
+				instagram_url = '${instagramUrl}'
+			</if>
+			<if test="imageUrl !=null">
+				AND
+				image_url = '${imageUrl}'
+			</if>
+			<if test="refreshToken !=null">
+				AND
+				refreshToken = '${refreshToken}'
+			</if>
+		</where>
+	</select>
+	
+	<!-- 1. 팔로잉 한 사람 리스트 가져오기 -->
+	<select id="findFollowingMemberList"  parameterType="long" resultType="Member">
+		<include refid="Member_Mapper.select-Member"></include> 
+		where m.rank_id = r.idrank 
+		and idmember in (select member_following from `coco`.`follow` where member_follower = #{value})
+	</select>
+	
+	<!-- 2. 팔로워 한 사람 리스트 가져오기 -->
+	<select id="findFollowerMemberList"  parameterType="long" resultType="Member">
+		<include refid="Member_Mapper.select-Member"></include> 
+		where m.rank_id = r.idrank
+		and idmember in (select member_follower from `coco`.`follow` where member_following = #{value});
+	</select>
+	
+	<select id="findWhoPressedTheLikeButton" parameterType="long" resultType="Member">
+		select idmember, rank_id, is_manager,is_delete, nickname, id, password, email, git_url, kakao_url,instagram_url ,date_created,update_created, grade,image_url,refreshToken  
+		from `coco`.`member` as m join `coco`.`rank` as r 
+		where  m.rank_id = r.idrank and idmember in (select member_id from `coco`.`like` where post_id = #{value});
+	</select>
+
+	<insert id="addMember" parameterType="Member"
+		useGeneratedKeys="true" keyProperty="idmember">
+		<include refid="insert-Member"></include>
+	</insert>
+
+	<update id="updateMember" parameterType="Member">
+		<include refid="update-Member"></include>
+	</update>
+
+	<delete id="deleteMember" parameterType="Member">
+		<include refid="delete-Member"></include>
+		<where>
+			m.rank_id = r.idrank
+			AND
+			is_manager = ${isManager}
+			AND
+			is_delete = ${isDelete}
+			<if test="idmember !=0">
+				AND
+				idmember = ${idmember}
+			</if>
+			<if test="id !=null">
+				AND
+				id = '${id}'
+			</if>
+			<if test="password !=null">
+				AND
+				password = '${password}'
+			</if>
+			<if test="rankId !=0">
+				AND
+				rank_id = ${rankId}
+			</if>
+			<if test="nickname !=null">
+				AND
+				nickname = '${nickname}'
+			</if>
+			<if test="email !=null">
+				AND
+				email = '${email}'
+			</if>
+			<if test="gitUrl !=null">
+				AND
+				git_url = '${gitUrl}'
+			</if>
+			<if test="kakaoUrl !=null">
+				AND
+				kakao_url = '${kakaoUrl}'
+			</if>
+			<if test="instagramUrl !=null">
+				AND
+				instagram_url = '${instagramUrl}'
+			</if>
+			<if test="imageUrl !=null">
+				AND
+				image_url = '${imageUrl}'
+			</if>
+			<if test="refreshToken !=null">
+				AND
+				refreshToken = '${refreshToken}'
+			</if>
+		</where>
+	</delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 완벽한 행태의 CRUD가 다 들어있는 sqlMapper 이게 돌아간다면 MyBatis Framework에단에 문제가 없는 
+	것으로 본다 일종의 단위테스트...MyBatisAppTest.java 가 바로 MyBatis Mapper 단위테스트 -->
+
+
+<mapper namespace="MypageTag_Mapper">
+
+	<sql id="select-MypageTag">
+		select idmypage_tag, mypage_id, tag_id
+		from mypage_tag
+	</sql>
+	<sql id="insert-MypageTag">
+		insert into mypage_tag
+		(mypage_id, tag_id)
+		values
+		(#{mypageId},#{tagId})
+	</sql>
+	<sql id="delete-MypageTag">
+		delete from mypage_tag
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllMypageTag" resultType="MypageTag">
+		<include refid="select-MypageTag"></include>
+	</select>
+	<select id="findMypageTag" resultType="MypageTag">
+		<include refid="select-MypageTag"></include>
+		<where>
+			<if test="idmypageTag !=0">
+				idmypage_tag = ${idmypageTag}
+			</if>
+			<if test="mypageId != 0">
+			AND
+				mypage_id = ${mypageId}
+			</if>
+			<if test="tagId != 0">
+			AND
+				tag_id = ${tagId}
+			</if>
+		</where>
+	</select>
+
+	<insert id="addMypageTag" parameterType="MypageTag"
+		useGeneratedKeys="true" keyProperty="idmypageTag">
+		<include refid="insert-MypageTag"></include>
+	</insert>
+
+	<delete id="deleteMypageTag" parameterType="MypageTag">
+		<include refid="delete-MypageTag"></include>
+		<where>
+			<if test="idmypageTag !=0">
+				idmypage_tag = ${idmypageTag}
+			</if>
+			<if test="mypageId != 0">
+			AND
+				mypage_id = ${mypageId}
+			</if>
+			<if test="tagId != 0">
+			AND
+				tag_id = ${tagId}
+			</if>
+		</where>
+	</delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

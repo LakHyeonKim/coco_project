@@ -1,0 +1,87 @@
+package com.ssafy.coco.vo;
+
+public class Alarm {
+	long idalarm;
+	long memberCaller;
+	long memberReceiver;
+	long postId;
+	long likeId;
+	long followId;
+	int isRead;//1 : 확인 //  0 : 확인 안함
+	int access;//0:기본값  // 1:비공개 //  2:삭제
+	
+	@Override
+	public String toString() {
+		return "Alarm [idalarm=" + idalarm + ", memberCaller=" + memberCaller + ", memberReciever=" + memberReceiver
+				+ ", postId=" + postId + ", likeId=" + likeId + ", followId=" + followId + ", isRead=" + isRead
+				+ ", access=" + access + "]";
+	}
+	
+	public Alarm() {
+		super();
+	}
+
+	public Alarm(long idalarm, long memberCaller, long memberReceiver, long postId, long likeId, long followId,
+			int isRead, int access) {
+		super();
+		this.idalarm = idalarm;
+		this.memberCaller = memberCaller;
+		this.memberReceiver = memberReceiver;
+		this.postId = postId;
+		this.likeId = likeId;
+		this.followId = followId;
+		this.isRead = isRead;
+		this.access = access;
+	}
+	public long getIdalarm() {
+		return idalarm;
+	}
+	public void setIdalarm(long idalarm) {
+		this.idalarm = idalarm;
+	}
+	public long getMemberCaller() {
+		return memberCaller;
+	}
+	public void setMemberCaller(long memberCaller) {
+		this.memberCaller = memberCaller;
+	}
+	public long getMemberReceiver() {
+		return memberReceiver;
+	}
+	public void setMemberReciever(long memberReceiver) {
+		this.memberReceiver = memberReceiver;
+	}
+	public long getPostId() {
+		return postId;
+	}
+	public void setPostId(long postId) {
+		this.postId = postId;
+	}
+	public long getLikeId() {
+		return likeId;
+	}
+	public void setLikeId(long likeId) {
+		this.likeId = likeId;
+	}
+	public long getFollowId() {
+		return followId;
+	}
+	public void setFollowId(long followId) {
+		this.followId = followId;
+	}
+	public int getIsRead() {
+		return isRead;
+	}
+	public void setIsRead(int isRead) {
+		this.isRead = isRead;
+	}
+	public int getAccess() {
+		return access;
+	}
+	public void setAccess(int access) {
+		this.access = access;
+	}
+	
+	
+	
+}

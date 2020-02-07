@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+
+	<typeAliases>
+		<package name="com.ssafy.coco.vo" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="sql/mybatis-alarm-mapping.xml" />
+		<mapper resource="sql/mybatis-wordDictionary-mapping.xml" />
+		<mapper resource="sql/mybatis-babyPost-mapping.xml" />
+		<mapper resource="sql/mybatis-comment-mapping.xml" />
+		<mapper resource="sql/mybatis-follow-mapping.xml" />
+		<mapper resource="sql/mybatis-like-mapping.xml" />
+		<mapper resource="sql/mybatis-member-mapping.xml" />
+		<mapper resource="sql/mybatis-memberTag-mapping.xml" />
+		<mapper resource="sql/mybatis-mypage-mapping.xml" />
+		<mapper resource="sql/mybatis-mypageTag-mapping.xml" />
+		<mapper resource="sql/mybatis-post-mapping.xml" />
+		<mapper resource="sql/mybatis-postTag-mapping.xml" />
+		<mapper resource="sql/mybatis-tag-mapping.xml" />
+	</mappers>
+
+</configuration>
