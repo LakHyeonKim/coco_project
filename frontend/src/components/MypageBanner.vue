@@ -42,8 +42,8 @@
 								<img
 									:src="
 										userInfo.isFollew == 1
-											? './img/icons/check_g.png'
-											: './img/icons/plus_w.png'
+											? '../img/icons/check_g.png'
+											: '../img/icons/plus_w.png'
 									"
 									width="13px"
 								/>
@@ -52,9 +52,9 @@
 					</div>
 				</div>
 				<div id="counting">
-					팔로잉 {{ userInfo.followingCount }} · 팔로워
-					{{ userInfo.followerCount }} · 게시글
-					{{ userInfo.totalPostCount }}
+					<span>팔로잉 {{ userInfo.followingCount }}</span> ·
+					<span>팔로워 {{ userInfo.followerCount }}</span> ·
+					<span>게시글 {{ userInfo.totalPostCount }}</span>
 				</div>
 			</div>
 		</div>
@@ -112,6 +112,9 @@ export default {
 	name: "MypageBanner",
 	components: { Modal },
 	store,
+	props: {
+		no: null
+	},
 	data() {
 		return {
 			checkFollow: false,
@@ -194,7 +197,8 @@ export default {
 
 			http.post(address, {
 				memberFollower: this.$session.get("id"),
-				memberFollowing: this.$session.get("targetId")
+				// memberFollowing: this.$session.get("targetId")
+				memberFollowing: this.no
 			})
 				.then(response => {
 					console.log(response);
@@ -212,12 +216,14 @@ export default {
 		}
 	},
 	mounted() {
-		if (this.$session.get("id") == this.$session.get("targetId")) {
+		console.log("MypageBanner : " + this.no);
+		if (this.$session.get("id") == this.no) {
 			this.isUser = true;
 		}
 		http.post("/api/findByMemberHomePageUserID/", {
 			myIdMemeber: this.$session.get("id"),
-			youIdMember: this.$session.get("targetId")
+			// youIdMember: this.$session.get("targetId")
+			youIdMember: this.no
 		})
 
 			.then(response => {
@@ -239,6 +245,16 @@ export default {
 </script>
 
 <style>
+#f_button {
+	outline: 0;
+	border: 0;
+}
+#f_button:hover {
+	filter: brightness(95%);
+}
+#f_button:active {
+	filter: brightness(85%);
+}
 #message {
 	font-size: 20px;
 	font-weight: 500;

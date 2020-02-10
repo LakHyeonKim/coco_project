@@ -35,6 +35,7 @@ import http from "../http-common";
 
 export default {
 	name: "DetailPage",
+	props: ["no"],
 	data() {
 		return {
 			detail: {
@@ -81,7 +82,7 @@ export default {
 	mounted() {
 		const requestForm = {
 			idMember: this.$session.get("id"),
-			idPost: store.state.idPost
+			idPost: this.no
 		};
 		// console.log(requestForm);
 		http.post("/api/findByBoardDetailPostId/", requestForm)

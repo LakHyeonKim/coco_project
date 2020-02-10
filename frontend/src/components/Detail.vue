@@ -50,6 +50,10 @@ export default {
 		commentCount: {},
 		attachments: {}
 	}
+	// ,
+	// mounted() {
+	// 	alert(this.no);
+	// }
 };
 </script>
 

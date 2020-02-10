@@ -6,9 +6,9 @@
 			<li>
 				<!-- <router-link to="/mypage"> -->
 				<img
+					@click="getMypage()"
 					id="profile"
 					src="../assets/user.png"
-					@click="getMypage()"
 				/>
 				<!-- </router-link> -->
 			</li>
@@ -55,8 +55,8 @@ export default {
 			router.push("/");
 		},
 		getMypage() {
-			this.$session.set("targetId", this.$session.get("id"));
-			router.push("/mypage");
+			// this.$session.set("targetId", this.$session.get("id"));
+			router.push("/mypage/" + this.$session.get("id"));
 		}
 	}
 };
@@ -86,6 +86,7 @@ export default {
 	background-color: white;
 	margin-bottom: 20px;
 	width: 40px;
+	cursor: pointer;
 }
 
 #navbar > ul > li {
