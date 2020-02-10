@@ -52,7 +52,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "SSAFY HRM" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "Base Controller" }, description = "기본적인 DB 접근 CRUD")
 public class BaseController {
 
 	@Autowired

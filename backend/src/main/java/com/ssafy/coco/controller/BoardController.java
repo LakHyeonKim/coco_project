@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "Board Controller" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "Board Controller" }, description = "Board(게시글 종합) 컨트롤러")
 
 public class BoardController {
 	@Autowired
