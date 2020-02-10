@@ -60,6 +60,11 @@ public class MypageServiceImpl implements MyPageService{
 		return myPageDao.updateMypageVisitedCount(idMember);
 	}
 
+	@Override
+	public int updateMypageTodayVisitedReset() {
+		return myPageDao.updateMypageTodayVisitedReset();
+	}
+
 
 	
 
