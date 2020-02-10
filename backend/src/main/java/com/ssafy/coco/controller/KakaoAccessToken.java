@@ -95,7 +95,6 @@ public class KakaoAccessToken {
 		{
 			Member result = list.get(0);
 			Tokens tokens2 = jwtService.login(result.getId(), result.getPassword());
-			
 			System.out.println("tokens2:"+tokens2.getAccessToken());
 			System.out.println("kkao:"+token.path("access_token").toString());
 			String memberJson = "{\"Member\":" + objectMapper.writeValueAsString(result) + ",";

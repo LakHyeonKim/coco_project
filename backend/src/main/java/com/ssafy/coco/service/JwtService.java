@@ -12,6 +12,7 @@ public interface JwtService {
 	public String makeJwt(HttpServletRequest res) throws Exception;
 	public String makeJwt(String id, String pwd) throws Exception;
 	public String makeJwt(String idmember, int time) throws Exception;
+	public String makeJwt(String idmember,String nickname, int time) throws Exception;
 	public boolean checkJwt(String jwt) throws Exception;
 	public HttpStatus checkJwt2(String jwt) throws Exception;
 	public boolean getAccessTokenByRefreshToken(@PathVariable String tt) throws Exception;

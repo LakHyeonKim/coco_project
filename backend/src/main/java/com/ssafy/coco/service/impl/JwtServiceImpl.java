@@ -66,6 +66,31 @@ public class JwtServiceImpl implements JwtService{
 
         return builder.compact();
     }
+    @Override
+    public String makeJwt(String idmember,String nickname, int time) throws Exception {
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        Date expireTime = new Date();
+        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 );
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        Map<String, Object> headerMap = new HashMap<String, Object>();
+
+        headerMap.put("typ","JWT");
+        headerMap.put("alg","HS256");
+
+        Map<String, Object> map= new HashMap<String, Object>();
+
+        map.put("idmember", idmember);
+        map.put("nickname", nickname);
+
+        JwtBuilder builder = Jwts.builder().setHeader(headerMap)
+                .setClaims(map)
+                .setExpiration(expireTime)
+                .signWith(signatureAlgorithm, signingKey);
+
+        return builder.compact();
+    }
     
     @Override
     public String makeJwt(String idmember,int time) throws Exception {
@@ -194,7 +219,7 @@ public class JwtServiceImpl implements JwtService{
 			String refreshToken = makeJwt(""+System.currentTimeMillis(),24*14);//나중에 뭘로 할지 찾기
 			m.setRefreshToken(refreshToken);
 			memberDao.updateRefreshToken(m);
-			Tokens tokens = new Tokens(makeJwt(""+m.getIdmember(),1),refreshToken);
+			Tokens tokens = new Tokens(makeJwt(""+m.getIdmember(),m.getNickname(),1),refreshToken);
 			return tokens;
 		}
 		else

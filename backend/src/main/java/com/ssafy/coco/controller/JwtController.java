@@ -73,7 +73,7 @@ public class JwtController {
 		if (list.size() > 0) {
 			m = list.get(0);
 			m.setGrade("아이언");
-			return jwtService.makeJwt("" + m.getIdmember(), 1);
+			return jwtService.makeJwt("" + m.getIdmember(),m.getNickname() ,1);
 		} else {
 			return "fail";
 		}
