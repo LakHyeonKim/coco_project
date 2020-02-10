@@ -3,6 +3,7 @@
 	<!-- 로딩된 정보를 넘겨 받아서 바로 띄워주면? -->
 	<div id="detailMain">
 		<detail
+			:no="this.no"
 			:idPost="this.detail.post.idpost"
 			:memberId="this.detail.post.memberId"
 			:postTitle="this.detail.post.postTitle"
@@ -35,6 +36,7 @@ import http from "../http-common";
 
 export default {
 	name: "DetailPage",
+	props: ["no"],
 	data() {
 		return {
 			detail: {
@@ -81,7 +83,7 @@ export default {
 	mounted() {
 		const requestForm = {
 			idMember: this.$session.get("id"),
-			idPost: store.state.idPost
+			idPost: this.no
 		};
 		// console.log(requestForm);
 		http.post("/api/findByBoardDetailPostId/", requestForm)

@@ -56,7 +56,12 @@
 		<form name="board" id="board" enctype="multipart/form-data">
 			<v-row>
 				<v-col>
-					<v-file-input name="attachments" v-model="board.attachments" chips label="첨부파일"></v-file-input>
+					<v-file-input
+						name="attachments"
+						v-model="board.attachments"
+						chips
+						label="첨부파일"
+					></v-file-input>
 				</v-col>
 			</v-row>
 			<v-row>
@@ -99,8 +104,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-				? event.charCode
-				: event.which;
+					? event.charCode
+					: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -139,7 +144,7 @@ export default {
 			http.post("/trc/makePost/", formData)
 				.then(res => {
 					alert("글이 성공적으로 작성되었습니다.");
-					this.$session.set("targetId", this.$session.get("id"))
+					this.$session.set("targetId", this.$session.get("id"));
 					router.push("/mypage");
 				})
 				.catch(err => {
@@ -149,13 +154,13 @@ export default {
 	},
 	mounted() {
 		Prism.plugins.autoloader.use_minified = false;
-		this.board.memberId = this.$session.get("id")
-		console.log("memberId newpage mounted ", this.board.memberId)
+		this.board.memberId = this.$session.get("id");
+		console.log("memberId newpage mounted ", this.board.memberId);
 		// 닉네임 재확인 안할방법 찾아보기
 		this.$store.state.token = this.$session.get("accessToken");
 		this.board.postWriter = this.$store.getters.userNickname;
-		console.log("nickname this ", this.board.postWriter)
-		console.log("nickname vuex ", this.$store.getters.userNickname)
+		console.log("nickname this ", this.board.postWriter);
+		console.log("nickname vuex ", this.$store.getters.userNickname);
 	}
 };
 </script>

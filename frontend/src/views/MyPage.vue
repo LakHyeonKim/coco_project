@@ -17,6 +17,7 @@ import store from "../store";
 export default {
 	name: "myPage",
 	store,
+	props: ["no"],
 	components: {
 		MypageBanner,
 		MypageMyMenu,

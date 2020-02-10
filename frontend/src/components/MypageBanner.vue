@@ -42,8 +42,8 @@
 								<img
 									:src="
 										userInfo.isFollew == 1
-											? './img/icons/check_g.png'
-											: './img/icons/plus_w.png'
+											? '../img/icons/check_g.png'
+											: '../img/icons/plus_w.png'
 									"
 									width="13px"
 								/>
@@ -52,9 +52,9 @@
 					</div>
 				</div>
 				<div id="counting">
-					팔로잉 {{ userInfo.followingCount }} · 팔로워
-					{{ userInfo.followerCount }} · 게시글
-					{{ userInfo.totalPostCount }}
+					<span>팔로잉 {{ userInfo.followingCount }}</span> ·
+					<span>팔로워 {{ userInfo.followerCount }}</span> ·
+					<span>게시글 {{ userInfo.totalPostCount }}</span>
 				</div>
 			</div>
 		</div>
@@ -239,6 +239,16 @@ export default {
 </script>
 
 <style>
+#f_button {
+	outline: 0;
+	border: 0;
+}
+#f_button:hover {
+	filter: brightness(95%);
+}
+#f_button:active {
+	filter: brightness(85%);
+}
 #message {
 	font-size: 20px;
 	font-weight: 500;
