@@ -2,37 +2,53 @@
 	<div style="background-color:rgba(0, 0, 0,0.0);" class="postBox">
 		<div id="cardBox">
 			<div id="contentBox">
-				<div id="cardHead">
-					<div id="imgDiv">
-						<img src="../assets/user.png" id="userImg" />
-					</div>
-					<div id="userTitle">
-						<p id="userId" @click.prevent="goYourPage(memberId)">
-							{{ postWriter }}
-						</p>
-						<p id="date">{{ dateCreated }}</p>
+				<div id="cardHash">
+					<div v-for="tag in tags" :key="`${tag}`">
+						<a id="hashTag" @click.prevent="goSearch(`${tag}`)">
+							{{ tag }}
+						</a>
 					</div>
 				</div>
+
 				<div id="cardTitle">
 					<div class="line-clamp-title" @click.prevent="goDetail()">
 						<b>{{ postTitle }}</b>
 					</div>
 				</div>
-				<div id="cardHash">
-					<div v-for="tag in tags" :key="`${tag}`">
-						<a id="hashTag" @click.prevent="goSearch(`${tag}`)">
-							#{{ tag }}
-						</a>
+
+				<div id="cardHead">
+					<img src="../assets/user.png" id="userImg" />
+					<div id="userId" @click.prevent="goYourPage(memberId)">
+						{{ postWriter }}
 					</div>
+					<div id="date">{{ dateCreated }}</div>
 				</div>
+
 				<div id="cardBody">
 					<span class="line-clamp-body">
 						{{ code }}
 					</span>
 				</div>
+
 				<div id="cardFooter">
-					<div id="like">좋아요 {{ likeCount }}개</div>
-					<div id="comment">댓글 {{ commentCount }}개</div>
+					<img
+						:id="idPost"
+						class="like_img"
+						:src="
+							likeCheck == 1
+								? './img/icons/tack_full.png'
+								: './img/icons/tack_empty.png'
+						"
+						width="35px"
+						@click="likeEmit(idPost, postIdx)"
+					/>
+					<div id="likeCount">
+						{{ likeCount }}
+					</div>
+					<img src="../assets/icon/chat.png" class="comment_img" />
+					<div id="commentCount">
+						{{ commentCount }}
+					</div>
 				</div>
 			</div>
 			<!-- <div id="imgBox" v-if="imagePath">
@@ -62,6 +78,7 @@ import store from "../store";
 export default {
 	name: "Post",
 	props: {
+		postIdx: {},
 		idPost: {},
 		memberId: {},
 		postTitle: {},
@@ -97,8 +114,15 @@ export default {
 			router.push("/search");
 		},
 		goYourPage(memberId) {
-			// this.$session.set("targetId", memberId);
+			this.$session.set("targetId", memberId);
 			router.push("/mypage/" + memberId);
+		},
+		likeEmit(postNum, index) {
+			// const form = {
+			// 	postId: postNum,
+			// 	postIdx: index
+			// };
+			this.$emit("like", postNum, index);
 		}
 	}
 };
@@ -118,38 +142,44 @@ export default {
 	flex: 1;
 }
 #cardHead {
-	display: flex;
+	display: inline-block;
 	margin-bottom: 7px;
+	height: 30px;
 }
 #imgDiv {
-	width: 40px;
-	height: 40px;
-	margin-right: 10px;
+	width: 20px;
+	height: 20px;
+	/* margin-right: 10px; */
 }
 #userImg {
-	width: 40px;
-	height: 40px;
-	border-radius: 25px;
-	background-color: black;
+	float: left;
+	border-radius: 50%;
+	width: 20px;
+	margin-top: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	margin-right: 3px;
 }
 #userId {
+	float: left;
 	color: black;
-	font-size: 15px;
-	margin-bottom: 2px;
-	height: 17px;
+	font-size: 13px;
+	line-height: 30px;
+	margin-right: 7px;
 }
 #date {
+	float: left;
+	font-size: 11px;
+	line-height: 30px;
 	color: gray;
-	font-size: 12px;
-	margin: 0;
-	height: 17px;
 }
 #cardTitle {
-	margin-bottom: 7px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	/* margin-left: 10px; */
 }
 .line-clamp-title {
 	font-size: 20px;
+	font-weight: 400;
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
@@ -160,14 +190,18 @@ export default {
 	margin-bottom: 7px;
 }
 #hashTag {
-	font-size: 16px;
-	color: blue;
-	text-decoration: none;
-	margin-right: 5px;
+	float: left;
+	margin-right: 6px;
+	font-size: 13px;
+	border-radius: 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: white;
+	background-color: rgba(160, 23, 98, 0.5);
 }
 #cardBody {
 	min-height: 75px;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	/* margin-left: 10px; */
 }
 .line-clamp-body {
@@ -177,15 +211,32 @@ export default {
 	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 }
-#like {
-	display: inline-block;
-	/* margin-left: 20px; */
-	margin-right: 10px;
-}
-#comment {
+#cardFooter {
 	display: inline-block;
 }
-
+.like_img {
+	float: left;
+	width: 35px;
+	border-radius: 50%;
+	transition: all ease-in-out 0.3s;
+}
+#likeCount {
+	float: left;
+	font-weight: 400;
+	margin-top: 10px;
+	font-size: 15px;
+}
+.comment_img {
+	float: left;
+	width: 30px;
+	margin: 7px 3px 0 10px;
+}
+#commentCount {
+	float: left;
+	font-weight: 400;
+	margin-top: 10px;
+	font-size: 15px;
+}
 #imgBox {
 	margin-left: 10px;
 	width: 200px;

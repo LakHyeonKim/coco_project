@@ -16,7 +16,7 @@
 					type="text"
 					v-on:change="onInput"
 					id="searchBox"
-					placeholder="Search"
+					placeholder="없으면 허전해"
 				/>
 				<p id="codeCoworker">Code Coworker</p>
 			</div>
@@ -45,6 +45,9 @@ export default {
 </script>
 
 <style scoped>
+#backBox {
+	height: 100%;
+}
 #header {
 	position: fixed;
 	width: 100%;
@@ -71,7 +74,7 @@ export default {
 }
 ::placeholder {
 	color: black;
-	font-size: 50px;
+	font-size: 20px;
 }
 #codeCoworker {
 	display: none;
@@ -86,7 +89,7 @@ export default {
 	/* background-color: blueviolet; */
 }
 #subBox {
-	height: 50px;
+	height: 100%;
 	width: 80vw;
 	/* background-color: red; */
 	/* align-content: center; */

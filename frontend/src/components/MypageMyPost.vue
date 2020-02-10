@@ -126,7 +126,9 @@ export default {
 					idpost: postNum
 				}
 			})
-				.then(response => {})
+				.then(res => {
+					console.log(res);
+				})
 				.catch(error => {
 					console.log(error);
 					if (this.posts[index].post.likeCheck == 1) {
