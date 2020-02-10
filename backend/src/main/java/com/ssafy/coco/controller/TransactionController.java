@@ -36,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/trc")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "Transaction Controller" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "Transaction Controller" }, description = "트랜잭션 함수 컨트롤러")
 public class TransactionController {
 	
 	@Autowired

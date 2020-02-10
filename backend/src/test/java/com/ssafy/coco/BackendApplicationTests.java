@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.service.BoardService;
 import com.ssafy.coco.service.CommentService;
-import com.ssafy.coco.service.MailService2;
+import com.ssafy.coco.service.MailService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.BabyPost;
 import com.ssafy.coco.vo.Comment;
@@ -43,7 +43,7 @@ class BackendApplicationTests {
 	BoardService boardService;
 
 	@Autowired
-	MailService2 mailService;
+	MailService mailService;
 	
 	//@Test void transactionContextLoads() throws Exception{
 	//	mailService.test();
