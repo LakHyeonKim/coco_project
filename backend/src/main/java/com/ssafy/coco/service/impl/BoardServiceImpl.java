@@ -58,6 +58,15 @@ public class BoardServiceImpl implements BoardService{
 		List<Post> newsPosts = postDao.findPostByNewsfeed(idMember);
 		return makeBoardList(idMember, newsPosts);
 	}
+	
+	@Override
+	public List<Board> findByAllNewsfeedScrollDown(long idMember, long lastIdPost) {
+		Map<String,Long> hashMap = new HashMap<>();
+		hashMap.put("idMember", idMember);
+		hashMap.put("idPost", lastIdPost);
+		List<Post> newsPosts = postDao.findByAllNewsfeedScrollDown(hashMap);
+		return makeBoardList(idMember, newsPosts);
+	}
 
 	@Override
 	public List<Board> findByAllDefaultSearch(long idMember) {
@@ -132,4 +141,5 @@ public class BoardServiceImpl implements BoardService{
 		}
 		return boards;
 	}
+
 }
