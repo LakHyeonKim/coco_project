@@ -36,6 +36,9 @@ import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
+	props: {
+		no: null
+	},
 	data() {
 		return {
 			items: ["전체", "#", "글제목", "글내용"],

@@ -74,6 +74,9 @@ import store from "../store";
 export default {
 	name: "MypageMyPost",
 	store,
+	props: {
+		no: null
+	},
 	data() {
 		return {
 			posts: "",
@@ -92,7 +95,7 @@ export default {
 			http.post("/api/findByMyPosts/", {
 				myIdMember: this.$session.get("id"),
 				order: idx,
-				youIdMember: this.$session.get("targetId")
+				youIdMember: this.no
 			})
 				.then(response => {
 					this.posts = response.data;
@@ -137,10 +140,11 @@ export default {
 		}
 	},
 	mounted() {
+		console.log("MypageMyPost : " + this.no);
 		http.post("/api/findByMyPosts/", {
 			myIdMember: this.$session.get("id"),
 			order: 4,
-			youIdMember: this.$session.get("targetId")
+			youIdMember: this.no
 		})
 			.then(response => {
 				this.posts = response.data;
