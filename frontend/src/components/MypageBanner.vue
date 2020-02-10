@@ -18,71 +18,55 @@
 						<div id="nickname">
 							{{ userInfo.member.nickname }}
 						</div>
-						<img
-							v-if="isUser"
-							src="../assets/icon/settings.png"
-							id="settings"
-							@click="showModal = true"
-						/>
-						<div id="isFollow" v-if="!isUser">
-							<button
-								id="f_button"
-								:style="
-									userInfo.isFollew == 1
-										? following_btn
-										: follow_btn
-								"
-								@click="
-									userInfo.isFollew == 1
-										? (showModal_f = true)
-										: follow()
-								"
-							>
-								{{ f_current }}
+
+						<MypagePWCheck v-if="isUser" style="float: left;">
+							<div slot="click">
 								<img
-									:src="
-										userInfo.isFollew == 1
-											? '../img/icons/check_g.png'
-											: '../img/icons/plus_w.png'
-									"
-									width="13px"
+									slot="click"
+									src="../assets/icon/settings.png"
+									id="settings"
 								/>
-							</button>
-						</div>
+							</div>
+						</MypagePWCheck>
+						<MypageFollowCheck
+							v-if="!isUser"
+							:userInfo="userInfo"
+							style="float: left;"
+						>
+							<div slot="click" id="isFollow">
+								<button
+									id="f_button"
+									:style="
+										userInfo.isFollew == 1
+											? following_btn
+											: follow_btn
+									"
+								>
+									{{ f_current }}
+									<img
+										:src="
+											userInfo.isFollew == 1
+												? '../img/icons/check_g.png'
+												: '../img/icons/plus_w.png'
+										"
+										width="13px"
+									/>
+								</button>
+							</div>
+						</MypageFollowCheck>
 					</div>
 				</div>
+
 				<div id="counting">
-					<span>팔로잉 {{ userInfo.followingCount }}</span> ·
-					<span>팔로워 {{ userInfo.followerCount }}</span> ·
-					<span>게시글 {{ userInfo.totalPostCount }}</span>
+					<span> 팔로잉 {{ userInfo.followingCount }} </span>
+					<span> · </span>
+					<span> 팔로워 {{ userInfo.followerCount }} </span>
+					<span> · </span>
+					<span> 게시글 {{ userInfo.totalPostCount }} </span>
 				</div>
 			</div>
 		</div>
-		<Modal v-if="showModal" @close="showModal = false">
-			<div slot="header">비밀번호 확인</div>
-			<div slot="body">
-				<v-text-field
-					:append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-					:rules="[rules.required, rules.min]"
-					:type="show ? 'text' : 'password'"
-					hint="At least 8 characters"
-					class="input-group--focused"
-					@click:append="show = !show"
-					:counter="counterEn ? counter : false"
-					solo
-					color="rgba(160, 23, 98, 0.5)"
-					v-model="input_pw"
-				></v-text-field>
-			</div>
-			<div slot="footer">
-				<button class="modal-default-button" @click="pwCheck()">
-					확인
-				</button>
-				<button class="modal-default-button" @click="showModal = false">
-					취소
-				</button>
-			</div>
-		</Modal>
+
 		<Modal v-if="showModal_f" @close="showModal_f = false">
 			<div slot="body">
 				<span id="message">
@@ -107,17 +91,18 @@
 <script>
 import http from "../http-common";
 import store from "../store";
-import Modal from "./Modal.vue";
+import MypagePWCheck from "./MypagePWCheck.vue";
+import MypageFollowCheck from "./MypageFollowCheck.vue";
+
 export default {
 	name: "MypageBanner",
-	components: { Modal },
+	components: { MypagePWCheck, MypageFollowCheck },
 	store,
-	props: {
-		no: null
-	},
 	data() {
 		return {
-			checkFollow: false,
+			isOk: false,
+			isClose: false,
+			pw_check: false,
 			showModal: false,
 			showModal_f: false,
 			isUser: false,
@@ -151,79 +136,25 @@ export default {
 				color: "white",
 				padding: "3px 10px 3px 10px",
 				boxShadow: "0.5px 0.5px 5px rgba(0, 0, 0, 0.2)"
-			},
-			clearable: true,
-			counterEn: true,
-			counter: 16,
-			show: false,
-			password: "Password",
-			rules: {
-				required: value => !!value || "Required.",
-				min: v => v.length >= 8 || "Min 8 characters",
-				emailMatch: () =>
-					"The email and password you entered don't match"
-			},
-			input_pw: ""
+			}
 		};
 	},
 	methods: {
 		pwCheck() {
 			alert(this.input_pw);
 			this.$router.push("/infoModify");
-			// http.post("/api/findByMyPosts/", {
-			// 	idMember: this.$session.get("id"),
-			// 	order: idx
-			// })
-			// 	.then(response => {
-			// 		this.posts = response.data;
-			// 		console.log(this.posts);
-			// 	})
-			// 	.catch(error => {
-			// 		console.log(error);
-			// 	});
-		},
-		follow() {
-			let address = "";
-			if (this.userInfo.isFollew == 1) {
-				address = "/trc/makeUnFollow/";
-				this.userInfo.isFollew = 0;
-				this.f_current = "팔로우";
-			} else {
-				address = "/trc/makeFollow/";
-				this.userInfo.isFollew = 1;
-				this.f_current = "팔로잉";
-			}
-			this.showModal_f = false;
-
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				// memberFollowing: this.$session.get("targetId")
-				memberFollowing: this.no
-			})
-				.then(response => {
-					console.log(response);
-				})
-				.catch(error => {
-					console.log(error);
-					if (this.userInfo.isFollew == 1) {
-						this.userInfo.isFollew = 0;
-						this.f_current = "팔로우";
-					} else {
-						this.userInfo.isFollew = 1;
-						this.f_current = "팔로잉";
-					}
-				});
 		}
 	},
 	mounted() {
-		console.log("MypageBanner : " + this.no);
-		if (this.$session.get("id") == this.no) {
+		console.log("MypageBanner : " + this.$route.params.no);
+		if (this.$session.get("id") == this.$route.params.no) {
 			this.isUser = true;
 		}
+		console.log("isUser : " + this.isUser);
 		http.post("/api/findByMemberHomePageUserID/", {
 			myIdMemeber: this.$session.get("id"),
 			// youIdMember: this.$session.get("targetId")
-			youIdMember: this.no
+			youIdMember: this.$route.params.no
 		})
 
 			.then(response => {
@@ -332,7 +263,7 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-#checkFollow {
+/* #checkFollow {
 	text-shadow: 0 0;
 	margin: 0 auto;
 	z-index: 1;
@@ -342,7 +273,8 @@ export default {
 	color: black;
 	border-radius: 5px;
 	box-shadow: 0.5px 0.5px 7px rgba(0, 0, 0, 0.3);
-}
+} */
+
 @media screen and (max-width: 600px) {
 	#settings {
 		width: 15px;
