@@ -115,4 +115,9 @@ public class PostServiceImpl implements PostService{
 	public int updatePostUnlikeCount(long idPost) {
 		return postDao.updatePostUnlikeCount(idPost);
 	}
+
+	@Override
+	public int updatePostlikeCount(long idPost) {
+		return postDao.updatePostlikeCount(idPost);
+	}
 }

@@ -111,4 +111,9 @@ public class PostDaoImpl implements PostDao {
 		return sqlSession.update(ns + "updatePostUnlikeCount",idPost);
 	}
 
+	@Override
+	public int updatePostlikeCount(long idPost) {
+		return sqlSession.update(ns + "updatePostlikeCount",idPost);
+	}
+
 }
