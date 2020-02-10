@@ -55,7 +55,7 @@ export default {
 			router.push("/");
 		},
 		getMypage() {
-			this.$session.set("targetId", this.$session.get("id"));
+			// this.$session.set("targetId", this.$session.get("id"));
 			router.push("/mypage/" + this.$session.get("id"));
 		}
 	}

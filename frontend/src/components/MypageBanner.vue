@@ -112,6 +112,9 @@ export default {
 	name: "MypageBanner",
 	components: { Modal },
 	store,
+	props: {
+		no: null
+	},
 	data() {
 		return {
 			checkFollow: false,
@@ -194,7 +197,8 @@ export default {
 
 			http.post(address, {
 				memberFollower: this.$session.get("id"),
-				memberFollowing: this.$session.get("targetId")
+				// memberFollowing: this.$session.get("targetId")
+				memberFollowing: this.no
 			})
 				.then(response => {
 					console.log(response);
@@ -212,12 +216,14 @@ export default {
 		}
 	},
 	mounted() {
-		if (this.$session.get("id") == this.$session.get("targetId")) {
+		console.log("MypageBanner : " + this.no);
+		if (this.$session.get("id") == this.no) {
 			this.isUser = true;
 		}
 		http.post("/api/findByMemberHomePageUserID/", {
 			myIdMemeber: this.$session.get("id"),
-			youIdMember: this.$session.get("targetId")
+			// youIdMember: this.$session.get("targetId")
+			youIdMember: this.no
 		})
 
 			.then(response => {

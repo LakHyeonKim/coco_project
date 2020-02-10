@@ -29,7 +29,6 @@
 export default {
 	name: "Detail",
 	props: {
-		no: null,
 		idPost: {},
 		memberId: {},
 		postTitle: {},
