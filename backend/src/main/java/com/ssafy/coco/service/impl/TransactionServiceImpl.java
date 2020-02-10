@@ -92,7 +92,7 @@ public class TransactionServiceImpl implements TransactionService{
 		member.setRankId(1L);
 		if(signUpMember.getFile() != null) {
 			MultipartFile file = signUpMember.getFile();
-			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userprofile";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
 			String imageFilePath = path + saveFileName + "";
@@ -208,6 +208,7 @@ public class TransactionServiceImpl implements TransactionService{
 	@Transactional
 	public void pushLike(long idPost, long idMember) {
 		likeDao.addLike(new Like(0, idPost, idMember, 0));
+		postDao.updatePostlikeCount(idPost);
 		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
 		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
@@ -251,7 +252,7 @@ public class TransactionServiceImpl implements TransactionService{
 		
 		if(board.getAttachments() != null) {
 			MultipartFile file = board.getAttachments();
-			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userfile";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
 			String filePath = path + saveFileName + "";

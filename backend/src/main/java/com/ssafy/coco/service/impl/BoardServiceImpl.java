@@ -125,7 +125,7 @@ public class BoardServiceImpl implements BoardService{
 					tags.add(tag.getTagName());
 				}
 				List<Member> likes = memberDao.findWhoPressedTheLikeButton(post.getIdpost());
-				post.setLikeCount(likes.size());
+				//post.setLikeCount(likes.size());
 				int commentCount = commentDao.findComment(new Comment(0, 0, post.getIdpost(), null, null, null, null, 0)).size();
 				boards.add(new Board(post, tags, commentCount));
 			}
