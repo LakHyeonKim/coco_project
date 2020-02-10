@@ -1,28 +1,49 @@
 <template>
-	<v-container>
-		<v-row style="justify-content: center">
-			<v-col class="col-12 col-sm-9 col-md-9">
+	<v-container class="col-12 col-sm-10 col-md-8">
+		<v-row>
+			<v-col>
 				<v-text-field
-					v-model="board.post.postTitle"
+					name="postTitle"
+					v-model="board.postTitle"
 					label="제목"
 					append-icon="mdi-page-layout-header"
 					counter
-					filled
 					outlined
 				></v-text-field>
-				<v-textarea
-					id="content"
-					v-model="board.post.code"
-					label="내용"
-					hint="더블클릭하여 에디터에서 수정"
-					rows="10"
-					append-icon="mdi-page-layout-body"
-					counter
-					filled
-					auto-grow
-					outlined
-					@dblclick="runStackEdit"
-				></v-textarea>
+			</v-col>
+		</v-row>
+		<v-card>
+			<v-tabs background-color="white" color="deep-purple accent-4" right>
+				<v-tab>글쓰기</v-tab>
+				<v-tab @click="highlighting">미리보기</v-tab>
+				<v-tab-item>
+					<v-container fluid>
+						<v-textarea
+							name="post.code"
+							id="input"
+							v-model="board.code"
+							label="Input"
+							@keydown="insertTab"
+							auto-grow
+							outlined
+						/>
+					</v-container>
+				</v-tab-item>
+				<v-tab-item>
+					<v-container fluid>
+						<div class="result">
+							<vue-markdown
+								class="line-numbers match-braces rainbow-braces show-invisibles"
+								:source="board.code"
+								data-download-link
+							></vue-markdown>
+						</div>
+					</v-container>
+				</v-tab-item>
+			</v-tabs>
+		</v-card>
+		<v-row>
+			<v-col>
 				<tags-input
 					v-model="tags"
 					element-id="tags"
@@ -30,85 +51,116 @@
 					add-tags-on-space
 					add-tags-on-blur
 				></tags-input>
-				<v-btn @click="test">test</v-btn>
 			</v-col>
 		</v-row>
+		<form name="board" id="board" enctype="multipart/form-data">
+			<v-row>
+				<v-col>
+					<v-file-input name="attachments" v-model="board.attachments" chips label="첨부파일"></v-file-input>
+				</v-col>
+			</v-row>
+			<v-row>
+				<v-col>
+					<v-btn @click="posting">글 작성</v-btn>
+				</v-col>
+			</v-row>
+			<input type="hidden" name="postTitle" v-model="board.postTitle" />
+			<input type="hidden" name="postWriter" v-model="board.postWriter" />
+			<input type="hidden" name="memberId" v-model="board.memberId" />
+			<input type="hidden" name="code" v-model="board.code" />
+			<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
+		</form>
 	</v-container>
 </template>
 
 <script>
-import Stackedit from "stackedit-js";
-import http from "../http-common";
 import router from "../router";
+import Prism from "../prism";
+import http from "../http-common";
 
 export default {
 	name: "NewPage",
 	components: {},
 	data() {
 		return {
-			el: "",
-			stackedit: "",
-			source: "",
-			result: "",
-
 			tags: [],
 			board: {
-				post: {
-					access: 0,
-					code: "",
-					idpost: 0,
-					imagePath: "string",
-					likeCount: 0,
-					memberId: 7,
-					postTitle: "",
-					postWriter: "tester",
-					views: 0
-				},
-				tags: []
+				code: "",
+				memberId: 7,
+				postTitle: "",
+				postWriter: "tester",
+				tags: [],
+				attachments: null
 			}
 		};
 	},
 	methods: {
-		test() {
-			for (let i = 0; i < this.tags.length; ++i) {
-				this.board.tags.push({
-					tagName: this.tags[i].value
-				});
-			}
-			console.log(this.board);
-
-			http.post("/makeTagsFromPost/", this.board).then(res => {
-				console.log(res);
-				router.push("/");
-			});
-		},
-		runStackEdit() {
-			// Open the iframe
-			this.stackedit.openFile({
-				name: "Filename", // with an optional filename
-				content: {
-					text: this.el.value // and the Markdown content.
-					// text: this.board.post.code
+		insertTab: function(event) {
+			var kC = event.keyCode
+				? event.keyCode
+				: event.charCode
+				? event.charCode
+				: event.which;
+			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+				var oS = event.target.scrollTop;
+				if (event.target.setSelectionRange) {
+					var sS = event.target.selectionStart;
+					var sE = event.target.selectionEnd;
+					event.target.value =
+						event.target.value.substring(0, sS) +
+						"\t" +
+						event.target.value.substr(sE);
+					event.target.setSelectionRange(sS + 1, sS + 1);
+					event.target.focus();
+				} else if (event.target.createTextRange) {
+					document.selection.createRange().text = "\t";
+					event.returnValue = false;
 				}
-			});
+				event.target.scrollTop = oS;
+				if (event.preventDefault) {
+					event.preventDefault();
+				}
+				return false;
+			}
+			return true;
+		},
+		highlighting() {
+			Prism.highlightAll();
+		},
+		posting() {
+			this.board.tags = [];
+			for (let i = 0; i < this.tags.length; ++i) {
+				this.board.tags.push(this.tags[i].value);
+			}
 
-			// Listen to StackEdit events and apply the changes to the textarea.
-			this.stackedit.on("fileChange", file => {
-				// this.el.value = file.content.text;
-				this.board.post.code = file.content.text;
-				// this.p.innerHTML = file.content.html;
-			});
+			let formData = new FormData(document.forms.namedItem("board"));
+			formData.append("tags", this.board.tags);
+
+			http.post("/trc/makePost/", formData)
+				.then(res => {
+					alert("글이 성공적으로 작성되었습니다.");
+					router.push("/");
+				})
+				.catch(err => {
+					alert("글 작성 중 문제가 생겼습니다.");
+				});
 		}
 	},
 	mounted() {
-		this.el = document.querySelector("#content");
-		this.stackedit = new Stackedit();
+		Prism.plugins.autoloader.use_minified = false;
 	}
 };
 </script>
 
 <style>
 @import "~@voerro/vue-tagsinput/dist/style.css";
+@import "../prism.css";
+
+.result {
+	border: 1.5px solid #ccc;
+	border-radius: 5px;
+}
+
 @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap");
 * {
 	font-family: "Noto Sans KR", Courier;

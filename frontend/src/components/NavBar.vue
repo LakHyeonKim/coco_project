@@ -4,9 +4,13 @@
 	<div id="navbar">
 		<ul>
 			<li>
-				<router-link to="/mypage">
-					<img id="profile" src="../assets/user.png" />
-				</router-link>
+				<!-- <router-link to="/mypage"> -->
+				<img
+					id="profile"
+					src="../assets/user.png"
+					@click="getMypage()"
+				/>
+				<!-- </router-link> -->
 			</li>
 			<li class="nav_menu">
 				<router-link to="/newsfeed">
@@ -19,18 +23,18 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="#">
+				<router-link to="/search">
 					<img class="nav_menu_img" src="../assets/icon/search.png" />
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="/">
+				<router-link to="#">
 					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
 				</router-link>
 			</li>
-			<li class="nav_menu">
+			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
-			</li>
+			</li> -->
 		</ul>
 	</div>
 </template>
@@ -41,12 +45,18 @@ import router from "../router";
 export default {
 	name: "NavBar",
 	data() {
-		return {};
+		return {
+			preUrl: ""
+		};
 	},
 	methods: {
 		logout() {
-			this.$store.dispatch("logout");
+			this.$session.destroy();
 			router.push("/");
+		},
+		getMypage() {
+			this.$session.set("targetId", this.$session.get("id"));
+			router.push("/mypage");
 		}
 	}
 };
@@ -126,6 +136,7 @@ export default {
 }
 @media screen and (max-width: 330px) {
 	#profile {
+		cursor: pointer;
 		width: 30px;
 	}
 	.nav_menu_img {

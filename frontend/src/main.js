@@ -7,6 +7,7 @@ import "font-awesome/css/font-awesome.min.css";
 import Gravatar from "vue-gravatar";
 import ImgInputer from "vue-img-inputer";
 import "vue-img-inputer/dist/index.css";
+import VueSession from "vue-session";
 
 import App from "./App.vue";
 import router from "./router";
@@ -21,6 +22,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueSimplemde);
 Vue.use(Vuetify);
+Vue.use(VueSession);
 
 Vue.component("v-gravatar", Gravatar);
 Vue.component("ImgInputer", ImgInputer);

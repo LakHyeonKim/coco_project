@@ -179,6 +179,12 @@
 		SET `like_count` = `like_count` - 1 
 		WHERE idpost = #{value};
 	</update>
+	
+	<update id="updatePostlikeCount" parameterType="long">
+		UPDATE `coco`.`post` 
+		SET `like_count` = `like_count` + 1 
+		WHERE idpost = #{value};
+	</update>
 
 	<delete id="deletePost" parameterType="Post">
 		<include refid="delete-Post"></include>

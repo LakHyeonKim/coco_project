@@ -1,27 +1,27 @@
 <template>
 	<div>
-		<Banner />
-		<MyMenu />
-		<MyPost />
-		<Footer />
+		<MypageBanner />
+		<MypageMyMenu />
+		<MypageMyPost />
+		<MypageFooter />
 		<div id="blank"></div>
 	</div>
 </template>
 
 <script>
-import Banner from "@/components/Banner";
-import MyMenu from "@/components/MyMenu";
-import MyPost from "@/components/MyPost";
-import Footer from "@/components/Footer";
+import MypageBanner from "@/components/MypageBanner";
+import MypageMyMenu from "@/components/MypageMyMenu";
+import MypageMyPost from "@/components/MypageMyPost";
+import MypageFooter from "@/components/MypageFooter";
 import store from "../store";
 export default {
 	name: "myPage",
 	store,
 	components: {
-		Banner,
-		MyMenu,
-		MyPost,
-		Footer
+		MypageBanner,
+		MypageMyMenu,
+		MypageMyPost,
+		MypageFooter
 	},
 	data() {
 		return {};
