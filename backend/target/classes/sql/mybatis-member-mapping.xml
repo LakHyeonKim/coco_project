@@ -139,6 +139,7 @@
 
 	<update id="updateMember" parameterType="Member">
 		<include refid="update-Member"></include>
+		
 	</update>
 
 	<delete id="deleteMember" parameterType="Member">
