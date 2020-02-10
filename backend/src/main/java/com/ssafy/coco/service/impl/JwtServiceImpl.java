@@ -340,7 +340,7 @@ public class JwtServiceImpl implements JwtService{
 		{
 			m = list.get(0);
 			m.setGrade("아이언");
-			
+			System.out.println("들어옴");
 			String refreshToken = makeJwt(""+System.currentTimeMillis(),24*14);//나중에 뭘로 할지 찾기
 			m.setRefreshToken(refreshToken);
 			memberDao.updateRefreshToken(m);
@@ -349,6 +349,7 @@ public class JwtServiceImpl implements JwtService{
 		}
 		else
 		{
+			System.out.println("안들어옴");
 			return null;
 		}
 	}

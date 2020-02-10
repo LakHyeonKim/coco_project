@@ -1,6 +1,8 @@
 package com.ssafy.coco.vo;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 public class Comment {
 	long idcomment;
@@ -8,15 +10,15 @@ public class Comment {
 	long postId;
 	String commentWriter;
 	String contents;
-	Timestamp dateCreated;
-	Timestamp updateCreated;
+	String dateCreated;
+	String updateCreated;
 	int access;
 	
 	public Comment() {
 		super();
 	}
 	public Comment(long idcomment, long memberId, long postId, String commentWriter, String contents,
-			Timestamp dateCreated, Timestamp updateCreated, int access) {
+			String dateCreated, String updateCreated, int access) {
 		super();
 		this.idcomment = idcomment;
 		this.memberId = memberId;
@@ -63,17 +65,51 @@ public class Comment {
 	public void setContents(String contents) {
 		this.contents = contents;
 	}
-	public Timestamp getDateCreated() {
+	public String getDateCreated() {
 		return dateCreated;
 	}
-	public void setDateCreated(Timestamp dateCreated) {
-		this.dateCreated = dateCreated;
+	public void setDateCreated(Timestamp d) {
+		java.sql.Timestamp timestamp_1 = java.sql.Timestamp.valueOf(LocalDateTime.now());
+		long l = (timestamp_1.getTime() - d.getTime());
+		long hour = (l / 1000) / 3600;
+		long minute = (l / 1000) / 60 % 60; // minute
+		long second = (l / 1000) % 60; // second
+		if (hour < 24) {
+			if (hour == 0) {
+				if (minute < 60) {
+					if (minute == 0)
+						this.dateCreated = second + "초전";
+					else
+						this.dateCreated = minute + "분전";
+				}
+			} else {
+				this.dateCreated = hour + "시간전";
+			}
+		} else
+			this.dateCreated = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분").format(d);
 	}
-	public Timestamp getUpdateCreated() {
+	public String getUpdateCreated() {
 		return updateCreated;
 	}
-	public void setUpdateCreated(Timestamp updateCreated) {
-		this.updateCreated = updateCreated;
+	public void setUpdateCreated(Timestamp d) {
+		java.sql.Timestamp timestamp_1 = java.sql.Timestamp.valueOf(LocalDateTime.now());
+		long l = (timestamp_1.getTime() - d.getTime());
+		long hour = (l / 1000) / 3600;
+		long minute = (l / 1000) / 60 % 60; // minute
+		long second = (l / 1000) % 60; // second
+		if (hour < 24) {
+			if (hour == 0) {
+				if (minute < 60) {
+					if (minute == 0)
+						this.updateCreated = second + "초전";
+					else
+						this.updateCreated = minute + "분전";
+				}
+			} else {
+				this.updateCreated = hour + "시간전";
+			}
+		} else
+			this.updateCreated = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분").format(d);
 	}
 	public int getAccess() {
 		return access;
