@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.coco.service.JwtService;
-import com.ssafy.coco.service.MailService2;
+import com.ssafy.coco.service.MailService;
 import com.ssafy.coco.service.MemberService;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Tokens;
@@ -47,7 +47,7 @@ public class KakaoAccessToken {
 	@Autowired
 	MemberService memberService;
 	@Autowired
-	MailService2 mailService;
+	MailService mailService;
 	@Autowired
 	JwtService jwtService;
 	@ApiOperation(value = "메일 테스트", response = List.class)

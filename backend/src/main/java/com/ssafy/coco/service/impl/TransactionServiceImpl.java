@@ -157,8 +157,9 @@ public class TransactionServiceImpl implements TransactionService{
 		postDao.updatePostViewCount(post.getIdpost());
 		List<PostTag> postTagList = postTagDao.findPostTag(new PostTag(0, post.getIdpost(), 0));
 		for(PostTag postTag : postTagList) {
-			if(memberTagDao.findMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 0)) == null){
+			if(memberTagDao.findMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 0)).size() == 0){
 				memberTagDao.addMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 1));
+				
 			}else {
 				Map<String,Long> hashMap = new HashMap<>();
 				hashMap.put("idMember", idMember);
