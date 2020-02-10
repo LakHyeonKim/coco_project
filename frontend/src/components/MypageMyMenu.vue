@@ -4,7 +4,9 @@
 			id="imgMenu"
 			@click="toggleMenu()"
 			:src="
-				isHidden ? './img/icons/menu_w.png' : './img/icons/close_w.png'
+				isHidden
+					? '../img/icons/menu_w.png'
+					: '../img/icons/close_w.png'
 			"
 			width="25px"
 		/>

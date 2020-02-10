@@ -45,8 +45,8 @@
 							class="like_img"
 							:src="
 								item.post.likeCheck == 1
-									? './img/icons/tack_full.png'
-									: './img/icons/tack_empty.png'
+									? '../img/icons/tack_full.png'
+									: '../img/icons/tack_empty.png'
 							"
 							width="35px"
 							@click="like(item.post.idpost, index)"

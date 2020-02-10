@@ -58,9 +58,10 @@ const routes = [
 		// }
 	},
 	{
-		path: "/myPage",
-		name: "myPage",
-		component: MyPage
+		path: "/mypage/:no",
+		name: "mypage",
+		component: MyPage,
+		props: true
 		// meta: {
 		// 	authRequired: true
 		// }
@@ -82,9 +83,10 @@ const routes = [
 		// }
 	},
 	{
-		path: "/detail",
+		path: "/detail/:no",
 		name: "detail",
-		component: DetailPage
+		component: DetailPage,
+		props: true
 		// meta: {
 		// 	authRequired: true
 		// }
@@ -112,7 +114,6 @@ const router = new VueRouter({
 	base: process.env.BASE_URL,
 	routes
 });
-
 router.beforeEach(function(to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (

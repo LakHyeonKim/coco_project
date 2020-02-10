@@ -87,9 +87,9 @@ export default {
 	methods: {
 		goDetail() {
 			// console.log("alsdkfjlaskdfj", this.idPost);
-			store.dispatch("saveIdPost", this.idPost);
+			// store.dispatch("saveIdPost", this.idPost);
 			// console.log("idPOst", store.state.idPost);
-			router.push("/detail");
+			router.push("/detail/" + this.idPost);
 		},
 		goSearch(tag) {
 			// console.log(word);
@@ -98,7 +98,7 @@ export default {
 		},
 		goYourPage(memberId) {
 			this.$session.set("targetId", memberId);
-			router.push("/mypage");
+			router.push("/mypage/" + memberId);
 		}
 	}
 };

@@ -29,6 +29,7 @@
 export default {
 	name: "Detail",
 	props: {
+		no: null,
 		idPost: {},
 		memberId: {},
 		postTitle: {},
@@ -50,6 +51,10 @@ export default {
 		commentCount: {},
 		attachments: {}
 	}
+	// ,
+	// mounted() {
+	// 	alert(this.no);
+	// }
 };
 </script>
 
