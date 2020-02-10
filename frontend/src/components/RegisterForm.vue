@@ -128,6 +128,49 @@ export default {
 				http.post("/trc/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
+
+						http.post("/jwt/login/", {
+							id: this.signUpMember.id,
+							password: this.signUpMember.password
+						})
+							.then(res => {
+								console.log(res);
+								if (res.status != "204") {
+									this.$session.start();
+									this.$session.set(
+										"accessToken",
+										res.data.accessToken
+									);
+									this.$session.set(
+										"refreshToken",
+										res.data.refreshToken
+									);
+									this.$store.state.token =
+										res.data.accessToken;
+									this.$session.set(
+										"id",
+										Number(this.$store.getters.userId)
+									);
+									this.$session.set("targetId", 10);
+									this.loading = false;
+									router.push("/newsfeed");
+									console.log("LOGIN then ", res);
+								} else {
+									router.push("/").catch(err => {
+										err;
+									});
+									alert(
+										"아이디와 비밀번호를 확인해 주십시오."
+									);
+									this.loading = false;
+								}
+							})
+							.catch(err => {
+								this.loading = false;
+								// this.$store.dispatch("endLoading");
+								console.log("LOGIN err ", err);
+							});
+
 						this.$store.dispatch("endLoading");
 						alert("회원가입이 성공적으로 완료되었습니다.");
 						router.push("/");
@@ -136,6 +179,7 @@ export default {
 						this.$store.dispatch("endLoading");
 						console.log("REGISTER catch ", err);
 					});
+				// http.post("/jwt/sendEmailkey/", formData);
 			} else {
 				console.log("REGISTER ", "검증 실패");
 			}
@@ -182,6 +226,7 @@ export default {
 							this.idcheck = true;
 						} else {
 							this.duplicate.push("아이디가 중복되었습니다.");
+							this.idcheck = false;
 						}
 					})
 					.catch(err => {

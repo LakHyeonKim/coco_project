@@ -7,28 +7,24 @@
 						<img src="../assets/user.png" id="userImg" />
 					</div>
 					<div id="userTitle">
-						<p id="userId" @click.prevent="goYourPage(memberId)">
-							{{ postWriter }}
-						</p>
+						<p id="userId" @click.prevent="goYourPage(memberId)">{{ postWriter }}</p>
 						<p id="date">{{ dateCreated }}</p>
 					</div>
 				</div>
 				<div id="cardTitle">
-					<div class="line-clamp-title" @click.prevent="goDetail()">
-						<b>{{ postTitle }}</b>
+					<div class="line-clamp-title">
+						<router-link :to="{ name: 'detail', params: { idPost: idPost } }">
+							<b>{{ postTitle }}</b>
+						</router-link>
 					</div>
 				</div>
 				<div id="cardHash">
 					<div v-for="tag in tags" :key="`${tag}`">
-						<a id="hashTag" @click.prevent="goSearch(`${tag}`)">
-							#{{ tag }}
-						</a>
+						<a id="hashTag" @click.prevent="goSearch(`${tag}`)">#{{ tag }}</a>
 					</div>
 				</div>
 				<div id="cardBody">
-					<span class="line-clamp-body">
-						{{ code }}
-					</span>
+					<span class="line-clamp-body">{{ code }}</span>
 				</div>
 				<div id="cardFooter">
 					<div id="like">좋아요 {{ likeCount }}개</div>
@@ -50,7 +46,7 @@
 				<img src="../assets/css.png" alt="" class="stackImgs" />
 				<img src="../assets/JS.png" alt="" class="stackImgs" />
 				<img src="../assets/vue.png" alt="" class="stackImgs" />
-			</div> -->
+			</div>-->
 		</div>
 	</div>
 </template>
@@ -85,12 +81,6 @@ export default {
 		};
 	},
 	methods: {
-		goDetail() {
-			// console.log("alsdkfjlaskdfj", this.idPost);
-			store.dispatch("saveIdPost", this.idPost);
-			// console.log("idPOst", store.state.idPost);
-			router.push("/detail");
-		},
 		goSearch(tag) {
 			// console.log(word);
 			store.dispatch("saveSearchTag", tag);

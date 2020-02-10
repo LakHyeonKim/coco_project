@@ -18,8 +18,7 @@ import InfoModify from "./views/InfoModify";
 
 Vue.use(VueRouter);
 
-const routes = [
-	{
+const routes = [{
 		path: "/",
 		name: "home",
 		component: Home
@@ -82,7 +81,7 @@ const routes = [
 		// }
 	},
 	{
-		path: "/detail",
+		path: "/detail/:idPost",
 		name: "detail",
 		component: DetailPage
 		// meta: {
@@ -113,10 +112,10 @@ const router = new VueRouter({
 	routes
 });
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (
-		to.matched.some(function(routeInfo) {
+		to.matched.some(function (routeInfo) {
 			return routeInfo.meta.authRequired;
 		})
 	) {
