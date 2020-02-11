@@ -31,11 +31,12 @@
 						<MypageFollowCheck
 							v-if="!isUser"
 							:userInfo="userInfo"
+							:follow="follow"
 							style="float: left;"
 						>
-							<div slot="click" id="isFollow">
+							<div slot="click" class="isFollow">
 								<button
-									id="f_button"
+									class="f_button"
 									:style="
 										userInfo.isFollew == 1
 											? following_btn
@@ -58,33 +59,38 @@
 				</div>
 
 				<div id="counting">
-					<span> 팔로잉 {{ userInfo.followingCount }} </span>
-					<span> · </span>
-					<span> 팔로워 {{ userInfo.followerCount }} </span>
-					<span> · </span>
-					<span> 게시글 {{ userInfo.totalPostCount }} </span>
+					<FollowList
+						:userInfo="userInfo"
+						:follow="follow"
+						:followList="followList"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span @click="getFollow(false)">
+								팔로잉 {{ userInfo.followingCount }}
+							</span>
+						</div>
+					</FollowList>
+					<span class="counting_sub"> · </span>
+					<FollowList
+						:userInfo="userInfo"
+						:follow="follow"
+						:followList="followList"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span @click="getFollow(true)">
+								팔로워 {{ userInfo.followerCount }}
+							</span>
+						</div>
+					</FollowList>
+					<span class="counting_sub"> · </span>
+					<span class="counting_sub">
+						게시글 {{ userInfo.totalPostCount }}
+					</span>
 				</div>
 			</div>
 		</div>
-
-		<Modal v-if="showModal_f" @close="showModal_f = false">
-			<div slot="body">
-				<span id="message">
-					정말 팔로우 취소하시겠습니까?
-				</span>
-			</div>
-			<div slot="footer">
-				<button class="modal-default-button" @click="follow()">
-					확인
-				</button>
-				<button
-					class="modal-default-button"
-					@click="showModal_f = false"
-				>
-					취소
-				</button>
-			</div>
-		</Modal>
 	</div>
 </template>
 
@@ -93,18 +99,19 @@ import http from "../http-common";
 import store from "../store";
 import MypagePWCheck from "./MypagePWCheck.vue";
 import MypageFollowCheck from "./MypageFollowCheck.vue";
-
+import FollowList from "./FollowList.vue";
+import "../assets/styles/check_btn.css";
 export default {
 	name: "MypageBanner",
-	components: { MypagePWCheck, MypageFollowCheck },
+	components: {
+		MypagePWCheck,
+		MypageFollowCheck,
+		FollowList
+	},
 	store,
 	data() {
 		return {
-			isOk: false,
-			isClose: false,
-			pw_check: false,
-			showModal: false,
-			showModal_f: false,
+			isFollowing: false,
 			isUser: false,
 			userInfo: {
 				mypage: {
@@ -136,24 +143,77 @@ export default {
 				color: "white",
 				padding: "3px 10px 3px 10px",
 				boxShadow: "0.5px 0.5px 5px rgba(0, 0, 0, 0.2)"
-			}
+			},
+			followList: null
 		};
 	},
 	methods: {
 		pwCheck() {
 			alert(this.input_pw);
 			this.$router.push("/infoModify");
+		},
+		follow() {
+			this.dialog = false;
+			console.log(this.$route.params.no);
+
+			let address = "";
+			if (this.userInfo.isFollew == 1) {
+				address = "/trc/makeUnFollow/";
+				this.userInfo.isFollew = 0;
+				this.f_current = "팔로우";
+			} else {
+				address = "/trc/makeFollow/";
+				this.userInfo.isFollew = 1;
+				this.f_current = "팔로잉";
+			}
+			this.showModal_f = false;
+
+			http.post(address, {
+				memberFollower: this.$session.get("id"),
+				// memberFollowing: this.$session.get("targetId")
+				memberFollowing: this.$route.params.no
+			})
+				.then(response => {
+					console.log(response);
+				})
+				.catch(error => {
+					console.log(error);
+					if (this.userInfo.isFollew == 1) {
+						this.userInfo.isFollew = 0;
+						this.f_current = "팔로우";
+					} else {
+						this.userInfo.isFollew = 1;
+						this.f_current = "팔로잉";
+					}
+				});
+		},
+		getFollow(flag) {
+			this.followList = null;
+			let address = "";
+			if (flag) address = "/api/findByFollowerListMember/";
+			else address = "/api/findByFollowingListMember/";
+
+			http.post(address, {
+				myIdMemeber: this.$session.get("id"),
+				youIdMember: this.$route.params.no
+			})
+				.then(response => {
+					console.log("Banner getFollow()");
+					this.followList = response.data;
+					console.log(this.followList);
+				})
+				.catch(error => {
+					console.log(error);
+				});
 		}
 	},
 	mounted() {
-		console.log("MypageBanner : " + this.$route.params.no);
 		if (this.$session.get("id") == this.$route.params.no) {
 			this.isUser = true;
 		}
 		console.log("isUser : " + this.isUser);
 		http.post("/api/findByMemberHomePageUserID/", {
 			myIdMemeber: this.$session.get("id"),
-			// youIdMember: this.$session.get("targetId")
 			youIdMember: this.$route.params.no
 		})
 
@@ -176,14 +236,24 @@ export default {
 </script>
 
 <style>
-#f_button {
+.counting_sub,
+.counting_click {
+	float: left;
+}
+.counting_click {
+	cursor: pointer;
+}
+.counting_click:hover {
+	opacity: 0.3;
+}
+.f_button {
 	outline: 0;
 	border: 0;
 }
-#f_button:hover {
+.f_button:hover {
 	filter: brightness(95%);
 }
-#f_button:active {
+.f_button:active {
 	filter: brightness(85%);
 }
 #message {
@@ -252,7 +322,7 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-#isFollow {
+.isFollow {
 	float: left;
 	position: relative;
 }

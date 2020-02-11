@@ -97,7 +97,7 @@ export default {
 			router.push("/search");
 		},
 		goYourPage(memberId) {
-			// this.$session.set("targetId", memberId);
+			// this.$session.set("targetId", memberId);a
 			router.push("/mypage/" + memberId);
 		}
 	}

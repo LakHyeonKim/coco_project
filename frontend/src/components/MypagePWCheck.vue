@@ -1,6 +1,6 @@
 <template>
 	<div class="text-center">
-		<v-dialog v-model="dialog" width="500">
+		<v-dialog v-model="dialog" width="300">
 			<template v-slot:activator="{ on }">
 				<div v-on="on"><slot name="click"></slot></div>
 			</template>
@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import "../assets/styles/check_btn.css";
 export default {
 	data() {
 		return {

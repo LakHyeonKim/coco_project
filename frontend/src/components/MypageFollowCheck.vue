@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<v-dialog v-model="dialog" width="500">
+		<v-dialog v-model="dialog" width="300">
 			<template v-slot:activator="{ on }">
 				<div v-on="on"><slot name="click"></slot></div>
 			</template>
@@ -18,7 +18,7 @@
 					</div>
 				</div>
 				<div class="d_footer">
-					<button class="d_btn" @click="follow()">
+					<button class="d_btn" @click="ok()">
 						확인
 					</button>
 					<button class="d_btn" @click="dialog = false">
@@ -31,10 +31,11 @@
 </template>
 
 <script>
-import http from "../http-common";
+// import http from "../http-common";
 export default {
 	props: {
-		userInfo: {}
+		userInfo: {},
+		follow: {}
 	},
 	data() {
 		return {
@@ -42,43 +43,10 @@ export default {
 		};
 	},
 	methods: {
-		follow() {
+		ok() {
+			this.follow();
 			this.dialog = false;
-			console.log(this.$route.params.no);
-
-			let address = "";
-			if (this.userInfo.isFollew == 1) {
-				address = "/trc/makeUnFollow/";
-				this.userInfo.isFollew = 0;
-				this.f_current = "팔로우";
-			} else {
-				address = "/trc/makeFollow/";
-				this.userInfo.isFollew = 1;
-				this.f_current = "팔로잉";
-			}
-			this.showModal_f = false;
-
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				// memberFollowing: this.$session.get("targetId")
-				memberFollowing: this.$route.params.no
-			})
-				.then(response => {
-					console.log(response);
-				})
-				.catch(error => {
-					console.log(error);
-					if (this.userInfo.isFollew == 1) {
-						this.userInfo.isFollew = 0;
-						this.f_current = "팔로우";
-					} else {
-						this.userInfo.isFollew = 1;
-						this.f_current = "팔로잉";
-					}
-				});
 		}
 	}
 };
 </script>
-
-<style lang="scss" scoped></style>
