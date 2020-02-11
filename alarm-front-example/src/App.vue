@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <alarm></alarm>
+    <room></room>
   </div>
 </template>
 
 <script>
-import Alarm from "@/components/Alarm.vue"
+import Room from "@/components/Room.vue"
 
 
 export default {
   name: 'App',
-  components:{
-    Alarm
+  componets:{
+    Room
   }
 }
 </script>
