@@ -6,14 +6,14 @@
 				<h1>{{ postTitle }}</h1>
 				<br />
 				<div style="display: inline-block; line-height: 10px">
-					<div style="float: left" v-if="imagePath">
-						<img src="imagePath" alt="no-img" />
-					</div>
-					<div style="float: left" v-else>
+					<div id="imgDiv" style="float: left">
 						<v-avatar>
-							<v-gravatar :email="postWriter" alt="gravatar" :size="50" />
+							<img src="imagePath" alt="user-img" v-if="imagePath" />
+							<img src="../assets/user.png" alt="default-img" v-else />
+							<!-- <v-gravatar :email="postWriter" alt="gravatar" :size="50" /> -->
 						</v-avatar>
 					</div>
+
 					<div id="profile-info" style="float: left; font-size: 13px">
 						<p>
 							{{ postWriter }}
