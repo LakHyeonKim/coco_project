@@ -31,6 +31,8 @@
 <script>
 import sock from 'sockjs-client'
 import ws from 'webstomp-client'
+import axios from "axios";
+
 export default {
   name: 'RoomDetail',
   data () {
@@ -74,20 +76,23 @@ export default {
       })
     },
     connect: function () {
+      this.socket = new sock("http://localhost:8081/gs-guide-websocket");
+      ws.over(this.socket);
       ws.connect(
         {},
         function (frame) {
-          ws.subscribe('/sub/chat/room/' + vm.$data.roomId, function (message) {
+          console.log(frame);
+          ws.subscribe('/sub/chat/room/' + this.$data.roomId, function (message) {
             var recv = JSON.parse(message.body)
-            vm.recvMessage(recv)
+            this.recvMessage(recv)
           })
           ws.send(
             '/pub/chat/message',
             {},
             JSON.stringify({
               type: 'ENTER',
-              roomId: vm.$data.roomId,
-              sender: vm.$data.sender
+              roomId: this.$data.roomId,
+              sender: this.$data.sender
             })
           )
         },
