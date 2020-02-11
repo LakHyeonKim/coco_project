@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.KeywordSearch;
 import com.ssafy.coco.relationvo.OrderSearch;
+import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.service.BoardService;
 import com.ssafy.coco.service.JwtService;
 
@@ -39,6 +40,21 @@ public class BoardController {
 		if(isAble)
 		{
 			List<Board> answers = boardService.findByAllNewsfeed(idMember);
+			if (answers.isEmpty()) {
+				return new ResponseEntity(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+		}
+		else return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	}
+	
+	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 다운 스크롤 (뉴스피드 페이지용)", response = List.class)
+	@RequestMapping(value = "/findByAllNewsfeedScrollDown", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByAllNewsfeedScrollDown(@RequestHeader(value="Authorization")String jwt, @RequestBody PostAndMember postAndMember) throws Exception {
+		boolean isAble = jwtService.checkJwt(jwt);
+		if(isAble)
+		{
+			List<Board> answers = boardService.findByAllNewsfeedScrollDown(postAndMember.getMember().getIdmember(),postAndMember.getPost().getIdpost());
 			if (answers.isEmpty()) {
 				return new ResponseEntity(HttpStatus.NO_CONTENT);
 			}
