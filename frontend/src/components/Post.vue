@@ -11,8 +11,10 @@
 				</div>
 
 				<div id="cardTitle">
-					<div class="line-clamp-title" @click.prevent="goDetail()">
-						<b>{{ postTitle }}</b>
+					<div class="line-clamp-title">
+						<router-link :to="{ name: 'detail', params: { idPost: idPost } }">
+							<b>{{ postTitle }}</b>
+						</router-link>
 					</div>
 				</div>
 
@@ -25,9 +27,7 @@
 				</div>
 
 				<div id="cardBody">
-					<span class="line-clamp-body">
-						{{ code }}
-					</span>
+					<span class="line-clamp-body">{{ code }}</span>
 				</div>
 
 				<div id="cardFooter">
@@ -66,7 +66,7 @@
 				<img src="../assets/css.png" alt="" class="stackImgs" />
 				<img src="../assets/JS.png" alt="" class="stackImgs" />
 				<img src="../assets/vue.png" alt="" class="stackImgs" />
-			</div> -->
+			</div>-->
 		</div>
 	</div>
 </template>

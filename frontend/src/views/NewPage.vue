@@ -161,6 +161,9 @@ export default {
 		this.board.postWriter = this.$store.getters.userNickname;
 		console.log("nickname this ", this.board.postWriter);
 		console.log("nickname vuex ", this.$store.getters.userNickname);
+	},
+	updated() {
+		Prism.highlightAll();
 	}
 };
 </script>
