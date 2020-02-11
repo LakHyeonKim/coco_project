@@ -5,22 +5,22 @@
 				@like="like"
 				class="ma-3"
 				:postIdx="i - 1"
-				:idPost="posts[i - 1].post.idpost"
-				:memberId="posts[i - 1].post.memberId"
-				:postTitle="posts[i - 1].post.postTitle"
-				:postWriter="posts[i - 1].post.postWriter"
-				:dateCreated="posts[i - 1].post.dateCreated"
-				:updateCreated="posts[i - 1].post.updateCreated"
-				:code="posts[i - 1].post.code"
-				:likeCount="posts[i - 1].post.likeCount"
-				:views="posts[i - 1].post.views"
-				:imagePath="posts[i - 1].post.imagePath"
-				:filePath="posts[i - 1].post.filePath"
-				:access="posts[i - 1].post.access"
-				:likeCheck="posts[i - 1].post.likeCheck"
-				:order="posts[i - 1].post.order"
-				:tags="posts[i - 1].tags"
-				:commentCount="posts[i - 1].commentCount"
+				:idPost="posts[i - 1].data.post.idpost"
+				:memberId="posts[i - 1].data.post.memberId"
+				:postTitle="posts[i - 1].data.post.postTitle"
+				:postWriter="posts[i - 1].data.post.postWriter"
+				:dateCreated="posts[i - 1].data.post.dateCreated"
+				:updateCreated="posts[i - 1].data.post.updateCreated"
+				:code="posts[i - 1].data.post.code"
+				:likeCount="posts[i - 1].data.post.likeCount"
+				:views="posts[i - 1].data.post.views"
+				:imagePath="posts[i - 1].data.post.imagePath"
+				:filePath="posts[i - 1].data.post.filePath"
+				:access="posts[i - 1].data.post.access"
+				:likeCheck="posts[i - 1].data.post.likeCheck"
+				:order="posts[i - 1].data.post.order"
+				:tags="posts[i - 1].data.tags"
+				:commentCount="posts[i - 1].data.commentCount"
 				id="post"
 			></post>
 			<!-- <PostMobile
@@ -58,6 +58,7 @@ export default {
 	data() {
 		return {
 			posts: [],
+			setPosts: new Set(),
 			scrollY: 0,
 			timer: null
 		};
@@ -102,40 +103,6 @@ export default {
 					}
 				});
 		},
-		// infinityScroll() {
-		// 	console.log(window.scrollY);
-		// 	window.onscroll = function(e) {
-		// 		//추가되는 임시 콘텐츠
-		// 		if (
-		// 			window.innerHeight + window.scrollY >=
-		// 			document.body.offsetHeight
-		// 		) {
-		// 			const token = this.$session.get("accessToken");
-		// 			const headers = {
-		// 				Authorization: token
-		// 			};
-		// 			http.post(
-		// 				"/api/findByAllNewsfeed/",
-		// 				this.$session.get("id"),
-		// 				{
-		// 					headers
-		// 				}
-		// 			)
-		// 				.then(res => {
-		// 					console.log("getpost then 1", res.data);
-		// 					console.log(
-		// 						"getpost then 2",
-		// 						res.data[0].post.idpost
-		// 					);
-		// 					this.posts.push(res.data);
-		// 					console.log("getpost then 3", this.posts);
-		// 				})
-		// 				.catch(err => {
-		// 					console.log("getpost catch ", err);
-		// 				});
-		// 		}
-		// 	};
-		// },
 		handleScroll: function() {
 			console.log(this.scrollY);
 			console.log(window.scrollY);
@@ -148,8 +115,13 @@ export default {
 				document.body.offsetHeight - window.innerHeight + 20
 			) {
 				const requestForm = {
-					memberId: this.$session.get("id"),
-					postId: this.posts[this.posts.length - 1].post.idpost
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: this.posts[this.posts.length - 1].data.post
+							.idpost
+					}
 				};
 				console.log("reqeustForm ", requestForm);
 				console.log("laskjdflaksjdflkajsdlfkajsldkfj");
@@ -157,16 +129,20 @@ export default {
 				const headers = {
 					Authorization: token
 				};
-				http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+				http.post("/api/findByAllNewsfeedScrollDown/", requestForm, {
 					headers
 				})
 					.then(res => {
 						console.log("getpost then 1", res.data);
 						console.log("getpost then 2", res.data[0].post.idpost);
 						for (let i = 0; i < res.data.length; ++i) {
-							this.posts.push(res.data[i]);
+							this.setPosts.add({
+								duple: res.data[i].post.idpost,
+								data: res.data[i]
+							});
 						}
-						console.log("getpost then 3", this.posts);
+						this.posts = [...this.setPosts];
+						console.log("getpost then 3", this.setPosts);
 					})
 					.catch(err => {
 						console.log("getpost catch ", err);
@@ -185,19 +161,25 @@ export default {
 			.then(res => {
 				console.log("getpost then 1", res.data);
 				console.log("getpost then 2", res.data[0].post.idpost);
-				this.posts = res.data;
-				console.log("getpost then 3", this.posts);
+				for (let i = 0; i < res.data.length; ++i) {
+					this.setPosts.add({
+						duple: res.data[i].post.idpost,
+						data: res.data[i]
+					});
+					// this.setPosts.add(res.data[i]);
+				}
+				console.log("getpost then 3", this.setPosts);
+				this.posts = [...this.setPosts];
+				console.log(this.posts[0].data);
 			})
 			.catch(err => {
 				console.log("getpost catch ", err);
 			});
 	},
 	created: function() {
-		// 핸들러 등록하기
 		window.addEventListener("scroll", this.handleScroll);
 	},
 	beforeDestroy: function() {
-		// 핸들러 제거하기(컴포넌트 또는 SPA의 경우 절대 잊지 말아 주세요!)
 		window.removeEventListener("scroll", this.handleScroll);
 	}
 };

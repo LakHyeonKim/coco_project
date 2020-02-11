@@ -91,9 +91,6 @@ export default {
 				id: "",
 				password: ""
 			},
-			// headers: {
-			// 	Authorization: "JWT " + "askdasdfasdgasdgjfhaskd"
-			// },
 			loading: false,
 			errors: []
 		};
@@ -120,7 +117,6 @@ export default {
 								"id",
 								Number(this.$store.getters.userId)
 							);
-							this.$session.set("targetId", 10);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);

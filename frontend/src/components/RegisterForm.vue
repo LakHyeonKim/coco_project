@@ -153,7 +153,47 @@ export default {
 						console.log("REGISTER then ", res);
 						this.$store.dispatch("endLoading");
 						alert("회원가입이 성공적으로 완료되었습니다.");
-						router.push("/");
+						const credentials = {
+							id: this.signUpMember.id,
+							password: this.signUpMember.password
+						};
+						http.post("/jwt/login/", credentials)
+							.then(res => {
+								console.log(res);
+								if (res.status != "204") {
+									this.$session.start();
+									this.$session.set(
+										"accessToken",
+										res.data.accessToken
+									);
+									this.$session.set(
+										"refreshToken",
+										res.data.refreshToken
+									);
+									this.$store.state.token =
+										res.data.accessToken;
+									this.$session.set(
+										"id",
+										Number(this.$store.getters.userId)
+									);
+									this.loading = false;
+									router.push("/newsfeed");
+									console.log("LOGIN then ", res);
+								} else {
+									router.push("/").catch(err => {
+										err;
+									});
+									alert(
+										"아이디와 비밀번호를 확인해 주십시오."
+									);
+									this.loading = false;
+								}
+							})
+							.catch(err => {
+								this.loading = false;
+								// this.$store.dispatch("endLoading");
+								console.log("LOGIN err ", err);
+							});
 					})
 					.catch(err => {
 						this.$store.dispatch("endLoading");
