@@ -25,6 +25,7 @@
 		<div id="mainBox">
 			<PostList id="subBox"></PostList>
 		</div>
+		<div class="footerBlank"></div>
 	</div>
 </template>
 
@@ -121,16 +122,26 @@ export default {
 		display: none;
 	}
 	#blankBox {
-		height: 30px;
+		display: block;
+		height: 60px;
 	}
 	#mainBox {
-		align-content: center;
-		justify-content: center;
+		/* display: block; */
+		/* align-content: center;
+		justify-content: center; */
 		/* background-color: blueviolet; */
 	}
 	#subBox {
 		width: 100%;
 		padding-left: 0;
+	}
+	.footerBlank {
+		display: block;
+		top: auto;
+		bottom: 0;
+		height: 17vw;
+		width: 100%;
+		padding: 0;
 	}
 }
 </style>

@@ -8,8 +8,9 @@
 					<div v-for="i in searches.length" :key="i">
 						<SearchCard
 							@like="like"
+							@searchtag="searchwords"
 							:postIdx="i - 1"
-							:idPost="searches[i - 1].post.idPost"
+							:idPost="searches[i - 1].post.idpost"
 							:memberId="searches[i - 1].post.memberId"
 							:postTitle="searches[i - 1].post.postTitle"
 							:postWriter="searches[i - 1].post.postWriter"
@@ -24,7 +25,6 @@
 							:tags="searches[i - 1].tags"
 							:commentCount="searches[i - 1].commentCount"
 							id="searches"
-							@searchtag="searchwords"
 						></SearchCard>
 					</div>
 				</div>

@@ -1,24 +1,28 @@
 <template>
-	<div style="background-color:rgba(0, 0, 0,0.0);" class="postBox">
+	<div
+		style="background-color:rgba(0, 0, 0,0.0);"
+		class="postBox"
+		@click.prevent="goDetail()"
+	>
 		<div id="cardBox">
 			<div id="contentBox">
 				<div id="cardHash">
-					<div v-for="tag in tags" :key="`${tag}`">
-						<a id="hashTag" @click.prevent="goSearch(`${tag}`)">
+					<button v-for="tag in tags" :key="`${tag}`">
+						<a id="hashTag" @click.stop="goSearchTag(`${tag}`)">
 							{{ tag }}
 						</a>
-					</div>
+					</button>
 				</div>
 
 				<div id="cardTitle">
-					<div class="line-clamp-title" @click.prevent="goDetail()">
+					<div class="line-clamp-title">
 						<b>{{ postTitle }}</b>
 					</div>
 				</div>
 
 				<div id="cardHead">
 					<img src="../assets/user.png" id="userImg" />
-					<div id="userId" @click.prevent="goYourPage(memberId)">
+					<div id="userId" @click.stop="goYourPage(memberId)">
 						{{ postWriter }}
 					</div>
 					<div id="date">{{ dateCreated }}</div>
@@ -40,7 +44,7 @@
 								: './img/icons/tack_empty.png'
 						"
 						width="35px"
-						@click="likeEmit(idPost, postIdx)"
+						@click.stop="likeEmit(idPost, postIdx)"
 					/>
 					<div id="likeCount">
 						{{ likeCount }}
@@ -73,7 +77,7 @@
 
 <script>
 import router from "../router";
-import store from "../store";
+import http from "../http-common";
 
 export default {
 	name: "SearchList",
@@ -103,14 +107,32 @@ export default {
 	methods: {
 		goDetail() {
 			// console.log("alsdkfjlaskdfj", this.idPost);
-			store.dispatch("saveIdPost", this.idPost);
+			// store.dispatch("saveIdPost", this.idPost);
 			// console.log("idPOst", store.state.idPost);
-			router.push("/detail");
+			const requestForm = {
+				member: {
+					idmember: this.$session.get("id")
+				},
+				post: {
+					idpost: this.idPost
+				}
+			};
+			console.log("goDetail requestForm ", requestForm);
+			http.post("/trc/postClick/", requestForm)
+				.then(res => {
+					console.log("postclick then ", res);
+				})
+				.catch(err => {
+					console.log("postclick catch ", err);
+				});
+			router.push("/detail/" + this.idPost);
 		},
-		goSearch(tag) {
+		goSearchTag(tag) {
 			// console.log(word);
-			store.dispatch("saveSearchTag", tag);
-			router.push("/search");
+			// store.dispatch("saveSearchTag", tag);
+			// router.push("/search");
+			console.log(tag);
+			this.$emit("searchtag", tag);
 		},
 		goYourPage(memberId) {
 			// this.$session.set("targetId", memberId);

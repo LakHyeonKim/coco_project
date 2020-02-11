@@ -22,15 +22,25 @@
 				v-for="(item, index) in posts"
 				:key="item.post.idpost"
 			>
-				<div style="margin: 10px;">
+				<div
+					style="margin: 10px;"
+					@click.prevent="goDetail(item.post.idpost)"
+				>
 					<div
 						v-for="tag in item.tags"
 						:key="tag.idtag"
 						style="display: inline-block;"
 					>
-						<span class="post_tag">{{ tag }}</span>
+						<button
+							class="post_tag"
+							@click.stop="goSearch(`${tag}`)"
+						>
+							{{ tag }}
+						</button>
 					</div>
-					<div class="post_title">{{ item.post.postTitle }}</div>
+					<div class="post_title">
+						{{ item.post.postTitle }}
+					</div>
 					<div class="post_create">
 						<img class="post_profile" src="../assets/user.png" />
 						<div class="post_nickname">
@@ -38,7 +48,9 @@
 						</div>
 						<div class="post_date">{{ item.post.dateCreated }}</div>
 					</div>
-					<div class="post_code">{{ item.post.code }}</div>
+					<div class="post_code">
+						{{ item.post.code }}
+					</div>
 					<div class="like_comment">
 						<img
 							:id="item.post.idpost"
@@ -49,7 +61,7 @@
 									: '../img/icons/tack_empty.png'
 							"
 							width="35px"
-							@click="like(item.post.idpost, index)"
+							@click.stop="like(item.post.idpost, index)"
 						/>
 						<div class="like_text">
 							{{ item.post.likeCount }}
@@ -71,6 +83,8 @@
 <script>
 import http from "../http-common";
 import store from "../store";
+import router from "../router";
+
 export default {
 	name: "MypageMyPost",
 	store,
@@ -104,6 +118,33 @@ export default {
 				.catch(error => {
 					console.log(error);
 				});
+		},
+		goSearch(tag) {
+			// console.log(word);
+			store.dispatch("saveSearchTag", tag);
+			router.push("/search");
+		},
+		goDetail(id) {
+			// console.log("alsdkfjlaskdfj", this.idPost);
+			// store.dispatch("saveIdPost", this.idPost);
+			// console.log("idPOst", store.state.idPost);
+			const requestForm = {
+				member: {
+					idmember: this.$session.get("id")
+				},
+				post: {
+					idpost: id
+				}
+			};
+			console.log("goDetail requestForm ", requestForm);
+			http.post("/trc/postClick/", requestForm)
+				.then(res => {
+					console.log("postclick then ", res);
+				})
+				.catch(err => {
+					console.log("postclick catch ", err);
+				});
+			router.push("/detail/" + id);
 		},
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
