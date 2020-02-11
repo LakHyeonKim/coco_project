@@ -5,9 +5,9 @@ import java.util.Random;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.coco.service.MailService2;
+import com.ssafy.coco.service.MailService;
 @Service
-public class MailServiceImpl implements MailService2{
+public class MailServiceImpl implements MailService{
 
 	@Override
 	public String createKey() throws Exception {
@@ -39,7 +39,6 @@ public class MailServiceImpl implements MailService2{
 		String hostSMTP = "smtp.naver.com";
 		String hostSMTPid = "a13975";
 		String hostSMTPpwd = "4856aa!!";
-		
 		String fromEmail = "a13975@naver.com";
 		String fromName = "이모찌";
 		

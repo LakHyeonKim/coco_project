@@ -60,8 +60,6 @@
 	<select id="findMember" resultType="Member">
 		<include refid="select-Member"></include>
 		<where>
-			is_manager = ${isManager}
-			AND
 			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
@@ -139,6 +137,7 @@
 
 	<update id="updateMember" parameterType="Member">
 		<include refid="update-Member"></include>
+		
 	</update>
 
 	<delete id="deleteMember" parameterType="Member">
