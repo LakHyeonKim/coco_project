@@ -257,7 +257,6 @@ public class JwtServiceImpl implements JwtService{
             System.out.println("Dd"+claims);
             logger.info("expireTime :" + claims.getExpiration());
             logger.info("name :" + claims.get("name"));
-            logger.info("Email :" + claims.get("email"));
             return true;
         } catch (ExpiredJwtException exception) {
             logger.info("토큰 만료");
