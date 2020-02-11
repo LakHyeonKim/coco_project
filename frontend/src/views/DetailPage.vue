@@ -73,23 +73,21 @@ export default {
 	components: {
 		Detail
 	},
-	// computed: {
-	// 	idPost: function() {
-	// 		return store.state.idPost;
-	// 	}
-	// },
+	computed: {
+		idPost: function() {
+			return store.state.idPost;
+		}
+	},
 	methods: {},
 	mounted() {
 		const requestForm = {
 			idMember: this.$session.get("id"),
-			idPost: this.no
+			idPost: this.$route.params.idPost
 		};
-		// console.log(requestForm);
 		http.post("/api/findByBoardDetailPostId/", requestForm)
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
-				console.log("this.detail ", this.detail);
 			})
 			.catch(err => {
 				console.log("detail err ", err);
@@ -103,7 +101,7 @@ export default {
 	background-color: bisque;
 	height: 100%;
 	width: 100%;
-	text-align: center;
+	/* text-align: center; */
 }
 #compo {
 	display: grid;
