@@ -169,6 +169,8 @@ public class AuthorityController {
 		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
 		String id = (String) map.get("id");
 		String password = (String) map.get("password");
+		System.out.println(id);
+		System.out.println(password);
 		Tokens tokens = jwtService.login(id, password);
 		if (tokens != null) {
 			return new ResponseEntity(tokens, HttpStatus.OK);

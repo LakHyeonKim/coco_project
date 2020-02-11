@@ -257,7 +257,6 @@ public class JwtServiceImpl implements JwtService{
             System.out.println("Dd"+claims);
             logger.info("expireTime :" + claims.getExpiration());
             logger.info("name :" + claims.get("name"));
-            logger.info("Email :" + claims.get("email"));
             return true;
         } catch (ExpiredJwtException exception) {
             logger.info("토큰 만료");
@@ -340,7 +339,7 @@ public class JwtServiceImpl implements JwtService{
 		{
 			m = list.get(0);
 			m.setGrade("아이언");
-			
+			System.out.println("들어옴");
 			String refreshToken = makeJwt(""+System.currentTimeMillis(),24*14);//나중에 뭘로 할지 찾기
 			m.setRefreshToken(refreshToken);
 			memberDao.updateRefreshToken(m);
@@ -349,6 +348,7 @@ public class JwtServiceImpl implements JwtService{
 		}
 		else
 		{
+			System.out.println("안들어옴");
 			return null;
 		}
 	}
