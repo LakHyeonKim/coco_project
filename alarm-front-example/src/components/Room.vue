@@ -50,7 +50,8 @@ export default {
   },
   methods: {
     findAllRoom: function () {
-      axios.get('/chat/rooms').then(response => {
+      axios.get('http://localhost:8081/chat/rooms').then(response => {
+        console.log(response)
         this.chatrooms = response.data
       })
     },
@@ -62,13 +63,15 @@ export default {
         var params = new URLSearchParams()
         params.append('name', this.room_name)
         axios
-          .post('/chat/room', params)
+          .post('http://localhost:8081/chat/room', params)
           .then(response => {
+            console.log(response)
             alert(response.data.name + '방 개설에 성공하였습니다.')
             this.room_name = ''
             this.findAllRoom()
           })
           .catch(response => {
+            console.log(response)
             alert('채팅방 개설에 실패하였습니다.')
           })
       }
