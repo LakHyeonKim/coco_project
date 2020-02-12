@@ -1,6 +1,6 @@
 <template>
 	<div id="el" class="canvas">
-		<div id="totalCounter" class="total-counter">{{ totalCount }}</div>
+		<div id="totalCounter" class="total-counter">{{ likeCount }}</div>
 		<div
 			id="clap"
 			class="clap-container"
@@ -8,7 +8,7 @@
 			@mouseover="addSonar"
 			@mouseout="removeSonar"
 		>
-			<span class="clap-icon">
+			<span class="clap-icon" :style="this.likeCheck ? { color: '#b4001e' } : { color: 'gray' }">
 				<i class="fa fa-thumb-tack"></i>
 			</span>
 		</div>
@@ -76,9 +76,11 @@
 </template>
 
 <script>
+import http from "../http-common";
 export default {
 	name: "MediumClap",
 	props: {
+		idPost: {},
 		likeCheck: {},
 		likeCount: {}
 	},
@@ -97,20 +99,25 @@ export default {
 
 			clap: null,
 			sonarClap: null,
-			clickCounter: null
+			clickCounter: null,
+
+			requestAddress: null
 		};
 	},
 	methods: {
 		addClap() {
+			console.log(this.likeCheck);
 			const particles = document.getElementById("particles");
 			const particles2 = document.getElementById("particles-2");
 			const particles3 = document.getElementById("particles-3");
 			const totalClickCounter = document.getElementById("totalCounter");
 
-			if (!this.clap.classList.contains("clicked")) {
-				document.querySelector(".clap-icon").style.color = "#b4001e";
-				this.clap.classList.add("clicked");
-				// axios then
+			if (!this.likeCheck) {
+				// if (!this.clap.classList.contains("clicked")) {
+				this.requestAddress = "/trc/pushLike/";
+				this.$emit("updateLike", +1);
+				// this.likeCheck = 1;
+				// document.querySelector(".clap-icon").style.color = "#b4001e";
 				this.totalCount++;
 				this.clickCounter.children[0].innerText = "+1";
 
@@ -124,9 +131,10 @@ export default {
 
 				this.runAnimationCycle(this.clap, "scale");
 			} else {
-				document.querySelector(".clap-icon").style.color = "gray";
-				this.clap.classList.remove("clicked");
-				// axios then
+				this.requestAddress = "/trc/unLike/";
+				this.$emit("updateLike", -1);
+				// this.likeCheck = 0;
+				// document.querySelector(".clap-icon").style.color = "gray";
 				this.totalCount--;
 				this.clickCounter.children[0].innerText = "-1";
 			}
@@ -136,10 +144,24 @@ export default {
 			} else {
 				this.runAnimationCycle(this.clickCounter, "first-active");
 			}
-
-			this.$emit("updateLike", this.totalCount);
 			this.runAnimationCycle(totalClickCounter, "fader");
+
+			http.post(this.requestAddress, {
+				member: {
+					idmember: this.$session.get("id")
+				},
+				post: {
+					idpost: this.idPost
+				}
+			})
+				.then(res => {
+					console.log(res);
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		},
+
 		addSonar() {
 			this.sonarClap.classList.add("hover-active");
 		},
@@ -194,14 +216,24 @@ export default {
 		}
 	},
 	mounted() {
-		this.totalCount = this.likeCount;
-
 		this.clap = document.getElementById("clap");
 		this.sonarClap = document.getElementById("sonar-clap");
 		this.clickCounter = document.getElementById("clicker");
 
-		if (!this.likeCheck) {
-			document.querySelector(".clap-icon").style.color = "gray";
+		// if (!this.likeCheck) {
+		// 	document.querySelector(".clap-icon").style.color = "gray";
+		// }
+	},
+	watch: {
+		likeCount: function(data) {
+			this.totalCount = data;
+		},
+		likeCheck: function(data) {
+			if (data) {
+				this.clap.classList.add("clicked");
+			} else {
+				this.clap.classList.remove("clicked");
+			}
 		}
 	}
 };

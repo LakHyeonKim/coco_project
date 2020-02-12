@@ -5,7 +5,7 @@
 			<div>
 				<h1>{{ postTitle }}</h1>
 				<br />
-				<div id="post-info">
+				<div id="post-head">
 					<div id="profile-img">
 						<v-avatar size="40">
 							<img src="imagePath" alt="user-img" v-if="imagePath" />
@@ -19,11 +19,13 @@
 							{{ postWriter }}
 							<v-btn class="ml-2" color="indigo" height="20px" outlined small>팔로우</v-btn>
 						</p>
-						<p id="post-date">{{ dateCreated }} | {{ updateCreated }}</p>
+						<span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span>
+						<span id="post-info" v-if="views > 1">views</span>
+						<span id="post-info" v-else>view</span>
+						<!-- <p id="post-date">{{ dateCreated }} | {{ updateCreated }} | {{ views }} views</p> -->
 					</div>
 				</div>
 			</div>
-
 			<div>
 				<vue-markdown
 					class="line-numbers match-braces rainbow-braces show-invisibles"
@@ -32,30 +34,47 @@
 				></vue-markdown>
 			</div>
 
-			<div id="hash-tags">
-				<v-btn class="mr-2" v-for="tag in tags" :key="tag.idtag" small outlined>
-					<v-icon left>mdi-music-accidental-sharp</v-icon>
-					{{ tag.tagName }}
-				</v-btn>
+			<div id="additionBox">
+				<div id="hash-tags">
+					<v-btn class="mr-2" v-for="tag in tags" :key="tag.idtag" small outlined>
+						<v-icon left>mdi-music-accidental-sharp</v-icon>
+						{{ tag.tagName }}
+					</v-btn>
+				</div>
+
+				<div id="action-bar">
+					<MediumClap
+						:idPost="idPost"
+						:likeCheck="likeCheck"
+						:likeCount="likeCount"
+						@updateLike="updateLike"
+					></MediumClap>
+					<div id="addition-action" class="ma-4">
+						<button>
+							<v-icon>fa fa-ellipsis-h</v-icon>
+						</button>
+					</div>
+				</div>
+
+				<div id="divide-line"></div>
+
+				<div>
+					<div
+						v-for="comment in comments"
+						:key="comment.idcomment"
+					>{{ comment.commentWriter }} | {{ comment.contents }}</div>
+				</div>
+
+				<div>likeCount {{ likeCount }}</div>
+				<div>filePath{{ filePath }}</div>
+				<div>order{{ order }}</div>
+				<div>tags{{ tags }}</div>
+				<div>comments{{ comments }}</div>
+				<div>likes{{ likes }}</div>
+				<div>babyPosts{{ babyPosts }}</div>
+				<div>commentCount{{ commentCount }}</div>
+				<div>attachments{{ attachments }}</div>
 			</div>
-
-			<div id="action-bar">
-				<MediumClap :likeCheck="likeCheck" :likeCount="likeCount"></MediumClap>
-			</div>
-
-			<div id="divide-line"></div>
-
-			<div>likeCount{{ likeCount }}</div>
-			<div>views{{ views }}</div>
-			<div>filePath{{ filePath }}</div>
-			<div>likeCheck{{ likeCheck }}</div>
-			<div>order{{ order }}</div>
-			<div>tags{{ tags }}</div>
-			<div>comments{{ comments }}</div>
-			<div>likes{{ likes }}</div>
-			<div>babyPosts{{ babyPosts }}</div>
-			<div>commentCount{{ commentCount }}</div>
-			<div>attachments{{ attachments }}</div>
 		</div>
 	</div>
 </template>
@@ -90,8 +109,8 @@ export default {
 		attachments: {}
 	},
 	methods: {
-		test() {
-			console.log(document.getElementById("tests").src);
+		updateLike(data) {
+			this.$emit("updateLike", data);
 		}
 	},
 	updated() {
@@ -101,7 +120,7 @@ export default {
 </script>
 
 <style scoped>
-#post-info {
+#post-head {
 	display: flex;
 	margin: 7px;
 	/* style="display: inline-block; line-height: 10px" */
@@ -116,7 +135,7 @@ export default {
 	margin-bottom: 5px;
 	height: 17px;
 }
-#post-date {
+#post-info {
 	color: gray;
 	margin-top: 5px;
 	font-size: 12px;
@@ -126,8 +145,11 @@ export default {
 }
 #detailBox {
 	background-color: aliceblue;
-	width: 80vw;
+	width: 65vw;
 	height: 100%;
+}
+#additionBox {
+	margin-top: 40px;
 }
 #profile-info {
 }
@@ -135,9 +157,10 @@ export default {
 	display: flex;
 	justify-content: space-between;
 }
-#more-btn {
-	width: 30px;
-	height: 30px;
+#addition-action {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 #divide-line {
 	margin: 20px 0;
