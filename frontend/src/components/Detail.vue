@@ -39,8 +39,8 @@
 				</v-btn>
 			</div>
 
-			<div>
-				<MediumClap></MediumClap>
+			<div id="action-bar">
+				<MediumClap :likeCheck="likeCheck" :likeCount="likeCount"></MediumClap>
 			</div>
 
 			<div id="divide-line"></div>
@@ -64,6 +64,9 @@ import Prism from "../prism";
 import MediumClap from "./MediumClap";
 export default {
 	name: "Detail",
+	components: {
+		MediumClap
+	},
 	props: {
 		idPost: {},
 		memberId: {},
@@ -86,8 +89,10 @@ export default {
 		commentCount: {},
 		attachments: {}
 	},
-	components: {
-		MediumClap
+	methods: {
+		test() {
+			console.log(document.getElementById("tests").src);
+		}
 	},
 	updated() {
 		Prism.highlightAll();
@@ -125,6 +130,14 @@ export default {
 	height: 100%;
 }
 #profile-info {
+}
+#action-bar {
+	display: flex;
+	justify-content: space-between;
+}
+#more-btn {
+	width: 30px;
+	height: 30px;
 }
 #divide-line {
 	margin: 20px 0;

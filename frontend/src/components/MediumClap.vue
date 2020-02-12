@@ -1,7 +1,6 @@
 <template>
 	<div id="el" class="canvas">
 		<div id="totalCounter" class="total-counter">{{ totalCount }}</div>
-
 		<div
 			id="clap"
 			class="clap-container"
@@ -79,10 +78,13 @@
 <script>
 export default {
 	name: "MediumClap",
+	props: {
+		likeCheck: {},
+		likeCount: {}
+	},
 	data() {
 		return {
-			accCounter: 1,
-			totalCount: 127,
+			totalCount: 0,
 			minDeg: 1,
 			maxDeg: 72,
 			particlesClasses: [
@@ -95,7 +97,7 @@ export default {
 
 			clap: null,
 			sonarClap: null,
-			clickCounter: 0
+			clickCounter: null
 		};
 	},
 	methods: {
@@ -103,38 +105,40 @@ export default {
 			const particles = document.getElementById("particles");
 			const particles2 = document.getElementById("particles-2");
 			const particles3 = document.getElementById("particles-3");
+			const totalClickCounter = document.getElementById("totalCounter");
 
 			if (!this.clap.classList.contains("clicked")) {
+				document.querySelector(".clap-icon").style.color = "#b4001e";
 				this.clap.classList.add("clicked");
 				// axios then
 				this.totalCount++;
+				this.clickCounter.children[0].innerText = "+1";
+
+				if (!particles.classList.contains("animating")) {
+					this.animateParticles(particles, 700);
+				} else if (!particles2.classList.contains("animating")) {
+					this.animateParticles(particles2, 700);
+				} else if (!particles3.classList.contains("animating")) {
+					this.animateParticles(particles3, 700);
+				}
+
+				this.runAnimationCycle(this.clap, "scale");
 			} else {
+				document.querySelector(".clap-icon").style.color = "gray";
 				this.clap.classList.remove("clicked");
 				// axios then
 				this.totalCount--;
+				this.clickCounter.children[0].innerText = "-1";
 			}
-
-			const totalClickCounter = document.getElementById("totalCounter");
-
-			this.clickCounter.children[0].innerText = "+" + this.accCounter;
-			this.totalCount = this.totalCount + this.accCounter;
 
 			if (this.clickCounter.classList.contains("first-active")) {
 				this.runAnimationCycle(this.clickCounter, "active");
 			} else {
 				this.runAnimationCycle(this.clickCounter, "first-active");
 			}
+
+			this.$emit("updateLike", this.totalCount);
 			this.runAnimationCycle(totalClickCounter, "fader");
-
-			this.runAnimationCycle(this.clap, "scale");
-
-			if (!particles.classList.contains("animating")) {
-				this.animateParticles(particles, 700);
-			} else if (!particles2.classList.contains("animating")) {
-				this.animateParticles(particles2, 700);
-			} else if (!particles3.classList.contains("animating")) {
-				this.animateParticles(particles3, 700);
-			}
 		},
 		addSonar() {
 			this.sonarClap.classList.add("hover-active");
@@ -190,9 +194,15 @@ export default {
 		}
 	},
 	mounted() {
+		this.totalCount = this.likeCount;
+
 		this.clap = document.getElementById("clap");
 		this.sonarClap = document.getElementById("sonar-clap");
 		this.clickCounter = document.getElementById("clicker");
+
+		if (!this.likeCheck) {
+			document.querySelector(".clap-icon").style.color = "gray";
+		}
 	}
 };
 </script>
@@ -203,16 +213,17 @@ $default-clap-color: #b4001e;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 300px;
-	height: 300px;
-	position: relative;
+	width: 100px;
+	height: 100px;
 	.total-counter {
+		position: relative;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		position: absolute;
-		margin-top: -45px;
+		// position: absolute;
+		// margin-top: -45px;
+		margin-left: 100px;
 		color: gray;
 		font-family: sans-serif;
 		font-size: 16px;
@@ -252,7 +263,7 @@ $default-clap-color: #b4001e;
 		width: 35px;
 		height: 35px;
 		position: absolute;
-		top: 132px;
+		// top: 132px;
 		background-color: $default-clap-color;
 		border-radius: 50%;
 		z-index: 1;
