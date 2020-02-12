@@ -7,13 +7,13 @@
 
 			<v-card class="d_container">
 				<div class="d_body">
-					<div v-if="userInfo.isFollew == 1">
+					<div v-if="isFollow == 1">
 						정말
-						{{ userInfo.member.nickname }} 님을<br />
+						{{ nickname }} 님을<br />
 						팔로우 취소하시겠습니까?
 					</div>
 					<div v-else>
-						{{ userInfo.member.nickname }}
+						{{ nickname }}
 						님을<br />팔로우 하시겠습니까?
 					</div>
 				</div>
@@ -31,11 +31,11 @@
 </template>
 
 <script>
-// import http from "../http-common";
 export default {
 	props: {
-		userInfo: {},
-		follow: {}
+		follow: {},
+		nickname: {},
+		isFollow: {}
 	},
 	data() {
 		return {

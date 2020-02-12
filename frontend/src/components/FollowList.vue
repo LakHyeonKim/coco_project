@@ -6,41 +6,54 @@
 			</template>
 
 			<v-card class="d_container">
-				<div
-					v-for="(follow, index) in followList"
-					:key="follow.member.idmember"
-				>
+				<div v-for="(f, idx) in followList" :key="f.member.idmember">
 					<div class="f_div">
-						<img
-							class="f_img"
-							:src="
-								follow.member.imgUrl == null
-									? '../img/icons/user.png'
-									: follow.member.imgUrl
-							"
-						/>
-						<div class="f_nick_div">
-							<span>{{ follow.member.nickname }}</span>
-						</div>
-
-						<div class="f_btn_div">
-							<button
-								class="f_button"
-								:style="
-									follow.isFollow == 1
-										? following_btn
-										: follow_btn
+						<div
+							class="f_info_div"
+							@click="moveMypage(f.member.idmember)"
+						>
+							<img
+								class="f_img"
+								:src="
+									f.member.imgUrl == null
+										? '../img/icons/user.png'
+										: f.member.imgUrl
 								"
+							/>
+							<div class="f_nick_div">
+								<span>
+									{{ f.member.nickname }}
+								</span>
+							</div>
+						</div>
+						<div class="f_btn_div">
+							<MypageFollowCheck
+								v-if="f.member.idmember != $session.get('id')"
+								:nickname="f.member.nickname"
+								:isFollow="f.isFollow"
+								:follow="otherFollow"
 							>
-								<img
-									:src="
-										follow.isFollow == 1
-											? '../img/icons/check_g.png'
-											: '../img/icons/plus_w.png'
-									"
-									width="13px"
-								/>
-							</button>
+								<div slot="click" class="isFollow">
+									<button
+										class="f_button"
+										:style="
+											f.isFollow == 1
+												? following_btn
+												: follow_btn
+										"
+										@click="otherIdx = idx"
+									>
+										<img
+											:src="
+												f.isFollow == 1
+													? '../img/icons/check_g.png'
+													: '../img/icons/plus_w.png'
+											"
+											width="13px"
+										/>
+									</button>
+								</div>
+							</MypageFollowCheck>
 						</div>
 					</div>
 				</div>
@@ -50,37 +63,69 @@
 </template>
 
 <script>
+import http from "../http-common";
+import MypageFollowCheck from "./MypageFollowCheck.vue";
 export default {
+	components: { MypageFollowCheck },
 	props: {
 		userInfo: {},
-		follow: {},
 		followList: {}
-		// following_btn: {},
-		// follow_btn: {}
 	},
 	data() {
 		return {
 			dialog: false,
 			following_btn: {
-				marginLeft: "10px",
+				// marginLeft: "10px",
 				backgroundColor: "white",
 				borderRadius: "5px",
 				color: "gray",
 				padding: "3px 10px 3px 10px",
-				// boxShadow: "0.5px 0.5px 7px rgba(0, 0, 0, 0.3)"
 				border: "1px solid silver"
 			},
 			follow_btn: {
-				marginLeft: "10px",
+				// marginLeft: "10px",
 				backgroundColor: "rgb(192, 110, 155)",
 				borderRadius: "5px",
 				color: "white",
 				padding: "3px 10px 3px 10px"
-				// boxShadow: "0.5px 0.5px 5px rgba(0, 0, 0, 0.2)"
-			}
+			},
+			otherIdx: {}
 		};
 	},
-	methods: {}
+	methods: {
+		moveMypage(num) {
+			this.$router.push("/mypage/" + num);
+		},
+		otherFollow() {
+			let address = "";
+			console.log(this.followList[this.otherIdx]);
+			let isFollow = this.followList[this.otherIdx].isFollow;
+			if (isFollow == 1) {
+				address = "/trc/makeUnFollow/";
+				this.followList[this.otherIdx].isFollow = 0;
+			} else {
+				address = "/trc/makeFollow/";
+				this.followList[this.otherIdx].isFollow = 1;
+			}
+
+			http.post(address, {
+				memberFollower: this.$session.get("id"),
+				memberFollowing: this.followList[this.otherIdx].member.idmember
+			})
+				.then(response => {
+					console.log(response);
+				})
+				.catch(error => {
+					console.log(error);
+					isFollow = this.followList[this.otherIdx].isFollow;
+					if (isFollow == 1) {
+						this.followList[this.otherIdx].isFollow = 0;
+					} else {
+						this.followList[this.otherIdx].isFollow = 1;
+					}
+				});
+		}
+	}
 };
 </script>
 <style>
@@ -95,13 +140,29 @@ export default {
 	padding: 8px;
 }
 .f_div {
-	display: inline-block;
-	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	/* width: 100%; */
 	/* background-color: silver; */
-	margin: 2px 0 2px 0;
+	/* margin: 2px 0 2px 0; */
+	margin: 10px 0 10px 0;
+	padding: 5px;
+	border-radius: 10px;
+}
+.f_div:hover {
+	box-shadow: 0.5px 0.5px 5px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+}
+.f_info_div {
+	width: 80%;
+	height: 40px;
+	margin-right: 0px;
 }
 .f_btn_div {
+	width: 15%;
 	padding: 5px;
+	display: flex;
+	flex-direction: row-reverse;
 	float: right;
 }
 ::-webkit-scrollbar {

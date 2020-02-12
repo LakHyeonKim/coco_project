@@ -30,7 +30,8 @@
 						</MypagePWCheck>
 						<MypageFollowCheck
 							v-if="!isUser"
-							:userInfo="userInfo"
+							:nickname="userInfo.member.nickname"
+							:isFollow="userInfo.isFollew"
 							:follow="follow"
 							style="float: left;"
 						>
@@ -61,7 +62,6 @@
 				<div id="counting">
 					<FollowList
 						:userInfo="userInfo"
-						:follow="follow"
 						:followList="followList"
 						class="counting_click"
 					>
@@ -74,7 +74,6 @@
 					<span class="counting_sub"> · </span>
 					<FollowList
 						:userInfo="userInfo"
-						:follow="follow"
 						:followList="followList"
 						class="counting_click"
 					>
@@ -144,7 +143,9 @@ export default {
 				padding: "3px 10px 3px 10px",
 				boxShadow: "0.5px 0.5px 5px rgba(0, 0, 0, 0.2)"
 			},
-			followList: null
+			followList: null,
+			memberFollower: null,
+			memberFollowing: null
 		};
 	},
 	methods: {
@@ -170,7 +171,6 @@ export default {
 
 			http.post(address, {
 				memberFollower: this.$session.get("id"),
-				// memberFollowing: this.$session.get("targetId")
 				memberFollowing: this.$route.params.no
 			})
 				.then(response => {
