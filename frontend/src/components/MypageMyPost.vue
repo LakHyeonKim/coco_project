@@ -12,30 +12,20 @@
 					dense
 					item-color="black"
 					color="rgba(0, 0, 0, 0.5)"
-					@change="chnagePostSel"
+					@change="changePostSel"
 					placeholder="정렬조건"
 					style="width: 100px; float: left; font-size: 15px;"
 				></v-select>
 			</div>
-			<div
-				class="post"
-				v-for="(item, index) in posts"
-				:key="item.post.idpost"
-			>
+			<div class="post" v-for="(item, index) in posts" :key="item.post.idpost">
 				<div style="margin: 10px;">
-					<div
-						v-for="tag in item.tags"
-						:key="tag.idtag"
-						style="display: inline-block;"
-					>
+					<div v-for="tag in item.tags" :key="tag.idtag" style="display: inline-block;">
 						<span class="post_tag">{{ tag }}</span>
 					</div>
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
 						<img class="post_profile" src="../assets/user.png" />
-						<div class="post_nickname">
-							{{ item.post.postWriter }}
-						</div>
+						<div class="post_nickname">{{ item.post.postWriter }}</div>
 						<div class="post_date">{{ item.post.dateCreated }}</div>
 					</div>
 					<div class="post_code">{{ item.post.code }}</div>
@@ -51,16 +41,9 @@
 							width="35px"
 							@click="like(item.post.idpost, index)"
 						/>
-						<div class="like_text">
-							{{ item.post.likeCount }}
-						</div>
-						<img
-							src="../assets/icon/chat.png"
-							class="comment_img"
-						/>
-						<div class="comment_text">
-							{{ item.commentCount }}
-						</div>
+						<div class="like_text">{{ item.post.likeCount }}</div>
+						<img src="../assets/icon/chat.png" class="comment_img" />
+						<div class="comment_text">{{ item.commentCount }}</div>
 					</div>
 				</div>
 				<div class="line" />
@@ -90,7 +73,7 @@ export default {
 		};
 	},
 	methods: {
-		chnagePostSel(idx) {
+		changePostSel(idx) {
 			console.log(idx);
 			http.post("/api/findByMyPosts/", {
 				myIdMember: this.$session.get("id"),
