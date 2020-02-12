@@ -31,6 +31,8 @@
 <script>
 import sock from 'sockjs-client'
 import ws from 'webstomp-client'
+import axios from "axios";
+
 export default {
   name: 'RoomDetail',
   data () {
@@ -46,23 +48,23 @@ export default {
     this.roomId = localStorage.getItem('wschat.roomId')
     this.sender = localStorage.getItem('wschat.sender')
     this.findRoom()
+    this.connect()
   },
   methods: {
     findRoom: function () {
-      axios.get('/chat/room/' + this.roomId).then(response => {
+      axios.get('http://localhost:8081/chat/room/' + this.roomId).then(response => {
         this.room = response.data
       })
     },
     sendMessage: function () {
-      ws.send(
-        '/pub/chat/message',
-        {},
+      this.stompClient.send(
+        '/app/chat/message',
         JSON.stringify({
           type: 'TALK',
           roomId: this.roomId,
           sender: this.sender,
           message: this.message
-        })
+        },{})
       )
       this.message = ''
     },
@@ -74,24 +76,26 @@ export default {
       })
     },
     connect: function () {
-      ws.connect(
+      this.socket = new sock("http://localhost:8081/gs-guide-websocket");
+      this.stompClient = ws.over(this.socket);
+      this.stompClient.connect(
         {},
-        function (frame) {
-          ws.subscribe('/sub/chat/room/' + vm.$data.roomId, function (message) {
+        frame => {
+          console.log(frame);
+          this.stompClient.subscribe('/sub/chat/room/' + this.$data.roomId, message => {
             var recv = JSON.parse(message.body)
-            vm.recvMessage(recv)
+            this.recvMessage(recv)
           })
-          ws.send(
-            '/pub/chat/message',
-            {},
+          this.stompClient.send(
+            '/app/chat/message',
             JSON.stringify({
               type: 'ENTER',
-              roomId: vm.$data.roomId,
-              sender: vm.$data.sender
-            })
+              roomId: this.$data.roomId,
+              sender: this.$data.sender
+            },{})
           )
         },
-        function (error) {
+        error => {
           alert('error ' + error)
         }
       )

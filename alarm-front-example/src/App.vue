@@ -1,18 +1,13 @@
 <template>
   <div id="app">
-    <room></room>
+    <router-view />
   </div>
 </template>
 
 <script>
-import Room from "@/components/Room.vue"
-
 
 export default {
   name: 'App',
-  componets:{
-    Room
-  }
 }
 </script>
 
