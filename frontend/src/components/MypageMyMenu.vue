@@ -22,7 +22,7 @@
 					id="search_sel"
 					style="float: left; width: 90px; font-size: 15px;"
 				/>
-				<input type="text" id="search_text" />
+				<input v-model="menu_text" type="text" id="search_text" />
 				<img
 					id="search_img"
 					@click="searchMenu()"
@@ -54,7 +54,8 @@ export default {
 			],
 			isHidden: true,
 			tags: "",
-			menuSel: ""
+			menuSel: "",
+			menu_text: ""
 		};
 	},
 	methods: {
@@ -67,6 +68,14 @@ export default {
 			this.menuSel = idx;
 		},
 		searchMenu() {
+			if (this.menuSel == "") {
+				alert("검색조건을 선택해주세요!");
+				return;
+			}
+			if (this.menu_text == "") {
+				alert("검색어를 입력해주세요!");
+				return;
+			}
 			let address = "";
 			if (this.menuSel == 1) {
 				address = "";
@@ -78,6 +87,8 @@ export default {
 				address = "";
 			}
 			console.log(address);
+			console.log(this.menu_text);
+			this.menu_text = "";
 		}
 	}
 };

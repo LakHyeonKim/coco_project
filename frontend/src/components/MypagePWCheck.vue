@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import http from "../http-common";
 export default {
 	data() {
 		return {
@@ -58,7 +59,18 @@ export default {
 	methods: {
 		pwCheck() {
 			this.dialog = false;
-			alert("???");
+			console.log(this.input_pw);
+
+			// http.post("/api/findByMyPosts/", {
+			// 	idmember: 6,
+			// 	password: "1234"
+			// })
+			// 	.then(response => {
+			// 		console.log(response);
+			// 	})
+			// 	.catch(error => {
+			// 		console.log(error);
+			// 	});
 		}
 	}
 };
