@@ -11,6 +11,16 @@
 					/>
 				</label>
 				<form v-on:submit.prevent="searchwords" id="serachBox">
+					<v-select
+						id="options"
+						:items="searchOption"
+						@change="selectOption"
+						dense
+						item-color="black"
+						color="rgba(0, 0, 0, 0.5)"
+						placeholder="검색조건"
+						style="width: 8vw; float: left; font-size: 15px; transform: translateY(-10%); "
+					></v-select>
 					<input
 						type="text"
 						v-model="words"
@@ -35,13 +45,25 @@ export default {
 	name: "SearchBar",
 	data() {
 		return {
-			words: ""
+			words: "",
+			searchOption: [
+				{ text: "제목", value: 1 },
+				{ text: "내용", value: 2 },
+				{ text: "글쓴이", value: 3 },
+				{ text: "태그", value: 4 }
+			],
+			value: 0
 		};
 	},
 	methods: {
 		searchwords() {
-			this.$emit("searchwords", this.words);
+			console.log("emit value ", this.value);
+			this.$emit("searchwords", this.words, this.value);
 			// this.words = "";
+		},
+		selectOption(values) {
+			// console.log(value);
+			this.value = values;
 		}
 	}
 };
@@ -65,6 +87,7 @@ export default {
 	width: 30px;
 	height: 30px;
 	vertical-align: middle;
+	margin-right: 10px;
 }
 #serachBox {
 	display: inline-block;
@@ -72,14 +95,14 @@ export default {
 #searchInput {
 	display: inline-block;
 	vertical-align: middle;
-	border: 1px solid black;
+	border-bottom: 1px solid black;
 	width: 20vw;
-	margin-left: 10px;
+	margin-left: 5px;
 	margin-right: 10px;
 }
 ::placeholder {
 	color: black;
-	font-size: 30px;
+	font-size: 20px;
 }
 #searchButton {
 	display: inline-block;

@@ -45,8 +45,8 @@
 							class="like_img"
 							:src="
 								item.post.likeCheck == 1
-									? './img/icons/tack_full.png'
-									: './img/icons/tack_empty.png'
+									? '../img/icons/tack_full.png'
+									: '../img/icons/tack_empty.png'
 							"
 							width="35px"
 							@click="like(item.post.idpost, index)"
@@ -74,6 +74,9 @@ import store from "../store";
 export default {
 	name: "MypageMyPost",
 	store,
+	props: {
+		no: null
+	},
 	data() {
 		return {
 			posts: "",
@@ -92,7 +95,7 @@ export default {
 			http.post("/api/findByMyPosts/", {
 				myIdMember: this.$session.get("id"),
 				order: idx,
-				youIdMember: this.$session.get("targetId")
+				youIdMember: this.no
 			})
 				.then(response => {
 					this.posts = response.data;
@@ -123,7 +126,9 @@ export default {
 					idpost: postNum
 				}
 			})
-				.then(response => {})
+				.then(res => {
+					console.log(res);
+				})
 				.catch(error => {
 					console.log(error);
 					if (this.posts[index].post.likeCheck == 1) {
@@ -137,10 +142,11 @@ export default {
 		}
 	},
 	mounted() {
+		console.log("MypageMyPost : " + this.no);
 		http.post("/api/findByMyPosts/", {
 			myIdMember: this.$session.get("id"),
 			order: 4,
-			youIdMember: this.$session.get("targetId")
+			youIdMember: this.no
 		})
 			.then(response => {
 				this.posts = response.data;

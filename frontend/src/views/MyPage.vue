@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<MypageBanner />
-		<MypageMyMenu />
-		<MypageMyPost />
+		<MypageBanner :no="this.no" />
+		<MypageMyMenu :no="this.no" />
+		<MypageMyPost :no="this.no" />
 		<MypageFooter />
 		<div id="blank"></div>
 	</div>
@@ -17,6 +17,7 @@ import store from "../store";
 export default {
 	name: "myPage",
 	store,
+	props: ["no"],
 	components: {
 		MypageBanner,
 		MypageMyMenu,

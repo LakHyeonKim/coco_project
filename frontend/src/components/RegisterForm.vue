@@ -1,7 +1,11 @@
 <template>
 	<div style="display: flex ; align-itmes: center; justify-content: center;">
 		<validation-observer ref="form">
-			<form @submit.prevent="register" id="formData" enctype="multipart/form-data">
+			<form
+				@submit.prevent="register"
+				id="formData"
+				enctype="multipart/form-data"
+			>
 				<validation-provider name="프로필 이미지 ">
 					<img-inputer
 						name="file"
@@ -18,7 +22,11 @@
 
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
 
-				<validation-provider name="아이디 " rules="required|email" v-slot="{ errors }">
+				<validation-provider
+					name="아이디 "
+					rules="required|email"
+					v-slot="{ errors }"
+				>
 					<v-text-field
 						name="id"
 						v-model="signUpMember.id"
@@ -26,7 +34,11 @@
 						:error-messages="errors[0] ? errors[0] : []"
 					></v-text-field>
 				</validation-provider>
-				<validation-provider name="닉네임 " rules="required|max:10" v-slot="{ errors }">
+				<validation-provider
+					name="닉네임 "
+					rules="required|max:10"
+					v-slot="{ errors }"
+				>
 					<v-text-field
 						name="nickname"
 						v-model="signUpMember.nickname"
@@ -66,9 +78,18 @@
 						@click:append="pwd2 = !pwd2"
 					></v-text-field>
 				</validation-provider>
-				<v-text-field v-model="signUpMember.gitUrl" label="Git url(선택)"></v-text-field>
-				<v-text-field v-model="signUpMember.kakaoUrl" label="Kakao url(선택)"></v-text-field>
-				<v-text-field v-model="signUpMember.instagramUrl" label="Instagram url(선택)"></v-text-field>
+				<v-text-field
+					v-model="signUpMember.gitUrl"
+					label="Git url(선택)"
+				></v-text-field>
+				<v-text-field
+					v-model="signUpMember.kakaoUrl"
+					label="Kakao url(선택)"
+				></v-text-field>
+				<v-text-field
+					v-model="signUpMember.instagramUrl"
+					label="Instagram url(선택)"
+				></v-text-field>
 
 				<v-btn class="mr-4" type="submit">회원가입</v-btn>
 				<v-btn @click="clear">초기화</v-btn>
@@ -76,7 +97,9 @@
 			<div>
 				<button v-on:click="idCheck">중복확인</button>
 				<div v-if="duplicate">
-					<div v-for="(message, idx) in duplicate" :key="idx">{{ message }}</div>
+					<div v-for="(message, idx) in duplicate" :key="idx">
+						{{ message }}
+					</div>
 				</div>
 			</div>
 		</validation-observer>
@@ -128,6 +151,49 @@ export default {
 				http.post("/trc/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
+
+						http.post("/jwt/login/", {
+							id: this.signUpMember.id,
+							password: this.signUpMember.password
+						})
+							.then(res => {
+								console.log(res);
+								if (res.status != "204") {
+									this.$session.start();
+									this.$session.set(
+										"accessToken",
+										res.data.accessToken
+									);
+									this.$session.set(
+										"refreshToken",
+										res.data.refreshToken
+									);
+									this.$store.state.token =
+										res.data.accessToken;
+									this.$session.set(
+										"id",
+										Number(this.$store.getters.userId)
+									);
+									this.$session.set("targetId", 10);
+									this.loading = false;
+									router.push("/newsfeed");
+									console.log("LOGIN then ", res);
+								} else {
+									router.push("/").catch(err => {
+										err;
+									});
+									alert(
+										"아이디와 비밀번호를 확인해 주십시오."
+									);
+									this.loading = false;
+								}
+							})
+							.catch(err => {
+								this.loading = false;
+								// this.$store.dispatch("endLoading");
+								console.log("LOGIN err ", err);
+							});
+
 						this.$store.dispatch("endLoading");
 						alert("회원가입이 성공적으로 완료되었습니다.");
 						router.push("/");
@@ -136,6 +202,7 @@ export default {
 						this.$store.dispatch("endLoading");
 						console.log("REGISTER catch ", err);
 					});
+				// http.post("/jwt/sendEmailkey/", formData);
 			} else {
 				console.log("REGISTER ", "검증 실패");
 			}
@@ -182,6 +249,7 @@ export default {
 							this.idcheck = true;
 						} else {
 							this.duplicate.push("아이디가 중복되었습니다.");
+							this.idcheck = false;
 						}
 					})
 					.catch(err => {
@@ -208,5 +276,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

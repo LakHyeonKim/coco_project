@@ -18,7 +18,11 @@ export default {
 	data() {
 		return {
 			tags: {},
-			tag: []
+			tag: [],
+			imgs: [
+				{ tag: "java", path: "../assets/vue.png" },
+				{ tag: "javascript", path: "../assets/JS.png" }
+			]
 		};
 	},
 	methods: {
@@ -26,6 +30,13 @@ export default {
 			// console.log(ta);
 			this.$emit("favtag", ta);
 			// this.tagforsearch = "";
+		},
+		imgPath(tag) {
+			if (tag == "java") {
+				return "../assets/vue.png";
+			} else if (tag == "javascript") {
+				return "../assets/JS.png";
+			}
 		}
 	},
 	mounted() {
@@ -61,6 +72,10 @@ export default {
 					// console.log(i);
 					// console.log(items[i]);
 					this.tag.push(items[i][0]);
+					// this.tag.push({
+					// 	tag: items[i][0],
+					// 	path: this.imgPath(items[i][0])
+					// });
 				}
 				// console.log(this.tag);
 			})
@@ -85,6 +100,12 @@ export default {
 }
 #tag {
 	display: inline-block;
-	margin-right: 10px;
+	font-size: 25px;
+	border-radius: 15px;
+	margin: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: white;
+	background-color: rgba(160, 23, 98, 0.5);
 }
 </style>

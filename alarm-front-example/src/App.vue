@@ -1,13 +1,18 @@
 <template>
   <div id="app">
-    <router-view />
+    <!-- <router-view /> -->
+    <Alarm/>
   </div>
 </template>
 
 <script>
+import Alarm from "@/components/Alarm";
 
 export default {
   name: 'App',
+  components:{
+    Alarm
+  }
 }
 </script>
 

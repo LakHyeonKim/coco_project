@@ -4,7 +4,9 @@
 			id="imgMenu"
 			@click="toggleMenu()"
 			:src="
-				isHidden ? './img/icons/menu_w.png' : './img/icons/close_w.png'
+				isHidden
+					? '../img/icons/menu_w.png'
+					: '../img/icons/close_w.png'
 			"
 			width="25px"
 		/>
@@ -34,6 +36,9 @@ import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
+	props: {
+		no: null
+	},
 	data() {
 		return {
 			items: ["전체", "#", "글제목", "글내용"],
