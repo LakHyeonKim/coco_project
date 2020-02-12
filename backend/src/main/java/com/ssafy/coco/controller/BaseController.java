@@ -123,6 +123,16 @@ public class BaseController {
 		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "닉네임 중복 체크", response = List.class)
+	@RequestMapping(value = "/checkNickName", method = RequestMethod.POST)
+	public ResponseEntity<List<Alarm>> checkNickName(@RequestBody Member member) throws Exception {
+		int size = memberService.findMember(member).size();
+		if (size ==0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
 	public ResponseEntity<List<Alarm>> findAlarm(@RequestBody Alarm alarm) throws Exception {

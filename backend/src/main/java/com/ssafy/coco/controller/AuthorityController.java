@@ -184,9 +184,9 @@ public class AuthorityController {
 	@RequestMapping(value = "/auth/{tt}", method = RequestMethod.GET)
 	public boolean authToken(@PathVariable String tt) throws Exception {
 		String jwt = tt;
-		System.out.println(jwt);
+		System.out.println("우왕와아앙");
 		if (jwt == null) {
-			System.out.println("null");
+			System.out.println("nulㄴㄴl");
 			return false;
 		} else {
 			return jwtService.checkJwt(jwt);
