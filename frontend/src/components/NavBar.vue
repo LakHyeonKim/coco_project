@@ -32,6 +32,14 @@
 					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
 				</router-link>
 			</li>
+			<li class="nav_menu">
+				<img
+					class="nav_menu_img"
+					src="../assets/kakao_logo.png"
+					@click="toggleMenu()"
+				/>
+				<Room v-if="!isHidden"></Room>
+			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
 			</li> -->
@@ -40,26 +48,34 @@
 </template>
 
 <script>
-import router from "../router";
+import router from '../router'
+import Room from '@/components/Room'
 
 export default {
-	name: "NavBar",
-	data() {
+	name: 'NavBar',
+	components: {
+		Room
+	},
+	data () {
 		return {
-			preUrl: ""
-		};
+			isHidden: true,
+			preUrl: ''
+		}
 	},
 	methods: {
-		logout() {
-			this.$session.destroy();
-			router.push("/");
+		toggleMenu () {
+			this.isHidden = !this.isHidden
 		},
-		getMypage() {
+		logout () {
+			this.$session.destroy()
+			router.push('/')
+		},
+		getMypage () {
 			// this.$session.set("targetId", this.$session.get("id"));
-			router.push("/mypage/" + this.$session.get("id"));
+			router.push('/mypage/' + this.$session.get('id'))
 		}
 	}
-};
+}
 </script>
 
 <style>

@@ -132,7 +132,8 @@ export default {
     }
   },
   mounted() {
-    //this.connect();
+    console.log('누나바보')
+    this.soloconnect()
   }
 };
 </script>
