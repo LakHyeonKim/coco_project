@@ -5,8 +5,8 @@
 			@click="toggleMenu()"
 			:src="
 				isHidden
-					? '../img/icons/menu_w.png'
-					: '../img/icons/close_w.png'
+					? '../img/icons/menu_g.png'
+					: '../img/icons/close_g.png'
 			"
 			width="25px"
 		/>
@@ -16,13 +16,18 @@
 				<v-select
 					label="검색조건"
 					:items="items"
+					@change="changeMenuSel"
 					color="rgba(0, 0, 0, 0.5)"
 					item-color="black"
 					id="search_sel"
-					style="float: left; width: 80px; font-size: 15px;"
+					style="float: left; width: 90px; font-size: 15px;"
 				/>
 				<input type="text" id="search_text" />
-				<img id="search_img" src="../assets/icon/search_b.png" />
+				<img
+					id="search_img"
+					@click="searchMenu()"
+					src="../assets/icon/search_b.png"
+				/>
 			</div>
 			<ul id="list" v-for="item in tags" :key="item">
 				<li>#{{ item }}</li>
@@ -41,9 +46,15 @@ export default {
 	},
 	data() {
 		return {
-			items: ["전체", "#", "글제목", "글내용"],
+			items: [
+				{ text: "전체", value: "1" },
+				{ text: "#", value: "2" },
+				{ text: "글제목", value: "3" },
+				{ text: "글내용", value: "4" }
+			],
 			isHidden: true,
-			tags: ""
+			tags: "",
+			menuSel: ""
 		};
 	},
 	methods: {
@@ -51,12 +62,24 @@ export default {
 			this.isHidden = !this.isHidden;
 			this.tags = store.state.tags;
 			console.log(this.tags);
+		},
+		changeMenuSel(idx) {
+			this.menuSel = idx;
+		},
+		searchMenu() {
+			let address = "";
+			if (this.menuSel == 1) {
+				address = "";
+			} else if (this.menuSel == 2) {
+				address = "";
+			} else if (this.menuSel == 3) {
+				address = "";
+			} else {
+				address = "";
+			}
+			console.log(address);
 		}
 	}
-	// updated() {
-	// 	console.log("태그가 오나,,?");
-	// 	console.log(store.state.tags);
-	// }
 };
 </script>
 
@@ -75,9 +98,13 @@ export default {
 	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
 }
 #search_img {
-	margin-top: 15px;
+	margin-top: 20px;
 	float: left;
-	width: 25px;
+	width: 20px;
+	cursor: pointer;
+}
+#search_img:hover {
+	opacity: 0.5;
 }
 #menu {
 	position: fixed;

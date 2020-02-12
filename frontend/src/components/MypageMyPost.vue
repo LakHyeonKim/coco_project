@@ -1,5 +1,6 @@
 <template>
 	<div id="posts">
+		<MypageMyMenu />
 		<div id="post_list">
 			<div style="height: 50px; margin-top: 15px;">
 				<img
@@ -71,11 +72,12 @@
 <script>
 import http from "../http-common";
 import store from "../store";
+import MypageMyMenu from "@/components/MypageMyMenu";
 export default {
 	name: "MypageMyPost",
 	store,
-	props: {
-		no: null
+	components: {
+		MypageMyMenu
 	},
 	data() {
 		return {
@@ -95,7 +97,7 @@ export default {
 			http.post("/api/findByMyPosts/", {
 				myIdMember: this.$session.get("id"),
 				order: idx,
-				youIdMember: this.no
+				youIdMember: this.$route.params.no
 			})
 				.then(response => {
 					this.posts = response.data;
@@ -142,11 +144,11 @@ export default {
 		}
 	},
 	mounted() {
-		console.log("MypageMyPost : " + this.no);
+		console.log("MypageMyPost : " + this.$route.params.no);
 		http.post("/api/findByMyPosts/", {
 			myIdMember: this.$session.get("id"),
 			order: 4,
-			youIdMember: this.no
+			youIdMember: this.$route.params.no
 		})
 			.then(response => {
 				this.posts = response.data;
