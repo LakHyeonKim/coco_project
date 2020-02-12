@@ -1,6 +1,7 @@
 package com.ssafy.vo;
 
-public class ChatMessage {
+
+public class ChatMessage{
 
 	// 메시지 타입 : 입장, 채팅
     public enum MessageType {

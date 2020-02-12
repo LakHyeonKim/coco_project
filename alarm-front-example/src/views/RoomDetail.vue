@@ -48,23 +48,23 @@ export default {
     this.roomId = localStorage.getItem('wschat.roomId')
     this.sender = localStorage.getItem('wschat.sender')
     this.findRoom()
+    this.connect()
   },
   methods: {
     findRoom: function () {
-      axios.get('/chat/room/' + this.roomId).then(response => {
+      axios.get('http://localhost:8081/chat/room/' + this.roomId).then(response => {
         this.room = response.data
       })
     },
     sendMessage: function () {
-      ws.send(
-        '/pub/chat/message',
-        {},
+      this.stompClient.send(
+        '/app/chat/message',
         JSON.stringify({
           type: 'TALK',
           roomId: this.roomId,
           sender: this.sender,
           message: this.message
-        })
+        },{})
       )
       this.message = ''
     },
@@ -77,26 +77,25 @@ export default {
     },
     connect: function () {
       this.socket = new sock("http://localhost:8081/gs-guide-websocket");
-      ws.over(this.socket);
-      ws.connect(
+      this.stompClient = ws.over(this.socket);
+      this.stompClient.connect(
         {},
-        function (frame) {
+        frame => {
           console.log(frame);
-          ws.subscribe('/sub/chat/room/' + this.$data.roomId, function (message) {
+          this.stompClient.subscribe('/sub/chat/room/' + this.$data.roomId, message => {
             var recv = JSON.parse(message.body)
             this.recvMessage(recv)
           })
-          ws.send(
-            '/pub/chat/message',
-            {},
+          this.stompClient.send(
+            '/app/chat/message',
             JSON.stringify({
               type: 'ENTER',
               roomId: this.$data.roomId,
               sender: this.$data.sender
-            })
+            },{})
           )
         },
-        function (error) {
+        error => {
           alert('error ' + error)
         }
       )
