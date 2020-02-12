@@ -16,8 +16,8 @@ import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.vo.MemberTag;
 
 @Component
-public class JwtInterceptor implements HandlerInterceptor{
-	
+public class JwtInterceptor implements HandlerInterceptor {
+
 	private static final String HEADER_AUTH = "Authorization";
 
 	@Autowired
@@ -27,25 +27,13 @@ public class JwtInterceptor implements HandlerInterceptor{
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		final String token = request.getHeader(HEADER_AUTH);
+		System.out.println("토큰 in 인터셉터" + token);
 		
-		System.out.println("토ㅡㄴ"+token);
-		System.out.println(request.getPathInfo());
-		Enumeration params = request.getParameterNames();
-		System.out.println("----------------------------");
-		while (params.hasMoreElements()){
-		    String name = (String)params.nextElement();
-		    System.out.println(name + " : " +request.getParameter(name));
-		}
-		System.out.println("----------------------------");
-		
-		if(token != null && jwtService.isUsable(token)){
-			System.out.println("토큰가능");
-			System.out.println(token);
-			return true;
-		}else{
-			System.out.println("토큰불가능");
-			System.out.println(token);
-			return false;
-		}
+		  if (token != null && jwtService.isUsable(token)) {
+		  System.out.println("토큰가능"); System.out.println(token); return true; } else {
+		  System.out.println("토큰불가능"); System.out.println(token); return false; }
+		 
+//		return true;
+
 	}
 }
