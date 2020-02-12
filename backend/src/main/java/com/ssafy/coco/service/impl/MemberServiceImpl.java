@@ -63,8 +63,6 @@ public class MemberServiceImpl implements MemberService{
 		return size == 0 ? true : false;
 	}
 	
-	
-
 	@Override
 	public List<Member> findFollowerMemberList(long idMemeberFollowing) {
 		return memberDao.findFollowerMemberList(idMemeberFollowing);

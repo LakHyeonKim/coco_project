@@ -90,7 +90,7 @@ public class JwtServiceImpl implements JwtService{
 
 	}
 
-	public JsonNode getKakaoUserInfo(String autorize_code) {
+	public JsonNode getKakaoUserInfo(String token) {
 
 		final String RequestUrl = "https://kapi.kakao.com/v1/user/me";
 
@@ -98,7 +98,7 @@ public class JwtServiceImpl implements JwtService{
 		final HttpPost post = new HttpPost(RequestUrl);
 
 		// add header
-		post.addHeader("Authorization", "Bearer " + autorize_code);
+		post.addHeader("Authorization", "Bearer " + token);
 
 		JsonNode returnNode = null;
 
@@ -362,8 +362,5 @@ public class JwtServiceImpl implements JwtService{
 		}
 		else return false;
 	}
-	
-
-	
 
 }
