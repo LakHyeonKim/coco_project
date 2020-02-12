@@ -1,5 +1,7 @@
 package com.ssafy.coco.service;
 
-public interface MemberHomePageService {
+import com.ssafy.coco.relationvo.MemberHomePage;
 
+public interface MemberHomePageService {
+	public MemberHomePage findByMemberHomePageUserID(long myIdMember, long youIdMember);
 }

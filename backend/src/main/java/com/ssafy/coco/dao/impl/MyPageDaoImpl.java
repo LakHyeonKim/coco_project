@@ -58,5 +58,10 @@ public class MyPageDaoImpl implements MyPageDao{
 	public int updateMypageVisitedCount(long idMember) {
 		return sqlSession.update(ns+"updateMypageVisitedCount",idMember);
 	}
+
+	@Override
+	public int updateMypageTodayVisitedReset() {
+		return sqlSession.update(ns+"updateMypageTodayVisitedReset");
+	}
  
 }
