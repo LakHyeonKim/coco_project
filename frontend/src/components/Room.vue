@@ -1,33 +1,33 @@
 <template>
-	<div id="chat">
-		<div id="open">
-			<div id="roomWrap">
-				<input
-					type="text"
-					v-model="room_name"
-					@keyup.enter="createRoom"
-				/>
-				<button type="button" @click="createRoom">
-					채팅방 개설
-				</button>
-				<div id="roomList">
-					<div id="roomHeader">
-						채팅 방 목록
-					</div>
-					<div id="roomSelect">
-						<div
-							class="roomEl active"
-							v-for="item in chatrooms"
-							v-bind:key="item.roomId"
-							v-on:click="enterRoom(item.roomId)"
-						>
-							{{ item.name }}
-						</div>
+	<div id="open">
+		<div id="roomWrap">
+			<div id="roomList">
+				<div id="roomHeader">
+					채팅 방 목록
+				</div>
+				<div id="roomSelect">
+					<div
+						class="roomEl active"
+						v-for="item in chatrooms"
+						v-bind:key="item.roomId"
+						v-on:click="enterRoom(item.roomId)"
+					>
+						{{ item.name }}
 					</div>
 				</div>
 			</div>
-			<RoomDetail v-if="isRoomDetail"> </RoomDetail>
 		</div>
+		<input
+			id="inputStyle"
+			type="text"
+			v-model="room_name"
+			@keyup.enter="createRoom"
+		/>
+		<button id="buttonStyle" type="button" @click="createRoom">
+			채팅방 개설
+		</button>
+		<RoomDetail v-if="isRoomDetail">
+		</RoomDetail>
 	</div>
 </template>
 
@@ -84,6 +84,10 @@ export default {
 			localStorage.setItem('wschat.sender', sender)
 			localStorage.setItem('wschat.roomId', roomId)
 			this.isRoomDetail = true
+			this.isRoomDetail = false
+			setTimeout(() => {
+  				this.isRoomDetail = true
+			}, 1);
 		}
 	}
 }
@@ -91,14 +95,11 @@ export default {
 
 <style>
 #roomWrap {
-	width: 200px;
+	width: 100%;
 }
 
-#chat {
-	text-align: left;
-	top: 0;
-	right: 0;
-	z-index: 1;
+input {
+	border-block-color: black;
 }
 
 #open {
@@ -107,20 +108,35 @@ export default {
 	left: 50px;
 	top: -10px;
 	width: 500px;
-	height: 700px;
+	height: 800%;
 	padding: 10px;
 	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
 	border-radius: 15px;
-  overflow: auto;
+	overflow: auto;
+}
+
+#inputStyle {
+	color: black;
+	border: 1px solid black;
+}
+
+#buttonStyle {
+	border: 1px solid black;
+	background: #7d4879;
 }
 
 #roomList {
-	border: 1px solid #0084ff;
+	border: 1px solid rgb(221, 187, 210);
+	border-radius: 5px;
+}
+
+#roomSelect {
+	border: 1px solid rgb(221, 187, 210);
 	border-radius: 5px;
 }
 
 #roomHeader {
-	background-color: #0084ff;
+	background-color: #7d4879;
 	color: rgb(0, 0, 0);
 	height: 40px;
 	font-size: 18px;
@@ -131,16 +147,16 @@ export default {
 
 .roomEl {
 	text-align: center;
-	border-bottom: 1px solid rgb(228, 16, 217);
+	border-bottom: 1px solid #ddd;
 	padding: 10px 0px;
 	cursor: pointer;
 }
 
 .roomEl:hover {
-	background: rgb(228, 16, 217);
+	background: #7d4879;
 }
 
 .roomEl.active {
-	background: rgb(228, 16, 217);
+	background: #7d4879;
 }
 </style>

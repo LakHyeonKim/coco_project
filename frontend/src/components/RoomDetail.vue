@@ -22,7 +22,7 @@
 			@keyup.enter="sendMessage"
 			placeholder="메시지를 입력하세요"
 		/>
-		<button class="btn btn-primary" type="button" @click="sendMessage">
+		<button id="buttonStyle" type="button" @click="sendMessage">
 			보내기
 		</button>
 	</div>
@@ -117,12 +117,13 @@ export default {
 
 <style>
 #chatWrap {
-	width: 600px;
+	width: 100%;
 	border: 1px solid #ddd;
 }
 
 #chatHeader {
 	height: 60px;
+	color: black;
 	text-align: center;
 	line-height: 60px;
 	font-size: 25px;
@@ -138,6 +139,11 @@ export default {
 
 .myMsg {
 	text-align: right;
+}
+
+#buttonStyle {
+	border: 1px solid black;
+	background: #7d4879;
 }
 
 .anotherMsg {
@@ -179,6 +185,8 @@ export default {
 	height: calc(100% - 1px);
 	border: none;
 	padding-bottom: 0;
+	color: #000;
+	border: 1px solid black;
 }
 
 #message:focus {
@@ -196,5 +204,6 @@ export default {
 #chatRoom {
 	overflow: auto;
 	height: 350px;
+	color: #000;
 }
 </style>
