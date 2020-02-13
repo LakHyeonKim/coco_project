@@ -258,12 +258,12 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (board.getAttachments() != null) {
 			MultipartFile file = board.getAttachments();
-	         String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
-	         String originFileName = file.getOriginalFilename();
-	         String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-	         String filePath = "http://localhost:8888/userfile/" + saveFileName + "";
-	         file.transferTo(new File(path, saveFileName));
-	         post.setFilePath(filePath);
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
+			String filePath = "http://localhost:8888/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			post.setFilePath(filePath);
 		}
 		postDao.addPost(post);
 		for (String splitedTag : splitTag) {

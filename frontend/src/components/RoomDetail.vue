@@ -1,15 +1,15 @@
 <template>
 	<div id="chatWrap">
-		<div id="chatHeader">{{ room.name }}</div>
+		<div id="chatHeader">{{ room.roomName }}</div>
 		<div id="chatRoom">
 			<div id="chatLog" v-for="message in messages" :key="message">
-				<div class="anotherMsg" v-if="message.sender != sender">
-					<span class="anotherName">{{ message.sender }}</span>
-					<span class="msg">{{ message.message }}</span>
+				<div class="anotherMsg" v-if="message.member_id != member_id">
+					<span class="anotherName">{{ message.member_id }}</span>
+					<span class="msg">{{ message.context }}</span>
 				</div>
-				<div class="myMsg" v-if="message.sender == sender">
-					<span class="anotherName">{{ message.sender }}</span>
-					<span class="msg">{{ message.message }}</span>
+				<div class="myMsg" v-if="message.member_id == member_id">
+					<span class="anotherName">{{ message.member_id }}</span>
+					<span class="msg">{{ message.context }}</span>
 				</div>
 			</div>
 		</div>
@@ -37,16 +37,18 @@ export default {
 	name: 'RoomDetail',
 	data () {
 		return {
-			roomId: '',
+			roomId: 0,
+			roomNumber:'',
 			room: {},
-			sender: '',
+			member_id: 0,
 			message: '',
 			messages: []
 		}
 	},
 	created () {
-		this.roomId = localStorage.getItem('wschat.roomId')
-		this.sender = localStorage.getItem('wschat.sender')
+		this.roomId = localStorage.getItem('wschat.idroom')
+		this.member_id = localStorage.getItem('wschat.member_id')
+		this.roomNumber = localStorage.getItem('wschat.roomNumber')
 		this.findRoom()
 		this.connect()
 	},
@@ -56,6 +58,13 @@ export default {
 				.get('http://localhost:8081/chat/room/' + this.roomId)
 				.then(response => {
 					this.room = response.data
+					console.log(this.room)
+				})
+			axios
+				.get('http://localhost:8081/chat/messages/' + this.roomId)
+				.then(response => {
+					this.messages = response.data
+					console.log(this.messages)
 				})
 		},
 		sendMessage: function () {
@@ -65,8 +74,8 @@ export default {
 					{
 						type: 'TALK',
 						roomId: this.roomId,
-						sender: this.sender,
-						message: this.message
+						memberId: this.member_id,
+						context: this.message
 					},
 					{}
 				)
@@ -76,8 +85,9 @@ export default {
 		recvMessage: function (recv) {
 			this.messages.push({
 				type: recv.type,
-				sender: recv.type == 'ENTER' ? '[알림]' : recv.sender,
-				message: recv.message
+				memberId: recv.type == 'ENTER' ? '[알림]' : recv.memberId,
+				context: recv.context,
+				dateCreated: recv.dateCreated
 			})
 		},
 		connect: function () {
@@ -88,7 +98,7 @@ export default {
 				frame => {
 					console.log(frame)
 					this.stompClient.subscribe(
-						'/sub/chat/room/' + this.$data.roomId,
+						'/sub/chat/room/' + this.$data.idroom,
 						message => {
 							var recv = JSON.parse(message.body)
 							this.recvMessage(recv)
@@ -100,7 +110,7 @@ export default {
 							{
 								type: 'ENTER',
 								roomId: this.$data.roomId,
-								sender: this.$data.sender
+								memberId: this.$data.member_id
 							},
 							{}
 						)

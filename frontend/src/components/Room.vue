@@ -10,9 +10,16 @@
 						class="roomEl active"
 						v-for="item in chatrooms"
 						v-bind:key="item.roomId"
-						v-on:click="enterRoom(item.roomId)"
+						v-on:click="enterRoom(item)"
 					>
 						{{ item.name }}
+						<!-- <button
+							id="buttonStyle"
+							type="button"
+							@click="deleteRoom"
+						>
+							채팅방 삭제
+						</button> -->
 					</div>
 				</div>
 			</div>
@@ -26,8 +33,7 @@
 		<button id="buttonStyle" type="button" @click="createRoom">
 			채팅방 개설
 		</button>
-		<RoomDetail v-if="isRoomDetail">
-		</RoomDetail>
+		<RoomDetail v-if="isRoomDetail"> </RoomDetail>
 	</div>
 </template>
 
@@ -39,6 +45,7 @@ export default {
 	name: 'Room',
 	data () {
 		return {
+			senderStatic: '',
 			isHidden: true,
 			isRoomDetail: false,
 			room_name: '',
@@ -63,13 +70,19 @@ export default {
 				alert('방 제목을 입력해 주십시요.')
 				return
 			} else {
-				var params = new URLSearchParams()
-				params.append('name', this.room_name)
+				// var room = new URLSearchParams()
+				// room.append('roomName', this.room_name)
+				// room.append('memberId', this.$session.get('id'))
 				axios
-					.post('http://localhost:8081/chat/room', params)
+					.post('http://localhost:8081/chat/room', {
+						roomName: this.room_name,
+						memberId: this.$session.get('id')
+					})
 					.then(response => {
 						console.log(response)
-						alert(response.data.name + '방 개설에 성공하였습니다.')
+						alert(
+							response.data.roomName + '방 개설에 성공하였습니다.'
+						)
 						this.room_name = ''
 						this.findAllRoom()
 					})
@@ -79,15 +92,20 @@ export default {
 					})
 			}
 		},
-		enterRoom: function (roomId) {
-			var sender = prompt('대화명을 입력해 주세요.')
-			localStorage.setItem('wschat.sender', sender)
-			localStorage.setItem('wschat.roomId', roomId)
+		deleteRoom: function () {},
+		enterRoom: function (item) {
+			//var sender = prompt('대화명을 입력해 주세요.')
+			this.senderStatic = this.$session.get('id')
+			localStorage.setItem('wschat.member_id', this.senderStatic)
+			localStorage.setItem('wschat.idroom', item.idroom)
+			localStorage.setItem('wschat.roomNumber', item.roomNumber)
+
+
 			this.isRoomDetail = true
 			this.isRoomDetail = false
 			setTimeout(() => {
-  				this.isRoomDetail = true
-			}, 1);
+				this.isRoomDetail = true
+			}, 1)
 		}
 	}
 }
