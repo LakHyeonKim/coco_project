@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.ssafy.coco.component.JwtInterceptor;
 
-//@Configuration
+@Configuration
 public class WebConfig implements WebMvcConfigurer {
     private static final String[] EXCLUDE_PATHS = {
 			  "/jwt/**",

@@ -21,9 +21,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.coco.dao.MemberDao;
 import com.ssafy.coco.relationvo.Board;
+import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService;
 import com.ssafy.coco.service.MemberService;
+import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Tokens;
@@ -54,7 +56,20 @@ public class AuthorityController {
 	MemberService memberService;
 	@Autowired
 	MailService mailService;
+	@Autowired
+	private TransactionService transactionService;
 
+	@ApiOperation(value = "프로필 사진과 함께 가입 하기", response = List.class)
+	@PostMapping("/signUp")
+	public ResponseEntity<Integer> signUp(SignUpMember signUpMember, HttpServletRequest request) throws Exception {
+		System.out.println(signUpMember);
+		int answer = (int) transactionService.signUp(signUpMember);
+		if (answer<=0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<Integer>(answer, HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "id로 sns로그인", response = List.class)
 	@RequestMapping(value = "/snsLogin", method = RequestMethod.POST)
 	public ResponseEntity<Tokens> snsLogin(@RequestBody String id) throws Exception {
@@ -205,5 +220,27 @@ public class AuthorityController {
 			String accessToken = jwtService.makeJwt("" + idmember, 1);
 			return new ResponseEntity<String>(accessToken, HttpStatus.OK);
 		}
+	}
+	
+	@ApiOperation(value = "중복확인 ", response = List.class)
+	@RequestMapping(value = "/check", method = RequestMethod.POST)
+	public ResponseEntity<Boolean> check(@RequestBody JSONObject json) throws Exception {
+		
+		String id = (String)json.get("id");
+		System.out.println("? " + json.get("id"));
+		boolean answer = memberService.check(id);
+		System.out.println(id);
+		System.out.println(answer);
+		return new ResponseEntity<Boolean>(answer, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "닉네임 중복 체크", response = List.class)
+	@RequestMapping(value = "/checkNickName", method = RequestMethod.POST)
+	public ResponseEntity<List<Alarm>> checkNickName(@RequestBody Member member) throws Exception {
+		int size = memberService.findMember(member).size();
+		if (size ==0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
 	}
 }

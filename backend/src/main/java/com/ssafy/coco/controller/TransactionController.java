@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,21 +42,10 @@ public class TransactionController {
 	
 	@Autowired
 	private TransactionService transactionService;
-
-	@ApiOperation(value = "프로필 사진과 함께 가입 하기", response = List.class)
-	@PostMapping("/signUp")
-	public ResponseEntity<Integer> signUp(SignUpMember signUpMember, HttpServletRequest request) throws Exception {
-		System.out.println(signUpMember);
-		int answer = (int) transactionService.signUp(signUpMember);
-		if (answer<=0) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<Integer>(answer, HttpStatus.OK);
-	}
 	
 	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/makeComment", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeComment(@RequestBody BoardDetail board) throws Exception {
+	public ResponseEntity<Integer> makeComment(@RequestHeader(value="Authorization")String jwt,@RequestBody BoardDetail board) throws Exception {
 		transactionService.makeComment(board.getComments().get(0),board.getPost().getMemberId());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
@@ -69,42 +59,42 @@ public class TransactionController {
 	
 	@ApiOperation(value = "하위 포스트 달기 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/makeBabyPost", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeBabyPost(@RequestBody DoublePost doublePost) throws Exception {
+	public ResponseEntity<Integer> makeBabyPost(@RequestHeader(value="Authorization")String jwt,@RequestBody DoublePost doublePost) throws Exception {
 		transactionService.makeBabyPost(doublePost.getSon(),doublePost.getParent());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "포스트 클릭시 작업 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/postClick", method = RequestMethod.POST)
-	public ResponseEntity<Integer> postClick(@RequestBody PostAndMember pam) throws Exception {
+	public ResponseEntity<Integer> postClick(@RequestHeader(value="Authorization")String jwt,@RequestBody PostAndMember pam) throws Exception {
 		transactionService.postClick(pam.getPost(),pam.getMember().getIdmember());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "팔로우 하기(Transaction) ", response = List.class)
 	@RequestMapping(value = "/makeFollow", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeFollow(@RequestBody Follow follow) throws Exception {
+	public ResponseEntity<Integer> makeFollow(@RequestHeader(value="Authorization")String jwt,@RequestBody Follow follow) throws Exception {
 		transactionService.makeFollow(follow.getMemberFollower(),follow.getMemberFollowing());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "팔로우 취소(Transaction) ", response = List.class)
 	@RequestMapping(value = "/makeUnFollow", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeUnFollow(@RequestBody Follow follow) throws Exception {
+	public ResponseEntity<Integer> makeUnFollow(@RequestHeader(value="Authorization")String jwt,@RequestBody Follow follow) throws Exception {
 		transactionService.makeUnFollow(follow.getMemberFollower(),follow.getMemberFollowing());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "좋아요 누르기 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/pushLike", method = RequestMethod.POST)
-	public ResponseEntity<Integer> pushLike(@RequestBody PostAndMember pam) throws Exception {
+	public ResponseEntity<Integer> pushLike(@RequestHeader(value="Authorization")String jwt,@RequestBody PostAndMember pam) throws Exception {
 		transactionService.pushLike(pam.getPost().getIdpost(),pam.getMember().getIdmember());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "좋아요 취소 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/unLike", method = RequestMethod.POST)
-	public ResponseEntity<Integer> unLike(@RequestBody PostAndMember pam) throws Exception {
+	public ResponseEntity<Integer> unLike(@RequestHeader(value="Authorization")String jwt,@RequestBody PostAndMember pam) throws Exception {
 		transactionService.unLike(pam.getPost().getIdpost(),pam.getMember().getIdmember());
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}

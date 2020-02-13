@@ -96,7 +96,7 @@ public class TransactionServiceImpl implements TransactionService{
 				signUpMember.getGrade());
 		member.setRankId(1L);
 		
-		
+		System.out.println(signUpMember.getFile()+"겟파일 ");
 		if(signUpMember.getFile() != null) {
 			MultipartFile file = signUpMember.getFile();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
@@ -126,8 +126,10 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	@Transactional
 	public void makeComment(Comment commentData, long receiver){
+		System.out.println(commentData);
+		System.out.println(receiver);
 		commentDao.addComment(commentData);
-		Alarm alarm = new Alarm(0,commentData.getMemberId(),receiver,commentData.getPostId(),1,1,0,0);
+		Alarm alarm = new Alarm(0,commentData.getMemberId(),receiver,commentData.getPostId(),0,0,0,0);
 		alarmDao.addAlarm(alarm);
 	}
 	

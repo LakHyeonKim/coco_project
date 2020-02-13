@@ -15,10 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.oauth2.common.OAuth2AccessToken;
-//import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,6 +34,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth.OAuthGetAccessToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleBrowserClientRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.gson.JsonObject;
 import com.ssafy.coco.dao.MemberDao;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.service.JwtService;
@@ -49,13 +53,14 @@ import com.ssafy.coco.vo.Tokens;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-//import oauth2.social.demo.social.google.GoogleUserDetails;
-//import oauth2.social.demo.social.userconnection.UserConnection;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -80,24 +85,65 @@ public class TestController {
 	MemberService memberService;
 	@Autowired
 	MailService mailService;
+	
+	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ResponseEntity login(@RequestBody JSONObject input) throws Exception {
+		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
+		String url = "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q=자바&start=10";
+		String id = (String) map.get("id");
+		String password = (String) map.get("password");
+		System.out.println(id);
+		System.out.println(password);
+		Tokens tokens = jwtService.login(id, password);
+		if (tokens != null) {
+			return new ResponseEntity(tokens, HttpStatus.OK);
+		} else {
+			System.out.println("failfail");
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+	}
+	
+	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
+	@RequestMapping(value = "/tttt{code}", produces = "application/json", method = { RequestMethod.GET,RequestMethod.POST })
+	public void setUp(@PathVariable String code) throws IOException {
+		HttpTransport httpTransport = new NetHttpTransport();
+		JacksonFactory jsonFactory = new JacksonFactory();
 
-//	 protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-//	        // super.successfulAuthentication(request, response, chain, authResult);
-//	        // Nearly a no-op, but if there is a ClientTokenServices then the token will now be stored
-//
-//	        final OAuthGetAccessToken accessToken = "토큰";
-//	        final OAuth2Authentication auth = (OAuth2Authentication) authResult;
-//	        final Object details = auth.getUserAuthentication().getDetails();
-//
-//	        final GoogleUserDetails userDetails = mapper.convertValue(details, GoogleUserDetails.class);
-//	        userDetails.setAccessToken(accessToken);
-//	        final UserConnection userConnection = UserConnection.valueOf(userDetails);
-//
-//	        final UsernamePasswordAuthenticationToken authenticationToken = socialService.doAuthentication(userConnection);
-//	        super.successfulAuthentication(request, response, chain, authenticationToken);
-//
-//	    }
-	 
+		// Go to the Google API Console, open your application's
+		// credentials page, and copy the client ID and client secret.
+		// Then paste them into the following code.
+		String clientId = "531269159065-2p985a1qoudvhpdpc441bqvjnvqa17kq.apps.googleusercontent.com";
+		String clientSecret = "j_PpDCc4q-HFfuehoM6eeMLX";
+
+		// Or your redirect URL for web based applications.
+		String redirectUrl = "http://localhost:8888/test/tttt";
+		String scope = "https://www.googleapis.com/auth/contacts.readonly";
+
+		// Step 1: Authorize -->
+		String authorizationUrl = new GoogleBrowserClientRequestUrl(clientId, "http://localhost:8888/test/tttt", Arrays.asList(scope))
+				.build();
+		// Point or redirect your user to the authorizationUrl.
+		System.out.println("Go to the following link in your browser:");
+		System.out.println(authorizationUrl);
+
+		// Read the authorization code from the standard input stream.
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("What is the authorization code?");
+		//String code = in.readLine();
+		// End of Step 1 <--
+
+		// Step 2: Exchange -->
+		GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(httpTransport, jsonFactory,
+				clientId, clientSecret, code, "http://localhost:8888/test/tttt").execute();
+		// End of Step 2 <--
+
+		GoogleCredential credential = new GoogleCredential.Builder().setTransport(httpTransport)
+				.setJsonFactory(jsonFactory).setClientSecrets(clientId, clientSecret).build()
+				.setFromTokenResponse(tokenResponse);
+		System.out.println("Dddd");
+	}
+
 	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
 	@RequestMapping(value = "/googlelogin2", produces = "application/json", method = { RequestMethod.GET,
 			RequestMethod.POST })
@@ -110,8 +156,8 @@ public class TestController {
 
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("code", code);
-		parameters.add("client_id", "762237131426-6aasgpj3j773f8p9dsrv6voiccn6o2uq.apps.googleusercontent.com");
-		parameters.add("client_secret", "eJSRiU8DNoCiN9Lgeg7PwAoi");
+		parameters.add("client_id", "531269159065-2p985a1qoudvhpdpc441bqvjnvqa17kq.apps.googleusercontent.com");
+		parameters.add("client_secret", "j_PpDCc4q-HFfuehoM6eeMLX");
 		parameters.add("redirect_uri", "http://localhost:8888/test/googlelogin2");
 		parameters.add("grant_type", "authorization_code");
 
@@ -131,14 +177,15 @@ public class TestController {
 	@RequestMapping(value = "/googlelogin", produces = "application/json", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public JsonNode kakaoLogin(@RequestParam("code") String code, HttpSession session) throws Exception {
-		//final String RequestUrl = "https://www.googleapis.com/oauth2/v4/token";
+		// final String RequestUrl = "https://www.googleapis.com/oauth2/v4/token";
+		System.out.println("코드는 " + code);
 		final String RequestUrl = "https://accounts.google.com/o/oauth2/token";
-		
+
 		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
 		postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
 		postParams.add(new BasicNameValuePair("client_id",
-				"762237131426-6aasgpj3j773f8p9dsrv6voiccn6o2uq.apps.googleusercontent.com")); // REST API KEY
-		postParams.add(new BasicNameValuePair("client_secret", "eJSRiU8DNoCiN9Lgeg7PwAoi")); // REST API KEY
+				"531269159065-2p985a1qoudvhpdpc441bqvjnvqa17kq.apps.googleusercontent.com")); // REST API KEY
+		postParams.add(new BasicNameValuePair("client_secret", "DFA8yZ876AJmSKBlHj30jJU5")); // REST API KEY
 		postParams.add(new BasicNameValuePair("redirect_uri", "http://localhost:8888/test/googlelogin")); // 리다이렉트 URI
 		postParams.add(new BasicNameValuePair("code", code)); // 로그인 과정중 얻은 code 값
 		// http://192.168.100.94:8080
@@ -216,16 +263,16 @@ public class TestController {
 	@RequestMapping(value = "/getKakaoUserInfo", produces = "application/json", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public JsonNode getKakaoUserInfo(String token) {
-		
+
 		System.out.println("ssadas");
 		final String RequestUrl = "https://people.googleapis.com/auth/user.emails.read";
-		
+
 		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
 		postParams.add(new BasicNameValuePair("access_token", token));
 		final HttpClient client = HttpClientBuilder.create().build();
 		final HttpPost post = new HttpPost(RequestUrl);
 		// add header
-		//post.addHeader("Authorization", "Bearer " + token);
+		// post.addHeader("Authorization", "Bearer " + token);
 
 		JsonNode returnNode = null;
 
