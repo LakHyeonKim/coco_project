@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.KeywordSearch;
 import com.ssafy.coco.relationvo.OrderSearch;
+import com.ssafy.coco.relationvo.OrderSearchKeyword;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.service.BoardService;
 import com.ssafy.coco.service.JwtService;
@@ -106,10 +107,31 @@ public class BoardController {
 		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "마이페이지 포스트 전체 검색 (태그, 포스트 제목, 포스트 내용, 작성자 구분 없이 가져옴)", response = List.class)
+	@RequestMapping(value = "/findByAllKeywordMyPosts", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByAllKeywordMyPosts(@RequestHeader(value="Authorization")String jwt,@RequestBody OrderSearchKeyword orderSearchKeyword) throws Exception {
+		System.out.println("int controller"+jwt);
+		List<Board> answers = boardService.findByAllKeywordMyPosts(orderSearchKeyword);
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "포스트 태그로 검색", response = List.class)
 	@RequestMapping(value = "/findByTagKeyword", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByTagKeyword(@RequestHeader(value="Authorization")String jwt,@RequestBody KeywordSearch keyWordSearch) throws Exception {
 		List<Board> answers = boardService.findByTagKeyword(keyWordSearch.getIdMember(), keyWordSearch.getKeyWord());
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "마이페이지 포스트 태그로 검색", response = List.class)
+	@RequestMapping(value = "/findByTagKeywordMyPosts", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByTagKeywordMyPosts(@RequestHeader(value="Authorization")String jwt,@RequestBody OrderSearchKeyword orderSearchKeyword) throws Exception {
+		List<Board> answers = boardService.findByTagKeywordMyPosts(orderSearchKeyword);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
@@ -126,10 +148,30 @@ public class BoardController {
 		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "마이페이지 포스트 타이틀로 검색", response = List.class)
+	@RequestMapping(value = "/findByPostTitleKeywordMyPosts", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByPostTitleKeywordMyPosts(@RequestHeader(value="Authorization")String jwt,@RequestBody OrderSearchKeyword orderSearchKeyword) throws Exception {
+		List<Board> answers = boardService.findByPostTitleKeywordMyPosts(orderSearchKeyword);
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "포스트 코드로 검색", response = List.class)
 	@RequestMapping(value = "/findByPostCodeKeyword", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByPostCodeKeyword(@RequestHeader(value="Authorization")String jwt,@RequestBody KeywordSearch keyWordSearch) throws Exception {
 		List<Board> answers = boardService.findByPostCodeKeyword(keyWordSearch.getIdMember(), keyWordSearch.getKeyWord());
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "마이페이지 포스트 코드로 검색", response = List.class)
+	@RequestMapping(value = "/findByPostCodeKeywordMyPosts", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByPostCodeKeywordMyPosts(@RequestHeader(value="Authorization")String jwt,@RequestBody OrderSearchKeyword orderSearchKeyword) throws Exception {
+		List<Board> answers = boardService.findByPostCodeKeywordMyPosts(orderSearchKeyword);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
