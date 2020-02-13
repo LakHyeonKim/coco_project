@@ -7,7 +7,7 @@
 				<br />
 				<div id="post-head">
 					<div id="profile-img">
-						<v-avatar size="40">
+						<v-avatar size="30">
 							<img src="imagePath" alt="user-img" v-if="imagePath" />
 							<img src="../assets/user.png" alt="default-img" v-else />
 							<!-- <v-gravatar :email="postWriter" alt="gravatar" :size="50" /> -->
@@ -22,7 +22,6 @@
 						<span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span>
 						<span id="post-info" v-if="views > 1">views</span>
 						<span id="post-info" v-else>view</span>
-						<!-- <p id="post-date">{{ dateCreated }} | {{ updateCreated }} | {{ views }} views</p> -->
 					</div>
 				</div>
 			</div>
@@ -58,12 +57,51 @@
 
 				<div id="divide-line"></div>
 
-				<div>
-					<div
-						v-for="comment in comments"
-						:key="comment.idcomment"
-					>{{ comment.commentWriter }} | {{ comment.contents }}</div>
+				<div id="commentCreateCard" @click="moveinFocus">
+					<v-card class="mx-auto">
+						<v-card-text id="commentCreateInfo">
+							<v-avatar size="40">
+								<img src="../assets/user.png" alt="default-img" />
+							</v-avatar>
+							<v-card-title id="commentCreatePlaceholder" v-show="!show">{{ $session.get("nickname") }}</v-card-title>
+							<v-card-subtitle v-show="show">asdfasdf</v-card-subtitle>
+						</v-card-text>
+
+						<v-expand-transition>
+							<div v-show="show">
+								<v-card-text>
+									<textarea
+										id="commentCreateInput"
+										style="resize: none;"
+										@blur="moveoutFocus"
+										v-model="userComments.contents"
+									/>
+									<v-btn outlined>댓글 작성</v-btn>
+								</v-card-text>
+							</div>
+						</v-expand-transition>
+					</v-card>
 				</div>
+
+				<div>
+					<div id="commentListCard" v-for="comment in comments" :key="comment.idcomment">
+						<div id="commentInfo">
+							<router-link
+								id="commentWriter"
+								:to="{ name: 'mypage', params: { no: comment.memberId }}"
+							>{{ comment.commentWriter }}</router-link>
+							<div id="commentDate">{{ comment.updateCreated }}</div>
+						</div>
+
+						<pre id="commentContent">{{ comment.contents }}</pre>
+					</div>
+				</div>
+
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
 
 				<div>likeCount {{ likeCount }}</div>
 				<div>filePath{{ filePath }}</div>
@@ -108,18 +146,46 @@ export default {
 		commentCount: {},
 		attachments: {}
 	},
+	data() {
+		return {
+			show: false,
+
+			userComments: [
+				{
+					commentWriter: "",
+					contents: "",
+					memberId: 0,
+					postId: 0
+				}
+			],
+			userPost: {
+				memberId: 0
+			}
+		};
+	},
 	methods: {
 		updateLike(data) {
 			this.$emit("updateLike", data);
+		},
+		expandCard() {
+			if (!this.show) {
+				this.show = !this.show;
+			}
+		},
+		async moveinFocus() {
+			await this.expandCard();
+			document.getElementById("commentCreateInput").focus();
+		},
+		moveoutFocus() {
+			if (!document.getElementById("commentCreateInput").value) {
+				this.show = !this.show;
+			}
 		}
 	},
 	updated() {
 		Prism.highlightAll();
-	}
-	// ,
-	// mounted() {
-	// 	alert(this.no);
-	// }
+	},
+	mounted() {}
 };
 </script>
 
@@ -169,5 +235,46 @@ export default {
 #divide-line {
 	margin: 20px 0;
 	border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+#commentCreateCard {
+	-webkit-font-smoothing: antialiased;
+}
+#commentCreateInfo {
+	display: flex;
+	align-items: center;
+}
+#commentCreatePlaceholder {
+	color: rgba(0, 0, 0, 0.54);
+}
+#commentCreateInput {
+	width: 100%;
+	min-height: 160px;
+	overflow: visible;
+	/* outline: none; */
+}
+#commentListCard {
+	background: white;
+	margin: 20px 0 0;
+	padding: 10px 20px 15px;
+	border: 1px solid rgba(0, 0, 0, 0.09);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+#commentInfo {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 0 15px;
+	padding: 5px 0 0;
+}
+#commentWriter {
+	text-decoration: none;
+	font-size: 16px;
+}
+#commentDate {
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.68);
+}
+#commentContent {
+	overflow: auto;
+	white-space: pre-wrap;
 }
 </style>

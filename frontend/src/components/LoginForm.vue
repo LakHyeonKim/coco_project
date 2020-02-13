@@ -49,15 +49,13 @@
 				</div>
 				<!-- <div style="display:inline-block">
 					<LoginFormForKakao></LoginFormForKakao>
-				</div> -->
+				</div>-->
 				<a @click.prevent="getCode">
 					<img src="../assets/kakao_logo.png" class="logos" />
 				</a>
 			</div>
 			<div v-if="errors.length" id="loginError" style="display:inline;">
-				<div v-for="(error, idx) in errors" :key="idx">
-					{{ error }}
-				</div>
+				<div v-for="(error, idx) in errors" :key="idx">{{ error }}</div>
 			</div>
 			<div id="forgotpwd">
 				<button>
@@ -119,6 +117,10 @@ export default {
 							this.$session.set(
 								"id",
 								Number(this.$store.getters.userId)
+							);
+							this.$session.set(
+								"nickname",
+								this.$store.getters.userNickname
 							);
 							// this.$session.set("targetId", 10);
 							this.loading = false;

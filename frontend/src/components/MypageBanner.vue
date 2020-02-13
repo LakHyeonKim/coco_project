@@ -8,24 +8,16 @@
 				today {{ userInfo.mypage.todayVisitedCount }} · total
 				{{ userInfo.mypage.totalVisitedCount }}
 			</div>
-			<div id="info_title">
-				{{ userInfo.mypage.bannerText }}
-			</div>
+			<div id="info_title">{{ userInfo.mypage.bannerText }}</div>
 			<div id="info_desc">
 				<img id="imgUser" :src="userInfo.member.imageUrl" />
 				<div id="info_desc_mid">
-					<div id="" style="display: inline-block;">
-						<div id="nickname">
-							{{ userInfo.member.nickname }}
-						</div>
+					<div id style="display: inline-block;">
+						<div id="nickname">{{ userInfo.member.nickname }}</div>
 
 						<MypagePWCheck v-if="isUser" style="float: left;">
 							<div slot="click">
-								<img
-									slot="click"
-									src="../assets/icon/settings.png"
-									id="settings"
-								/>
+								<img slot="click" src="../assets/icon/settings.png" id="settings" />
 							</div>
 						</MypagePWCheck>
 						<MypageFollowCheck
@@ -60,33 +52,19 @@
 				</div>
 
 				<div id="counting">
-					<FollowList
-						:userInfo="userInfo"
-						:followList="followList"
-						class="counting_click"
-					>
+					<FollowList :userInfo="userInfo" :followList="followList" class="counting_click">
 						<div slot="click">
-							<span @click="getFollow(false)">
-								팔로잉 {{ userInfo.followingCount }}
-							</span>
+							<span @click="getFollow(false)">팔로잉 {{ userInfo.followingCount }}</span>
 						</div>
 					</FollowList>
-					<span class="counting_sub"> · </span>
-					<FollowList
-						:userInfo="userInfo"
-						:followList="followList"
-						class="counting_click"
-					>
+					<span class="counting_sub">·</span>
+					<FollowList :userInfo="userInfo" :followList="followList" class="counting_click">
 						<div slot="click">
-							<span @click="getFollow(true)">
-								팔로워 {{ userInfo.followerCount }}
-							</span>
+							<span @click="getFollow(true)">팔로워 {{ userInfo.followerCount }}</span>
 						</div>
 					</FollowList>
-					<span class="counting_sub"> · </span>
-					<span class="counting_sub">
-						게시글 {{ userInfo.totalPostCount }}
-					</span>
+					<span class="counting_sub">·</span>
+					<span class="counting_sub">게시글 {{ userInfo.totalPostCount }}</span>
 				</div>
 			</div>
 		</div>
@@ -212,10 +190,14 @@ export default {
 			this.isUser = true;
 		}
 		console.log("isUser : " + this.isUser);
-		http.post("/api/findByMemberHomePageUserID/", {
-			myIdMemeber: this.$session.get("id"),
-			youIdMember: this.$route.params.no
-		})
+		http.post(
+			"/api/findByMemberHomePageUserID/",
+			{
+				myIdMemeber: this.$session.get("id"),
+				youIdMember: this.$route.params.no
+			},
+			{ headers: { Authorization: this.$session.get("accessToken") } }
+		)
 
 			.then(response => {
 				this.userInfo = response.data;

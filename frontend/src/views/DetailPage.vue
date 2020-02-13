@@ -94,7 +94,11 @@ export default {
 			idMember: this.$session.get("id"),
 			idPost: this.$route.params.idPost
 		};
-		http.post("/api/findByBoardDetailPostId/", requestForm)
+		const headers = {
+			Authorization: this.$session.get("accessToken")
+		};
+
+		http.post("/api/findByBoardDetailPostId/", requestForm, { headers })
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
