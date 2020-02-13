@@ -1,206 +1,139 @@
 <template>
-	<v-container class="col-12 col-sm-10 col-md-8">
-		<v-row>
-			<v-col>
-				<v-text-field
-					name="postTitle"
-					v-model="board.postTitle"
-					label="제목"
-					append-icon="mdi-page-layout-header"
-					counter
-					outlined
-				></v-text-field>
-			</v-col>
-		</v-row>
-		<v-card>
-			<v-tabs background-color="white" color="deep-purple accent-4" right>
-				<v-tab>글쓰기</v-tab>
-				<v-tab @click="highlighting">미리보기</v-tab>
-				<v-tab-item>
-					<v-container fluid>
-						<v-textarea
-							name="post.code"
-							id="input"
-							v-model="board.code"
-							label="Input"
-							@keydown="insertTab"
-							auto-grow
-							outlined
-						/>
-					</v-container>
-				</v-tab-item>
-				<v-tab-item>
-					<v-container fluid>
-						<div class="result">
-							<vue-markdown
-								class="line-numbers match-braces rainbow-braces show-invisibles"
-								:source="board.code"
-								data-download-link
-							></vue-markdown>
-						</div>
-					</v-container>
-				</v-tab-item>
-			</v-tabs>
-		</v-card>
-		<v-row>
-			<v-col>
-				<tags-input
-					v-model="tags"
-					element-id="tags"
-					placeholder="해시태그"
-					add-tags-on-space
-					add-tags-on-blur
-				></tags-input>
-			</v-col>
-		</v-row>
-		<form name="board" id="board" enctype="multipart/form-data">
-			<v-row>
-				<v-col>
-					<v-file-input
-						name="attachments"
-						v-model="board.attachments"
-						chips
-						label="첨부파일"
-					></v-file-input>
-				</v-col>
-			</v-row>
-			<v-row>
-				<v-col>
-					<v-btn @click="posting">글 작성</v-btn>
-				</v-col>
-			</v-row>
-			<input type="hidden" name="postTitle" v-model="board.postTitle" />
-			<input type="hidden" name="postWriter" v-model="board.postWriter" />
-			<input type="hidden" name="memberId" v-model="board.memberId" />
-			<input type="hidden" name="code" v-model="board.code" />
-			<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
-		</form>
-	</v-container>
+	<div id="backBox">
+		<div id="header">
+			<div id="headInnerBox">
+				<img
+					src="../assets/CC_Logo.png"
+					alt="logo_image"
+					id="searchLogo"
+				/>
+				<div id="codeCoworker">Code Coworker</div>
+			</div>
+		</div>
+		<div id="blankBox"></div>
+		<div id="mainBox">
+			<createPage id="subBox"></createPage>
+		</div>
+		<div class="footerBlank"></div>
+	</div>
 </template>
 
 <script>
-import router from "../router";
-import Prism from "../prism";
-import http from "../http-common";
+import CreatePage from "../components/CreatePage";
 
 export default {
 	name: "NewPage",
-	components: {},
+	components: {
+		CreatePage
+	},
 	data() {
-		return {
-			tags: [],
-			board: {
-				code: "",
-				memberId: 0,
-				postTitle: "",
-				postWriter: "",
-				tags: [],
-				attachments: null
-			}
-		};
-	},
-	methods: {
-		insertTab: function(event) {
-			var kC = event.keyCode
-				? event.keyCode
-				: event.charCode
-					? event.charCode
-					: event.which;
-			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
-				var oS = event.target.scrollTop;
-				if (event.target.setSelectionRange) {
-					var sS = event.target.selectionStart;
-					var sE = event.target.selectionEnd;
-					event.target.value =
-						event.target.value.substring(0, sS) +
-						"\t" +
-						event.target.value.substr(sE);
-					event.target.setSelectionRange(sS + 1, sS + 1);
-					event.target.focus();
-				} else if (event.target.createTextRange) {
-					document.selection.createRange().text = "\t";
-					event.returnValue = false;
-				}
-				event.target.scrollTop = oS;
-				if (event.preventDefault) {
-					event.preventDefault();
-				}
-				return false;
-			}
-			return true;
-		},
-		highlighting() {
-			Prism.highlightAll();
-		},
-		posting() {
-			this.board.tags = [];
-			for (let i = 0; i < this.tags.length; ++i) {
-				this.board.tags.push(this.tags[i].value);
-			}
-
-			let formData = new FormData(document.forms.namedItem("board"));
-			formData.append("tags", this.board.tags);
-
-			http.post("/trc/makePost/", formData)
-				.then(res => {
-					alert("글이 성공적으로 작성되었습니다.");
-					this.$session.set("targetId", this.$session.get("id"));
-					router.push("/mypage");
-				})
-				.catch(err => {
-					alert("글 작성 중 문제가 생겼습니다.");
-				});
-		}
-	},
-	mounted() {
-		Prism.plugins.autoloader.use_minified = false;
-		this.board.memberId = this.$session.get("id");
-		console.log("memberId newpage mounted ", this.board.memberId);
-		// 닉네임 재확인 안할방법 찾아보기
-		this.$store.state.token = this.$session.get("accessToken");
-		this.board.postWriter = this.$store.getters.userNickname;
-		console.log("nickname this ", this.board.postWriter);
-		console.log("nickname vuex ", this.$store.getters.userNickname);
-	},
-	updated() {
-		Prism.highlightAll();
+		return {};
 	}
 };
 </script>
 
 <style>
-@import "~@voerro/vue-tagsinput/dist/style.css";
-@import "../prism.css";
-
-.result {
-	border: 1.5px solid #ccc;
-	border-radius: 5px;
+#backBox {
+	height: 100%;
 }
-
-@import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap");
-* {
-	font-family: "Noto Sans KR", Courier;
+#header {
+	position: fixed;
+	width: 100%;
+	height: 75px;
+	z-index: 1;
+	background-color: white;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
-.tags-input-wrapper-default {
-	background: white;
-	line-height: 2;
+#headInnerBox {
+	text-align: center;
+	padding: 20px 10px 20px 10px;
 }
-.tags-input-wrapper-default input::placeholder {
-	color: gray;
+#searchLogo {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
 }
-
-.tags-input-badge {
-	font-size: 100%;
+#searchBox {
+	display: inline-block;
+	vertical-align: middle;
+	border: 1px solid black;
+	width: 20vw;
 }
-
-.tags-input-remove::before,
-.tags-input-remove::after {
-	background: white;
+::placeholder {
+	color: black;
+	font-size: 20px;
 }
-
-.tags-input-badge-selected-default {
-	color: white;
-	font-weight: 400;
-	background: rgba(160, 23, 98, 0.5);
+#codeCoworker {
+	display: none;
+}
+#blankBox {
+	height: 75px;
+}
+#mainBox {
+	display: grid;
+	align-content: center;
+	justify-content: center;
+	/* background-color: blueviolet; */
+}
+#subBox {
+	height: 100%;
+	width: 80vw;
+	/* background-color: red; */
+	/* align-content: center; */
+	justify-content: center;
+	padding-left: 40px;
+}
+@media screen and (max-width: 600px) {
+	#header {
+		position: fixed;
+		width: 100%;
+		z-index: 1;
+		/* background-color: white; */
+		border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	}
+	#headInnerBox {
+		padding: 20px 10px 20px 10px;
+		/* vertical-align: middle; */
+		/* align-content: center;
+		justify-content: center; */
+	}
+	#searchLogo {
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		margin-right: 10px;
+	}
+	#codeCoworker {
+		display: inline-block;
+		font-size: 20px;
+		margin: 0px;
+		/* padding-top: 10px; */
+	}
+	#searchBox {
+		display: none;
+	}
+	#blankBox {
+		display: block;
+		height: 75px;
+	}
+	#mainBox {
+		/* display: block; */
+		/* align-content: center;
+		justify-content: center; */
+		/* background-color: blueviolet; */
+	}
+	#subBox {
+		width: 100%;
+		padding-left: 0;
+	}
+	.footerBlank {
+		display: block;
+		top: auto;
+		bottom: 0;
+		height: 17vw;
+		width: 100%;
+		padding: 0;
+	}
 }
 </style>

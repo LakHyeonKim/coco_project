@@ -40,9 +40,15 @@ export default {
 		}
 	},
 	mounted() {
-		http.post("/api/findByAllDefaultSearch/", this.$session.get("id"))
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		http.post("/api/findByAllDefaultSearch/", this.$session.get("id"), {
+			headers
+		})
 			.then(res => {
-				console.log("findByAlldefault for tag ", res);
+				console.log("findByAlldefault for tag res ", res);
 				// console.log(res.data);
 				for (let i = 0; i < res.data.length; ++i) {
 					// console.log(res.data[i].tags);
@@ -80,7 +86,7 @@ export default {
 				// console.log(this.tag);
 			})
 			.catch(err => {
-				console.log(err);
+				console.log("findByAlldefault for tag err ", err);
 			});
 	}
 };
@@ -107,5 +113,29 @@ export default {
 	padding-right: 5px;
 	color: white;
 	background-color: rgba(160, 23, 98, 0.5);
+}
+@media screen and (max-width: 600px) {
+	#tagBox {
+		width: 100%;
+		/* background-color: white; */
+	}
+	#blankBox {
+		height: 80px;
+	}
+	#favTag {
+		border: none;
+		border-bottom: 0.75px solid rgba(0, 0, 0, 0.2);
+		height: 100%;
+	}
+	#tag {
+		display: inline-block;
+		font-size: 25px;
+		border-radius: 15px;
+		margin: 10px;
+		padding-left: 5px;
+		padding-right: 5px;
+		color: white;
+		background-color: rgba(160, 23, 98, 0.5);
+	}
 }
 </style>

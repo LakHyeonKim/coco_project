@@ -184,11 +184,20 @@ export default {
 	},
 	mounted() {
 		console.log("MypageMyPost : " + this.no);
-		http.post("/api/findByMyPosts/", {
-			myIdMember: this.$session.get("id"),
-			order: 4,
-			youIdMember: this.no
-		})
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		console.log("myPage headers", headers);
+		http.post(
+			"/api/findByMyPosts/",
+			{
+				myIdMember: this.$session.get("id"),
+				order: 4,
+				youIdMember: this.no
+			},
+			{ headers }
+		)
 			.then(response => {
 				this.posts = response.data;
 				// console.log(response);

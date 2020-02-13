@@ -30,6 +30,7 @@
 				</div>
 			</div>
 		</div>
+		<div class="footerBlank"></div>
 	</div>
 </template>
 
@@ -57,10 +58,11 @@ export default {
 		searchwords(word, value) {
 			// alert("넘어왔다");
 			console.log("word $ value ", word, value);
-			// const token = this.$session.get("jwt");
-			// const headers = {
-			// 	Authorization: token
-			// };
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			console.log("search words headers ", headers);
 			if (word) {
 				const searchword = {
 					idMember: this.idMember,
@@ -68,7 +70,9 @@ export default {
 				};
 				console.log(searchword);
 				if (value == 1) {
-					http.post("/api/findByPostTitleKeyword/", searchword)
+					http.post("/api/findByPostTitleKeyword/", searchword, {
+						headers
+					})
 						.then(res => {
 							console.log("search TITLE words then ", res);
 							this.searches = res.data;
@@ -77,7 +81,9 @@ export default {
 							console.log("search TITLE words catch ", err);
 						});
 				} else if (value == 2) {
-					http.post("api/findByPostCodeKeyword/", searchword)
+					http.post("api/findByPostCodeKeyword/", searchword, {
+						headers
+					})
 						.then(res => {
 							console.log("search CODE words then ", res);
 							this.searches = res.data;
@@ -86,7 +92,9 @@ export default {
 							console.log("search CODE words catch ", err);
 						});
 				} else if (value == 3) {
-					http.post("api/findByPostWriterKeyword/", searchword)
+					http.post("api/findByPostWriterKeyword/", searchword, {
+						headers
+					})
 						.then(res => {
 							console.log("search WRITER words then ", res);
 							this.searches = res.data;
@@ -95,7 +103,7 @@ export default {
 							console.log("search WRITER words catch ", err);
 						});
 				} else if (value == 4) {
-					http.post("api/findByTagKeyword/", searchword)
+					http.post("api/findByTagKeyword/", searchword, { headers })
 						.then(res => {
 							console.log("search TAG words then ", res);
 							this.searches = res.data;
@@ -104,7 +112,7 @@ export default {
 							console.log("search TAG words catch ", err);
 						});
 				} else {
-					http.post("/api/findByAllKeyword/", searchword)
+					http.post("/api/findByAllKeyword/", searchword, { headers })
 						.then(res => {
 							console.log("searchwords then ", res);
 							this.searches = res.data;
@@ -157,13 +165,18 @@ export default {
 		this.idMember = this.$session.get("id");
 		console.log("mounted", this.idMember);
 		const tagforsearch = this.$store.state.searchtag;
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		console.log(headers);
 		if (tagforsearch) {
 			const requestForm = {
 				idMember: this.idMember,
 				keyWord: tagforsearch
 			};
 			console.log(requestForm);
-			http.post("/api/findByAllKeyword/", requestForm)
+			http.post("/api/findByAllKeyword/", requestForm, { headers })
 				.then(res => {
 					console.log("searchtags then ", res);
 					this.searches = res.data;
@@ -175,13 +188,15 @@ export default {
 					console.log("searchtags catch ", err);
 				});
 		} else {
-			http.post("/api/findByAllDefaultSearch/", this.idMember)
+			http.post("/api/findByAllDefaultSearch/", this.idMember, {
+				headers
+			})
 				.then(res => {
-					console.log("search mounted then", res);
+					console.log("search default mounted then", res);
 					this.searches = res.data;
 				})
 				.catch(err => {
-					console.log("search mounted catch", err);
+					console.log("search default mounted catch", err);
 				});
 		}
 	}
@@ -194,14 +209,26 @@ export default {
 	height: 100%;
 	width: 100%;
 	justify-content: center;
+	padding-left: 40px;
 }
 #compo {
 	justify-content: center;
 	width: 80vw;
 }
-/* @media screen and (max-width: 600px) {
-	#searches {
-		display: none;
+@media screen and (max-width: 600px) {
+	#searchMain {
+		padding-left: 0px;
 	}
-} */
+	#compo {
+		width: 100%;
+	}
+	.footerBlank {
+		display: block;
+		top: auto;
+		bottom: 0;
+		height: 17vw;
+		width: 100%;
+		padding: 0;
+	}
+}
 </style>

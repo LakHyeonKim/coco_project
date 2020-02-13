@@ -282,4 +282,142 @@ export default {
 	/* right: 0;
 	margin-right: 11vw; */
 }
+@media screen and (max-width: 600px) {
+	.postBox {
+		/* margin: 0px; */
+		border: none;
+		box-shadow: none;
+		border-bottom: 0.75px solid rgba(0, 0, 0, 0.2);
+		/* border-top: 0.25px solid rgba(0, 0, 0, 0.2); */
+		height: 100%;
+		/* display: block; */
+	}
+	#cardBox {
+		margin: 10px 10px 5px 10px;
+		display: block;
+	}
+	#contentBox {
+		flex: 1;
+	}
+	#cardHead {
+		display: inline-block;
+		margin-bottom: 3px;
+		height: 30px;
+	}
+	#imgDiv {
+		width: 20px;
+		height: 20px;
+		/* margin-right: 10px; */
+	}
+	#userImg {
+		float: left;
+		border-radius: 50%;
+		width: 20px;
+		margin-top: 4px;
+		border: 1px solid rgba(0, 0, 0, 0.5);
+		margin-right: 3px;
+	}
+	#userId {
+		float: left;
+		color: black;
+		font-size: 13px;
+		line-height: 30px;
+		margin-right: 7px;
+	}
+	#date {
+		float: left;
+		font-size: 11px;
+		line-height: 30px;
+		color: gray;
+	}
+	#cardTitle {
+		padding-top: 2px;
+		padding-bottom: 2px;
+		/* margin-left: 10px; */
+	}
+	.line-clamp-title {
+		font-size: 20px;
+		font-weight: 400;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+	}
+	#cardHash {
+		display: flex;
+		margin-bottom: 4px;
+	}
+	#hashTag {
+		float: left;
+		margin-right: 6px;
+		font-size: 13px;
+		border-radius: 8px;
+		padding-left: 5px;
+		padding-right: 5px;
+		color: white;
+		background-color: rgba(160, 23, 98, 0.5);
+	}
+	#cardBody {
+		min-height: 75px;
+		margin-bottom: 5px;
+		/* margin-left: 10px; */
+	}
+	.line-clamp-body {
+		color: rgb(27, 27, 27);
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
+	#cardFooter {
+		display: inline-block;
+	}
+	.like_img {
+		float: left;
+		width: 35px;
+		border-radius: 50%;
+		transition: all ease-in-out 0.3s;
+	}
+	#likeCount {
+		float: left;
+		font-weight: 400;
+		margin-top: 10px;
+		font-size: 15px;
+	}
+	.comment_img {
+		float: left;
+		width: 30px;
+		margin: 7px 3px 0 10px;
+	}
+	#commentCount {
+		float: left;
+		font-weight: 400;
+		margin-top: 10px;
+		font-size: 15px;
+	}
+	#imgBox {
+		margin-left: 10px;
+		width: 200px;
+	}
+	#stackImg {
+		position: relative;
+		text-align: end;
+		transform: translateY(-100%);
+	}
+	.stackImgs {
+		width: 35px;
+		height: 35px;
+		border-radius: 50%;
+		background-color: white;
+	}
+	#noStackImg {
+		position: relative;
+		/* justify-content: center; */
+		/* align-items: center; */
+		/* text-align: end; */
+		/* transform: translateY(410%); */
+		/* right: 0;
+		margin-right: 11vw; */
+	}
+}
 </style>

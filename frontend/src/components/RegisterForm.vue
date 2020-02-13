@@ -148,7 +148,7 @@ export default {
 			if (this.onSubmit() && this.idcheck) {
 				this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", formData);
-				http.post("/trc/signUp/", formData)
+				http.post("/jwt/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
 						this.$store.dispatch("endLoading");
@@ -157,9 +157,10 @@ export default {
 							id: this.signUpMember.id,
 							password: this.signUpMember.password
 						};
+						console.log("for login credentials ", credentials);
 						http.post("/jwt/login/", credentials)
 							.then(res => {
-								console.log(res);
+								console.log("login ", res);
 								if (res.status != "204") {
 									this.$session.start();
 									this.$session.set(
@@ -233,7 +234,7 @@ export default {
 			if (this.signUpMember.id) {
 				this.duplicate = [];
 				console.log("DUPLICATE ", this.signUpMember.id);
-				http.post("/api/check", {
+				http.post("/jwt/check", {
 					id: this.signUpMember.id
 				})
 					.then(res => {

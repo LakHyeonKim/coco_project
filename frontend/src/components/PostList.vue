@@ -1,5 +1,8 @@
 <template>
 	<v-layout wrap>
+		<div @click="test()">
+			If Y wanna check this.flag, Click Here
+		</div>
 		<v-flex v-for="i in posts.length" :key="i" class="postList">
 			<post
 				@like="like"
@@ -22,34 +25,11 @@
 				:commentCount="posts[i - 1][1].commentCount"
 				id="post"
 			></post>
-			<!-- <PostMobile
-				class="ma-3"
-				:postIdx="i - 1"
-				:idPost="posts[i - 1].post.idpost"
-				:memberId="posts[i - 1].post.memberId"
-				:postTitle="posts[i - 1].post.postTitle"
-				:postWriter="posts[i - 1].post.postWriter"
-				:dateCreated="posts[i - 1].post.dateCreated"
-				:updateCreated="posts[i - 1].post.updateCreated"
-				:code="posts[i - 1].post.code"
-				:likeCount="posts[i - 1].post.likeCount"
-				:views="posts[i - 1].post.views"
-				:imagePath="posts[i - 1].post.imagePath"
-				:filePath="posts[i - 1].post.filePath"
-				:access="posts[i - 1].post.access"
-				:likeCheck="posts[i - 1].post.likeCheck"
-				:order="posts[i - 1].post.order"
-				:tags="posts[i - 1].tags"
-				:commentCount="posts[i - 1].commentCount"
-				id="postmobile"
-			>
-			</PostMobile> -->
 		</v-flex>
 	</v-layout>
 </template>
 <script>
 import Post from "@/components/Post";
-import PostMobile from "@/components/PostMobile";
 import http from "../http-common";
 
 export default {
@@ -64,10 +44,12 @@ export default {
 		};
 	},
 	components: {
-		Post,
-		PostMobile
+		Post
 	},
 	methods: {
+		test() {
+			console.log(this.flag);
+		},
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
 			console.log("멤버 ID : " + this.$session.get("id"));
@@ -105,12 +87,12 @@ export default {
 		},
 		scrollEvent: function() {
 			console.log(window.scrollY);
-
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			// console.log("scroll headers event ", headers);
 			if (window.scrollY == 0) {
-				const token = this.$session.get("accessToken");
-				const headers = {
-					Authorization: token
-				};
 				http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
 					headers
 				})
@@ -152,11 +134,8 @@ export default {
 						idpost: this.posts[this.posts.length - 1][1].post.idpost
 					}
 				};
-				console.log("reqeustForm ", requestForm);
-				const token = this.$session.get("accessToken");
-				const headers = {
-					Authorization: token
-				};
+				console.log("down scroll reqeustForm ", requestForm);
+				// console.log("scroll headers event ", headers);
 				http.post("/api/findByAllNewsfeedScrollDown/", requestForm, {
 					headers
 				})
@@ -181,10 +160,13 @@ export default {
 		}
 	},
 	mounted() {
+		this.flag = true;
 		const token = this.$session.get("accessToken");
 		const headers = {
 			Authorization: token
 		};
+		console.log("lakjsdfkjasdf", this.$session.get("id"));
+		console.log("lakjsdfkjasdf", headers);
 		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
 			headers
 		})
@@ -220,6 +202,7 @@ export default {
 		/* display: block; */
 		/* flex: none; */
 		width: 100%;
+		border-bottom: 0.75px solid rgba(0, 0, 0, 0.2);
 	}
 	#post {
 		/* display: block;

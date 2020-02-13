@@ -7,7 +7,7 @@
 				</div>
 				<form v-else class="loginform" @submit.prevent="login">
 					<img
-						src="../assets/see_saw_logo.png"
+						src="../assets/CC_Logo.png"
 						width="200px"
 						style="margin-top:40px; margin-bottom:20px;"
 					/>
@@ -60,7 +60,7 @@
 				</div>
 			</div>
 			<div id="forgotpwd">
-				<button>
+				<button @click.prevent="findPwd()">
 					<p>비밀번호를 잊으셨나요?</p>
 				</button>
 			</div>
@@ -152,6 +152,9 @@ export default {
 				return true;
 			}
 		},
+		findPwd() {
+			router.push("/findpwd");
+		},
 		async loginWithGoogle() {
 			const result = await FirebaseService.loginWithGoogle();
 			console.log(result);
@@ -220,7 +223,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .boxform {
 	min-height: 450px;
 	width: 350px;
@@ -228,7 +231,7 @@ export default {
 #innerbox {
 	width: 100%;
 	background-color: white;
-	border: 1px solid gray;
+	border: 1px solid rgba(187, 187, 187, 0.5);
 	margin-bottom: 10px;
 	align-content: center;
 	justify-content: center;
@@ -293,7 +296,7 @@ input::placeholder {
 	display: grid;
 	width: 100%;
 	background-color: white;
-	border: 1px solid gray;
+	border: 1px solid rgba(187, 187, 187, 0.5);
 }
 #regiform {
 	text-align: center;
@@ -306,5 +309,93 @@ input::placeholder {
 	width: auto;
 	text-align: center;
 	margin-bottom: 10px;
+}
+@media screen and (max-width: 450px) {
+	.boxform {
+		min-height: 450px;
+		width: 350px;
+	}
+	#innerbox {
+		width: 100%;
+		background-color: rgba(0, 0, 0, 0);
+		border: none;
+		margin-bottom: 10px;
+		align-content: center;
+		justify-content: center;
+	}
+	.logos {
+		height: 40px;
+		width: 40px;
+		background-color: none;
+		border-radius: 50%;
+		margin-bottom: 10px;
+	}
+	#logos {
+		display: block;
+		text-align: center;
+	}
+	.inputform {
+		border: 1px black;
+		border-radius: 5px;
+		width: 80%;
+		align-content: center;
+		justify-content: center;
+		background-color: #e9cde7;
+		font-size: 20px;
+		height: 35px;
+	}
+	input::placeholder {
+		color: white;
+		font-size: 18px;
+	}
+	.loginform {
+		display: block;
+		text-align: center;
+		align-content: center;
+		justify-content: center;
+		font-size: 27px;
+	}
+	.loginbutton {
+		border: 1px black;
+		border-radius: 5px;
+		width: 80%;
+		align-content: center;
+		justify-content: center;
+		font-size: 20px;
+		background-color: #7d4879;
+		color: white;
+	}
+	#logintext {
+		font-size: 15px;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
+	}
+	#divideLine {
+		text-align: center;
+		margin-top: 15px;
+		margin-bottom: 15px;
+	}
+	#forgotpwd {
+		font-size: 11px;
+		text-align: center;
+	}
+	#downBox {
+		display: grid;
+		width: 100%;
+		background-color: rgba(0, 0, 0, 0);
+		border: none;
+	}
+	#regiform {
+		text-align: center;
+		align-content: center;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	#loginError {
+		color: red;
+		width: auto;
+		text-align: center;
+		margin-bottom: 10px;
+	}
 }
 </style>

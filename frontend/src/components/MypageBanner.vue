@@ -217,14 +217,23 @@ export default {
 	},
 	mounted() {
 		console.log("MypageBanner : " + this.no);
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		console.log("myPage banner headers", headers);
 		if (this.$session.get("id") == this.no) {
 			this.isUser = true;
 		}
-		http.post("/api/findByMemberHomePageUserID/", {
-			myIdMemeber: this.$session.get("id"),
-			// youIdMember: this.$session.get("targetId")
-			youIdMember: this.no
-		})
+		http.post(
+			"/api/findByMemberHomePageUserID/",
+			{
+				myIdMemeber: this.$session.get("id"),
+				// youIdMember: this.$session.get("targetId")
+				youIdMember: this.no
+			},
+			{ headers }
+		)
 
 			.then(response => {
 				this.userInfo = response.data;

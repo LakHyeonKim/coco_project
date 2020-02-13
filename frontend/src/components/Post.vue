@@ -287,12 +287,13 @@ export default {
 		/* margin: 0px; */
 		border: none;
 		box-shadow: none;
-		border-bottom: 1px solid rgba(160, 23, 98, 0.2);
-		border-top: 1px solid rgba(160, 23, 98, 0.2);
+		/* border-bottom: 0.5px solid rgba(0, 0, 0, 0.2); */
+		/* border-top: 0.25px solid rgba(0, 0, 0, 0.2); */
+		height: 100%;
 		/* display: block; */
 	}
 	#cardBox {
-		margin: 10px;
+		margin: 10px 10px 5px 10px;
 		display: block;
 	}
 	#contentBox {
@@ -300,7 +301,7 @@ export default {
 	}
 	#cardHead {
 		display: inline-block;
-		margin-bottom: 7px;
+		margin-bottom: 3px;
 		height: 30px;
 	}
 	#imgDiv {
@@ -330,8 +331,8 @@ export default {
 		color: gray;
 	}
 	#cardTitle {
-		padding-top: 5px;
-		padding-bottom: 5px;
+		padding-top: 2px;
+		padding-bottom: 2px;
 		/* margin-left: 10px; */
 	}
 	.line-clamp-title {
@@ -344,7 +345,7 @@ export default {
 	}
 	#cardHash {
 		display: flex;
-		margin-bottom: 7px;
+		margin-bottom: 4px;
 	}
 	#hashTag {
 		float: left;
