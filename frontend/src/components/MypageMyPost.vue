@@ -1,22 +1,26 @@
 <template>
 	<div id="posts">
-		<MypageMyMenu :posts="posts" @setPosts="setPosts" />
+		<MypageMyMenu :posts="posts" @setPosts="setPosts" @setTag="setTag" />
 		<div id="post_list">
-			<div style="height: 50px; margin-top: 15px;">
-				<img
-					src="../assets/icon/sort_b.png"
-					width="25px"
-					style="float: left; margin-top: 7px; margin-right: 10px; opacity: 0.5;"
-				/>
-				<v-select
-					:items="postSels"
-					dense
-					item-color="black"
-					color="rgba(0, 0, 0, 0.5)"
-					@change="chnagePostSel"
-					placeholder="정렬조건"
-					style="width: 100px; float: left; font-size: 15px;"
-				></v-select>
+			<div id="post_top">
+				<span v-if="selTag != ''" id="post_top_tag">#{{ selTag }}</span>
+				<div></div>
+				<div id="post_top_sel">
+					<img
+						src="../assets/icon/sort_b.png"
+						width="25px"
+						style="float: left; margin-top: 7px; margin-right: 10px; opacity: 0.5;"
+					/>
+					<v-select
+						:items="postSels"
+						dense
+						item-color="black"
+						color="rgba(0, 0, 0, 0.5)"
+						@change="chnagePostSel"
+						placeholder="정렬조건"
+						style="width: 100px; float: left; font-size: 15px;"
+					></v-select>
+				</div>
 			</div>
 			<div
 				class="post"
@@ -88,10 +92,14 @@ export default {
 				{ text: "오래된순", value: "3" },
 				{ text: "좋아요순", value: "2" }
 			],
-			address: ""
+			address: "",
+			selTag: ""
 		};
 	},
 	methods: {
+		setTag(t_tag) {
+			this.selTag = t_tag;
+		},
 		setPosts(t_posts) {
 			this.posts = t_posts;
 		},
@@ -165,6 +173,27 @@ export default {
 };
 </script>
 <style>
+#post_top {
+	display: inline-block;
+	/* justify-content: space-between; */
+	margin-top: 15px;
+	width: 100%;
+}
+#post_top_tag {
+	border: 1px solid silver;
+	border-radius: 15px;
+	/* height: 35px; */
+	font-size: 20px;
+	background-color: #7d4879;
+	color: white;
+	font-weight: 500;
+	float: left;
+	padding: 3px 5px 3px 5px;
+}
+#post_top_sel {
+	height: 50px;
+	float: right;
+}
 .line {
 	margin-top: 20px;
 	margin-bottom: 20px;

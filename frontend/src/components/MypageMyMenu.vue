@@ -42,9 +42,10 @@ import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
-	props: {
-		posts: null
-	},
+	// props: {
+	// 	posts: null,
+	// 	selTag: {}
+	// },
 	data() {
 		return {
 			items: [
@@ -101,15 +102,16 @@ export default {
 			)
 				.then(response => {
 					// this.posts = response.data;
+					if (this.menuSel == 2) this.$emit("setTag", this.menu_text);
+					else this.$emit("setTag", "");
 					this.$emit("setPosts", response.data);
-					console.log(this.posts);
+					this.menu_text = "";
 				})
 				.catch(error => {
 					console.log(error);
 				});
 
 			this.isHidden = true;
-			this.menu_text = "";
 		}
 	}
 };
@@ -128,6 +130,9 @@ export default {
 	width: 150px;
 	height: 30px;
 	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
+}
+#search_text:focus {
+	outline: none;
 }
 #search_img {
 	margin-top: 20px;
