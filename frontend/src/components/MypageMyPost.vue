@@ -12,7 +12,7 @@
 					dense
 					item-color="black"
 					color="rgba(0, 0, 0, 0.5)"
-					@change="chnagePostSel"
+					@change="changePostSel"
 					placeholder="정렬조건"
 					style="width: 100px; float: left; font-size: 15px;"
 				></v-select>
@@ -63,16 +63,12 @@
 							width="35px"
 							@click.stop="like(item.post.idpost, index)"
 						/>
-						<div class="like_text">
-							{{ item.post.likeCount }}
-						</div>
+						<div class="like_text">{{ item.post.likeCount }}</div>
 						<img
 							src="../assets/icon/chat.png"
 							class="comment_img"
 						/>
-						<div class="comment_text">
-							{{ item.commentCount }}
-						</div>
+						<div class="comment_text">{{ item.commentCount }}</div>
 					</div>
 				</div>
 				<div class="line" />
@@ -104,7 +100,7 @@ export default {
 		};
 	},
 	methods: {
-		chnagePostSel(idx) {
+		changePostSel(idx) {
 			console.log(idx);
 			http.post("/api/findByMyPosts/", {
 				myIdMember: this.$session.get("id"),

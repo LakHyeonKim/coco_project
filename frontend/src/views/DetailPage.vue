@@ -24,6 +24,7 @@
 			:commentCount="this.detail.commentCount"
 			:attachments="this.detail.attachments"
 			id="compo"
+			@updateLike="updateLike"
 		></detail>
 	</div>
 </template>
@@ -77,8 +78,17 @@ export default {
 			return store.state.idPost;
 		}
 	},
-	methods: {},
-	mounted() {
+	methods: {
+		updateLike(like) {
+			if (like == 1) {
+				this.detail.post.likeCheck = 1;
+			} else {
+				this.detail.post.likeCheck = 0;
+			}
+			this.detail.post.likeCount += like;
+		}
+	},
+	created() {
 		const requestForm = {
 			idMember: this.$session.get("id"),
 			idPost: this.$route.params.idPost

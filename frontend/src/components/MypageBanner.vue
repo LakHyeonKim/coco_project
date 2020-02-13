@@ -18,108 +18,99 @@
 						<div id="nickname">
 							{{ userInfo.member.nickname }}
 						</div>
-						<img
-							v-if="isUser"
-							src="../assets/icon/settings.png"
-							id="settings"
-							@click="showModal = true"
-						/>
-						<div id="isFollow" v-if="!isUser">
-							<button
-								id="f_button"
-								:style="
-									userInfo.isFollew == 1
-										? following_btn
-										: follow_btn
-								"
-								@click="
-									userInfo.isFollew == 1
-										? (showModal_f = true)
-										: follow()
-								"
-							>
-								{{ f_current }}
+
+						<MypagePWCheck v-if="isUser" style="float: left;">
+							<div slot="click">
 								<img
-									:src="
-										userInfo.isFollew == 1
-											? '../img/icons/check_g.png'
-											: '../img/icons/plus_w.png'
-									"
-									width="13px"
+									slot="click"
+									src="../assets/icon/settings.png"
+									id="settings"
 								/>
-							</button>
-						</div>
+							</div>
+						</MypagePWCheck>
+						<MypageFollowCheck
+							v-if="!isUser"
+							:nickname="userInfo.member.nickname"
+							:isFollow="userInfo.isFollew"
+							:follow="follow"
+							style="float: left;"
+						>
+							<div slot="click" class="isFollow">
+								<button
+									class="f_button"
+									:style="
+										userInfo.isFollew == 1
+											? following_btn
+											: follow_btn
+									"
+								>
+									{{ f_current }}
+									<img
+										:src="
+											userInfo.isFollew == 1
+												? '../img/icons/check_g.png'
+												: '../img/icons/plus_w.png'
+										"
+										width="13px"
+									/>
+								</button>
+							</div>
+						</MypageFollowCheck>
 					</div>
 				</div>
+
 				<div id="counting">
-					<span>팔로잉 {{ userInfo.followingCount }}</span> ·
-					<span>팔로워 {{ userInfo.followerCount }}</span> ·
-					<span>게시글 {{ userInfo.totalPostCount }}</span>
+					<FollowList
+						:userInfo="userInfo"
+						:followList="followList"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span @click="getFollow(false)">
+								팔로잉 {{ userInfo.followingCount }}
+							</span>
+						</div>
+					</FollowList>
+					<span class="counting_sub"> · </span>
+					<FollowList
+						:userInfo="userInfo"
+						:followList="followList"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span @click="getFollow(true)">
+								팔로워 {{ userInfo.followerCount }}
+							</span>
+						</div>
+					</FollowList>
+					<span class="counting_sub"> · </span>
+					<span class="counting_sub">
+						게시글 {{ userInfo.totalPostCount }}
+					</span>
 				</div>
 			</div>
 		</div>
-		<Modal v-if="showModal" @close="showModal = false">
-			<div slot="header">비밀번호 확인</div>
-			<div slot="body">
-				<v-text-field
-					:append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-					:rules="[rules.required, rules.min]"
-					:type="show ? 'text' : 'password'"
-					hint="At least 8 characters"
-					class="input-group--focused"
-					@click:append="show = !show"
-					:counter="counterEn ? counter : false"
-					solo
-					color="rgba(160, 23, 98, 0.5)"
-					v-model="input_pw"
-				></v-text-field>
-			</div>
-			<div slot="footer">
-				<button class="modal-default-button" @click="pwCheck()">
-					확인
-				</button>
-				<button class="modal-default-button" @click="showModal = false">
-					취소
-				</button>
-			</div>
-		</Modal>
-		<Modal v-if="showModal_f" @close="showModal_f = false">
-			<div slot="body">
-				<span id="message">
-					정말 팔로우 취소하시겠습니까?
-				</span>
-			</div>
-			<div slot="footer">
-				<button class="modal-default-button" @click="follow()">
-					확인
-				</button>
-				<button
-					class="modal-default-button"
-					@click="showModal_f = false"
-				>
-					취소
-				</button>
-			</div>
-		</Modal>
 	</div>
 </template>
 
 <script>
 import http from "../http-common";
 import store from "../store";
-import Modal from "./Modal.vue";
+import MypagePWCheck from "./MypagePWCheck.vue";
+import MypageFollowCheck from "./MypageFollowCheck.vue";
+import FollowList from "./FollowList.vue";
+import "../assets/styles/check_btn.css";
 export default {
 	name: "MypageBanner",
-	components: { Modal },
-	store,
-	props: {
-		no: null
+	components: {
+		MypagePWCheck,
+		MypageFollowCheck,
+		FollowList
 	},
+	store,
 	data() {
 		return {
-			checkFollow: false,
-			showModal: false,
-			showModal_f: false,
+			isFollowing: false,
 			isUser: false,
 			userInfo: {
 				mypage: {
@@ -152,37 +143,20 @@ export default {
 				padding: "3px 10px 3px 10px",
 				boxShadow: "0.5px 0.5px 5px rgba(0, 0, 0, 0.2)"
 			},
-			clearable: true,
-			counterEn: true,
-			counter: 16,
-			show: false,
-			password: "Password",
-			rules: {
-				required: value => !!value || "Required.",
-				min: v => v.length >= 8 || "Min 8 characters",
-				emailMatch: () =>
-					"The email and password you entered don't match"
-			},
-			input_pw: ""
+			followList: null,
+			memberFollower: null,
+			memberFollowing: null
 		};
 	},
 	methods: {
 		pwCheck() {
 			alert(this.input_pw);
 			this.$router.push("/infoModify");
-			// http.post("/api/findByMyPosts/", {
-			// 	idMember: this.$session.get("id"),
-			// 	order: idx
-			// })
-			// 	.then(response => {
-			// 		this.posts = response.data;
-			// 		console.log(this.posts);
-			// 	})
-			// 	.catch(error => {
-			// 		console.log(error);
-			// 	});
 		},
 		follow() {
+			this.dialog = false;
+			console.log(this.$route.params.no);
+
 			let address = "";
 			if (this.userInfo.isFollew == 1) {
 				address = "/trc/makeUnFollow/";
@@ -197,8 +171,7 @@ export default {
 
 			http.post(address, {
 				memberFollower: this.$session.get("id"),
-				// memberFollowing: this.$session.get("targetId")
-				memberFollowing: this.no
+				memberFollowing: this.$route.params.no
 			})
 				.then(response => {
 					console.log(response);
@@ -212,6 +185,25 @@ export default {
 						this.userInfo.isFollew = 1;
 						this.f_current = "팔로잉";
 					}
+				});
+		},
+		getFollow(flag) {
+			this.followList = null;
+			let address = "";
+			if (flag) address = "/api/findByFollowerListMember/";
+			else address = "/api/findByFollowingListMember/";
+
+			http.post(address, {
+				myIdMemeber: this.$session.get("id"),
+				youIdMember: this.$route.params.no
+			})
+				.then(response => {
+					console.log("Banner getFollow()");
+					this.followList = response.data;
+					console.log(this.followList);
+				})
+				.catch(error => {
+					console.log(error);
 				});
 		}
 	},
@@ -234,7 +226,6 @@ export default {
 			},
 			{ headers }
 		)
-
 			.then(response => {
 				this.userInfo = response.data;
 				store.state.tags = this.userInfo.tags;
@@ -254,14 +245,24 @@ export default {
 </script>
 
 <style>
-#f_button {
+.counting_sub,
+.counting_click {
+	float: left;
+}
+.counting_click {
+	cursor: pointer;
+}
+.counting_click:hover {
+	opacity: 0.3;
+}
+.f_button {
 	outline: 0;
 	border: 0;
 }
-#f_button:hover {
+.f_button:hover {
 	filter: brightness(95%);
 }
-#f_button:active {
+.f_button:active {
 	filter: brightness(85%);
 }
 #message {
@@ -330,7 +331,7 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-#isFollow {
+.isFollow {
 	float: left;
 	position: relative;
 }
@@ -341,7 +342,7 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-#checkFollow {
+/* #checkFollow {
 	text-shadow: 0 0;
 	margin: 0 auto;
 	z-index: 1;
@@ -351,7 +352,8 @@ export default {
 	color: black;
 	border-radius: 5px;
 	box-shadow: 0.5px 0.5px 7px rgba(0, 0, 0, 0.3);
-}
+} */
+
 @media screen and (max-width: 600px) {
 	#settings {
 		width: 15px;

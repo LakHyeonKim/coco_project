@@ -55,8 +55,16 @@ export default {
 			router.push("/");
 		},
 		getMypage() {
-			// this.$session.set("targetId", this.$session.get("id"));
-			router.push("/mypage/" + this.$session.get("id"));
+			console.log(this.$route.fullPath);
+			let location = "/mypage/" + this.$session.get("id");
+
+			if (this.$route.fullPath != location) {
+				router.push(location).catch(err => {
+					console.log(err);
+				});
+			} else {
+				window.location.reload(true);
+			}
 		}
 	}
 };
