@@ -12,7 +12,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.ssafy.coco.service.JwtService;
 
-//@Component
+@Component
 public class JwtInterceptor implements HandlerInterceptor {
 
 	private static final String HEADER_AUTH = "Authorization";
