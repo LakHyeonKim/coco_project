@@ -144,8 +144,7 @@ export default {
 			http.post("/trc/makePost/", formData)
 				.then(res => {
 					alert("글이 성공적으로 작성되었습니다.");
-					this.$session.set("targetId", this.$session.get("id"));
-					router.push("/mypage");
+					router.push("/mypage/" + this.$session.get("id"));
 				})
 				.catch(err => {
 					alert("글 작성 중 문제가 생겼습니다.");

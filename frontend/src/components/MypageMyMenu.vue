@@ -37,12 +37,13 @@
 	</div>
 </template>
 <script>
+import http from "../http-common";
 import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
 	props: {
-		no: null
+		posts: null
 	},
 	data() {
 		return {
@@ -78,16 +79,36 @@ export default {
 			}
 			let address = "";
 			if (this.menuSel == 1) {
-				address = "";
+				address = "/api/findByAllKeywordMyPosts";
 			} else if (this.menuSel == 2) {
-				address = "";
+				address = "/api/findByTagKeywordMyPosts";
 			} else if (this.menuSel == 3) {
-				address = "";
+				address = "/api/findByPostTitleKeywordMyPosts";
 			} else {
-				address = "";
+				address = "/api/findByPostCodeKeywordMyPosts";
 			}
-			console.log(address);
 			console.log(this.menu_text);
+			console.log(address);
+			http.post(
+				address,
+				{
+					keyword: this.menu_text,
+					myIdMember: this.$session.get("id"),
+					order: 4,
+					youIdMember: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(response => {
+					// this.posts = response.data;
+					this.$emit("setPosts", response.data);
+					console.log(this.posts);
+				})
+				.catch(error => {
+					console.log(error);
+				});
+
+			this.isHidden = true;
 			this.menu_text = "";
 		}
 	}

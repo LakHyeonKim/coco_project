@@ -1,6 +1,6 @@
 <template>
 	<div id="posts">
-		<MypageMyMenu />
+		<MypageMyMenu :posts="posts" @setPosts="setPosts" />
 		<div id="post_list">
 			<div style="height: 50px; margin-top: 15px;">
 				<img
@@ -92,6 +92,9 @@ export default {
 		};
 	},
 	methods: {
+		setPosts(t_posts) {
+			this.posts = t_posts;
+		},
 		chnagePostSel(idx) {
 			console.log(idx);
 			http.post("/api/findByMyPosts/", {

@@ -297,7 +297,7 @@ export default {
 						console.log("DUPLICATE catch ", err);
 					});
 			} else {
-				this.duplicate = "아이디를 입력해 주십시오.";
+				this.duplicate = "닉네임을 입력해 주십시오.";
 			}
 			alert(this.duplicate);
 		},
