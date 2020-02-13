@@ -124,7 +124,7 @@ export default {
 		/* background-color: blueviolet; */
 	}
 	#subBox {
-		width: 100%;
+		width: 100vw;
 		padding-left: 0;
 	}
 	.footerBlank {

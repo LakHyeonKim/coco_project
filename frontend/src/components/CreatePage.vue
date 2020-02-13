@@ -249,4 +249,88 @@ export default {
 	background-color: white;
 	height: 200px;
 }
+@media screen and (max-width: 600px) {
+	.tags-input-wrapper-default {
+		/* height: 45px; */
+		font-size: 15px;
+	}
+	.tags-input-wrapper-default input::placeholder {
+		color: gray;
+		font-size: 15px;
+		height: 100%;
+	}
+
+	.tags-input-badge {
+		font-size: 15px;
+		height: 100%;
+	}
+
+	.tags-input-remove::before,
+	.tags-input-remove::after {
+		background: white;
+		height: 100%;
+	}
+	.tags-input-badge-selected-default {
+		color: white;
+		font-weight: 400;
+		background: rgba(160, 23, 98, 0.5);
+		height: 100%;
+		font-size: 15px;
+		
+	}
+	.backBox {
+		height: 100%;
+		background-color: white;
+	}
+	.tagInput {
+		float: left;
+		width: 68%;
+		margin: 25px auto 25px auto;
+		padding: 0px 0px 0px 10vw;
+	}
+	.submitInput {
+		/* display:grid;
+		justify-content: end; */
+		float: right;
+		margin: 25px auto 25px auto;
+		padding-right: 7vw;
+	}
+	.submitButton {
+		width: 70px;
+		height: 45px;
+		font-size: 20px;
+		color: white;
+		background-color: rgba(160, 23, 98, 0.5);
+		border-radius: 5px;
+	}
+	.title {
+		width: 80%;
+		margin: 0px auto 0px auto;
+		padding: 150px 40px 20px 40px;
+		border-bottom: 0.5px solid rgba(128, 128, 128, 0.5);
+	}
+	.titleInput {
+		width: 100%;
+		height: 60px;
+		font-size: 30px;
+	}
+	.title > ::placeholder {
+		color: gray;
+		font-size: 30px;
+	}
+	.codeInput {
+		width: 80%;
+		margin: 0px auto 0px auto;
+	}
+	.attachInput {
+		/* display:inline-block; */
+		width: 82%;
+		margin: 0px auto 0px auto;
+		padding: 0px 40px 0px 40px;
+	}
+	.footerBox {
+		background-color: white;
+		height: 100px;
+	}
+}
 </style>

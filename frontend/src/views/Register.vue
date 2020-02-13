@@ -1,9 +1,9 @@
 <template>
-	<div>
-		<br />
-		<h1 class="text-center">회원가입</h1>
-		<br />
-		<RegisterForm />
+	<div class="mainBox">
+		<div class="blankBox"></div>
+		<div class="compo">
+			<RegisterForm />
+		</div>
 	</div>
 </template>
 
@@ -17,3 +17,19 @@ export default {
 	}
 };
 </script>
+
+<style>
+.mainBox {
+	display: grid;
+	justify-items: center;
+}
+/* .blankBox {
+	height: 50px;
+} */
+.compo {
+	width: 450px;
+	height: 100%;
+	/* background-color: white; */
+	/* border: 1px solid rgba(187, 187, 187, 0.5); */
+}
+</style>

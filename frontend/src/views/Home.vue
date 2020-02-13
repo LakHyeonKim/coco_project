@@ -79,16 +79,13 @@ export default {
 #imgBoxDesk {
 	display: inline-block;
 	position: absolute;
-	margin-top: 110px;
+	margin-top: 120px;
 }
-/* #regiForm {
-	display: inline-block;
-	margin-left: 100px;
-} */
 #loginForm {
 	display: inline-block;
 	position: relative;
 	margin-left: 576px;
+	margin-bottom: 130px;
 }
 #imgBoxMobile {
 	display: none;
@@ -221,6 +218,7 @@ export default {
 	#imgBoxMobile {
 		display: inline-block;
 		position: absolute;
+		margin-top: 70px;
 	}
 	#mobileDiv {
 		position: absolute;
@@ -346,6 +344,7 @@ export default {
 		justify-content: center;
 		margin: 10px;
 		padding: 5px;
+		margin-bottom: 130px;
 	}
 }
 </style>
