@@ -123,15 +123,7 @@ public class BaseController {
 		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "닉네임 중복 체크", response = List.class)
-	@RequestMapping(value = "/checkNickName", method = RequestMethod.POST)
-	public ResponseEntity<List<Alarm>> checkNickName(@RequestBody Member member) throws Exception {
-		int size = memberService.findMember(member).size();
-		if (size ==0) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
-	}
+	
 	
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
@@ -143,17 +135,7 @@ public class BaseController {
 		return new ResponseEntity<List<Alarm>>(answers, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "중복확인 ", response = List.class)
-	@RequestMapping(value = "/check", method = RequestMethod.POST)
-	public ResponseEntity<Boolean> check(@RequestBody JSONObject json) throws Exception {
-		
-		String id = (String)json.get("id");
-		System.out.println("? " + json.get("id"));
-		boolean answer = memberService.check(id);
-		System.out.println(id);
-		System.out.println(answer);
-		return new ResponseEntity<Boolean>(answer, HttpStatus.OK);
-	}
+	
 
 	@ApiOperation(value = "알람 입력", response = List.class)
 	@RequestMapping(value = "/addAlarm", method = RequestMethod.POST)

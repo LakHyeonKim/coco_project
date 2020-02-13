@@ -8,7 +8,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -71,10 +73,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/*@RestController
+@RestController
 @RequestMapping("/test")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "test Controller" }, description = "테스트 컨트롤러")*/
+@Api(tags = { "test Controller" }, description = "테스트 컨트롤러")
 public class TestController {
 
 	@Autowired
@@ -87,21 +89,41 @@ public class TestController {
 	MailService mailService;
 	
 	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ResponseEntity login(@RequestBody JSONObject input) throws Exception {
-		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
-		String url = "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q=자바&start=10";
-		String id = (String) map.get("id");
-		String password = (String) map.get("password");
-		System.out.println(id);
-		System.out.println(password);
-		Tokens tokens = jwtService.login(id, password);
-		if (tokens != null) {
-			return new ResponseEntity(tokens, HttpStatus.OK);
-		} else {
-			System.out.println("failfail");
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
-		}
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity search() throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		RestTemplate restTemplate = new RestTemplate();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		JSONParser p = new JSONParser();
+		String uri = "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q=자바&start=10";
+		ResponseEntity<String> rest_reponse;
+		rest_reponse = restTemplate.getForEntity(uri, String.class);
+		
+		String bodys = rest_reponse.getBody();
+		System.out.println(bodys);
+		JSONObject data = (JSONObject)p.parse(bodys);
+		/*
+		 * JSONArray items = (JSONArray) data.get("items"); JsonObject item; for(int i =
+		 * 0 ; i < items.size(); i++) { Map<String,String> map = (Map<String, String>)
+		 * items.get(i);
+		 * 
+		 * String title = map.get("title"); String link = map.get("link"); String
+		 * snippet = ""+map.get("snippet"); Map<String,String> pagemap =
+		 * map.get("pagemap"); JsonObject pagemap = (JsonObject) p.parse(tt); String
+		 * cse_thumnail= "" +pagemap.get("cse_thumbnail"); String src= ""
+		 * +pagemap.get("src");
+		 * 
+		 * System.out.println(title); System.out.println(link);
+		 * System.out.println(snippet); System.out.println(pagemap);
+		 * System.out.println(cse_thumnail); System.out.println(src); }
+		 */
+		
+
+		
+		System.out.println("Ss");
+		
+		return new ResponseEntity(bodys, HttpStatus.OK);
+	
 	}
 	
 	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
