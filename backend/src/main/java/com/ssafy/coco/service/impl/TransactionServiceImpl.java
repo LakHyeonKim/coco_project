@@ -99,7 +99,7 @@ public class TransactionServiceImpl implements TransactionService{
 		
 		if(signUpMember.getFile() != null) {
 			MultipartFile file = signUpMember.getFile();
-			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userprofile";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
 			String imageFilePath = path + saveFileName + "";
@@ -263,7 +263,7 @@ public class TransactionServiceImpl implements TransactionService{
 		
 		if(board.getAttachments() != null) {
 			MultipartFile file = board.getAttachments();
-			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userfile";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
 			String filePath = path + saveFileName + "";
