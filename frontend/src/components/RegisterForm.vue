@@ -207,16 +207,16 @@ export default {
 				console.log("REGISTER ", "검증 실패");
 			}
 		},
-		previewImage: function(event) {
-			var input = event.target;
-			if (input.files && input.files[0]) {
-				var reader = new FileReader();
-				reader.onload = e => {
-					this.singUpMember.file = e.target.result;
-				};
-				reader.readAsDataURL(input.files[0]);
-			}
-		},
+		// previewImage: function(event) {
+		// 	var input = event.target;
+		// 	if (input.files && input.files[0]) {
+		// 		var reader = new FileReader();
+		// 		reader.onload = e => {
+		// 			this.singUpMember.file = e.target.result;
+		// 		};
+		// 		reader.readAsDataURL(input.files[0]);
+		// 	}
+		// },
 		onSubmit() {
 			this.$refs.form.validate().then(success => {
 				if (!success) {

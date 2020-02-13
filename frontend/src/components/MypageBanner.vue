@@ -12,7 +12,11 @@
 				{{ userInfo.mypage.bannerText }}
 			</div>
 			<div id="info_desc">
-				<img id="imgUser" :src="userInfo.member.imageUrl" />
+				<img
+					id="imgUser"
+					src="http://192.168.100.57:8888/userprofile/ktt7566@naver.com_face-with-uneven-eyes-and-wavy-mouth.png"
+				/>
+				<!-- <img id="imgUser" :src="userInfo.member.imageUrl" /> -->
 				<div id="info_desc_mid">
 					<div id="" style="display: inline-block;">
 						<div id="nickname">
@@ -302,8 +306,11 @@ export default {
 #imgUser {
 	float: left;
 	width: 55px;
+	height: 55px;
+	margin-right: 10px;
+	margin-top: 3px;
 	border-radius: 50%;
-	background-color: white;
+	background-color: rgba(255, 255, 255, 0.3);
 }
 #info_title {
 	font-size: 25px;
@@ -352,9 +359,10 @@ export default {
 	#imgBannerBox {
 		height: 50vw;
 	}
-	#imgUser {
+	/* #imgUser {
 		width: 50px;
-	}
+		height: 50px;
+	} */
 	#infoBox {
 		top: -160px;
 	}
