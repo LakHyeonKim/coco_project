@@ -175,8 +175,8 @@ export default {
 			http.post(
 				requestAddress,
 				{
-					memberFollower: this.$session.get("id"),
-					memberFollowing: this.$route.params.no
+					memberFollower: this.memberId,
+					memberFollowing: this.$session.get("id")
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
@@ -241,7 +241,8 @@ export default {
 	updated() {
 		Prism.highlightAll();
 	},
-	mounted() {}
+	mounted() {},
+	created() {}
 };
 </script>
 

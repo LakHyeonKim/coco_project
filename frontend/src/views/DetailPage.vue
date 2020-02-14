@@ -115,11 +115,10 @@ export default {
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
-
 				http.post(
 					"/api/findFollow",
 					{
-						memberFollower: this.detail.post.memberId,
+						memberFollower: res.data.post.memberId,
 						memberFollowing: this.$session.get("id")
 					},
 					{
@@ -131,7 +130,7 @@ export default {
 					console.log(res);
 					if (res.status == 200) {
 						this.isFollow = 1;
-					} else {
+					} else if (res.status == 204) {
 						this.isFollow = 0;
 					}
 				});
