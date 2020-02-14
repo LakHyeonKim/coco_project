@@ -41,6 +41,10 @@ export default new Vuex.Store({
 			} else {
 				return state.nickname;
 			}
+		},
+		userAccess: function(state) {
+			console.log(jwtDecode(state.token));
+			return jwtDecode(state.token).access;
 		}
 	},
 	mutations: {

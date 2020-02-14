@@ -150,9 +150,9 @@ import http from "../http-common";
 import router from "../router";
 import {
 	ValidationProvider,
-	ValidationObserver,
-	extend,
-	validate
+	ValidationObserver
+	// extend,
+	// validate
 } from "vee-validate";
 
 export default {

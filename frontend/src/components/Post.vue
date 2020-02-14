@@ -7,11 +7,11 @@
 		<div id="cardBox">
 			<div id="contentBox">
 				<div id="cardHash">
-					<div v-for="tag in tags" :key="`${tag}`">
-						<button id="hashTag" @click.stop="goSearch(`${tag}`)">
+					<button v-for="tag in tags" :key="`${tag}`">
+						<a id="hashTag" @click.stop="goSearch(`${tag}`)">
 							{{ tag }}
-						</button>
-					</div>
+						</a>
+					</button>
 				</div>
 
 				<div id="cardTitle">
@@ -153,13 +153,14 @@ export default {
 .postBox {
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-	height: 250px;
+	height: 95%;
 }
 #cardBox {
 	margin: 13px 13px 13px 13px;
 	display: flex;
 }
 #contentBox {
+	width: 100%;
 	flex: 1;
 }
 #cardHead {
@@ -197,6 +198,7 @@ export default {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	/* margin-left: 10px; */
+	/* display: inline-block; */
 }
 .line-clamp-title {
 	font-size: 20px;
@@ -207,7 +209,7 @@ export default {
 	-webkit-box-orient: vertical;
 }
 #cardHash {
-	display: flex;
+	/* display: flex; */
 	margin-bottom: 7px;
 }
 #hashTag {
@@ -219,6 +221,7 @@ export default {
 	padding-right: 5px;
 	color: white;
 	background-color: rgba(160, 23, 98, 0.5);
+	white-space: nowrap;
 }
 #cardBody {
 	min-height: 75px;
@@ -344,7 +347,7 @@ export default {
 		-webkit-box-orient: vertical;
 	}
 	#cardHash {
-		display: flex;
+		/* display: flex; */
 		margin-bottom: 4px;
 	}
 	#hashTag {

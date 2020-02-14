@@ -85,6 +85,9 @@ export default {
 	padding-left: 40px;
 }
 @media screen and (max-width: 600px) {
+	#backBox {
+		background-color: white;
+	}
 	#header {
 		position: fixed;
 		width: 100%;

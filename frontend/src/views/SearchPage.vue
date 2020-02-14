@@ -3,7 +3,7 @@
 		<searchBar @searchwords="searchwords"></searchBar>
 		<div id="searchMain">
 			<div id="compo">
-				<searchFavTag @favtag="searchwords"></searchFavTag>
+				<searchFavTag id="tags" @favtag="searchwords"></searchFavTag>
 				<div>
 					<div v-for="i in searches.length" :key="i">
 						<SearchCard
@@ -126,6 +126,10 @@ export default {
 			}
 		},
 		like(postNum, index) {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
 			console.log("글번호 : " + postNum + "| index : " + index);
 			console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.searches[index].post.likeCheck == 1) {
@@ -138,14 +142,18 @@ export default {
 				this.searches[index].post.likeCount++;
 			}
 			console.log(this.address);
-			http.post(this.address, {
-				member: {
-					idmember: this.$session.get("id")
+			http.post(
+				this.address,
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: postNum
+					}
 				},
-				post: {
-					idpost: postNum
-				}
-			})
+				{ headers }
+			)
 				.then(res => {
 					console.log(res);
 				})
@@ -220,7 +228,13 @@ export default {
 		padding-left: 0px;
 	}
 	#compo {
-		width: 100%;
+		width: 100vw;
+	}
+	#tags {
+		width: 100vw;
+	}
+	#searches {
+		width: 100vw;
 	}
 	.footerBlank {
 		display: block;

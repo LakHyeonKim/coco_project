@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="backBox">
+		<div class="templatePage">
 			<div class="tagInput">
 				<tags-input
 					v-model="tags"
@@ -13,7 +13,7 @@
 			<form name="board" enctype="multipart/form-data">
 				<div class="submitInput">
 					<button class="submitButton" @click="posting">
-						글 작성
+						WRITE
 					</button>
 				</div>
 				<div class="title">
@@ -38,6 +38,7 @@
 									auto-grow
 									rounded
 									placeholder="내용"
+									class="code"
 								/>
 							</v-container>
 						</v-tab-item>
@@ -63,8 +64,16 @@
 					></v-file-input>
 				</div>
 				<div class="footerBox"></div>
-				<input type="hidden" name="postTitle" v-model="board.postTitle" />
-				<input type="hidden" name="postWriter" v-model="board.postWriter" />
+				<input
+					type="hidden"
+					name="postTitle"
+					v-model="board.postTitle"
+				/>
+				<input
+					type="hidden"
+					name="postWriter"
+					v-model="board.postWriter"
+				/>
 				<input type="hidden" name="memberId" v-model="board.memberId" />
 				<input type="hidden" name="code" v-model="board.code" />
 				<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
@@ -128,24 +137,28 @@ export default {
 			Prism.highlightAll();
 		},
 		posting() {
-			this.board.tags = [];
-			for (let i = 0; i < this.tags.length; ++i) {
-				this.board.tags.push(this.tags[i].value);
+			if (this.board.postTitle && this.board.code) {
+				this.board.tags = [];
+				for (let i = 0; i < this.tags.length; ++i) {
+					this.board.tags.push(this.tags[i].value);
+				}
+
+				let formData = new FormData(document.forms.namedItem("board"));
+				formData.append("tags", this.board.tags);
+
+				http.post("/trc/makePost/", formData)
+					.then(res => {
+						alert("글이 성공적으로 작성되었습니다.");
+						// this.$session.set("targetId", this.$session.get("id"));
+						router.push("/mypage/" + this.$session.get("id"));
+					})
+					.catch(err => {
+						alert("글 작성 중 문제가 생겼습니다.");
+						router.push("/newpage");
+					});
+			} else {
+				alert("글을 작성해 주세요")
 			}
-
-			let formData = new FormData(document.forms.namedItem("board"));
-			formData.append("tags", this.board.tags);
-
-			http.post("/trc/makePost/", formData)
-				.then(res => {
-					alert("글이 성공적으로 작성되었습니다.");
-					this.$session.set("targetId", this.$session.get("id"));
-					router.push("/mypage/" + this.$session.get("id"));
-				})
-				.catch(err => {
-					alert("글 작성 중 문제가 생겼습니다.");
-					router.push("/newpage");
-				});
 		}
 	},
 	mounted() {
@@ -195,7 +208,7 @@ export default {
 	font-weight: 400;
 	background: rgba(160, 23, 98, 0.5);
 }
-.backBox {
+.templatePage {
 	height: 100%;
 	background-color: white;
 }
@@ -250,35 +263,7 @@ export default {
 	height: 200px;
 }
 @media screen and (max-width: 600px) {
-	.tags-input-wrapper-default {
-		/* height: 45px; */
-		font-size: 15px;
-	}
-	.tags-input-wrapper-default input::placeholder {
-		color: gray;
-		font-size: 15px;
-		height: 100%;
-	}
-
-	.tags-input-badge {
-		font-size: 15px;
-		height: 100%;
-	}
-
-	.tags-input-remove::before,
-	.tags-input-remove::after {
-		background: white;
-		height: 100%;
-	}
-	.tags-input-badge-selected-default {
-		color: white;
-		font-weight: 400;
-		background: rgba(160, 23, 98, 0.5);
-		height: 100%;
-		font-size: 15px;
-		
-	}
-	.backBox {
+	.templatePage {
 		height: 100%;
 		background-color: white;
 	}
@@ -286,51 +271,61 @@ export default {
 		float: left;
 		width: 68%;
 		margin: 25px auto 25px auto;
-		padding: 0px 0px 0px 10vw;
+		padding: 0px 0px 0px 5vw;
 	}
 	.submitInput {
 		/* display:grid;
 		justify-content: end; */
 		float: right;
 		margin: 25px auto 25px auto;
-		padding-right: 7vw;
+		padding-right: 5vw;
 	}
 	.submitButton {
 		width: 70px;
 		height: 45px;
-		font-size: 20px;
+		font-size: 15px;
 		color: white;
 		background-color: rgba(160, 23, 98, 0.5);
 		border-radius: 5px;
 	}
 	.title {
-		width: 80%;
-		margin: 0px auto 0px auto;
-		padding: 150px 40px 20px 40px;
+		width: 90%;
+		margin: 0px 5vw 0px 5vw;
+		padding: 150px 0px 10px 0px;
 		border-bottom: 0.5px solid rgba(128, 128, 128, 0.5);
 	}
 	.titleInput {
 		width: 100%;
-		height: 60px;
-		font-size: 30px;
+		height: 50px;
+		font-size: 20px;
 	}
 	.title > ::placeholder {
 		color: gray;
-		font-size: 30px;
+		font-size: 20px;
+	}
+	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div {
+		padding: 0px;
+	}
+	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div > div {
+		padding-top: 0px;
+	}
+	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div > div > div > div.v-input__slot {
+		width: 100%;
+		padding: 0px;
 	}
 	.codeInput {
-		width: 80%;
-		margin: 0px auto 0px auto;
+		width: 90%;
+		margin: 0px 5vw 0px 5vw;
 	}
 	.attachInput {
 		/* display:inline-block; */
-		width: 82%;
-		margin: 0px auto 0px auto;
-		padding: 0px 40px 0px 40px;
+		width: 90%;
+		margin: 0px 5vw 0px 5vw;
+		padding: 0px;
 	}
 	.footerBox {
-		background-color: white;
-		height: 100px;
+		/* background-color: white; */
+		height: 0px;
 	}
 }
 </style>

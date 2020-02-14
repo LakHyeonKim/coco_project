@@ -48,9 +48,17 @@ export default {
 	},
 	methods: {
 		test() {
-			console.log(this.flag);
+			console.log("flag check", this.flag);
+			// console.log(
+			// 	window.scrollY >=
+			// 		document.body.offsetHeight - window.innerHeight - 150
+			// );
 		},
 		like(postNum, index) {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
 			console.log("글번호 : " + postNum + "| index : " + index);
 			console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.posts[index][1].post.likeCheck == 1) {
@@ -63,14 +71,18 @@ export default {
 				this.posts[index][1].post.likeCount++;
 			}
 			console.log(this.address);
-			http.post(this.address, {
-				member: {
-					idmember: this.$session.get("id")
+			http.post(
+				this.address,
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: postNum
+					}
 				},
-				post: {
-					idpost: postNum
-				}
-			})
+				{ headers }
+			)
 				.then(res => {
 					console.log(res);
 				})
@@ -86,6 +98,7 @@ export default {
 				});
 		},
 		scrollEvent: function() {
+			window.scrollY;
 			console.log(window.scrollY);
 			const token = this.$session.get("accessToken");
 			const headers = {
@@ -125,6 +138,9 @@ export default {
 					document.body.offsetHeight - window.innerHeight - 150 &&
 				this.flag == true
 			) {
+				console.log(
+					"flagflagflagflag asdjflkasjdlfkajsdlfkajsldfkjalsdkfjalskdfj"
+				);
 				this.flag = false;
 				const requestForm = {
 					member: {
@@ -155,19 +171,20 @@ export default {
 					})
 					.catch(err => {
 						console.log("getpost catch ", err);
+						this.flag = true;
 					});
 			}
 		}
 	},
 	mounted() {
-		this.flag = true;
+		console.log("마운트는 언제 찍힐까");
 		const token = this.$session.get("accessToken");
 		const headers = {
 			Authorization: token
 		};
 		console.log("lakjsdfkjasdf", this.$session.get("id"));
 		console.log("lakjsdfkjasdf", headers);
-		http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
+		http.post("/api/findByAllNewsfeed", this.$session.get("id"), {
 			headers
 		})
 			.then(res => {
@@ -179,15 +196,18 @@ export default {
 				console.log("getpost then 3", this.mapPosts);
 				this.posts = [...this.mapPosts];
 				console.log(this.posts);
+				window.addEventListener("scroll", this.scrollEvent);
 			})
 			.catch(err => {
 				console.log("getpost catch ", err);
 			});
 	},
-	created: function() {
-		window.addEventListener("scroll", this.scrollEvent);
-	},
+	// created: function() {
+	// 	console.log("크리에이트는 언제 찍힐까");
+	// 	// window.addEventListener("scroll", this.scrollEvent);
+	// },
 	beforeDestroy: function() {
+		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };

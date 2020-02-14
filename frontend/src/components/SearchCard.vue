@@ -153,7 +153,7 @@ export default {
 .postBox {
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-	height: 250px;
+	height: 100%;
 }
 #cardBox {
 	margin: 13px 13px 13px 13px;
@@ -207,7 +207,7 @@ export default {
 	-webkit-box-orient: vertical;
 }
 #cardHash {
-	display: flex;
+	/* display: flex; */
 	margin-bottom: 7px;
 }
 #hashTag {
@@ -219,6 +219,7 @@ export default {
 	padding-right: 5px;
 	color: white;
 	background-color: rgba(160, 23, 98, 0.5);
+	white-space: nowrap;
 }
 #cardBody {
 	min-height: 75px;
@@ -289,20 +290,20 @@ export default {
 		box-shadow: none;
 		border-bottom: 0.75px solid rgba(0, 0, 0, 0.2);
 		/* border-top: 0.25px solid rgba(0, 0, 0, 0.2); */
-		height: 100%;
+		/* height: 100%; */
 		/* display: block; */
 	}
 	#cardBox {
 		margin: 10px 10px 5px 10px;
 		display: block;
 	}
-	#contentBox {
+	/* #contentBox {
 		flex: 1;
-	}
+	} */
 	#cardHead {
-		display: inline-block;
+		/* display: inline-block; */
 		margin-bottom: 3px;
-		height: 30px;
+		/* height: 30px; */
 	}
 	#imgDiv {
 		width: 20px;
@@ -310,25 +311,25 @@ export default {
 		/* margin-right: 10px; */
 	}
 	#userImg {
-		float: left;
+		/* float: left;
 		border-radius: 50%;
 		width: 20px;
 		margin-top: 4px;
 		border: 1px solid rgba(0, 0, 0, 0.5);
-		margin-right: 3px;
+		margin-right: 3px; */
 	}
 	#userId {
-		float: left;
+		/* float: left;
 		color: black;
 		font-size: 13px;
 		line-height: 30px;
-		margin-right: 7px;
+		margin-right: 7px; */
 	}
 	#date {
-		float: left;
+		/* float: left;
 		font-size: 11px;
 		line-height: 30px;
-		color: gray;
+		color: gray; */
 	}
 	#cardTitle {
 		padding-top: 2px;
@@ -336,82 +337,82 @@ export default {
 		/* margin-left: 10px; */
 	}
 	.line-clamp-title {
-		font-size: 20px;
+		/* font-size: 20px;
 		font-weight: 400;
 		overflow: hidden;
 		display: -webkit-box;
 		-webkit-line-clamp: 1;
-		-webkit-box-orient: vertical;
+		-webkit-box-orient: vertical; */
 	}
 	#cardHash {
-		display: flex;
+		/* display: flex; */
 		margin-bottom: 4px;
 	}
 	#hashTag {
-		float: left;
+		/* float: left;
 		margin-right: 6px;
 		font-size: 13px;
 		border-radius: 8px;
 		padding-left: 5px;
 		padding-right: 5px;
 		color: white;
-		background-color: rgba(160, 23, 98, 0.5);
+		background-color: rgba(160, 23, 98, 0.5); */
 	}
 	#cardBody {
-		min-height: 75px;
-		margin-bottom: 5px;
+		/* min-height: 75px;
+		margin-bottom: 5px; */
 		/* margin-left: 10px; */
 	}
 	.line-clamp-body {
-		color: rgb(27, 27, 27);
+		/* color: rgb(27, 27, 27);
 		overflow: hidden;
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
+		-webkit-box-orient: vertical; */
 	}
 	#cardFooter {
-		display: inline-block;
+		/* display: inline-block; */
 	}
 	.like_img {
-		float: left;
+		/* float: left;
 		width: 35px;
 		border-radius: 50%;
-		transition: all ease-in-out 0.3s;
+		transition: all ease-in-out 0.3s; */
 	}
 	#likeCount {
-		float: left;
+		/* float: left;
 		font-weight: 400;
 		margin-top: 10px;
-		font-size: 15px;
+		font-size: 15px; */
 	}
 	.comment_img {
-		float: left;
+		/* float: left;
 		width: 30px;
-		margin: 7px 3px 0 10px;
+		margin: 7px 3px 0 10px; */
 	}
 	#commentCount {
-		float: left;
+		/* float: left;
 		font-weight: 400;
 		margin-top: 10px;
-		font-size: 15px;
+		font-size: 15px; */
 	}
 	#imgBox {
-		margin-left: 10px;
-		width: 200px;
+		/* margin-left: 10px;
+		width: 200px; */
 	}
 	#stackImg {
-		position: relative;
+		/* position: relative;
 		text-align: end;
-		transform: translateY(-100%);
+		transform: translateY(-100%); */
 	}
 	.stackImgs {
-		width: 35px;
+		/* width: 35px;
 		height: 35px;
 		border-radius: 50%;
-		background-color: white;
+		background-color: white; */
 	}
 	#noStackImg {
-		position: relative;
+		/* position: relative; */
 		/* justify-content: center; */
 		/* align-items: center; */
 		/* text-align: end; */

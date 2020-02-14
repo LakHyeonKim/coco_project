@@ -15,6 +15,7 @@ import SearchPage from "./views/SearchPage.vue";
 import DetailPage from "./views/DetailPage.vue";
 import FindPassword from "./views/FindPassword.vue";
 import InfoModify from "./views/InfoModify";
+import AlarmPage from "./views/AlarmPage";
 
 Vue.use(VueRouter);
 
@@ -100,6 +101,11 @@ const routes = [
 		path: "/infoModify",
 		name: "infoModify",
 		component: InfoModify
+	},
+	{
+		path: "/alarm",
+		name: "alarm",
+		component: AlarmPage
 	},
 	{
 		path: "*",

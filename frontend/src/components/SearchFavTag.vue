@@ -44,6 +44,7 @@ export default {
 		const headers = {
 			Authorization: token
 		};
+		console.log("favHeaders", headers);
 		http.post("/api/findByAllDefaultSearch/", this.$session.get("id"), {
 			headers
 		})

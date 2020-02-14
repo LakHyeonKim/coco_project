@@ -101,7 +101,7 @@ export default {
 				this.loading = true;
 				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						console.log(res);
+						console.log("login res", res);
 						if (res.status != "204") {
 							this.$session.start();
 							this.$session.set(
@@ -116,6 +116,14 @@ export default {
 							this.$session.set(
 								"id",
 								Number(this.$store.getters.userId)
+							);
+							this.$session.set(
+								"access",
+								Number(this.$store.getters.userAccess)
+							);
+							this.$session.set(
+								"nickname",
+								this.$store.getters.userNickname
 							);
 							// this.$session.set("targetId", 10);
 							this.loading = false;

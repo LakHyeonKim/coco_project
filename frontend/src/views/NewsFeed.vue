@@ -34,6 +34,9 @@ import PostList from "../components/PostList";
 
 export default {
 	name: "NewsFeed",
+	data() {
+		return {};
+	},
 	components: {
 		PostList
 	},
