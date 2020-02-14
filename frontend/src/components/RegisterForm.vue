@@ -138,7 +138,6 @@
 					v-model="signUpMember.instagramUrl"
 					label="Instagram url(선택)"
 				></v-text-field> -->
-
 				<button id="submitButton">회원가입</button>
 			</form>
 		</validation-observer>

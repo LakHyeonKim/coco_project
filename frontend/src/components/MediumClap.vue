@@ -106,7 +106,6 @@ export default {
 	},
 	methods: {
 		addClap() {
-			console.log(this.likeCheck);
 			const particles = document.getElementById("particles");
 			const particles2 = document.getElementById("particles-2");
 			const particles3 = document.getElementById("particles-3");
@@ -146,14 +145,22 @@ export default {
 			}
 			this.runAnimationCycle(totalClickCounter, "fader");
 
-			http.post(this.requestAddress, {
-				member: {
-					idmember: this.$session.get("id")
+			http.post(
+				this.requestAddress,
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: this.idPost
+					}
 				},
-				post: {
-					idpost: this.idPost
+				{
+					headers: {
+						Authorization: this.$session.get("accessToken")
+					}
 				}
-			})
+			)
 				.then(res => {
 					console.log(res);
 				})
