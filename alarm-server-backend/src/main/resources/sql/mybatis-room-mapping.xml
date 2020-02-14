@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RoomMapper">
+	<sql id="select-room">
+		select idroom, member_id, room_name, date_created
+		from `coco`.`room`
+	</sql>
+	<sql id="insert-room">
+		insert into `coco`.`room`
+		(member_id, room_name, date_created)
+		values(#{memberId}, #{roomName}, now())
+	</sql>
+	<sql id="update-room">
+		update `coco`.`room` set
+		member_id=#{memberId},
+		room_name=#{roomName},
+		where
+		idroom=#{idroom}
+	</sql>
+	<sql id="delete-room">
+		delete from room
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllRoom" resultType="Room">
+		<include refid="select-room"></include>
+		order by date_created desc;
+	</select>
+	
+	<select id="findRoom" resultType="Room" parameterType="Room">
+		<include refid="select-room"></include>
+		<where>
+			<if test="idroom !=0">
+				idroom = ${idroom}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = ${memberId}
+			</if>
+			<if test="roomName !=null">
+				AND
+				room_name = '${roomName}'
+			</if>
+		</where>
+		order by date_created desc;
+	</select>
+
+	<insert id="addRoom" parameterType="Room"
+		useGeneratedKeys="true" keyProperty="idroom">
+		<include refid="insert-room"></include>
+	</insert>
+
+	<update id="updateRoom" parameterType="Room">
+		<include refid="update-room"></include>
+	</update>
+
+	<delete id="deleteRoom" parameterType="Room">
+		<include refid="delete-room"></include>
+		<where>
+			<if test="idroom !=0">
+				idroom = ${idroom}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = ${memberId}
+			</if>
+			<if test="roomName !=null">
+				AND
+				room_name = '${roomName}'
+			</if>
+		</where>
+	</delete>
+</mapper>

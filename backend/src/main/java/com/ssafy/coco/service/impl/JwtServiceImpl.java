@@ -24,6 +24,8 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,16 +42,16 @@ import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Tokens;
 
 @Service
-public class JwtServiceImpl implements JwtService{
+public class JwtServiceImpl implements JwtService {
 
 	private String secretKey = "ssafyisbest";
 
-    private Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
-    @Autowired
-    MemberDao memberDao;
-    
-    public JsonNode getAccessToken(String autorize_code) {
+	@Autowired
+	MemberDao memberDao;
+
+	public JsonNode getAccessToken(String autorize_code) {
 		final String RequestUrl = "https://kauth.kakao.com/oauth/token";
 
 		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
@@ -57,8 +59,8 @@ public class JwtServiceImpl implements JwtService{
 		postParams.add(new BasicNameValuePair("client_id", "716ea071847daf5fdddd8ecac5cd2796")); // REST API KEY
 		postParams.add(new BasicNameValuePair("redirect_uri", "http://192.168.100.94:8080")); // 리다이렉트 URI
 		postParams.add(new BasicNameValuePair("code", autorize_code)); // 로그인 과정중 얻은 code 값
-		//http://192.168.100.94:8080
-		//http://192.168.100.95:8888/test/kakaologin2
+		// http://192.168.100.94:8080
+		// http://192.168.100.95:8888/test/kakaologin2
 		final HttpClient client = HttpClientBuilder.create().build();
 		final HttpPost post = new HttpPost(RequestUrl);
 		JsonNode returnNode = null;
@@ -90,7 +92,7 @@ public class JwtServiceImpl implements JwtService{
 
 	}
 
-	public JsonNode getKakaoUserInfo(String autorize_code) {
+	public JsonNode getKakaoUserInfo(String token) {
 
 		final String RequestUrl = "https://kapi.kakao.com/v1/user/me";
 
@@ -98,7 +100,7 @@ public class JwtServiceImpl implements JwtService{
 		final HttpPost post = new HttpPost(RequestUrl);
 
 		// add header
-		post.addHeader("Authorization", "Bearer " + autorize_code);
+		post.addHeader("Authorization", "Bearer " + token);
 
 		JsonNode returnNode = null;
 
@@ -140,170 +142,188 @@ public class JwtServiceImpl implements JwtService{
 		JsonNode properties = userInfo.path("properties"); // 추가정보 받아오기
 		if (properties.has("nickname"))
 			vo.setNickname(properties.path("nickname").asText());
-			vo.setImageUrl(properties.path("profile_image").asText());
+		vo.setImageUrl(properties.path("profile_image").asText());
 		return vo;
 	}
-    @Override
-    public String makeJwt(HttpServletRequest res) throws Exception {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        Date expireTime = new Date();
-        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 1);
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+	@Override
+	public String makeJwt(HttpServletRequest res) throws Exception {
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		Date expireTime = new Date();
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 1);
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        headerMap.put("typ","JWT");
-        headerMap.put("alg","HS256");
+		Map<String, Object> headerMap = new HashMap<String, Object>();
 
-        Map<String, Object> map= new HashMap<String, Object>();
+		headerMap.put("typ", "JWT");
+		headerMap.put("alg", "HS256");
 
-        String name = "김진호";
-        String email = "kongkong@naver.com";
+		Map<String, Object> map = new HashMap<String, Object>();
 
-        map.put("name", name);
-        map.put("email", email);
+		String name = "김진호";
+		String email = "kongkong@naver.com";
 
-        JwtBuilder builder = Jwts.builder().setHeader(headerMap)
-                .setClaims(map)
-                .setExpiration(expireTime)
-                .signWith(signatureAlgorithm, signingKey);
+		map.put("name", name);
+		map.put("email", email);
 
-        return builder.compact();
-    }
-    @Override
-    public String makeJwt(String idmember,String nickname, int time) throws Exception {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        Date expireTime = new Date();
-        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 );
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		JwtBuilder builder = Jwts.builder().setHeader(headerMap).setClaims(map).setExpiration(expireTime)
+				.signWith(signatureAlgorithm, signingKey);
 
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+		return builder.compact();
+	}
 
-        headerMap.put("typ","JWT");
-        headerMap.put("alg","HS256");
+	@Override
+	public String makeJwt(String idmember, String nickname, int access, int time) throws Exception {
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		Date expireTime = new Date();
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        Map<String, Object> map= new HashMap<String, Object>();
+		Map<String, Object> headerMap = new HashMap<String, Object>();
 
-        map.put("idmember", idmember);
-        map.put("nickname", nickname);
+		headerMap.put("typ", "JWT");
+		headerMap.put("alg", "HS256");
 
-        JwtBuilder builder = Jwts.builder().setHeader(headerMap)
-                .setClaims(map)
-                .setExpiration(expireTime)
-                .signWith(signatureAlgorithm, signingKey);
+		Map<String, Object> map = new HashMap<String, Object>();
 
-        return builder.compact();
-    }
-    
-    @Override
-    public String makeJwt(String idmember,int time) throws Exception {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        Date expireTime = new Date();
-        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 );
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		map.put("idmember", idmember);
+		map.put("nickname", nickname);
+		map.put("access", access);
 
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+		JwtBuilder builder = Jwts.builder().setHeader(headerMap).setClaims(map).setExpiration(expireTime)
+				.signWith(signatureAlgorithm, signingKey);
 
-        headerMap.put("typ","JWT");
-        headerMap.put("alg","HS256");
+		return builder.compact();
+	}
 
-        Map<String, Object> map= new HashMap<String, Object>();
+	@Override
+	public String makeJwt(String idmember, String nickname, int time) throws Exception {
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		Date expireTime = new Date();
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        map.put("idmember", idmember);
+		Map<String, Object> headerMap = new HashMap<String, Object>();
 
-        JwtBuilder builder = Jwts.builder().setHeader(headerMap)
-                .setClaims(map)
-                .setExpiration(expireTime)
-                .signWith(signatureAlgorithm, signingKey);
+		headerMap.put("typ", "JWT");
+		headerMap.put("alg", "HS256");
 
-        return builder.compact();
-    }
-    
-    @Override
-    public String makeJwt(String id, String pwd) throws Exception {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        Date expireTime = new Date();
-        expireTime.setTime(expireTime.getTime() + 1000 * 60 * 1);
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		Map<String, Object> map = new HashMap<String, Object>();
 
-        Map<String, Object> headerMap = new HashMap<String, Object>();
+		map.put("idmember", idmember);
+		map.put("nickname", nickname);
 
-        headerMap.put("typ","JWT");
-        headerMap.put("alg","HS256");
+		JwtBuilder builder = Jwts.builder().setHeader(headerMap).setClaims(map).setExpiration(expireTime)
+				.signWith(signatureAlgorithm, signingKey);
 
-        Map<String, Object> map= new HashMap<String, Object>();
+		return builder.compact();
+	}
 
-        map.put("id", id);
-        map.put("password", pwd);
+	@Override
+	public String makeJwt(String idmember, int time) throws Exception {
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		Date expireTime = new Date();
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        JwtBuilder builder = Jwts.builder().setHeader(headerMap)
-                .setClaims(map)
-                .setExpiration(expireTime)
-                .signWith(signatureAlgorithm, signingKey);
+		Map<String, Object> headerMap = new HashMap<String, Object>();
 
-        return builder.compact();
-    }
-    
-    @Override
-    public boolean checkJwt(String jwt) throws Exception {
-        try {
-        	System.out.println("start");
-            Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
-                    .parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
-            System.out.println("Dd"+claims);
-            logger.info("expireTime :" + claims.getExpiration());
-            logger.info("name :" + claims.get("name"));
-            return true;
-        } catch (ExpiredJwtException exception) {
-            logger.info("토큰 만료");
-            return false;
-        } catch (JwtException exception) {
-            logger.info("토큰 변조");
-            return false;
-        }
-    }
-    
-    
-    @Override
-    public int getIdmemberByToken(String jwt) throws Exception {
-        try {
-        	System.out.println("start");
-            Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
-                    .parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
-            System.out.println("Dd"+claims);
-            logger.info("expireTime :" + claims.getExpiration());
-            logger.info("name :" + claims.get("name"));
-            return Integer.parseInt((String) claims.get("idmember"));
-        } catch (ExpiredJwtException exception) {
-            logger.info("토큰 만료");
-            return -1;
-        } catch (JwtException exception) {
-            logger.info("토큰 변조");
-            return -1;
-        }
-    }
+		headerMap.put("typ", "JWT");
+		headerMap.put("alg", "HS256");
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("idmember", idmember);
+
+		JwtBuilder builder = Jwts.builder().setHeader(headerMap).setClaims(map).setExpiration(expireTime)
+				.signWith(signatureAlgorithm, signingKey);
+
+		return builder.compact();
+	}
+
+	@Override
+	public String makeJwt(String id, String pwd) throws Exception {
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		Date expireTime = new Date();
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 1);
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+		Map<String, Object> headerMap = new HashMap<String, Object>();
+
+		headerMap.put("typ", "JWT");
+		headerMap.put("alg", "HS256");
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("id", id);
+		map.put("password", pwd);
+
+		JwtBuilder builder = Jwts.builder().setHeader(headerMap).setClaims(map).setExpiration(expireTime)
+				.signWith(signatureAlgorithm, signingKey);
+
+		return builder.compact();
+	}
+
+	@Override
+	public boolean checkJwt(String jwt) throws Exception {
+		try {
+			System.out.println("start");
+			Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
+					.parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
+			System.out.println("Dd" + claims);
+			logger.info("expireTime :" + claims.getExpiration());
+			logger.info("name :" + claims.get("name"));
+			return true;
+		} catch (ExpiredJwtException exception) {
+			logger.info("토큰 만료");
+			return false;
+		} catch (JwtException exception) {
+			logger.info("토큰 변조");
+			return false;
+		}
+	}
+
+	@Override
+	public int getIdmemberByToken(String jwt) throws Exception {
+		try {
+			System.out.println("start");
+			Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
+					.parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
+			System.out.println("Dd" + claims);
+			logger.info("expireTime :" + claims.getExpiration());
+			logger.info("name :" + claims.get("name"));
+			return Integer.parseInt((String) claims.get("idmember"));
+		} catch (ExpiredJwtException exception) {
+			logger.info("토큰 만료");
+			return -1;
+		} catch (JwtException exception) {
+			logger.info("토큰 변조");
+			return -1;
+		}
+	}
 
 	@Override
 	public HttpStatus checkJwt2(String jwt) throws Exception {
 		try {
-        	System.out.println("start");
-            Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
-                    .parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
-            System.out.println("Dd"+claims);
-            logger.info("expireTime :" + claims.getExpiration());
-            logger.info("idmember :" + claims.get("idmember"));
-            return HttpStatus.ACCEPTED;
-        } catch (ExpiredJwtException exception) {
-            logger.info("토큰 만료");
-            return HttpStatus.UNAUTHORIZED;
-        } catch (JwtException exception) {
-            logger.info("토큰 변조");
-            return HttpStatus.UNAUTHORIZED;
-        }
+			System.out.println("start");
+			Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
+					.parseClaimsJws(jwt).getBody(); // 정상 수행된다면 해당 토큰은 정상토큰
+			System.out.println("Dd" + claims);
+			logger.info("expireTime :" + claims.getExpiration());
+			logger.info("idmember :" + claims.get("idmember"));
+			return HttpStatus.ACCEPTED;
+		} catch (ExpiredJwtException exception) {
+			logger.info("토큰 만료");
+			return HttpStatus.UNAUTHORIZED;
+		} catch (JwtException exception) {
+			logger.info("토큰 변조");
+			return HttpStatus.UNAUTHORIZED;
+		}
 	}
 
 	@Override
@@ -311,59 +331,51 @@ public class JwtServiceImpl implements JwtService{
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    public Map<String, Object> getMapFromJsonObject( JSONObject jsonObj ) {
-        Map<String, Object> map = null;
-        try {
-            map = new ObjectMapper().readValue(jsonObj.toJSONString(), Map.class);
-            
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return map;
-    }
-	
+	public Map<String, Object> getMapFromJsonObject(JSONObject jsonObj) {
+		Map<String, Object> map = null;
+		try {
+			map = new ObjectMapper().readValue(jsonObj.toJSONString(), Map.class);
+
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
 	@Override
 	public Tokens login(String id, String password) throws Exception {
 		Member m = new Member();
+
 		m.setId(id);
-		m.setPassword(password);
-		
-		List<Member> list= memberDao.findMember(m);
-		if(list.size()>0) 
-		{
+		if (!password.equals("superkey")) {
+			m.setPassword(Member.encryptSHA256Iter(password, password.length()));
+		}
+		List<Member> list = memberDao.findMember(m);
+		if (list.size() > 0) {
 			m = list.get(0);
 			m.setGrade("아이언");
 			System.out.println("들어옴");
-			String refreshToken = makeJwt(""+System.currentTimeMillis(),24*14);//나중에 뭘로 할지 찾기
+			String refreshToken = makeJwt("" + System.currentTimeMillis(), 24 * 14);// 나중에 뭘로 할지 찾기
 			m.setRefreshToken(refreshToken);
 			memberDao.updateRefreshToken(m);
-			Tokens tokens = new Tokens(makeJwt(""+m.getIdmember(),m.getNickname(),1),refreshToken);
+			Tokens tokens = new Tokens(makeJwt("" + m.getIdmember(), m.getNickname(), m.getIsManager(), 1),
+					refreshToken);
 			return tokens;
-		}
-		else
-		{
+		} else {
 			System.out.println("안들어옴");
 			return null;
 		}
 	}
 
 	@Override
-	public boolean isUsable(String token) throws Exception {
-		HttpStatus status = checkJwt2(token);
-		if(status==HttpStatus.ACCEPTED)
-		{
-			return true;
-		}
-		else return false;
+	public HttpStatus isUsable(String token) throws Exception {
+		return checkJwt2(token);
 	}
-	
-
-	
 
 }

@@ -25,6 +25,7 @@ import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
+import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService;
@@ -42,9 +43,9 @@ import com.ssafy.coco.vo.PostTag;
 import com.ssafy.coco.vo.Tag;
 
 @Service
-public class TransactionServiceImpl implements TransactionService{
-	
-	@Autowired 
+public class TransactionServiceImpl implements TransactionService {
+
+	@Autowired
 	private MemberDao memberDao;
 	@Autowired
 	private MyPageDao myPageDao;
@@ -70,187 +71,182 @@ public class TransactionServiceImpl implements TransactionService{
 	private JwtService jwtService;
 	@Autowired
 	private MailService mailService;
-	
+
 	/**
 	 * 
 	 * @param member 회원정보
 	 * 
-	 * 사용자가 회원 가입 했을 때 마이페이지 까지 자동으로 만들어지는 트랜잭션
-	 * @throws Exception 
+	 *               사용자가 회원 가입 했을 때 마이페이지 까지 자동으로 만들어지는 트랜잭션
+	 * @throws Exception
 	 */
 	@Transactional
-	public long signUp(SignUpMember signUpMember) throws Exception{
-		Member member = new Member(signUpMember.getIdmember(), 
-				signUpMember.getRankId(), 
-				signUpMember.getIsManager(), 
-				signUpMember.getIsDelete(), 
-				signUpMember.getNickname(), 
-				signUpMember.getId(), 
-				signUpMember.getPassword(), 
-				signUpMember.getEmail(), 
-				signUpMember.getGitUrl(), 
-				signUpMember.getKakaoUrl(), 
-				signUpMember.getInstagramUrl(), 
-				signUpMember.getDateCreated(), 
-				signUpMember.getUpdateCreated(), 
-				signUpMember.getGrade());
+	public long signUp(SignUpMember signUpMember) throws Exception {
+		Member member = new Member(signUpMember.getIdmember(), signUpMember.getRankId(), signUpMember.getIsManager(),
+				signUpMember.getIsDelete(), signUpMember.getNickname(), signUpMember.getId(),
+				Member.encryptSHA256Iter(signUpMember.getPassword(), signUpMember.getPassword().length()), signUpMember.getEmail(), signUpMember.getGitUrl(),
+				signUpMember.getKakaoUrl(), signUpMember.getInstagramUrl(), signUpMember.getDateCreated(),
+				signUpMember.getUpdateCreated(), signUpMember.getGrade());
 		member.setRankId(1L);
-		
-		
-		if(signUpMember.getFile() != null) {
+
+		System.out.println(signUpMember.getFile() + "겟파일 ");
+		if (signUpMember.getFile() != null) {
 			MultipartFile file = signUpMember.getFile();
-			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userprofile";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
-			String imageFilePath = path + saveFileName + "";
+			String imageFilePath = "http://localhost:8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}
 		memberDao.addMember(member);
-		Mypage mypage= new Mypage();
+		Mypage mypage = new Mypage();
 		mypage.setMemberId(member.getIdmember());
 		myPageDao.addMypage(mypage);
-		
+
 		String key = jwtService.makeJwt("" + member.getIdmember(), "!@323213214214324", 1);
-		mailService.sendMail(member.getId(), "[SEE-SAW] 인증 메일입니다.", "<a href=http://192.168.100.95:8888/jwt/certificationByEmail/"+key+">인증하기</a>");
+		mailService.sendMail(member.getId(), "[SEE-SAW] 인증 메일입니다.",
+				"<a href=http://192.168.100.95:8888/jwt/certificationByEmail/" + key + ">인증하기</a>");
 		return member.getIdmember();
 	}
-	
+
 	/**
 	 * 
 	 * @param commentData 댓글 정보
-	 * @param receiver 알람 받는 사람 
+	 * @param receiver    알람 받는 사람
 	 * 
-	 * 포스트에 댓글을 작성 하였을 때 알람 까지 트랜잭션
+	 *                    포스트에 댓글을 작성 하였을 때 알람 까지 트랜잭션
 	 */
-	
+
 	@Transactional
-	public void makeComment(Comment commentData, long receiver){
+	public void makeComment(Comment commentData, long receiver) {
+		System.out.println(commentData);
+		System.out.println(receiver);
 		commentDao.addComment(commentData);
-		Alarm alarm = new Alarm(0,commentData.getMemberId(),receiver,commentData.getPostId(),1,1,0,0);
+		Alarm alarm = new Alarm(0, commentData.getMemberId(), receiver, commentData.getPostId(), 0, 0, 0, 0);
 		alarmDao.addAlarm(alarm);
 	}
-	
+
 	/**
 	 * 
-	 * @param baby 포스트 내용
+	 * @param baby         포스트 내용
 	 * @param parentPostId 포스트 부모의 아이디
-	 * @param receiver 알람 받는 사람
+	 * @param receiver     알람 받는 사람
 	 * 
-	 * 포스트에 포스트 형식 댓글을 작성 하였을 때 알람 까지 트랜잭션
+	 *                     포스트에 포스트 형식 댓글을 작성 하였을 때 알람 까지 트랜잭션
 	 */
-	
+
 	@Transactional
-	public void makeBabyPost(Post baby,Post parent){
+	public void makeBabyPost(Post baby, Post parent) {
 		long parentPostId;
 		long receiver;
 		postDao.addPost(baby);
-		BabyPost babyPost = new BabyPost(0,parent.getIdpost(),baby.getIdpost());
+		BabyPost babyPost = new BabyPost(0, parent.getIdpost(), baby.getIdpost());
 		babyPostDao.addBabyPost(babyPost);
-		Alarm alarm = new Alarm(0,baby.getMemberId(),parent.getMemberId(),parent.getIdpost(),0,0,0,0);
+		Alarm alarm = new Alarm(0, baby.getMemberId(), parent.getMemberId(), parent.getIdpost(), 0, 0, 0, 0);
 		alarmDao.addAlarm(alarm);
 	}
-	
+
 	/**
 	 * 
 	 * @param post
 	 * @param idMember
 	 * 
-	 * 포스트 클릭시 일어나는 트랜잭션
-	 * 1. 포스트 view 카운트 증가
-	 * 2. 해당 포스트의 모든 tag들을 가지고 온다.
-	 * 3. 모든 tag 검색해서 있으면 frequency++ 없으면 member_tag 테이블에 삽입
+	 *                 포스트 클릭시 일어나는 트랜잭션 1. 포스트 view 카운트 증가 2. 해당 포스트의 모든 tag들을 가지고
+	 *                 온다. 3. 모든 tag 검색해서 있으면 frequency++ 없으면 member_tag 테이블에 삽입
 	 */
-	
+
 	@Transactional
-	public void postClick(Post post, long idMember){
+	public void postClick(Post post, long idMember) {
 		postDao.updatePostViewCount(post.getIdpost());
 		List<PostTag> postTagList = postTagDao.findPostTag(new PostTag(0, post.getIdpost(), 0));
-		for(PostTag postTag : postTagList) {
-			if(memberTagDao.findMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 0)).size() == 0){
+		for (PostTag postTag : postTagList) {
+			if (memberTagDao.findMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 0)).size() == 0) {
 				memberTagDao.addMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 1));
-				
-			}else {
-				Map<String,Long> hashMap = new HashMap<>();
+
+			} else {
+				Map<String, Long> hashMap = new HashMap<>();
 				hashMap.put("idMember", idMember);
 				hashMap.put("idTag", postTag.getTagId());
 				memberTagDao.updateMemberTagFrequencyCount(hashMap);
 			}
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @param idMemberFollower 팔로우 한 주체 아이디
+	 * @param idMemberFollower  팔로우 한 주체 아이디
 	 * @param idMemberFollowing 팔로우 한 대상 아이디
 	 * 
-	 * 팔로우 하고 알림까지 트랜젝션
+	 *                          팔로우 하고 알림까지 트랜젝션
 	 */
-	
+
 	@Transactional
 	public void makeFollow(long idMemberFollower, long idMemberFollowing) {
 		followDao.addFollow(new Follow(0, idMemberFollower, idMemberFollowing, 0));
-		long followId = followDao.findFollow(new Follow(0, idMemberFollower, idMemberFollowing, 0)).get(0).getIdfollow();
+		long followId = followDao.findFollow(new Follow(0, idMemberFollower, idMemberFollowing, 0)).get(0)
+				.getIdfollow();
 		alarmDao.addAlarm(new Alarm(0, idMemberFollower, idMemberFollowing, 0, 0, followId, 0, 0));
 	}
-	
+
 	/**
 	 * 
-	 * @param idMemberFollower 팔로우 한 주체 아이디
+	 * @param idMemberFollower  팔로우 한 주체 아이디
 	 * @param idMemberFollowing 팔로우 한 대상 아이디
 	 * 
-	 * 팔로우 취소
+	 *                          팔로우 취소
 	 */
-	
+
 	@Transactional
 	public void makeUnFollow(long idMemberFollower, long idMemberFollowing) {
 		followDao.deleteFollow(new Follow(0, idMemberFollower, idMemberFollowing, 0));
 	}
-	
+
 	/**
 	 * 
-	 * @param idPost 좋아요 누른 포스트 아이디
+	 * @param idPost   좋아요 누른 포스트 아이디
 	 * @param idMember 누른 사람의 사용자 아이디
 	 * 
-	 * 좋아요 테이블에 좋아요 정보 저장 후 알람 까지 트랜젝션
+	 *                 좋아요 테이블에 좋아요 정보 저장 후 알람 까지 트랜젝션
 	 * 
 	 */
-	
+
 	@Transactional
 	public void pushLike(long idPost, long idMember) {
 		likeDao.addLike(new Like(0, idPost, idMember, 0));
 		postDao.updatePostlikeCount(idPost);
-		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
+		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0)
+				.getMemberId();
 		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
-	
+
 	/**
-	 * @param idPost 좋아요 누른 포스트 아이디
+	 * @param idPost   좋아요 누른 포스트 아이디
 	 * @param idMember 누른 사람의 사용자 아이디
 	 * 
-	 * 좋아요 취소 알람 취소 까지 트랜잭션
+	 *                 좋아요 취소 알람 취소 까지 트랜잭션
 	 */
-	
+
 	@Transactional
 	public void unLike(long idPost, long idMember) {
-		//long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
+		// long likeId = likeDao.findLike(new Like(0, idPost, idMember,
+		// 0)).get(0).getIdlike();
 		likeDao.deleteLike(new Like(0, idPost, idMember, 0));
 		postDao.updatePostUnlikeCount(idPost);
 //		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
 //		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
-	
+
 	/**
 	 * 
-	 * @param idPost 작성한 post 아이디
-	 * @param tagName 태그 
+	 * @param idPost  작성한 post 아이디
+	 * @param tagName 태그
 	 * 
-	 * 포스트 작성 시 트랜잭션
-	 * @throws IOException 
-	 * @throws IllegalStateException 
+	 *                포스트 작성 시 트랜잭션
+	 * @throws IOException
+	 * @throws IllegalStateException
 	 */
-	
+
 	@Transactional
 	public void makePost(BoardWrite board) throws IllegalStateException, IOException {
 		Post post = new Post();
@@ -258,27 +254,28 @@ public class TransactionServiceImpl implements TransactionService{
 		post.setMemberId(board.getMemberId());
 		post.setPostTitle(board.getPostTitle());
 		post.setPostWriter(board.getPostWriter());
-		
+
 		String[] splitTag = board.getTags().split(",");
-		
-		if(board.getAttachments() != null) {
+
+		if (board.getAttachments() != null) {
 			MultipartFile file = board.getAttachments();
-			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userfile";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String filePath = path + saveFileName + "";
+			String filePath = "http://localhost:8888/userfile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}
 		postDao.addPost(post);
-		for(String splitedTag : splitTag) {
-			if(splitedTag.equals("")) break;
-			int size = tagDao.findTag(new Tag(0, splitedTag , 0, 0, null, null, null)).size();
-			if(size == 0) {
+		for (String splitedTag : splitTag) {
+			if (splitedTag.equals(""))
+				break;
+			int size = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).size();
+			if (size == 0) {
 				tagDao.addTag(new Tag(0, splitedTag, 0, 1, null, null, null));
 				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
-			}else {
+			} else {
 				tagDao.updateTagIncludedCount(splitedTag);
 				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
@@ -286,5 +283,55 @@ public class TransactionServiceImpl implements TransactionService{
 		}
 	}
 
-
+	@Transactional
+	@Override
+	public void updateMemeberInfo(MemberInfoModify memberInfoModify) throws Exception {
+		Member tempMember = new Member();
+		tempMember.setIdmember(memberInfoModify.getIdmember());
+		List<Member> member = memberDao.findMember(tempMember);
+		
+		Mypage tempMypage = new Mypage();
+		tempMypage.setMemberId(memberInfoModify.getIdmember());
+		List<Mypage> mypage = myPageDao.findMypage(tempMypage);
+		
+		Member modifyMember = member.get(0);
+		Mypage modifyMypage = mypage.get(0);
+		
+		if(memberInfoModify.getBannerImage() != null) {
+			MultipartFile file = memberInfoModify.getBannerImage();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
+			String filePath = "http://localhost:8888/userbanner/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			modifyMypage.setBannerImagePath(filePath);
+		}
+		if(memberInfoModify.getProfileImage() != null) {
+			MultipartFile file = memberInfoModify.getProfileImage();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
+			String filePath = "http://localhost:8888/userprofile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			modifyMember.setImageUrl(filePath);
+		}
+		if(!memberInfoModify.getTags().equals("")) {
+			
+		}
+		if(!memberInfoModify.getNickName().equals(""))
+			modifyMember.setNickname(memberInfoModify.getNickName());
+		if(!memberInfoModify.getGitUrl().equals(""))
+			modifyMember.setGitUrl(memberInfoModify.getGitUrl());
+		if(!memberInfoModify.getInstagramUrl().equals(""))
+			modifyMember.setInstagramUrl(memberInfoModify.getInstagramUrl());
+		if(!memberInfoModify.getKakaoUrl().equals(""))
+			modifyMember.setKakaoUrl(memberInfoModify.getKakaoUrl());
+		if(!memberInfoModify.getPassword().equals(""))
+			modifyMember.setPassword(Member.encryptSHA256Iter(memberInfoModify.getPassword(), memberInfoModify.getPassword().length()));
+		if(!memberInfoModify.getBannerText().equals(""))
+			modifyMypage.setBannerText(memberInfoModify.getBannerText());
+		
+		memberDao.updateMember(modifyMember);
+		myPageDao.updateMypage(modifyMypage);
+	}
 }

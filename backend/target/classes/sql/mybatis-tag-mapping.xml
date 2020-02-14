@@ -18,13 +18,13 @@
 		first_time_created, most_recently_mentioned_time,image_path)
 		
 		values(#{tagName},#{searchedNumber},#{includedNumber},
-		now(),now(),#{imagePath})
+		DATE_ADD(NOW(), INTERVAL 9 HOUR),DATE_ADD(NOW(), INTERVAL 9 HOUR),#{imagePath})
 	</sql>
 	<sql id="update-Tag">
 		update tag set
 		searched_number=#{searchedNumber},
 		included_number=#{includedNumber},
-		most_recently_mentioned_time=now(),
+		most_recently_mentioned_time=DATE_ADD(NOW(), INTERVAL 9 HOUR),
 		image_path=#{imagePath}
 		where
 		idtag=#{idtag}
@@ -73,7 +73,7 @@
 	</update>
 	
 	<update id="updateTagIncludedCount" parameterType="string">
-		update `coco`.`tag` set `included_number` = `included_number` + 1 , `most_recently_mentioned_time` = now() where tag_name = #{value};
+		update `coco`.`tag` set `included_number` = `included_number` + 1 , `most_recently_mentioned_time` = DATE_ADD(NOW(), INTERVAL 9 HOUR) where tag_name = #{value};
 	</update>
 
 	<delete id="deleteTag" parameterType="Tag">

@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService{
 		String charset = "utf-8";
 		String hostSMTP = "smtp.naver.com";
 		String hostSMTPid = "a13975";
-		String hostSMTPpwd = "4856aa!!";
+		String hostSMTPpwd = "Tkvlxkfcnf1!!";
 		String fromEmail = "a13975@naver.com";
 		String fromName = "이모찌";
 		

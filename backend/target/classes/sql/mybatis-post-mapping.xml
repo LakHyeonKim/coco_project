@@ -16,8 +16,8 @@
 		insert into post
 		(member_id, post_title, post_writer,
 		date_created, update_created, code, like_count, views, image_path, file_path, access)
-		values(#{memberId},#{postTitle},#{postWriter},now(),
-		now(), #{code}, #{likeCount}, #{views}, #{imagePath}, #{filePath}, #{access})
+		values(#{memberId},#{postTitle},#{postWriter},DATE_ADD(NOW(), INTERVAL 9 HOUR),
+		DATE_ADD(NOW(), INTERVAL 9 HOUR), #{code}, #{likeCount}, #{views}, #{imagePath}, #{filePath}, #{access})
 	</sql>
 	<sql id="update-Post">
 		update post set
@@ -110,12 +110,48 @@
 		order by date_created desc
 	</select>
 	
+	<select id="findByAllKeywordMyPosts" parameterType="OrderSearchKeyword" resultType="post">
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access  
+		from `coco`.`post` 
+		where member_id = #{youIdMember} and (idpost in (select post_id from `coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag` where tag_name like '%${keyword}%')) or post_title like '%${keyword}%' or code like '%${keyword}%' or post_writer like '%${keyword}%') 
+		<if test="order == 1">
+				order by like_count asc;
+		</if>
+		<if test="order == 2">
+				order by like_count desc;
+		</if>
+		<if test="order == 3">
+				order by date_created asc;
+		</if>
+		<if test="order == 4">
+				order by date_created desc;
+		</if>
+	</select>
+	
 	<!-- 3. post tag로 검색 -->
 	<select id="findPostByTag" parameterType="string" resultType="Post">
 		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
 		from `coco`.`post` where idpost 
 		in (select post_id from `coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag` where tag_name like '%${value}%'))
 		order by date_created desc
+	</select>
+	
+	<select id="findByTagKeywordMyPosts" parameterType="OrderSearchKeyword" resultType="Post">
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
+		from `coco`.`post` 
+		where member_id = #{youIdMember} and (idpost in (select post_id from `coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag` where tag_name like '%${keyword}%')))
+		<if test="order == 1">
+				order by like_count asc;
+		</if>
+		<if test="order == 2">
+				order by like_count desc;
+		</if>
+		<if test="order == 3">
+				order by date_created asc;
+		</if>
+		<if test="order == 4">
+				order by date_created desc;
+		</if>
 	</select>
 	
 	<!-- 4. post title로 검색 -->
@@ -126,12 +162,48 @@
 		order by date_created desc
 	</select>
 	
+	<select id="findByPostTitleKeywordMyPosts" parameterType="OrderSearchKeyword" resultType="Post">
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access 
+		from `coco`.`post` 
+		where member_id = #{youIdMember} and post_title like '%${keyword}%'
+		<if test="order == 1">
+				order by like_count asc;
+		</if>
+		<if test="order == 2">
+				order by like_count desc;
+		</if>
+		<if test="order == 3">
+				order by date_created asc;
+		</if>
+		<if test="order == 4">
+				order by date_created desc;
+		</if>
+	</select>
+	
 	<!-- 5. post 내용(code)에서 만 검색 -->
 	<select id="findPostByCode" parameterType="string" resultType="Post">
 		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access  
 		from `coco`.`post` 
 		where code like '%${value}%'
 		order by date_created desc
+	</select>
+	
+	<select id="findByPostCodeKeywordMyPosts" parameterType="OrderSearchKeyword" resultType="Post">
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, file_path, access  
+		from `coco`.`post` 
+		where member_id = #{youIdMember} and code like '%${keyword}%'
+		<if test="order == 1">
+				order by like_count asc;
+		</if>
+		<if test="order == 2">
+				order by like_count desc;
+		</if>
+		<if test="order == 3">
+				order by date_created asc;
+		</if>
+		<if test="order == 4">
+				order by date_created desc;
+		</if>
 	</select>
 	
 	<!-- 6. post 아이디로 검색 -->

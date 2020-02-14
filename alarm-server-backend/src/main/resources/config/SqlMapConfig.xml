@@ -14,6 +14,7 @@
 
 	<mappers>
 		<mapper resource="sql/mybatis-alarm-mapping.xml"/>
-		
+		<mapper resource="sql/mybatis-message-mapping.xml"/>
+		<mapper resource="sql/mybatis-room-mapping.xml"/>
 	</mappers>
 </configuration>

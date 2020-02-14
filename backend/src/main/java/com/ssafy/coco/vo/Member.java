@@ -1,5 +1,7 @@
 package com.ssafy.coco.vo;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 
 public class Member {
@@ -19,12 +21,17 @@ public class Member {
 	String grade;
 	String imageUrl;
 	String refreshToken;
-	
+
 	public Member() {
 		super();
 	}
 	
-	
+
+	public Member(long idmember) {
+		super();
+		this.idmember = idmember;
+	}
+
 
 	public Member(long idmember, long rankId, int isManager, int isDelete, String nickname, String id, String password,
 			String email, String gitUrl, String kakaoUrl, String instagramUrl, Timestamp dateCreated,
@@ -210,8 +217,8 @@ public class Member {
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
-	
-	
+
+
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -231,5 +238,30 @@ public class Member {
 				+ ", refreshToken=" + refreshToken + "]";
 	}
 	
+	public static String encryptSHA256Iter(String str, int iterNum) {
+		String prev = "coco";
+		String post = "ssafy";
+		String sha = prev+str+post;
+		iterNum *= (str.length() % 5000);
+		for (int t = 0; t < iterNum; t++) {
+			try {
+				MessageDigest sh = MessageDigest.getInstance("SHA-256");
+				sh.update(sha.getBytes());
+				byte byteData[] = sh.digest();
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < byteData.length; i++) {
+					sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+				}
+
+				sha = sb.toString();
+
+			} catch (NoSuchAlgorithmException e) {
+				// e.printStackTrace();
+				System.out.println("Encrypt Error - NoSuchAlgorithmException");
+				sha = null;
+			}
+		}
+		return sha;
+	}
 	
 }
