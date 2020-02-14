@@ -17,13 +17,11 @@
 					<div id="profile-info">
 						<p id="user-nickname">
 							{{ postWriter }}
-							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" outlined small>
-								<span>팔로우</span>
-								<v-icon small>mdi-plus-thick</v-icon>
-							</v-btn>
-							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" outlined small>
-								<span>팔로잉</span>
-								<v-icon small>mdi-check-bold</v-icon>
+							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" @click="follow" outlined small>
+								<span v-show="!isFollow">팔로우</span>
+								<span v-show="isFollow">팔로잉</span>
+								<v-icon v-show="!isFollow" small>mdi-plus-thick</v-icon>
+								<v-icon v-show="isFollow" small>mdi-check-bold</v-icon>
 							</v-btn>
 						</p>
 						<span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span>
@@ -137,6 +135,7 @@ export default {
 		MediumClap
 	},
 	props: {
+		isFollow: {},
 		idPost: {},
 		memberId: {},
 		postTitle: {},
@@ -165,6 +164,30 @@ export default {
 		};
 	},
 	methods: {
+		follow() {
+			let requestAddress = "";
+			if (this.isFollow) {
+				requestAddress = "/trc/makeUnFollow/";
+			} else {
+				requestAddress = "/trc/makeFollow/";
+			}
+
+			http.post(
+				requestAddress,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(response => {
+					console.log(response);
+					this.$emit("updateFollow");
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
 		updateLike(data) {
 			this.$emit("updateLike", data);
 		},
