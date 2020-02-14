@@ -87,7 +87,7 @@ public class TestController {
 	MemberService memberService;
 	@Autowired
 	MailService mailService;
-	
+
 	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
 	public ResponseEntity search() throws Exception {
@@ -98,10 +98,10 @@ public class TestController {
 		String uri = "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q=자바&start=10";
 		ResponseEntity<String> rest_reponse;
 		rest_reponse = restTemplate.getForEntity(uri, String.class);
-		
+
 		String bodys = rest_reponse.getBody();
 		System.out.println(bodys);
-		JSONObject data = (JSONObject)p.parse(bodys);
+		JSONObject data = (JSONObject) p.parse(bodys);
 		/*
 		 * JSONArray items = (JSONArray) data.get("items"); JsonObject item; for(int i =
 		 * 0 ; i < items.size(); i++) { Map<String,String> map = (Map<String, String>)
@@ -117,17 +117,16 @@ public class TestController {
 		 * System.out.println(snippet); System.out.println(pagemap);
 		 * System.out.println(cse_thumnail); System.out.println(src); }
 		 */
-		
 
-		
 		System.out.println("Ss");
-		
+
 		return new ResponseEntity(bodys, HttpStatus.OK);
-	
+
 	}
-	
+
 	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
-	@RequestMapping(value = "/tttt{code}", produces = "application/json", method = { RequestMethod.GET,RequestMethod.POST })
+	@RequestMapping(value = "/tttt{code}", produces = "application/json", method = { RequestMethod.GET,
+			RequestMethod.POST })
 	public void setUp(@PathVariable String code) throws IOException {
 		HttpTransport httpTransport = new NetHttpTransport();
 		JacksonFactory jsonFactory = new JacksonFactory();
@@ -143,8 +142,8 @@ public class TestController {
 		String scope = "https://www.googleapis.com/auth/contacts.readonly";
 
 		// Step 1: Authorize -->
-		String authorizationUrl = new GoogleBrowserClientRequestUrl(clientId, "http://localhost:8888/test/tttt", Arrays.asList(scope))
-				.build();
+		String authorizationUrl = new GoogleBrowserClientRequestUrl(clientId, "http://localhost:8888/test/tttt",
+				Arrays.asList(scope)).build();
 		// Point or redirect your user to the authorizationUrl.
 		System.out.println("Go to the following link in your browser:");
 		System.out.println(authorizationUrl);
@@ -152,7 +151,7 @@ public class TestController {
 		// Read the authorization code from the standard input stream.
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("What is the authorization code?");
-		//String code = in.readLine();
+		// String code = in.readLine();
 		// End of Step 1 <--
 
 		// Step 2: Exchange -->
@@ -320,5 +319,15 @@ public class TestController {
 		}
 		return returnNode;
 
+	}
+
+	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
+	@RequestMapping(value = "/jsonTest", produces = "application/json", method = { RequestMethod.GET,
+			RequestMethod.POST })
+	public void jsonTest(String JJ) {
+
+		System.out.println("ssadas");
+
+		System.out.println("구글구글 " + JJ);
 	}
 }

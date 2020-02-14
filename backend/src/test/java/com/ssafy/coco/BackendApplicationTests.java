@@ -49,6 +49,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.people.v1.PeopleService;
+import com.google.api.services.people.v1.model.ListConnectionsResponse;
+import com.google.api.services.people.v1.model.Person;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -136,7 +139,8 @@ class BackendApplicationTests {
 		}
 		System.out.println("Ss");
 	}
-
+	
+	
 	public void setUp() throws IOException {
 		HttpTransport httpTransport = new NetHttpTransport();
 		JacksonFactory jsonFactory = new JacksonFactory();
@@ -148,7 +152,7 @@ class BackendApplicationTests {
 		String clientSecret = "kaqz1mBd2kgPLDku9nLAf4Wj";
 
 		// Or your redirect URL for web based applications.
-		String redirectUrl = "http://localhost:8888";
+		String redirectUrl = "http://localhost:8888/test/jsonTest";
 		String scope = "https://www.googleapis.com/auth/contacts.readonly";
 
 		// Step 1: Authorize -->
@@ -158,11 +162,13 @@ class BackendApplicationTests {
 		// Point or redirect your user to the authorizationUrl.
 		System.out.println("Go to the following link in your browser:");
 		System.out.println(authorizationUrl);
-
+     
 		// Read the authorization code from the standard input stream.
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("What is the authorization code?");
 		String code = in.readLine();
+		
+//		String code = "4/wgFGim5DMubUa2rD-jjyiGDAf46-ria-sVphINBvHV99N_To9TP6g4S_AwsQfeNEpBwIXHnoxfTEFBO7vy_44jE";
 		// End of Step 1 <--
 
 		// Step 2: Exchange -->
@@ -173,8 +179,11 @@ class BackendApplicationTests {
 		GoogleCredential credential = new GoogleCredential.Builder().setTransport(httpTransport)
 				.setJsonFactory(jsonFactory).setClientSecrets(clientId, clientSecret).build()
 				.setFromTokenResponse(tokenResponse);
-
 		PeopleService peopleService = new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
+		ListConnectionsResponse response = peopleService.people().connections().list("people/me")
+			    .setPersonFields("names,emailAddresses")
+			    .execute();
+			List<Person> connections = response.getConnections();
 	}
 
 	/*

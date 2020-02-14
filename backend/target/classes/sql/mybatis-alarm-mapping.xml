@@ -8,16 +8,16 @@
 <mapper namespace="Alarm_Mapper">
 	<sql id="select-Alarm">
 		select idalarm, member_caller, member_receiver, post_id,
-		like_id, follow_id, is_read, access
+		like_id, follow_id, is_read, access,date_created
 		from coco.alarm
 	</sql>
 	<sql id="insert-Alarm">
 		insert into coco.alarm
 		(member_caller,member_receiver, post_id,
-		like_id, follow_id, is_read, access)
+		like_id, follow_id, is_read, access,date_created)
 
 		values(#{memberCaller},#{memberReceiver},
-		#{postId},#{likeId},#{followId},#{isRead},#{access})
+		#{postId},#{likeId},#{followId},#{isRead},#{access},DATE_ADD(NOW(), INTERVAL 9 HOUR))
 	</sql>
 	<sql id="update-Alarm">
 		update alarm set
@@ -38,6 +38,7 @@
 	<!-- 전체 검색 -->
 	<select id="findAllAlarm" resultType="Alarm">
 		<include refid="select-Alarm"></include>
+		order by date_created desc;
 	</select>
 	<select id="findAlarm" resultType="Alarm" parameterType="Alarm">
 		<include refid="select-Alarm"></include>
@@ -72,6 +73,7 @@
 				is_read = ${isRead}
 			</if>
 		</where>
+		order by date_created desc;
 	</select>
 
 	<insert id="addAlarm" parameterType="Alarm"

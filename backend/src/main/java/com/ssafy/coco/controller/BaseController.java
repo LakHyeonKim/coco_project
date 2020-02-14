@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -83,21 +84,20 @@ public class BaseController {
 	private WordDictionaryService wordDictionaryService;
 
 	@SuppressWarnings("unchecked")
-    public static Map<String, Object> getMapFromJsonObject( JSONObject jsonObj ) {
-        Map<String, Object> map = null;
-        try {
-            map = new ObjectMapper().readValue(jsonObj.toJSONString(), Map.class) ;
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return map;
-    }
-	
-	
+	public static Map<String, Object> getMapFromJsonObject(JSONObject jsonObj) {
+		Map<String, Object> map = null;
+		try {
+			map = new ObjectMapper().readValue(jsonObj.toJSONString(), Map.class);
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
 	// 알람
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved list"),
 			@ApiResponse(code = 401, message = "인증 오류 입니다"),
@@ -112,19 +112,17 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Alarm>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "비밀 번호 체크", response = List.class)
 	@RequestMapping(value = "/checkPwd", method = RequestMethod.POST)
 	public ResponseEntity<List<Alarm>> checkPwd(@RequestBody Member member) throws Exception {
 		int size = memberService.findMember(member).size();
-		if (size ==0) {
+		if (size == 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
 	}
-	
-	
-	
+
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
 	public ResponseEntity<List<Alarm>> findAlarm(@RequestBody Alarm alarm) throws Exception {
@@ -134,8 +132,6 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Alarm>>(answers, HttpStatus.OK);
 	}
-	
-	
 
 	@ApiOperation(value = "알람 입력", response = List.class)
 	@RequestMapping(value = "/addAlarm", method = RequestMethod.POST)
@@ -149,8 +145,7 @@ public class BaseController {
 
 	@ApiOperation(value = "알람 수정", response = List.class)
 	@RequestMapping(value = "/updateAlarm", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateAlarm(@RequestBody Alarm alarm
-			) throws Exception {
+	public ResponseEntity<Integer> updateAlarm(@RequestBody Alarm alarm) throws Exception {
 		int answer = alarmService.updateAlarm(alarm);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -376,7 +371,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 멤버 반환", response = List.class)
 	@RequestMapping(value = "/findAllMember", method = RequestMethod.GET)
-	public ResponseEntity<List<Member>> findAllMember() throws Exception {
+	public ResponseEntity<List<Member>> findAllMember(@RequestHeader(value="Authorization")String jwt) throws Exception {
+		System.out.println("find all member: "+jwt);
 		List<Member> answers = memberService.findAllMember();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -397,9 +393,9 @@ public class BaseController {
 	@ApiOperation(value = "멤버 등록", response = List.class)
 	@RequestMapping(value = "/addMember", method = RequestMethod.POST)
 	public ResponseEntity<Integer> addMember(@RequestBody Member member) throws Exception {
-		System.out.println("before"+member);
+		System.out.println("before" + member);
 		Integer answers = memberService.addMember(member);
-		System.out.println("after"+member);
+		System.out.println("after" + member);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
@@ -555,7 +551,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "마이 페이지 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deleteMypageTag", method = RequestMethod.DELETE)
 	public ResponseEntity<Integer> deleteMypageTag(@RequestBody MypageTag mypageTag) throws Exception {
@@ -565,7 +561,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "모든 포스트 반환", response = List.class)
 	@RequestMapping(value = "/findAllPost", method = RequestMethod.GET)
 	public ResponseEntity<List<Post>> findAllPost() throws Exception {
@@ -575,7 +571,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Post>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 포스트 반환", response = List.class)
 	@RequestMapping(value = "/findPost", method = RequestMethod.POST)
 	public ResponseEntity<List<Post>> findPost(@RequestBody Post post) throws Exception {
@@ -585,7 +581,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Post>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 등록", response = List.class)
 	@RequestMapping(value = "/addPost", method = RequestMethod.POST)
 	public ResponseEntity<Integer> addPost(@RequestBody Post post) throws Exception {
@@ -595,7 +591,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 수정", response = List.class)
 	@RequestMapping(value = "/updatePost", method = RequestMethod.PUT)
 	public ResponseEntity<Integer> updatePost(@RequestBody Post post) throws Exception {
@@ -605,7 +601,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 삭제", response = List.class)
 	@RequestMapping(value = "/deletePost", method = RequestMethod.DELETE)
 	public ResponseEntity<Integer> deletePost(@RequestBody Post post) throws Exception {
@@ -615,7 +611,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "모든 포스트 태그 반환", response = List.class)
 	@RequestMapping(value = "/findAllPostTag", method = RequestMethod.GET)
 	public ResponseEntity<List<PostTag>> findAllPostTag() throws Exception {
@@ -625,11 +621,11 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<PostTag>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 포스트 태그 반환", response = List.class)
 	@RequestMapping(value = "/findPostTag", method = RequestMethod.POST)
 	public ResponseEntity<List<PostTag>> findPostTag(@RequestBody PostTag postTag) throws Exception {
-		
+
 		System.out.println("findposttag");
 		List<PostTag> answers = postTagService.findPostTag(postTag);
 		if (answers.isEmpty()) {
@@ -637,7 +633,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<PostTag>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 태그 등록", response = List.class)
 	@RequestMapping(value = "/addPostTag", method = RequestMethod.POST)
 	public ResponseEntity<Integer> addPostTag(@RequestBody PostTag postTag) throws Exception {
@@ -647,7 +643,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deletePostTag", method = RequestMethod.DELETE)
 	public ResponseEntity<Integer> deletePostTag(@RequestBody PostTag postTag) throws Exception {
@@ -657,7 +653,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "모든 태그 반환", response = List.class)
 	@RequestMapping(value = "/findAllTag", method = RequestMethod.GET)
 	public ResponseEntity<List<Tag>> findAllTag() throws Exception {
@@ -667,7 +663,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Tag>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 태그 반환", response = List.class)
 	@RequestMapping(value = "/findTag", method = RequestMethod.POST)
 	public ResponseEntity<List<Tag>> findTag(@RequestBody Tag tag) throws Exception {
@@ -677,7 +673,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<Tag>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 태그 등록", response = List.class)
 	@RequestMapping(value = "/addTag", method = RequestMethod.POST)
 	public ResponseEntity<Integer> addTag(@RequestBody Tag tag) throws Exception {
@@ -687,7 +683,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 태그 수정", response = List.class)
 	@RequestMapping(value = "/updateTag", method = RequestMethod.PUT)
 	public ResponseEntity<Integer> updateTag(@RequestBody Tag tag) throws Exception {
@@ -697,7 +693,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "포스트 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deleteTag", method = RequestMethod.DELETE)
 	public ResponseEntity<Integer> deleteTag(@RequestBody Tag tag) throws Exception {
@@ -707,8 +703,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
-	
+
 	@ApiOperation(value = "모든 워드 사전 반환", response = List.class)
 	@RequestMapping(value = "/findAllWordDictionary", method = RequestMethod.GET)
 	public ResponseEntity<List<WordDictionary>> findAllWordDictionary() throws Exception {
@@ -718,17 +713,18 @@ public class BaseController {
 		}
 		return new ResponseEntity<List<WordDictionary>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 워드 사전 반환", response = List.class)
 	@RequestMapping(value = "/findWordDictionary", method = RequestMethod.POST)
-	public ResponseEntity<List<WordDictionary>> findWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
+	public ResponseEntity<List<WordDictionary>> findWordDictionary(@RequestBody WordDictionary wordDictionary)
+			throws Exception {
 		List<WordDictionary> answers = wordDictionaryService.findWordDictionary(wordDictionary);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<List<WordDictionary>>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 워드 사전 삭제", response = List.class)
 	@RequestMapping(value = "/addWordDictionary", method = RequestMethod.POST)
 	public ResponseEntity<Integer> addWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
@@ -738,7 +734,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 워드 사전 수정", response = List.class)
 	@RequestMapping(value = "/updateWordDictionary", method = RequestMethod.PUT)
 	public ResponseEntity<Integer> updateWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
@@ -748,7 +744,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "선택 워드 사전 삭제", response = List.class)
 	@RequestMapping(value = "/deleteWordDictionary", method = RequestMethod.DELETE)
 	public ResponseEntity<Integer> deleteWordDictionary(@RequestBody WordDictionary wordDictionary) throws Exception {
