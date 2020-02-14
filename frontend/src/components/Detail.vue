@@ -7,7 +7,7 @@
 				<br />
 				<div id="post-head">
 					<div id="profile-img">
-						<v-avatar size="40">
+						<v-avatar size="30">
 							<img src="imagePath" alt="user-img" v-if="imagePath" />
 							<img src="../assets/user.png" alt="default-img" v-else />
 							<!-- <v-gravatar :email="postWriter" alt="gravatar" :size="50" /> -->
@@ -17,12 +17,16 @@
 					<div id="profile-info">
 						<p id="user-nickname">
 							{{ postWriter }}
-							<v-btn class="ml-2" color="indigo" height="20px" outlined small>팔로우</v-btn>
+							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" @click="follow" outlined small>
+								<span v-show="!isFollow">팔로우</span>
+								<span v-show="isFollow">팔로잉</span>
+								<v-icon v-show="!isFollow" small>mdi-plus-thick</v-icon>
+								<v-icon v-show="isFollow" small>mdi-check-bold</v-icon>
+							</v-btn>
 						</p>
 						<span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span>
 						<span id="post-info" v-if="views > 1">views</span>
 						<span id="post-info" v-else>view</span>
-						<!-- <p id="post-date">{{ dateCreated }} | {{ updateCreated }} | {{ views }} views</p> -->
 					</div>
 				</div>
 			</div>
@@ -58,12 +62,55 @@
 
 				<div id="divide-line"></div>
 
+				<div id="commentCreateCard">
+					<v-card class="mx-auto">
+						<v-card-text id="commentCreateInfo">
+							<v-avatar size="40">
+								<img src="../assets/user.png" alt="default-img" />
+							</v-avatar>
+							<v-card-title id="commentCreatePlaceholder" v-show="!show" @click="moveinFocus">댓글을 작성해주세요</v-card-title>
+							<v-card-subtitle id="commentCreateNickname" v-show="show">{{ $session.get("nickname") }}</v-card-subtitle>
+						</v-card-text>
+
+						<v-expand-transition>
+							<div v-show="show">
+								<v-card-text id="commentCreateExpand">
+									<textarea
+										id="commentCreateInput"
+										style="resize: none;"
+										@blur="moveoutFocus"
+										v-model="commentContent"
+									/>
+									<v-btn outlined @click="commenting">댓글 작성</v-btn>
+								</v-card-text>
+							</div>
+						</v-expand-transition>
+					</v-card>
+				</div>
+
 				<div>
 					<div
-						v-for="comment in comments"
+						id="commentListCard"
+						v-for="comment in comments.slice().reverse()"
 						:key="comment.idcomment"
-					>{{ comment.commentWriter }} | {{ comment.contents }}</div>
+					>
+						<div id="commentInfo">
+							<router-link
+								id="commentWriter"
+								:to="{ name: 'mypage', params: { no: comment.memberId }}"
+							>{{ comment.commentWriter }}</router-link>
+							<div id="commentDate">{{ comment.updateCreated }}</div>
+						</div>
+
+						<pre id="commentContent">{{ comment.contents }}</pre>
+					</div>
 				</div>
+
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
 
 				<div>likeCount {{ likeCount }}</div>
 				<div>filePath{{ filePath }}</div>
@@ -79,6 +126,7 @@
 	</div>
 </template>
 <script>
+import http from "../http-common";
 import Prism from "../prism";
 import MediumClap from "./MediumClap";
 export default {
@@ -87,6 +135,7 @@ export default {
 		MediumClap
 	},
 	props: {
+		isFollow: {},
 		idPost: {},
 		memberId: {},
 		postTitle: {},
@@ -108,18 +157,92 @@ export default {
 		commentCount: {},
 		attachments: {}
 	},
+	data() {
+		return {
+			show: false,
+			commentContent: ""
+		};
+	},
 	methods: {
+		follow() {
+			let requestAddress = "";
+			if (this.isFollow) {
+				requestAddress = "/trc/makeUnFollow/";
+			} else {
+				requestAddress = "/trc/makeFollow/";
+			}
+
+			http.post(
+				requestAddress,
+				{
+					memberFollower: this.memberId,
+					memberFollowing: this.$session.get("id")
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(response => {
+					console.log(response);
+					this.$emit("updateFollow");
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
 		updateLike(data) {
 			this.$emit("updateLike", data);
+		},
+		expandCard() {
+			if (!this.show) {
+				this.show = !this.show;
+			}
+		},
+		async moveinFocus() {
+			await this.expandCard();
+			document.getElementById("commentCreateInput").focus();
+		},
+		moveoutFocus() {
+			if (!document.getElementById("commentCreateInput").value) {
+				this.show = !this.show;
+			}
+		},
+		commenting() {
+			if (!this.commentContent) {
+				return;
+			}
+			const userComment = {
+				comments: [
+					{
+						commentWriter: this.$session.get("nickname"),
+						contents: this.commentContent,
+						memberId: this.$session.get("id"),
+						postId: this.idPost
+					}
+				],
+				post: {
+					memberId: this.memberId
+				}
+			};
+			http.post("/trc/makeComment/", userComment, {
+				headers: {
+					Authorization: this.$session.get("accessToken")
+				}
+			})
+				.then(res => {
+					console.log(res);
+					this.$emit("addComment", userComment.comments[0]);
+					this.commentContent = "";
+					this.show = !this.show;
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		}
 	},
 	updated() {
 		Prism.highlightAll();
-	}
-	// ,
-	// mounted() {
-	// 	alert(this.no);
-	// }
+	},
+	mounted() {},
+	created() {}
 };
 </script>
 
@@ -169,5 +292,56 @@ export default {
 #divide-line {
 	margin: 20px 0;
 	border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+#commentCreateCard {
+	-webkit-font-smoothing: antialiased;
+}
+#commentCreateInfo {
+	display: flex;
+	align-items: center;
+}
+#commentCreatePlaceholder {
+	width: 100%;
+	color: rgba(0, 0, 0, 0.54);
+}
+#commentCreateNickname {
+	padding: 16px;
+	margin: 0;
+	color: gray;
+	font-weight: 500;
+}
+#commentCreateExpand {
+	padding: 0 16px 16px;
+}
+#commentCreateInput {
+	width: 100%;
+	min-height: 160px;
+	overflow: visible;
+	outline: none;
+}
+#commentListCard {
+	background: white;
+	margin: 20px 0 0;
+	padding: 10px 20px 15px;
+	border: 1px solid rgba(0, 0, 0, 0.09);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+#commentInfo {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 0 15px;
+	padding: 5px 0 0;
+}
+#commentWriter {
+	text-decoration: none;
+	font-size: 16px;
+}
+#commentDate {
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.68);
+}
+#commentContent {
+	overflow: auto;
+	white-space: pre-wrap;
 }
 </style>

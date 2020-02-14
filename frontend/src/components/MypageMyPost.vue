@@ -75,11 +75,17 @@ export default {
 	methods: {
 		changePostSel(idx) {
 			console.log(idx);
-			http.post("/api/findByMyPosts/", {
-				myIdMember: this.$session.get("id"),
-				order: idx,
-				youIdMember: this.no
-			})
+			http.post(
+				"/api/findByMyPosts/",
+				{
+					myIdMember: this.$session.get("id"),
+					order: idx,
+					youIdMember: this.no
+				},
+				{
+					headers: { Authorization: this.$session.get("accessToken") }
+				}
+			)
 				.then(response => {
 					this.posts = response.data;
 					console.log(this.posts);
@@ -126,14 +132,18 @@ export default {
 	},
 	mounted() {
 		console.log("MypageMyPost : " + this.no);
-		http.post("/api/findByMyPosts/", {
-			myIdMember: this.$session.get("id"),
-			order: 4,
-			youIdMember: this.no
-		})
+		http.post(
+			"/api/findByMyPosts/",
+			{
+				myIdMember: this.$session.get("id"),
+				order: 4,
+				youIdMember: this.no
+			},
+			{ headers: { Authorization: this.$session.get("accessToken") } }
+		)
 			.then(response => {
 				this.posts = response.data;
-				// console.log(response);
+				console.log(response);
 			})
 			.catch(error => {
 				console.log(error);

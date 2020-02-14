@@ -1,11 +1,7 @@
 <template>
 	<div style="display: flex ; align-itmes: center; justify-content: center;">
 		<validation-observer ref="form">
-			<form
-				@submit.prevent="register"
-				id="formData"
-				enctype="multipart/form-data"
-			>
+			<form @submit.prevent="register" id="formData" enctype="multipart/form-data">
 				<validation-provider name="프로필 이미지 ">
 					<img-inputer
 						name="file"
@@ -22,11 +18,7 @@
 
 				<!-- <v-gravatar :email="email" alt="gravatar" :size="50" /> -->
 
-				<validation-provider
-					name="아이디 "
-					rules="required|email"
-					v-slot="{ errors }"
-				>
+				<validation-provider name="아이디 " rules="required|email" v-slot="{ errors }">
 					<v-text-field
 						name="id"
 						v-model="signUpMember.id"
@@ -34,11 +26,7 @@
 						:error-messages="errors[0] ? errors[0] : []"
 					></v-text-field>
 				</validation-provider>
-				<validation-provider
-					name="닉네임 "
-					rules="required|max:10"
-					v-slot="{ errors }"
-				>
+				<validation-provider name="닉네임 " rules="required|max:10" v-slot="{ errors }">
 					<v-text-field
 						name="nickname"
 						v-model="signUpMember.nickname"
@@ -78,18 +66,9 @@
 						@click:append="pwd2 = !pwd2"
 					></v-text-field>
 				</validation-provider>
-				<v-text-field
-					v-model="signUpMember.gitUrl"
-					label="Git url(선택)"
-				></v-text-field>
-				<v-text-field
-					v-model="signUpMember.kakaoUrl"
-					label="Kakao url(선택)"
-				></v-text-field>
-				<v-text-field
-					v-model="signUpMember.instagramUrl"
-					label="Instagram url(선택)"
-				></v-text-field>
+				<v-text-field v-model="signUpMember.gitUrl" label="Git url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.kakaoUrl" label="Kakao url(선택)"></v-text-field>
+				<v-text-field v-model="signUpMember.instagramUrl" label="Instagram url(선택)"></v-text-field>
 
 				<v-btn class="mr-4" type="submit">회원가입</v-btn>
 				<v-btn @click="clear">초기화</v-btn>
@@ -97,9 +76,7 @@
 			<div>
 				<button v-on:click="idCheck">중복확인</button>
 				<div v-if="duplicate">
-					<div v-for="(message, idx) in duplicate" :key="idx">
-						{{ message }}
-					</div>
+					<div v-for="(message, idx) in duplicate" :key="idx">{{ message }}</div>
 				</div>
 			</div>
 		</validation-observer>
@@ -148,7 +125,7 @@ export default {
 			if (this.onSubmit() && this.idcheck) {
 				this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", formData);
-				http.post("/trc/signUp/", formData)
+				http.post("/jwt/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
 
@@ -236,7 +213,7 @@ export default {
 			if (this.signUpMember.id) {
 				this.duplicate = [];
 				console.log("DUPLICATE ", this.signUpMember.id);
-				http.post("/api/check", {
+				http.post("/jwt/check/", {
 					id: this.signUpMember.id
 				})
 					.then(res => {
