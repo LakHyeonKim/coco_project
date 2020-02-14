@@ -17,12 +17,12 @@
 		contents, date_created, update_created, access)
 
 		values(#{memberId},#{postId},
-		#{commentWriter},#{contents},now(),now(),#{access})
+		#{commentWriter},#{contents},DATE_ADD(NOW(), INTERVAL 9 HOUR),DATE_ADD(NOW(), INTERVAL 9 HOUR),#{access})
 	</sql>
 	<sql id="update-Comment">
 		update comment set
 		comment_writer=#{commentWriter},
-		update_created=now(),
+		update_created=DATE_ADD(NOW(), INTERVAL 9 HOUR),
 		contents=#{contents},
 		access=#{access}
 		where
