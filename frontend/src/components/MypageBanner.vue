@@ -10,7 +10,11 @@
 			</div>
 			<div id="info_title">{{ userInfo.mypage.bannerText }}</div>
 			<div id="info_desc">
-				<img id="imgUser" :src="userInfo.member.imageUrl" />
+				<img
+					id="imgUser"
+					src="http://192.168.100.57:8888/userprofile/ktt7566@naver.com_face-with-uneven-eyes-and-wavy-mouth.png"
+				/>
+				<!-- <img id="imgUser" :src="userInfo.member.imageUrl" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
 						<div id="nickname">{{ userInfo.member.nickname }}</div>
@@ -165,10 +169,14 @@ export default {
 			}
 			this.showModal_f = false;
 
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				memberFollowing: this.$route.params.no
-			})
+			http.post(
+				address,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log(response);
 				})
@@ -189,10 +197,14 @@ export default {
 			if (flag) address = "/api/findByFollowerListMember/";
 			else address = "/api/findByFollowingListMember/";
 
-			http.post(address, {
-				myIdMemeber: this.$session.get("id"),
-				youIdMember: this.$route.params.no
-			})
+			http.post(
+				address,
+				{
+					myIdMemeber: this.$session.get("id"),
+					youIdMember: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log("Banner getFollow()");
 					this.followList = response.data;
@@ -307,8 +319,11 @@ export default {
 #imgUser {
 	float: left;
 	width: 55px;
+	height: 55px;
+	margin-right: 10px;
+	margin-top: 3px;
 	border-radius: 50%;
-	background-color: white;
+	background-color: rgba(255, 255, 255, 0.3);
 }
 #info_title {
 	font-size: 25px;
@@ -357,9 +372,10 @@ export default {
 	#imgBannerBox {
 		height: 50vw;
 	}
-	#imgUser {
+	/* #imgUser {
 		width: 50px;
-	}
+		height: 50px;
+	} */
 	#infoBox {
 		top: -160px;
 	}

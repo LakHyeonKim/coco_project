@@ -13,11 +13,8 @@ export default new Vuex.Store({
 		idPost: 0,
 		searchtag: "",
 		tags: null,
-		nickname: ""
-		// init: true,
-		// memberemail: "",
-		// accessToken: "",
-		// refreshToken: "",
+		nickname: "",
+		isCheck: 0
 	},
 	getters: {
 		userId: function(state) {

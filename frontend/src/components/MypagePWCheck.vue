@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import http from "../http-common";
 export default {
 	data() {
 		return {
@@ -57,8 +58,30 @@ export default {
 	},
 	methods: {
 		pwCheck() {
-			this.dialog = false;
-			alert("???");
+			console.log(this.input_pw);
+
+			http.post(
+				"/api/checkPwd/",
+				{
+					idmember: this.$session.get("id"),
+					password: this.input_pw
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(response => {
+					console.log(response.status);
+					if (response.status == 204) {
+						alert("비밀번호가 일치하지 않습니다!");
+					} else {
+						this.dialog = false;
+						this.$store.state.isCheck = 1;
+						this.$router.push("/infoModify/");
+					}
+				})
+				.catch(error => {
+					console.log(error);
+				});
+			this.input_pw = "";
 		}
 	}
 };

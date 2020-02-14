@@ -1,7 +1,4 @@
-import {
-	extend,
-	configure
-} from "vee-validate";
+import { extend, configure } from "vee-validate";
 import {
 	required,
 	alpha,
@@ -10,9 +7,7 @@ import {
 	min,
 	max
 } from "vee-validate/dist/rules";
-import {
-	i18n
-} from "./i18n";
+import { i18n } from "./i18n";
 
 configure({
 	defaultMessage: (field, values) => {

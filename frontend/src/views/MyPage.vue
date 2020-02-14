@@ -1,8 +1,7 @@
 <template>
 	<div>
-		<MypageBanner :no="this.no" />
-		<MypageMyMenu :no="this.no" />
-		<MypageMyPost :no="this.no" />
+		<MypageBanner />
+		<MypageMyPost />
 		<MypageFooter />
 		<div id="blank"></div>
 	</div>
@@ -10,17 +9,14 @@
 
 <script>
 import MypageBanner from "@/components/MypageBanner";
-import MypageMyMenu from "@/components/MypageMyMenu";
 import MypageMyPost from "@/components/MypageMyPost";
 import MypageFooter from "@/components/MypageFooter";
 import store from "../store";
 export default {
 	name: "myPage",
 	store,
-	props: ["no"],
 	components: {
 		MypageBanner,
-		MypageMyMenu,
 		MypageMyPost,
 		MypageFooter
 	},
