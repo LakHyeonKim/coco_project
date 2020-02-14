@@ -2,13 +2,13 @@
 	<div id="chatWrap">
 		<div id="chatHeader">{{ room.roomName }}</div>
 		<div id="chatRoom">
-			<div id="chatLog" v-for="message in messages" :key="message">
-				<div class="anotherMsg" v-if="message.member_id != member_id">
-					<span class="anotherName">{{ message.member_id }}</span>
+			<div id="chatLog" v-for="message in messages" :key="message.idmessage">
+				<div class="anotherMsg" v-if="message.memberId != memberId && message.idmessage != 0">
+					<span class="anotherName">{{ message.nickName }}</span>
 					<span class="msg">{{ message.context }}</span>
 				</div>
-				<div class="myMsg" v-if="message.member_id == member_id">
-					<span class="anotherName">{{ message.member_id }}</span>
+				<div class="myMsg" v-if="message.memberId == memberId && message.idmessage != 0">
+					<span class="anotherName">{{ message.nickName }}</span>
 					<span class="msg">{{ message.context }}</span>
 				</div>
 			</div>
@@ -38,19 +38,16 @@ export default {
 	data () {
 		return {
 			roomId: 0,
-			roomNumber:'',
+			memberId: 0,
 			room: {},
-			member_id: 0,
 			message: '',
 			messages: []
 		}
 	},
 	created () {
 		this.roomId = localStorage.getItem('wschat.idroom')
-		this.member_id = localStorage.getItem('wschat.member_id')
-		this.roomNumber = localStorage.getItem('wschat.roomNumber')
+		this.memberId = localStorage.getItem('wschat.member_id')
 		this.findRoom()
-		this.connect()
 	},
 	methods: {
 		findRoom: function () {
@@ -66,6 +63,7 @@ export default {
 					this.messages = response.data
 					console.log(this.messages)
 				})
+			this.connect()
 		},
 		sendMessage: function () {
 			this.stompClient.send(
@@ -74,7 +72,8 @@ export default {
 					{
 						type: 'TALK',
 						roomId: this.roomId,
-						memberId: this.member_id,
+						memberId: this.memberId,
+						nickName: this.memberId + '번 님',
 						context: this.message
 					},
 					{}
@@ -84,10 +83,13 @@ export default {
 		},
 		recvMessage: function (recv) {
 			this.messages.push({
-				type: recv.type,
+				idmessage: recv.idmessage,
+				roomId: recv.roomId,
 				memberId: recv.type == 'ENTER' ? '[알림]' : recv.memberId,
+				nickName: recv.nickName,
+				dateCreated: recv.dateCreated,
 				context: recv.context,
-				dateCreated: recv.dateCreated
+				type: recv.type
 			})
 		},
 		connect: function () {
@@ -98,7 +100,7 @@ export default {
 				frame => {
 					console.log(frame)
 					this.stompClient.subscribe(
-						'/sub/chat/room/' + this.$data.idroom,
+						'/sub/chat/room/' + this.$data.roomId,
 						message => {
 							var recv = JSON.parse(message.body)
 							this.recvMessage(recv)
@@ -109,8 +111,9 @@ export default {
 						JSON.stringify(
 							{
 								type: 'ENTER',
+								memberId: this.$data.memberId,
 								roomId: this.$data.roomId,
-								memberId: this.$data.member_id
+								nickName: this.$data.memberId + '번 님'
 							},
 							{}
 						)

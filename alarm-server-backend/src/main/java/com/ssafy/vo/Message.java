@@ -10,20 +10,15 @@ public class Message{
     
     private long idmessage;
     private long roomId; // 방번호
-    private String roomNumber;
     private long memberId; // 메시지 보낸사람 id
     private String nickName; // nickName
     private String dateCreated;
     private String context; // 메시지
     private MessageType type; // 메시지 타입
     
-    
-
 	public Message() {
 		super();
 	}
-
-	
 
 	public Message(long idmessage, long roomId, long memberId, String nickName, String dateCreated, String context,
 			MessageType type) {
@@ -36,38 +31,6 @@ public class Message{
 		this.context = context;
 		this.type = type;
 	}
-
-
-
-	public Message(long idmessage, long roomId, String room_number, long memberId, String nickName,
-			String dateCreated, String context, MessageType type) {
-		super();
-		this.idmessage = idmessage;
-		this.roomId = roomId;
-		this.roomNumber = room_number;
-		this.memberId = memberId;
-		this.nickName = nickName;
-		this.dateCreated = dateCreated;
-		this.context = context;
-		this.type = type;
-	}
-
-
-
-	
-
-
-
-	public String getRoomNumber() {
-		return roomNumber;
-	}
-
-
-
-	public void setRoomNumber(String roomNumber) {
-		this.roomNumber = roomNumber;
-	}
-
 
 
 	public long getIdmessage() {
@@ -129,9 +92,7 @@ public class Message{
 
 	@Override
 	public String toString() {
-		return "Message [idmessage=" + idmessage + ", roomId=" + roomId + ", roomNumber=" + roomNumber + ", memberId="
-				+ memberId + ", nickName=" + nickName + ", dateCreated=" + dateCreated + ", context=" + context
-				+ ", type=" + type + "]";
+		return "Message [idmessage=" + idmessage + ", roomId=" + roomId + ", memberId=" + memberId + ", nickName="
+				+ nickName + ", dateCreated=" + dateCreated + ", context=" + context + ", type=" + type + "]";
 	}
-
 }

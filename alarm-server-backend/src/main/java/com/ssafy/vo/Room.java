@@ -6,7 +6,6 @@ import java.util.UUID;
 public class Room {
 	private long idroom;
 	private long memberId;
-	private String roomNumber;
 	private String roomName;
 	private Timestamp dateCreated;
 	
@@ -25,14 +24,6 @@ public class Room {
 
 	public void setMemberId(long member_id) {
 		this.memberId = member_id;
-	}
-
-	public String getRoomNumber() {
-		return roomNumber;
-	}
-
-	public void setRoomNumber(String roomNumber) {
-		this.roomNumber = roomNumber;
 	}
 
 	public String getRoomName() {
@@ -56,20 +47,17 @@ public class Room {
 		super();
 	}
 
-	public Room(long idroom, long member_id, String roomNumber, String roomName, Timestamp dateCreated) {
+	public Room(long idroom, long memberId, String roomName, Timestamp dateCreated) {
 		super();
 		this.idroom = idroom;
-		this.memberId = member_id;
-		this.roomNumber = roomNumber;
+		this.memberId = memberId;
 		this.roomName = roomName;
 		this.dateCreated = dateCreated;
 	}
 
-	public static Room create(Room room) {
-		Room chatRoom = new Room();
-		chatRoom.roomNumber = UUID.randomUUID().toString();
-		chatRoom.roomName = room.getRoomName();
-		chatRoom.memberId = room.getMemberId();
-		return chatRoom;
+	@Override
+	public String toString() {
+		return "Room [idroom=" + idroom + ", memberId=" + memberId + ", roomName=" + roomName + ", dateCreated="
+				+ dateCreated + "]";
 	}
 }
