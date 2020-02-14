@@ -60,10 +60,14 @@ export default {
 		pwCheck() {
 			console.log(this.input_pw);
 
-			http.post("/api/checkPwd/", {
-				idmember: this.$session.get("id"),
-				password: this.input_pw
-			})
+			http.post(
+				"/api/checkPwd/",
+				{
+					idmember: this.$session.get("id"),
+					password: this.input_pw
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log(response.status);
 					if (response.status == 204) {

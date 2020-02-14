@@ -1,25 +1,34 @@
 <template>
 	<div id="posts">
-		<MypageMyMenu :posts="posts" @setPosts="setPosts" @setTag="setTag" />
+		<MypageMyMenu @search="search" />
 		<div id="post_list">
 			<div id="post_top">
-				<span v-if="selTag != ''" id="post_top_tag">#{{ selTag }}</span>
-				<div></div>
-				<div id="post_top_sel">
-					<img
-						src="../assets/icon/sort_b.png"
-						width="25px"
-						style="float: left; margin-top: 7px; margin-right: 10px; opacity: 0.5;"
-					/>
+				<v-select
+					:items="postSels"
+					dense
+					item-color="black"
+					color="rgba(0, 0, 0, 0.5)"
+					@change="chnagePostSel"
+					label="정렬조건"
+					id="orderSel"
+					v-model="orderSel"
+				></v-select>
+				<div id="search">
 					<v-select
-						:items="postSels"
-						dense
-						item-color="black"
+						label="검색조건"
+						:items="items"
+						@change="changeMenuSel"
 						color="rgba(0, 0, 0, 0.5)"
-						@change="chnagePostSel"
-						placeholder="정렬조건"
-						style="width: 100px; float: left; font-size: 15px;"
-					></v-select>
+						item-color="black"
+						id="search_sel"
+						v-model="searchSel"
+					/>
+					<input v-model="menu_text" type="text" id="search_text" />
+					<img
+						id="search_img"
+						@click="search()"
+						src="../assets/icon/search_b.png"
+					/>
 				</div>
 			</div>
 			<div
@@ -33,7 +42,11 @@
 						:key="tag.idtag"
 						style="display: inline-block;"
 					>
-						<span class="post_tag">{{ tag }}</span>
+						<span
+							class="post_tag"
+							:style="selTag == tag ? selStyle : tagStyle"
+							>{{ tag }}</span
+						>
 					</div>
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
@@ -71,6 +84,9 @@
 				<div class="line" />
 			</div>
 		</div>
+		<div v-if="noContents" id="noContents">
+			검색한 내용의 포스트가 존재하지 않습니다
+		</div>
 	</div>
 </template>
 <script>
@@ -85,6 +101,7 @@ export default {
 	},
 	data() {
 		return {
+			noContents: true,
 			posts: "",
 			postTags: "",
 			postSels: [
@@ -92,24 +109,97 @@ export default {
 				{ text: "오래된순", value: "3" },
 				{ text: "좋아요순", value: "2" }
 			],
+			items: [
+				{ text: "전체", value: "1" },
+				{ text: "#", value: "2" },
+				{ text: "글제목", value: "3" },
+				{ text: "글내용", value: "4" }
+			],
 			address: "",
-			selTag: ""
+			selTag: "",
+			selStyle: {
+				float: "left",
+				marginRight: "6px",
+				fontSize: "13px",
+				borderRadius: "8px",
+				paddingLeft: "5px",
+				paddingRight: "5px",
+				color: "white",
+				backgroundColor: "#7d4879"
+			},
+			tagStyle: {
+				float: "left",
+				marginRight: "6px",
+				fontSize: "13px",
+				borderRadius: "8px",
+				paddingLeft: "5px",
+				paddingRight: "5px",
+				color: "white",
+				backgroundColor: "rgba(160, 23, 98, 0.5)"
+			},
+			menuSel: "",
+			menu_text: "",
+			searchSel: "",
+			orderSel: ""
 		};
 	},
 	methods: {
-		setTag(t_tag) {
-			this.selTag = t_tag;
-		},
-		setPosts(t_posts) {
-			this.posts = t_posts;
+		search() {
+			if (this.menuSel == "") {
+				alert("검색조건을 선택해주세요!");
+				return;
+			}
+			if (this.menu_text == "") {
+				alert("검색어를 입력해주세요!");
+				return;
+			}
+			let address = "";
+			if (this.menuSel == 1) {
+				address = "/api/findByAllKeywordMyPosts";
+			} else if (this.menuSel == 2) {
+				address = "/api/findByTagKeywordMyPosts";
+			} else if (this.menuSel == 3) {
+				address = "/api/findByPostTitleKeywordMyPosts";
+			} else {
+				address = "/api/findByPostCodeKeywordMyPosts";
+			}
+			this.orderSel = null;
+			http.post(
+				address,
+				{
+					keyword: this.menu_text,
+					myIdMember: this.$session.get("id"),
+					order: 4,
+					youIdMember: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(response => {
+					if (this.menuSel == 2) this.selTag = this.menu_text;
+					else this.selTag = "";
+					this.posts = response.data;
+				})
+				.catch(error => {
+					console.log(error);
+				});
 		},
 		chnagePostSel(idx) {
 			console.log(idx);
-			http.post("/api/findByMyPosts/", {
-				myIdMember: this.$session.get("id"),
-				order: idx,
-				youIdMember: this.$route.params.no
-			})
+			this.selTag = "";
+			// console.log(document.getElementById("search_sel").value);
+			// document.getElementById("search_sel").selected = undefined;
+			// document.getElementById("search_sel").items = this.items;
+			console.log(this.selValue);
+			this.searchSel = null;
+			http.post(
+				"/api/findByMyPosts/",
+				{
+					myIdMember: this.$session.get("id"),
+					order: idx,
+					youIdMember: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					this.posts = response.data;
 					console.log(this.posts);
@@ -117,6 +207,9 @@ export default {
 				.catch(error => {
 					console.log(error);
 				});
+		},
+		changeMenuSel(idx) {
+			this.menuSel = idx;
 		},
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
@@ -156,11 +249,15 @@ export default {
 	},
 	mounted() {
 		console.log("MypageMyPost : " + this.$route.params.no);
-		http.post("/api/findByMyPosts/", {
-			myIdMember: this.$session.get("id"),
-			order: 4,
-			youIdMember: this.$route.params.no
-		})
+		http.post(
+			"/api/findByMyPosts/",
+			{
+				myIdMember: this.$session.get("id"),
+				order: 4,
+				youIdMember: this.$route.params.no
+			},
+			{ headers: { Authorization: this.$session.get("accessToken") } }
+		)
 			.then(response => {
 				this.posts = response.data;
 				// console.log(response);
@@ -173,27 +270,129 @@ export default {
 };
 </script>
 <style>
-#post_top {
-	display: inline-block;
-	/* justify-content: space-between; */
-	margin-top: 15px;
-	width: 100%;
-}
-#post_top_tag {
-	border: 1px solid silver;
-	border-radius: 15px;
-	/* height: 35px; */
+#noContents {
+	text-align: center;
+	padding-top: 100px;
+	padding-bottom: 100px;
 	font-size: 20px;
-	background-color: #7d4879;
-	color: white;
 	font-weight: 500;
-	float: left;
-	padding: 3px 5px 3px 5px;
 }
-#post_top_sel {
-	height: 50px;
+#search {
+	margin-left: 15px;
+	display: inline-block;
+	padding: 0;
 	float: right;
 }
+#search_text {
+	float: left;
+	margin-top: 19px;
+	padding: 0;
+	width: 300px;
+	height: 30px;
+	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
+}
+#search_text:focus {
+	outline: none;
+}
+#search_img {
+	margin-top: 20px;
+	float: left;
+	width: 20px;
+	cursor: pointer;
+}
+#search_img:hover {
+	opacity: 0.5;
+}
+/* id : search_sel */
+#search > div {
+	float: left;
+	width: 90px;
+}
+#post_top {
+	margin-top: 10px;
+}
+/* 라벨 */
+#post_top
+	> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select
+	> div
+	> div.v-input__slot
+	> div.v-select__slot
+	> label {
+	font-size: 13px;
+}
+
+/* id : orderSel */
+#post_top
+	> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select {
+	width: 100px;
+	float: left;
+	margin-top: 17px;
+}
+
+/* 라벨 */
+#search > div > div > div.v-input__slot > div.v-select__slot > label {
+	font-size: 13px;
+}
+
+@media screen and (max-width: 660px) {
+	#noContents {
+		font-size: 15px;
+	}
+
+	/* id : search_sel */
+	#search > div {
+		width: 70px;
+	}
+
+	#search
+		> div
+		> div
+		> div.v-input__slot
+		> div.v-select__slot
+		> div.v-select__selections
+		> div {
+		font-size: 13px;
+	}
+
+	#search > div > div > div.v-input__slot > div.v-select__slot > label {
+		font-size: 12px;
+	}
+
+	/* id : orderSel */
+	#post_top
+		> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select {
+		width: 90px;
+	}
+
+	#post_top
+		> div.v-input.v-input--is-label-active.v-input--is-dirty.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select
+		> div
+		> div.v-input__slot
+		> div.v-select__slot
+		> div.v-select__selections
+		> div {
+		font-size: 13px;
+	}
+
+	#post_top
+		> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select
+		> div
+		> div.v-input__slot
+		> div.v-select__slot
+		> label {
+		font-size: 12px;
+	}
+
+	#search_text {
+		width: 130px;
+	}
+}
+
+#post_top {
+	display: inline-block;
+	width: 100%;
+}
+
 .line {
 	margin-top: 20px;
 	margin-bottom: 20px;

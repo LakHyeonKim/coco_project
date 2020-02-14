@@ -173,10 +173,14 @@ export default {
 			}
 			this.showModal_f = false;
 
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				memberFollowing: this.$route.params.no
-			})
+			http.post(
+				address,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log(response);
 				})
@@ -197,10 +201,14 @@ export default {
 			if (flag) address = "/api/findByFollowerListMember/";
 			else address = "/api/findByFollowingListMember/";
 
-			http.post(address, {
-				myIdMemeber: this.$session.get("id"),
-				youIdMember: this.$route.params.no
-			})
+			http.post(
+				address,
+				{
+					myIdMemeber: this.$session.get("id"),
+					youIdMember: this.$route.params.no
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log("Banner getFollow()");
 					this.followList = response.data;
@@ -216,10 +224,14 @@ export default {
 			this.isUser = true;
 		}
 		console.log("isUser : " + this.isUser);
-		http.post("/api/findByMemberHomePageUserID/", {
-			myIdMemeber: this.$session.get("id"),
-			youIdMember: this.$route.params.no
-		})
+		http.post(
+			"/api/findByMemberHomePageUserID/",
+			{
+				myIdMemeber: this.$session.get("id"),
+				youIdMember: this.$route.params.no
+			},
+			{ headers: { Authorization: this.$session.get("accessToken") } }
+		)
 
 			.then(response => {
 				this.userInfo = response.data;

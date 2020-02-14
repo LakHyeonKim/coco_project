@@ -198,7 +198,8 @@ export default {
 				// 		http.post("/jwt/login/", {
 				// 			id: this.signUpMember.id,
 				// 			password: this.signUpMember.password
-				// 		})
+				// 		},
+				// { headers: { Authorization: this.$session.get("accessToken") } })
 				// 			.then(res => {
 				// 				console.log(res);
 				// 				if (res.status != "204") {
