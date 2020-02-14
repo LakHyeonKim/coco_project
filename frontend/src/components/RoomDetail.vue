@@ -2,12 +2,40 @@
 	<div id="chatWrap">
 		<div id="chatHeader">{{ room.roomName }}</div>
 		<div id="chatRoom">
-			<div id="chatLog" v-for="message in messages" :key="message.idmessage">
-				<div class="anotherMsg" v-if="message.memberId != memberId && message.idmessage != 0">
+			<div
+				id="chatLog"
+				v-for="message in messages"
+				:key="message.idmessage"
+			>
+				<div
+					class="noticMsg"
+					v-if="
+						message.memberId != memberId &&
+							message.idmessage != 0 &&
+							message.type == 'ENTER'
+					"
+				>
+					<span class="msg">{{ message.context }}</span>
+				</div>
+				<div
+					class="anotherMsg"
+					v-if="
+						message.memberId != memberId &&
+							message.idmessage != 0 &&
+							message.type == 'TALK'
+					"
+				>
 					<span class="anotherName">{{ message.nickName }}</span>
 					<span class="msg">{{ message.context }}</span>
 				</div>
-				<div class="myMsg" v-if="message.memberId == memberId && message.idmessage != 0">
+				<div
+					class="myMsg"
+					v-if="
+						message.memberId == memberId &&
+							message.idmessage != 0 &&
+							message.type == 'TALK'
+					"
+				>
 					<span class="anotherName">{{ message.nickName }}</span>
 					<span class="msg">{{ message.context }}</span>
 				</div>
@@ -61,7 +89,6 @@ export default {
 				.get('http://localhost:8081/chat/messages/' + this.roomId)
 				.then(response => {
 					this.messages = response.data
-					console.log(this.messages)
 				})
 			this.connect()
 		},
@@ -104,6 +131,7 @@ export default {
 						message => {
 							var recv = JSON.parse(message.body)
 							this.recvMessage(recv)
+							this.chatOnScroll()
 						}
 					)
 					this.stompClient.send(
@@ -123,7 +151,16 @@ export default {
 					alert('error ' + error)
 				}
 			)
+		},
+		chatOnScroll: function () {
+			var objDiv = document.getElementById('chatRoom')
+			console.log(objDiv.scrollTop)
+			console.log( objDiv.scrollHeight)
+			objDiv.scrollTop = objDiv.scrollHeight
 		}
+	},
+	watch:{
+		
 	}
 }
 </script>
@@ -162,6 +199,10 @@ export default {
 .anotherMsg {
 	text-align: left;
 	margin-bottom: 5px;
+}
+
+.noticMsg {
+	text-align: center;
 }
 
 .msg {

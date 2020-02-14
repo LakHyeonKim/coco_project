@@ -13,16 +13,17 @@
 						v-on:click="enterRoom(item)"
 					>
 						<p v-if="item.idroom != 0">
-							방번호::{{ item.idroom }} - 방제목::
-							{{ item.nameName }} - 방장:: {{ item.memberId }}
+							방번호::{{ item.idroom }}___방제목::
+							{{ item.roomName }}___방장:: {{ item.memberId }}___생성일::{{ item.dateCreated }}
 						</p>
-						<!-- <button
+						<button
 							id="buttonStyle"
 							type="button"
 							@click="deleteRoom"
+							v-if="item.memberId == senderStatic"
 						>
 							채팅방 삭제
-						</button> -->
+						</button>
 					</div>
 				</div>
 			</div>
@@ -48,7 +49,7 @@ export default {
 	name: 'Room',
 	data () {
 		return {
-			senderStatic: '',
+			senderStatic: 0,
 			isHidden: true,
 			isRoomDetail: false,
 			room_name: '',
@@ -60,6 +61,7 @@ export default {
 	},
 	created () {
 		this.findAllRoom()
+		this.senderStatic = this.$session.get('id')
 	},
 	methods: {
 		findAllRoom: function () {
@@ -94,8 +96,6 @@ export default {
 		},
 		deleteRoom: function () {},
 		enterRoom: function (item) {
-			//var sender = prompt('대화명을 입력해 주세요.')
-			this.senderStatic = this.$session.get('id')
 			localStorage.setItem('wschat.member_id', this.senderStatic)
 			localStorage.setItem('wschat.idroom', item.idroom)
 			this.isRoomDetail = true

@@ -18,6 +18,7 @@ import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardDetailSearch;
 import com.ssafy.coco.relationvo.MemberHomePage;
 import com.ssafy.coco.relationvo.MemberHomePageSearch;
+import com.ssafy.coco.relationvo.MemberInfoModifyReceive;
 import com.ssafy.coco.service.BoardDetailSerivce;
 import com.ssafy.coco.service.MemberHomePageService;
 
@@ -41,5 +42,16 @@ public class MemberHomePageController {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<MemberHomePage>(answer, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "멤버의 id(String)을 가지고 mypage 수정 할 정보를 가지고 옴", response = List.class)
+	@RequestMapping(value = "/findByMemberHomePageModify", method = RequestMethod.POST)
+	public ResponseEntity<MemberInfoModifyReceive> findByMemberHomePageModify(@RequestHeader(value="Authorization")String jwt,@RequestBody long idmember) {
+		System.out.println("토큰 인 파바멤홈페"+ jwt);
+		MemberInfoModifyReceive answer = memberHomePageService.findByMemberHomePageModify(idmember);
+		if (answer == null) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<MemberInfoModifyReceive>(answer, HttpStatus.OK);
 	}
 }
