@@ -43,20 +43,17 @@
 			<!-- <RegisterForm id="regiForm"></RegisterForm> -->
 			<LoginForm id="loginForm"></LoginForm>
 		</div>
-		<LoginFormMobile id="mobileloginForm"></LoginFormMobile>
 	</div>
 </template>
 
 <script>
 import LoginForm from "../components/LoginForm";
-import LoginFormMobile from "../components/LoginFormMobile";
 import router from "../router";
 
 export default {
 	name: "home",
 	components: {
-		LoginForm,
-		LoginFormMobile
+		LoginForm
 	},
 	methods: {
 		checkLoggedIn() {
@@ -82,16 +79,13 @@ export default {
 #imgBoxDesk {
 	display: inline-block;
 	position: absolute;
-	margin-top: 110px;
+	margin-top: 120px;
 }
-/* #regiForm {
-	display: inline-block;
-	margin-left: 100px;
-} */
 #loginForm {
 	display: inline-block;
 	position: relative;
 	margin-left: 576px;
+	margin-bottom: 130px;
 }
 #imgBoxMobile {
 	display: none;
@@ -224,6 +218,7 @@ export default {
 	#imgBoxMobile {
 		display: inline-block;
 		position: absolute;
+		margin-top: 70px;
 	}
 	#mobileDiv {
 		position: absolute;
@@ -349,17 +344,7 @@ export default {
 		justify-content: center;
 		margin: 10px;
 		padding: 5px;
-	}
-}
-@media screen and (max-width: 450px) {
-	#mainBox {
-		display: none;
-	}
-	#blankBox {
-		display: none;
-	}
-	#mobileloginForm {
-		display: block;
+		margin-bottom: 130px;
 	}
 }
 </style>

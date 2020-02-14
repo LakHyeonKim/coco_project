@@ -17,7 +17,11 @@
 
 						<MypagePWCheck v-if="isUser" style="float: left;">
 							<div slot="click">
-								<img slot="click" src="../assets/icon/settings.png" id="settings" />
+								<img
+									slot="click"
+									src="../assets/icon/settings.png"
+									id="settings"
+								/>
 							</div>
 						</MypagePWCheck>
 						<MypageFollowCheck
@@ -52,19 +56,33 @@
 				</div>
 
 				<div id="counting">
-					<FollowList :userInfo="userInfo" :followList="followList" class="counting_click">
+					<FollowList
+						:userInfo="userInfo"
+						:followList="followList"
+						class="counting_click"
+					>
 						<div slot="click">
-							<span @click="getFollow(false)">팔로잉 {{ userInfo.followingCount }}</span>
+							<span @click="getFollow(false)"
+								>팔로잉 {{ userInfo.followingCount }}</span
+							>
 						</div>
 					</FollowList>
 					<span class="counting_sub">·</span>
-					<FollowList :userInfo="userInfo" :followList="followList" class="counting_click">
+					<FollowList
+						:userInfo="userInfo"
+						:followList="followList"
+						class="counting_click"
+					>
 						<div slot="click">
-							<span @click="getFollow(true)">팔로워 {{ userInfo.followerCount }}</span>
+							<span @click="getFollow(true)"
+								>팔로워 {{ userInfo.followerCount }}</span
+							>
 						</div>
 					</FollowList>
 					<span class="counting_sub">·</span>
-					<span class="counting_sub">게시글 {{ userInfo.totalPostCount }}</span>
+					<span class="counting_sub"
+						>게시글 {{ userInfo.totalPostCount }}</span
+					>
 				</div>
 			</div>
 		</div>
@@ -186,7 +204,13 @@ export default {
 		}
 	},
 	mounted() {
-		if (this.$session.get("id") == this.$route.params.no) {
+		console.log("MypageBanner : " + this.no);
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		console.log("myPage banner headers", headers);
+		if (this.$session.get("id") == this.no) {
 			this.isUser = true;
 		}
 		console.log("isUser : " + this.isUser);
@@ -198,7 +222,6 @@ export default {
 			},
 			{ headers: { Authorization: this.$session.get("accessToken") } }
 		)
-
 			.then(response => {
 				this.userInfo = response.data;
 				store.state.tags = this.userInfo.tags;

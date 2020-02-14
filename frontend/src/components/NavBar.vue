@@ -28,7 +28,7 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="#">
+				<router-link to="/alarm">
 					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
 				</router-link>
 			</li>
