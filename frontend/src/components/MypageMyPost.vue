@@ -45,8 +45,10 @@
 						<span
 							class="post_tag"
 							:style="selTag == tag ? selStyle : tagStyle"
-							>{{ tag }}</span
+							@click="getSearchData(2, tag)"
 						>
+							{{ tag }}
+						</span>
 					</div>
 					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
@@ -101,7 +103,7 @@ export default {
 	},
 	data() {
 		return {
-			noContents: true,
+			noContents: false,
 			posts: "",
 			postTags: "",
 			postSels: [
@@ -153,12 +155,15 @@ export default {
 				alert("검색어를 입력해주세요!");
 				return;
 			}
+			this.getSearchData(this.menuSel, this.menu_text);
+		},
+		getSearchData(sel, text) {
 			let address = "";
-			if (this.menuSel == 1) {
+			if (sel == 1) {
 				address = "/api/findByAllKeywordMyPosts";
-			} else if (this.menuSel == 2) {
+			} else if (sel == 2) {
 				address = "/api/findByTagKeywordMyPosts";
-			} else if (this.menuSel == 3) {
+			} else if (sel == 3) {
 				address = "/api/findByPostTitleKeywordMyPosts";
 			} else {
 				address = "/api/findByPostCodeKeywordMyPosts";
@@ -167,7 +172,7 @@ export default {
 			http.post(
 				address,
 				{
-					keyword: this.menu_text,
+					keyword: text,
 					myIdMember: this.$session.get("id"),
 					order: 4,
 					youIdMember: this.$route.params.no
@@ -175,9 +180,12 @@ export default {
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
 				.then(response => {
-					if (this.menuSel == 2) this.selTag = this.menu_text;
+					if (sel == 2) this.selTag = text;
 					else this.selTag = "";
 					this.posts = response.data;
+					console.log(this.posts.length);
+					if (this.posts.length == 0) this.noContents = true;
+					else this.noContents = false;
 				})
 				.catch(error => {
 					console.log(error);
@@ -189,7 +197,6 @@ export default {
 			// console.log(document.getElementById("search_sel").value);
 			// document.getElementById("search_sel").selected = undefined;
 			// document.getElementById("search_sel").items = this.items;
-			console.log(this.selValue);
 			this.searchSel = null;
 			http.post(
 				"/api/findByMyPosts/",
@@ -224,14 +231,18 @@ export default {
 				this.posts[index].post.likeCount++;
 			}
 			console.log(this.address);
-			http.post(this.address, {
-				member: {
-					idmember: this.$session.get("id")
+			http.post(
+				this.address,
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: postNum
+					}
 				},
-				post: {
-					idpost: postNum
-				}
-			})
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(res => {
 					console.log(res);
 				})
@@ -417,13 +428,17 @@ export default {
 }
 .post_tag {
 	float: left;
-	margin-right: 6px;
+	/* margin-right: 6px;
 	font-size: 13px;
 	border-radius: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 	color: white;
-	background-color: rgba(160, 23, 98, 0.5);
+	background-color: rgba(160, 23, 98, 0.5); */
+	cursor: pointer;
+}
+.post_tag:hover {
+	background-color: #7d4879;
 }
 .post_create {
 	display: inline-block;

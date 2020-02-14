@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@jeremyhamm/vue-slider": "^0.2.0",
+    "@johmun/vue-tags-input": "^2.1.0",
     "axios": "^0.19.2",
     "clipboard": "^2.0.4",
     "core-js": "^3.6.2",

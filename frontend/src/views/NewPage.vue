@@ -141,7 +141,9 @@ export default {
 			let formData = new FormData(document.forms.namedItem("board"));
 			formData.append("tags", this.board.tags);
 
-			http.post("/trc/makePost/", formData)
+			http.post("/trc/makePost/", formData, {
+				headers: { Authorization: this.$session.get("accessToken") }
+			})
 				.then(res => {
 					alert("글이 성공적으로 작성되었습니다.");
 					router.push("/mypage/" + this.$session.get("id"));

@@ -40,16 +40,6 @@
 					</div>
 				</div>
 
-				<div class="info_div">
-					<v-text-field
-						name="id"
-						label="아이디"
-						v-model="temp_id"
-						readonly
-						color="gray"
-					></v-text-field>
-				</div>
-
 				<div id="nick_div" class="info_div">
 					<div id="nick_text">
 						<validation-provider
@@ -76,12 +66,45 @@
 						{{ duplicate }}
 					</div>
 				</div> -->
+				<div class="info_div">
+					<v-text-field
+						name="title"
+						label="마이페이지 타이틀"
+						color="gray"
+					></v-text-field>
+				</div>
+
+				<!-- <tags-input
+					v-model="tags"
+					element-id="tags"
+					placeholder="해시태그"
+					add-tags-on-space
+					add-tags-on-blur
+				></tags-input> -->
+
+				<div>
+					<VueTagsInput
+						v-model="tag"
+						:tags="tags"
+						@tags-changed="newTags => (tags = newTags)"
+					/>
+				</div>
+
+				<div class="info_div">
+					<v-text-field
+						name="id"
+						label="아이디"
+						v-model="temp_id"
+						readonly
+						color="gray"
+					></v-text-field>
+				</div>
 
 				<div class="info_div">
 					<validation-provider
 						name="비밀번호 "
 						vid="confirmation"
-						rules="required|min:8|max:16|password"
+						rules="min:8|max:16|password"
 						v-slot="{ errors }"
 					>
 						<v-text-field
@@ -101,7 +124,7 @@
 				<div class="info_div">
 					<validation-provider
 						name="비밀번호 확인 "
-						rules="required|confirmed:confirmation"
+						rules="confirmed:confirmation"
 						v-slot="{ errors }"
 					>
 						<v-text-field
@@ -147,7 +170,6 @@
 		<div id="blank"></div>
 	</div>
 </template>
-
 <script>
 import http from "../http-common";
 import router from "../router";
@@ -157,12 +179,13 @@ import {
 	extend,
 	validate
 } from "vee-validate";
-
+import VueTagsInput from "@johmun/vue-tags-input";
 export default {
 	name: "InfoModifyForm",
 	components: {
 		ValidationProvider,
-		ValidationObserver
+		ValidationObserver,
+		VueTagsInput
 	},
 	data: () => ({
 		temp_id: "temp@naver.com",
@@ -180,7 +203,9 @@ export default {
 		pwd2: false,
 		passwordConfirm: "",
 		duplicate: "",
-		idcheck: false
+		idcheck: false,
+		tag: "",
+		tags: []
 	}),
 
 	methods: {
@@ -395,6 +420,20 @@ export default {
 	#blank {
 		height: 20vw;
 		width: 100%;
+	}
+
+	#back_img > div {
+		width: 140px;
+		/* height: 100px; */
+	}
+
+	#profile_img > div {
+		width: 140px;
+		/* height: 100px; */
+	}
+
+	#img_div {
+		padding: 30px;
 	}
 }
 
