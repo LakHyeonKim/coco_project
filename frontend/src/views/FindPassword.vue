@@ -3,7 +3,6 @@
 		<h1>비밀번호 찾기</h1>
 		<div class="inner">
 			<input type="text" placeholder="아이디입력" v-model="id" />
-			<input type="text" placeholder="닉네임입력" v-model="nick" />
 			<button type="submit" @click="check()">SUBMIT</button>
 		</div>
 	</div>
@@ -29,7 +28,7 @@ export default {
 				nickname: this.nick
 			};
 			console.log(requestForm);
-			http.post("/test/mailTest/", requestForm)
+			http.post("/jwt/getTemporaryPassword/", requestForm)
 				.then(res => {
 					console.log(res);
 				})

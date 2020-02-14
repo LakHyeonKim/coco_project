@@ -5,12 +5,24 @@
 			<div id="headInnerBox">
 				<label for="searchBox">
 					<img
-						src="../assets/logoo.png"
+						src="../assets/CC_Logo.png"
 						alt="logo_image"
 						id="searchLogo"
 					/>
 				</label>
+				<!-- <p id="codeCoworker">Code Coworker</p> -->
 				<form v-on:submit.prevent="searchwords" id="serachBox">
+					<v-select
+						id="options"
+						:items="searchOption"
+						@change="selectOption"
+						dense
+						item-color="black"
+						color="rgba(0, 0, 0, 0.5)"
+						placeholder="검색조건"
+						height="28px"
+						style="width: 100px; float: left; font-size: 15px; transform: translateY(-13%); "
+					></v-select>
 					<input
 						type="text"
 						v-model="words"
@@ -24,7 +36,6 @@
 						/>
 					</button>
 				</form>
-				<p id="codeCoworker">Code Coworker</p>
 			</div>
 		</div>
 	</div>
@@ -35,13 +46,25 @@ export default {
 	name: "SearchBar",
 	data() {
 		return {
-			words: ""
+			words: "",
+			searchOption: [
+				{ text: "제목", value: 1 },
+				{ text: "내용", value: 2 },
+				{ text: "글쓴이", value: 3 },
+				{ text: "태그", value: 4 }
+			],
+			value: 0
 		};
 	},
 	methods: {
 		searchwords() {
-			this.$emit("searchwords", this.words);
+			console.log("emit value ", this.value);
+			this.$emit("searchwords", this.words, this.value);
 			// this.words = "";
+		},
+		selectOption(values) {
+			// console.log(value);
+			this.value = values;
 		}
 	}
 };
@@ -65,6 +88,7 @@ export default {
 	width: 30px;
 	height: 30px;
 	vertical-align: middle;
+	margin-right: 10px;
 }
 #serachBox {
 	display: inline-block;
@@ -72,14 +96,14 @@ export default {
 #searchInput {
 	display: inline-block;
 	vertical-align: middle;
-	border: 1px solid black;
+	border-bottom: 0.25px solid gray;
 	width: 20vw;
-	margin-left: 10px;
+	margin-left: 5px;
 	margin-right: 10px;
 }
 ::placeholder {
 	color: black;
-	font-size: 30px;
+	font-size: 20px;
 }
 #searchButton {
 	display: inline-block;
@@ -92,5 +116,49 @@ export default {
 }
 #codeCoworker {
 	display: none;
+}
+@media screen and (max-width: 600px) {
+	#header {
+		height: 65px;
+	}
+	#headInnerBox {
+		text-align: center;
+		padding: 0px;
+		padding-top: 15px;
+	}
+	#searchLogo {
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		vertical-align: middle;
+		margin-right: 10px;
+	}
+	#serachBox {
+		display: inline-block;
+	}
+	#searchInput {
+		display: inline-block;
+		vertical-align: middle;
+		border-bottom: 1px solid black;
+		width: 40vw;
+		margin-left: 5px;
+		margin-right: 10px;
+	}
+	::placeholder {
+		color: black;
+		font-size: 20px;
+	}
+	#searchButton {
+		display: inline-block;
+		vertical-align: middle;
+		height: 25px;
+	}
+	.searchIcon {
+		width: 25px;
+		color: black;
+	}
+	#codeCoworker {
+		display: none;
+	}
 }
 </style>

@@ -1,40 +1,58 @@
 <template>
-	<div style="background-color:rgba(0, 0, 0,0.0);" class="postBox">
+	<div
+		style="background-color:rgba(0, 0, 0,0.0);"
+		class="postBox"
+		@click.prevent="goDetail()"
+	>
 		<div id="cardBox">
 			<div id="contentBox">
-				<div id="cardHead">
-					<div id="imgDiv">
-						<img src="../assets/user.png" id="userImg" />
-					</div>
-					<div id="userTitle">
-						<p id="userId">{{ postWriter }}</p>
-						<p id="date">{{ dateCreated }}</p>
-					</div>
+				<div id="cardHash">
+					<button v-for="tag in tags" :key="`${tag}`">
+						<a id="hashTag" @click.stop="goSearchTag(`${tag}`)">
+							{{ tag }}
+						</a>
+					</button>
 				</div>
+
 				<div id="cardTitle">
 					<div class="line-clamp-title">
 						<b>{{ postTitle }}</b>
 					</div>
 				</div>
-				<div id="cardHash">
-					<div v-for="tag in tags" :key="`${tag}`">
-						<button
-							v-on:click.prevent="searchtag(tag)"
-							id="hashTag"
-						>
-							#{{ tag }}
-						</button>
-						<!-- <a href="#" id="hashTag"> #{{ tag.tagName }} </a> -->
+
+				<div id="cardHead">
+					<img src="../assets/user.png" id="userImg" />
+					<div id="userId" @click.stop="goYourPage(memberId)">
+						{{ postWriter }}
 					</div>
+					<div id="date">{{ dateCreated }}</div>
 				</div>
+
 				<div id="cardBody">
 					<span class="line-clamp-body">
 						{{ code }}
 					</span>
 				</div>
+
 				<div id="cardFooter">
-					<div id="like">좋아요 {{ likeCount }}개</div>
-					<div id="comment">댓글 {{ commentCount }}개</div>
+					<img
+						:id="idPost"
+						class="like_img"
+						:src="
+							likeCheck == 1
+								? './img/icons/tack_full.png'
+								: './img/icons/tack_empty.png'
+						"
+						width="35px"
+						@click.stop="likeEmit(idPost, postIdx)"
+					/>
+					<div id="likeCount">
+						{{ likeCount }}
+					</div>
+					<img src="../assets/icon/chat.png" class="comment_img" />
+					<div id="commentCount">
+						{{ commentCount }}
+					</div>
 				</div>
 			</div>
 			<!-- <div id="imgBox" v-if="imagePath">
@@ -58,10 +76,14 @@
 </template>
 
 <script>
+import router from "../router";
+import http from "../http-common";
+
 export default {
 	name: "SearchList",
 	props: {
 		// imagePath: {},
+		postIdx: {},
 		idPost: {},
 		memberId: {},
 		postTitle: {},
@@ -83,10 +105,45 @@ export default {
 		};
 	},
 	methods: {
-		searchtag(tag) {
+		goDetail() {
+			// console.log("alsdkfjlaskdfj", this.idPost);
+			// store.dispatch("saveIdPost", this.idPost);
+			// console.log("idPOst", store.state.idPost);
+			const requestForm = {
+				member: {
+					idmember: this.$session.get("id")
+				},
+				post: {
+					idpost: this.idPost
+				}
+			};
+			console.log("goDetail requestForm ", requestForm);
+			http.post("/trc/postClick/", requestForm)
+				.then(res => {
+					console.log("postclick then ", res);
+				})
+				.catch(err => {
+					console.log("postclick catch ", err);
+				});
+			router.push("/detail/" + this.idPost);
+		},
+		goSearchTag(tag) {
+			// console.log(word);
+			// store.dispatch("saveSearchTag", tag);
+			// router.push("/search");
 			console.log(tag);
 			this.$emit("searchtag", tag);
-			// this.tagforsearch = "";
+		},
+		goYourPage(memberId) {
+			// this.$session.set("targetId", memberId);
+			router.push("/mypage/" + memberId);
+		},
+		likeEmit(postNum, index) {
+			// const form = {
+			// 	postId: postNum,
+			// 	postIdx: index
+			// };
+			this.$emit("like", postNum, index);
 		}
 	}
 };
@@ -94,10 +151,9 @@ export default {
 
 <style scoped>
 .postBox {
-	width: 80vw;
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-	height: 250px;
+	height: 100%;
 }
 #cardBox {
 	margin: 13px 13px 13px 13px;
@@ -107,56 +163,67 @@ export default {
 	flex: 1;
 }
 #cardHead {
-	display: flex;
+	display: inline-block;
 	margin-bottom: 7px;
+	height: 30px;
 }
 #imgDiv {
-	width: 40px;
-	height: 40px;
-	margin-right: 10px;
+	width: 20px;
+	height: 20px;
+	/* margin-right: 10px; */
 }
 #userImg {
-	width: 40px;
-	height: 40px;
-	border-radius: 25px;
-	background-color: black;
+	float: left;
+	border-radius: 50%;
+	width: 20px;
+	margin-top: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	margin-right: 3px;
 }
 #userId {
+	float: left;
 	color: black;
-	font-size: 15px;
-	margin-bottom: 2px;
-	height: 17px;
+	font-size: 13px;
+	line-height: 30px;
+	margin-right: 7px;
 }
 #date {
+	float: left;
+	font-size: 11px;
+	line-height: 30px;
 	color: gray;
-	font-size: 12px;
-	margin: 0;
-	height: 17px;
 }
 #cardTitle {
-	margin-bottom: 7px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	/* margin-left: 10px; */
 }
 .line-clamp-title {
 	font-size: 20px;
+	font-weight: 400;
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 }
 #cardHash {
-	display: flex;
+	/* display: flex; */
 	margin-bottom: 7px;
 }
 #hashTag {
-	font-size: 16px;
-	color: blue;
-	text-decoration: none;
-	margin-right: 5px;
+	float: left;
+	margin-right: 6px;
+	font-size: 13px;
+	border-radius: 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: white;
+	background-color: rgba(160, 23, 98, 0.5);
+	white-space: nowrap;
 }
 #cardBody {
 	min-height: 75px;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	/* margin-left: 10px; */
 }
 .line-clamp-body {
@@ -166,15 +233,32 @@ export default {
 	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 }
-#like {
-	display: inline-block;
-	/* margin-left: 20px; */
-	margin-right: 10px;
-}
-#comment {
+#cardFooter {
 	display: inline-block;
 }
-
+.like_img {
+	float: left;
+	width: 35px;
+	border-radius: 50%;
+	transition: all ease-in-out 0.3s;
+}
+#likeCount {
+	float: left;
+	font-weight: 400;
+	margin-top: 10px;
+	font-size: 15px;
+}
+.comment_img {
+	float: left;
+	width: 30px;
+	margin: 7px 3px 0 10px;
+}
+#commentCount {
+	float: left;
+	font-weight: 400;
+	margin-top: 10px;
+	font-size: 15px;
+}
 #imgBox {
 	margin-left: 10px;
 	width: 200px;
@@ -198,5 +282,143 @@ export default {
 	/* transform: translateY(410%); */
 	/* right: 0;
 	margin-right: 11vw; */
+}
+@media screen and (max-width: 600px) {
+	.postBox {
+		/* margin: 0px; */
+		border: none;
+		box-shadow: none;
+		border-bottom: 0.75px solid rgba(0, 0, 0, 0.2);
+		/* border-top: 0.25px solid rgba(0, 0, 0, 0.2); */
+		/* height: 100%; */
+		/* display: block; */
+	}
+	#cardBox {
+		margin: 10px 10px 5px 10px;
+		display: block;
+	}
+	/* #contentBox {
+		flex: 1;
+	} */
+	#cardHead {
+		/* display: inline-block; */
+		margin-bottom: 3px;
+		/* height: 30px; */
+	}
+	#imgDiv {
+		width: 20px;
+		height: 20px;
+		/* margin-right: 10px; */
+	}
+	#userImg {
+		/* float: left;
+		border-radius: 50%;
+		width: 20px;
+		margin-top: 4px;
+		border: 1px solid rgba(0, 0, 0, 0.5);
+		margin-right: 3px; */
+	}
+	#userId {
+		/* float: left;
+		color: black;
+		font-size: 13px;
+		line-height: 30px;
+		margin-right: 7px; */
+	}
+	#date {
+		/* float: left;
+		font-size: 11px;
+		line-height: 30px;
+		color: gray; */
+	}
+	#cardTitle {
+		padding-top: 2px;
+		padding-bottom: 2px;
+		/* margin-left: 10px; */
+	}
+	.line-clamp-title {
+		/* font-size: 20px;
+		font-weight: 400;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical; */
+	}
+	#cardHash {
+		/* display: flex; */
+		margin-bottom: 4px;
+	}
+	#hashTag {
+		/* float: left;
+		margin-right: 6px;
+		font-size: 13px;
+		border-radius: 8px;
+		padding-left: 5px;
+		padding-right: 5px;
+		color: white;
+		background-color: rgba(160, 23, 98, 0.5); */
+	}
+	#cardBody {
+		/* min-height: 75px;
+		margin-bottom: 5px; */
+		/* margin-left: 10px; */
+	}
+	.line-clamp-body {
+		/* color: rgb(27, 27, 27);
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical; */
+	}
+	#cardFooter {
+		/* display: inline-block; */
+	}
+	.like_img {
+		/* float: left;
+		width: 35px;
+		border-radius: 50%;
+		transition: all ease-in-out 0.3s; */
+	}
+	#likeCount {
+		/* float: left;
+		font-weight: 400;
+		margin-top: 10px;
+		font-size: 15px; */
+	}
+	.comment_img {
+		/* float: left;
+		width: 30px;
+		margin: 7px 3px 0 10px; */
+	}
+	#commentCount {
+		/* float: left;
+		font-weight: 400;
+		margin-top: 10px;
+		font-size: 15px; */
+	}
+	#imgBox {
+		/* margin-left: 10px;
+		width: 200px; */
+	}
+	#stackImg {
+		/* position: relative;
+		text-align: end;
+		transform: translateY(-100%); */
+	}
+	.stackImgs {
+		/* width: 35px;
+		height: 35px;
+		border-radius: 50%;
+		background-color: white; */
+	}
+	#noStackImg {
+		/* position: relative; */
+		/* justify-content: center; */
+		/* align-items: center; */
+		/* text-align: end; */
+		/* transform: translateY(410%); */
+		/* right: 0;
+		margin-right: 11vw; */
+	}
 }
 </style>

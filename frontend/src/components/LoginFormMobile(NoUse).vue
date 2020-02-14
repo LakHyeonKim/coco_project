@@ -119,7 +119,7 @@ export default {
 								"id",
 								Number(this.$store.getters.userId)
 							);
-							this.$session.set("targetId", 10);
+							// this.$session.set("targetId", 10);
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);
