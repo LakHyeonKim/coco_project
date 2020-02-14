@@ -24,6 +24,7 @@ import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.DoublePost;
+import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.TransactionService;
@@ -99,6 +100,12 @@ public class TransactionController {
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "member 정보 수정 (Transaction) ", response = List.class)
+	@RequestMapping(value = "/updateMemeberInfo", method = RequestMethod.POST)
+	public ResponseEntity<Integer> updateMemeberInfo(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberInfoModify memberInfoModify) throws Exception {
+		transactionService.updateMemeberInfo(memberInfoModify);
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
 	
 	
 	/* 알아보고 삭제 해야 할 것*/

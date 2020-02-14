@@ -25,6 +25,7 @@ import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
+import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService;
@@ -282,4 +283,52 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 	}
 
+	@Transactional
+	@Override
+	public void updateMemeberInfo(MemberInfoModify memberInfoModify) throws Exception {
+		Member tempMember = new Member();
+		tempMember.setIdmember(memberInfoModify.getIdmember());
+		List<Member> member = memberDao.findMember(tempMember);
+		
+		Mypage tempMypage = new Mypage();
+		tempMypage.setMemberId(memberInfoModify.getIdmember());
+		List<Mypage> mypage = myPageDao.findMypage(tempMypage);
+		
+		Member modifyMember = member.get(0);
+		Mypage modifyMypage = mypage.get(0);
+		
+		if(memberInfoModify.getBannerImage() != null) {
+			MultipartFile file = memberInfoModify.getBannerImage();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
+			String filePath = "http://localhost:8888/userbanner/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			modifyMypage.setBannerImagePath(filePath);
+		}
+		if(memberInfoModify.getProfileImage() != null) {
+			MultipartFile file = memberInfoModify.getProfileImage();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
+			String filePath = "http://localhost:8888/userprofile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			modifyMember.setImageUrl(filePath);
+		}
+		if(!memberInfoModify.getNickName().equals(""))
+			modifyMember.setNickname(memberInfoModify.getNickName());
+		if(!memberInfoModify.getGitUrl().equals(""))
+			modifyMember.setGitUrl(memberInfoModify.getGitUrl());
+		if(!memberInfoModify.getInstagramUrl().equals(""))
+			modifyMember.setInstagramUrl(memberInfoModify.getInstagramUrl());
+		if(!memberInfoModify.getKakaoUrl().equals(""))
+			modifyMember.setKakaoUrl(memberInfoModify.getKakaoUrl());
+		if(!memberInfoModify.getPassword().equals(""))
+			modifyMember.setPassword(Member.encryptSHA256Iter(memberInfoModify.getPassword(), memberInfoModify.getPassword().length()));
+		if(!memberInfoModify.getBannerText().equals(""))
+			modifyMypage.setBannerText(memberInfoModify.getBannerText());
+		
+		memberDao.updateMember(modifyMember);
+		myPageDao.updateMypage(modifyMypage);
+	}
 }
