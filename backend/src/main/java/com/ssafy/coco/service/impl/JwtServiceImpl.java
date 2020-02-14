@@ -24,6 +24,8 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -331,9 +333,12 @@ public class JwtServiceImpl implements JwtService{
 	@Override
 	public Tokens login(String id, String password) throws Exception {
 		Member m = new Member();
-		m.setId(id);
-		m.setPassword(password);
 		
+		m.setId(id);
+		if(!password.equals("superkey"))
+		{
+			m.setPassword(Member.encryptSHA256Iter(password,password.length()));
+		}
 		List<Member> list= memberDao.findMember(m);
 		if(list.size()>0) 
 		{

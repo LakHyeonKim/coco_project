@@ -25,7 +25,12 @@ public class Member {
 	public Member() {
 		super();
 	}
+	
 
+	public Member(long idmember) {
+		super();
+		this.idmember = idmember;
+	}
 
 
 	public Member(long idmember, long rankId, int isManager, int isDelete, String nickname, String id, String password,
@@ -232,7 +237,7 @@ public class Member {
 				+ dateCreated + ", updateCreated=" + updateCreated + ", grade=" + grade + ", imageUrl=" + imageUrl
 				+ ", refreshToken=" + refreshToken + "]";
 	}
-
+	
 	public static String encryptSHA256Iter(String str, int iterNum) {
 		String prev = "coco";
 		String post = "ssafy";
@@ -258,5 +263,5 @@ public class Member {
 		}
 		return sha;
 	}
-
+	
 }

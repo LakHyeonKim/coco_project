@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,7 +28,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/wdc")
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "WordController Controller" }, description = "SSAFY HRM resource API (Test)")
+@Api(tags = { "WordController Controller" }, description = "사전에 키워드를 통해 검색")
 public class WordController {
 	@Autowired
 	WordDictionaryService wordDictionaryService;
@@ -35,6 +36,18 @@ public class WordController {
 	@Autowired
 	TagService tagService;
 
+	@ApiOperation(value = "선택 워드 사전 반환", response = List.class)
+	@RequestMapping(value = "/findWordDictionary", method = RequestMethod.POST)
+	public ResponseEntity<List<WordDictionary>> findWordDictionary(@RequestBody String keyword) throws Exception {
+		WordDictionary wd = new WordDictionary();
+		wd.setWord(keyword);
+		List<WordDictionary> answers = wordDictionaryService.findWordDictionary(wd);
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<WordDictionary>>(answers, HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "존재 하는 해시태그의 사전 전처리 구성", response = List.class)
 	@RequestMapping(value = "/makeWordDictionary", method = RequestMethod.POST)
 	void makeWordDictionary() throws Exception {

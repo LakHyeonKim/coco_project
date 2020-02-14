@@ -16,8 +16,8 @@
 		insert into post
 		(member_id, post_title, post_writer,
 		date_created, update_created, code, like_count, views, image_path, file_path, access)
-		values(#{memberId},#{postTitle},#{postWriter},now(),
-		now(), #{code}, #{likeCount}, #{views}, #{imagePath}, #{filePath}, #{access})
+		values(#{memberId},#{postTitle},#{postWriter},DATE_ADD(NOW(), INTERVAL 9 HOUR),
+		DATE_ADD(NOW(), INTERVAL 9 HOUR), #{code}, #{likeCount}, #{views}, #{imagePath}, #{filePath}, #{access})
 	</sql>
 	<sql id="update-Post">
 		update post set
