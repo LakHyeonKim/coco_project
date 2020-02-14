@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.dao.MessageDAO;
 import com.ssafy.vo.Message;
+import com.ssafy.vo.Message.MessageType;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -23,10 +25,13 @@ public class MessageServiceImpl implements MessageService {
 	public List<Message> findMessage(Message message) {
 		return messageDAO.findMessage(message);
 	}
-
+	
+	@Transactional
 	@Override
-	public int addMessage(Message message) {
-		return messageDAO.addMessage(message);
+	public Message addMessage(Message message) {
+		messageDAO.addMessage(message);
+		List<Message> result = messageDAO.findMessage(message);
+		return result.get(0);
 	}
 
 }

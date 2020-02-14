@@ -4,18 +4,17 @@
 
 <mapper namespace="RoomMapper">
 	<sql id="select-room">
-		select idroom, member_id, room_number, room_name, date_created
+		select idroom, member_id, room_name, date_created
 		from `coco`.`room`
 	</sql>
 	<sql id="insert-room">
 		insert into `coco`.`room`
-		(member_id, room_number, room_name, date_created)
-		values(#{memberId}, #{roomNumber}, #{roomName}, now())
+		(member_id, room_name, date_created)
+		values(#{memberId}, #{roomName}, now())
 	</sql>
 	<sql id="update-room">
 		update `coco`.`room` set
 		member_id=#{memberId},
-		room_number=#{roomNumber},
 		room_name=#{roomName},
 		where
 		idroom=#{idroom}
@@ -40,13 +39,9 @@
 				AND
 				member_id = ${memberId}
 			</if>
-			<if test="roomNumber !=null">
-				AND
-				room_number = ${roomNumber}
-			</if>
 			<if test="roomName !=null">
 				AND
-				room_name = ${roomName}
+				room_name = '${roomName}'
 			</if>
 		</where>
 		order by date_created desc;
@@ -71,13 +66,9 @@
 				AND
 				member_id = ${memberId}
 			</if>
-			<if test="roomNumber !=null">
-				AND
-				room_number = ${roomNumber}
-			</if>
 			<if test="roomName !=null">
 				AND
-				room_name = ${roomName}
+				room_name = '${roomName}'
 			</if>
 		</where>
 	</delete>

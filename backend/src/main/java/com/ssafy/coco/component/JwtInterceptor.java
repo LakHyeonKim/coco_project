@@ -29,17 +29,17 @@ public class JwtInterceptor implements HandlerInterceptor {
 		System.out.println("---------------------------------");
 		// System.out.println(request.getPathInfo());
 
-		if (token != null && jwtService.isUsable(token)) {
-			System.out.println("토큰가능");
-			System.out.println(token);
-			return true;
-		} else {
-			System.out.println("토큰불가능");
-			System.out.println(token);
-			return false;
-		}
+//		if (token != null && jwtService.isUsable(token)) {
+//			System.out.println("토큰가능");
+//			System.out.println(token);
+//			return true;
+//		} else {
+//			System.out.println("토큰불가능");
+//			System.out.println(token);
+//			return false;
+//		}
 
-//		return true;
+		return true;
 
 	}
 }
