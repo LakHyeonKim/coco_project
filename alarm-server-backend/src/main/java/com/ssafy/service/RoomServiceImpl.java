@@ -29,8 +29,8 @@ public class RoomServiceImpl implements RoomService {
 	@Transactional
 	@Override
 	public Room addRoom(Room room) {
-		Room result = Room.create(room);
-		roomDAO.addRoom(result);
+		Room result = room;
+		roomDAO.addRoom(room);
 		return result;
 	}
 

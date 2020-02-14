@@ -9,10 +9,13 @@
 					<div
 						class="roomEl active"
 						v-for="item in chatrooms"
-						v-bind:key="item.roomId"
+						v-bind:key="item.idroom"
 						v-on:click="enterRoom(item)"
 					>
-						{{ item.name }}
+						<p v-if="item.idroom != 0">
+							방번호::{{ item.idroom }} - 방제목::
+							{{ item.nameName }} - 방장:: {{ item.memberId }}
+						</p>
 						<!-- <button
 							id="buttonStyle"
 							type="button"
@@ -70,9 +73,6 @@ export default {
 				alert('방 제목을 입력해 주십시요.')
 				return
 			} else {
-				// var room = new URLSearchParams()
-				// room.append('roomName', this.room_name)
-				// room.append('memberId', this.$session.get('id'))
 				axios
 					.post('http://localhost:8081/chat/room', {
 						roomName: this.room_name,
@@ -98,9 +98,6 @@ export default {
 			this.senderStatic = this.$session.get('id')
 			localStorage.setItem('wschat.member_id', this.senderStatic)
 			localStorage.setItem('wschat.idroom', item.idroom)
-			localStorage.setItem('wschat.roomNumber', item.roomNumber)
-
-
 			this.isRoomDetail = true
 			this.isRoomDetail = false
 			setTimeout(() => {
