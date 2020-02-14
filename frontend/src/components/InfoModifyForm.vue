@@ -2,22 +2,34 @@
 	<div id="modify">
 		<validation-observer ref="form">
 			<form
-				@submit.prevent="register"
+				@submit.prevent="updateForm"
 				id="formData"
+				name="updateForm"
 				enctype="multipart/form-data"
 			>
+				<div class="info_div">
+					<v-text-field
+						name="id"
+						label="아이디"
+						v-model="member.id"
+						readonly
+						color="gray"
+						filled
+					></v-text-field>
+				</div>
+
 				<div id="img_div">
 					<div id="back_img">
 						<img-inputer
-							name="file"
-							v-model="signUpMember.file"
+							name="bannerImage"
+							v-model="bannerImage"
 							placeholder="Drop file here or click"
 							bottomText="Drop file here or click"
 							exceedSizeText="사진의 크기가 초과하였습니다"
 							:maxSize="10240"
-							ref="profile"
+							ref="bannerImage"
 							@onExceed="exceedHandler"
-							img-src="../img/icons/close_w.png"
+							:img-src="member.bannerImgUrl"
 							size="small"
 						/>
 						<br />배너 이미지
@@ -25,15 +37,15 @@
 
 					<div id="profile_img">
 						<img-inputer
-							name="file"
-							v-model="signUpMember.file"
+							name="profileImage"
+							v-model="profileImage"
 							placeholder="Drop file here or click"
 							bottomText="Drop file here or click"
 							exceedSizeText="사진의 크기가 초과하였습니다"
 							:maxSize="10240"
-							ref="profile"
+							ref="bannerImage"
 							@onExceed="exceedHandler"
-							img-src=""
+							:img-src="member.profileImageUrl"
 							size="small"
 						/>
 						<br />프로필 이미지
@@ -48,8 +60,8 @@
 							v-slot="{ errors }"
 						>
 							<v-text-field
-								name="nickname"
-								v-model="signUpMember.nickname"
+								name="nickName"
+								v-model="member.nickName"
 								:counter="10"
 								label="닉네임"
 								:error-messages="errors[0] ? errors[0] : []"
@@ -61,64 +73,44 @@
 						중복확인
 					</div>
 				</div>
-				<!-- <div>
-					<div v-if="duplicate">
-						{{ duplicate }}
-					</div>
-				</div> -->
+
 				<div class="info_div">
 					<v-text-field
-						name="title"
+						name="bannerText"
 						label="마이페이지 타이틀"
 						color="gray"
 					></v-text-field>
 				</div>
 
-				<!-- <tags-input
-					v-model="tags"
-					element-id="tags"
-					placeholder="해시태그"
-					add-tags-on-space
-					add-tags-on-blur
-				></tags-input> -->
-
-				<div>
+				<div style="margin-bottom: 20px;">
+					<span style="color: gray; font-size: 12px;">
+						마이페이지 태그
+					</span>
 					<VueTagsInput
 						v-model="tag"
 						:tags="tags"
 						@tags-changed="newTags => (tags = newTags)"
+						:add-on-key="[13, 32, 9, ':', ';']"
+						add-on-blur
+						allow-edit-tags
+						:max-tags="10"
+						id="tagsInput"
+						placeholder=""
 					/>
 				</div>
 
 				<div class="info_div">
 					<v-text-field
-						name="id"
-						label="아이디"
-						v-model="temp_id"
-						readonly
+						name="password"
+						v-model="member.password"
+						label="비밀번호"
+						:counter="16"
+						:type="pwd1 ? 'text' : 'password'"
+						:error-messages="errors[0] ? errors[0] : []"
+						:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
+						@click:append="pwd1 = !pwd1"
 						color="gray"
 					></v-text-field>
-				</div>
-
-				<div class="info_div">
-					<validation-provider
-						name="비밀번호 "
-						vid="confirmation"
-						rules="min:8|max:16|password"
-						v-slot="{ errors }"
-					>
-						<v-text-field
-							name="password"
-							v-model="signUpMember.password"
-							label="비밀번호"
-							:counter="16"
-							:type="pwd1 ? 'text' : 'password'"
-							:error-messages="errors[0] ? errors[0] : []"
-							:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
-							@click:append="pwd1 = !pwd1"
-							color="gray"
-						></v-text-field>
-					</validation-provider>
 				</div>
 
 				<div class="info_div">
@@ -141,7 +133,7 @@
 
 				<div class="info_div">
 					<v-text-field
-						v-model="signUpMember.gitUrl"
+						v-model="member.gitUrl"
 						label="Git url(선택)"
 						color="gray"
 					></v-text-field>
@@ -149,7 +141,7 @@
 
 				<div class="info_div">
 					<v-text-field
-						v-model="signUpMember.kakaoUrl"
+						v-model="member.kakaoUrl"
 						label="Kakao url(선택)"
 						color="gray"
 					></v-text-field>
@@ -157,7 +149,7 @@
 
 				<div class="info_div">
 					<v-text-field
-						v-model="signUpMember.instagramUrl"
+						v-model="member.instagramUrl"
 						label="Instagram url(선택)"
 						color="gray"
 					></v-text-field>
@@ -189,33 +181,35 @@ export default {
 	},
 	data: () => ({
 		temp_id: "temp@naver.com",
-		signUpMember: {
-			file: "",
+		member: {
 			id: "",
-			nickname: "",
-			password: "",
-			email: "",
+			profileImageUrl: "",
+			bannerImageUrl: "",
+			nickName: "",
 			gitUrl: "",
 			kakaoUrl: "",
-			instagramUrl: ""
+			instagramUrl: "",
+			password: ""
 		},
+		profileImage: "",
+		bannerImage: "",
 		pwd1: false,
 		pwd2: false,
 		passwordConfirm: "",
-		duplicate: "",
+		duplicate: false,
 		idcheck: false,
 		tag: "",
 		tags: []
 	}),
 
 	methods: {
-		register() {
-			let formData = new FormData(document.getElementById("formData"));
-			formData.set("file", this.$refs.profile.file);
+		updateForm() {
+			// let formData = new FormData(document.getElementById("formData"));
+			// formData.set("file", this.$refs.profile.file);
 
 			if (this.onSubmit() && this.idcheck) {
 				this.$store.dispatch("startLoading");
-				console.log("REGISTER beforeaxios ", formData);
+				// console.log("REGISTER beforeaxios ", formData);
 				// http.post("/trc/signUp/", formData)
 				// 	.then(res => {
 				// 		console.log("REGISTER then ", res);
@@ -302,30 +296,28 @@ export default {
 			this.$refs.form.validate();
 		},
 		nickCheck() {
-			if (this.signUpMember.id) {
-				this.duplicate = "";
-				console.log("DUPLICATE ", this.signUpMember.id);
-				http.post("/api/check", {
-					id: this.signUpMember.id
-				})
+			if (this.member.nickname) {
+				http.post("/jwt/checkNickName", { nickname: this.nickName })
 					.then(res => {
-						console.log("DUPLICATE then ", this.signUpMember.id);
 						console.log("DUPLICATE then ", res);
-						if (res.data) {
-							this.duplicate = "사용하실수 있는 아이디입니다.";
-							this.idcheck = true;
+						if (res.status == "204") {
+							this.duplicate_nickname.push(
+								"사용하실수 있는 닉네임입니다."
+							);
+							this.duplicate = true;
 						} else {
-							this.duplicate = "아이디가 중복되었습니다.";
-							this.idcheck = false;
+							this.duplicate_nickname.push(
+								"닉네임이 중복되었습니다."
+							);
+							this.duplicate = false;
 						}
 					})
 					.catch(err => {
 						console.log("DUPLICATE catch ", err);
 					});
 			} else {
-				this.duplicate = "닉네임을 입력해 주십시오.";
+				alert("닉네임을 입력해 주십시오.");
 			}
-			alert(this.duplicate);
 		},
 		exceedHandler(file) {
 			console.log(this.$refs.profile);
@@ -341,6 +333,18 @@ export default {
 		// } else {
 		// 	this.$store.state.isCheck = 0;
 		// }
+
+		http.post("/api/findByMemberHomePageModify", this.$session.get("id"), {
+			headers: { Authorization: this.$session.get("accessToken") }
+		})
+			.then(res => {
+				console.log("findByMemberHomepageModify");
+				console.log(res.data);
+				this.member = res.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	},
 	computed: {
 		loading: function() {
@@ -351,6 +355,22 @@ export default {
 </script>
 
 <style>
+#tagsInput {
+	background: none;
+}
+#tagsInput > div {
+	border-radius: 5px;
+	border: 0.5px solid silver;
+}
+
+#tagsInput > div > ul > li.ti-tag.ti-valid {
+	background-color: rgba(160, 23, 98, 0.5);
+}
+
+#tagsInput > div > ul > li.ti-tag.ti-valid.ti-deletion-mark {
+	background-color: rgba(160, 23, 98, 0.9);
+}
+
 #modify {
 	width: 400px;
 	position: relative;
