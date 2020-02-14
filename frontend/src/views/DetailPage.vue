@@ -25,6 +25,7 @@
 			:attachments="this.detail.attachments"
 			id="compo"
 			@updateLike="updateLike"
+			@addComment="addComment"
 		></detail>
 	</div>
 </template>
@@ -87,6 +88,12 @@ export default {
 				this.detail.post.likeCheck = 0;
 			}
 			this.detail.post.likeCount += like;
+		},
+		addComment(comment) {
+			comment.dateCreated = "방금 전";
+			comment.updateCreated = "방금 전";
+			comment.idcomment = 0;
+			this.detail.comments.push(comment);
 		}
 	},
 	created() {

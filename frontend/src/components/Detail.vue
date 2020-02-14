@@ -17,7 +17,14 @@
 					<div id="profile-info">
 						<p id="user-nickname">
 							{{ postWriter }}
-							<v-btn class="ml-2" color="indigo" height="20px" outlined small>팔로우</v-btn>
+							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" outlined small>
+								<span>팔로우</span>
+								<v-icon small>mdi-plus-thick</v-icon>
+							</v-btn>
+							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" outlined small>
+								<span>팔로잉</span>
+								<v-icon small>mdi-check-bold</v-icon>
+							</v-btn>
 						</p>
 						<span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span>
 						<span id="post-info" v-if="views > 1">views</span>
@@ -57,26 +64,26 @@
 
 				<div id="divide-line"></div>
 
-				<div id="commentCreateCard" @click="moveinFocus">
+				<div id="commentCreateCard">
 					<v-card class="mx-auto">
 						<v-card-text id="commentCreateInfo">
 							<v-avatar size="40">
 								<img src="../assets/user.png" alt="default-img" />
 							</v-avatar>
-							<v-card-title id="commentCreatePlaceholder" v-show="!show">{{ $session.get("nickname") }}</v-card-title>
-							<v-card-subtitle v-show="show">asdfasdf</v-card-subtitle>
+							<v-card-title id="commentCreatePlaceholder" v-show="!show" @click="moveinFocus">댓글을 작성해주세요</v-card-title>
+							<v-card-subtitle id="commentCreateNickname" v-show="show">{{ $session.get("nickname") }}</v-card-subtitle>
 						</v-card-text>
 
 						<v-expand-transition>
 							<div v-show="show">
-								<v-card-text>
+								<v-card-text id="commentCreateExpand">
 									<textarea
 										id="commentCreateInput"
 										style="resize: none;"
 										@blur="moveoutFocus"
-										v-model="userComments.contents"
+										v-model="commentContent"
 									/>
-									<v-btn outlined>댓글 작성</v-btn>
+									<v-btn outlined @click="commenting">댓글 작성</v-btn>
 								</v-card-text>
 							</div>
 						</v-expand-transition>
@@ -84,7 +91,11 @@
 				</div>
 
 				<div>
-					<div id="commentListCard" v-for="comment in comments" :key="comment.idcomment">
+					<div
+						id="commentListCard"
+						v-for="comment in comments.slice().reverse()"
+						:key="comment.idcomment"
+					>
 						<div id="commentInfo">
 							<router-link
 								id="commentWriter"
@@ -117,6 +128,7 @@
 	</div>
 </template>
 <script>
+import http from "../http-common";
 import Prism from "../prism";
 import MediumClap from "./MediumClap";
 export default {
@@ -149,18 +161,7 @@ export default {
 	data() {
 		return {
 			show: false,
-
-			userComments: [
-				{
-					commentWriter: "",
-					contents: "",
-					memberId: 0,
-					postId: 0
-				}
-			],
-			userPost: {
-				memberId: 0
-			}
+			commentContent: ""
 		};
 	},
 	methods: {
@@ -180,6 +181,38 @@ export default {
 			if (!document.getElementById("commentCreateInput").value) {
 				this.show = !this.show;
 			}
+		},
+		commenting() {
+			if (!this.commentContent) {
+				return;
+			}
+			const userComment = {
+				comments: [
+					{
+						commentWriter: this.$session.get("nickname"),
+						contents: this.commentContent,
+						memberId: this.$session.get("id"),
+						postId: this.idPost
+					}
+				],
+				post: {
+					memberId: this.memberId
+				}
+			};
+			http.post("/trc/makeComment/", userComment, {
+				headers: {
+					Authorization: this.$session.get("accessToken")
+				}
+			})
+				.then(res => {
+					console.log(res);
+					this.$emit("addComment", userComment.comments[0]);
+					this.commentContent = "";
+					this.show = !this.show;
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		}
 	},
 	updated() {
@@ -244,13 +277,23 @@ export default {
 	align-items: center;
 }
 #commentCreatePlaceholder {
+	width: 100%;
 	color: rgba(0, 0, 0, 0.54);
+}
+#commentCreateNickname {
+	padding: 16px;
+	margin: 0;
+	color: gray;
+	font-weight: 500;
+}
+#commentCreateExpand {
+	padding: 0 16px 16px;
 }
 #commentCreateInput {
 	width: 100%;
 	min-height: 160px;
 	overflow: visible;
-	/* outline: none; */
+	outline: none;
 }
 #commentListCard {
 	background: white;
