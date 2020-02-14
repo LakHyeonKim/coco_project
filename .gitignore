@@ -42,7 +42,7 @@ buildNumber.properties
 # End of https://www.gitignore.io/api/java,maven
 새 텍스트 문서.txt
 
-*.properties
+
 
 
 .DS_Store

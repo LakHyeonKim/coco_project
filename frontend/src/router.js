@@ -15,6 +15,7 @@ import SearchPage from "./views/SearchPage.vue";
 import DetailPage from "./views/DetailPage.vue";
 import FindPassword from "./views/FindPassword.vue";
 import InfoModify from "./views/InfoModify";
+import AlarmPage from "./views/AlarmPage";
 
 Vue.use(VueRouter);
 
@@ -58,9 +59,10 @@ const routes = [
 		// }
 	},
 	{
-		path: "/myPage",
-		name: "myPage",
-		component: MyPage
+		path: "/mypage/:no",
+		name: "mypage",
+		component: MyPage,
+		props: true
 		// meta: {
 		// 	authRequired: true
 		// }
@@ -82,9 +84,10 @@ const routes = [
 		// }
 	},
 	{
-		path: "/detail",
+		path: "/detail/:idPost",
 		name: "detail",
-		component: DetailPage
+		component: DetailPage,
+		props: true
 		// meta: {
 		// 	authRequired: true
 		// }
@@ -100,6 +103,11 @@ const routes = [
 		component: InfoModify
 	},
 	{
+		path: "/alarm",
+		name: "alarm",
+		component: AlarmPage
+	},
+	{
 		path: "*",
 		name: "notfound",
 		component: NewsFeed
@@ -112,7 +120,6 @@ const router = new VueRouter({
 	base: process.env.BASE_URL,
 	routes
 });
-
 router.beforeEach(function(to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (

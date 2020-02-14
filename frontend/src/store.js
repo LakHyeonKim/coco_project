@@ -12,11 +12,9 @@ export default new Vuex.Store({
 		postDetail: [],
 		idPost: 0,
 		searchtag: "",
-		tags: null
-		// init: true,
-		// memberemail: "",
-		// accessToken: "",
-		// refreshToken: "",
+		tags: null,
+		nickname: "",
+		isCheck: 0
 	},
 	getters: {
 		userId: function(state) {
@@ -32,6 +30,18 @@ export default new Vuex.Store({
 					Authorization: "JWT " + state.token
 				}
 			};
+		},
+		userNickname: function(state) {
+			if (!state.nickname) {
+				console.log(jwtDecode(state.token));
+				return jwtDecode(state.token).nickname;
+			} else {
+				return state.nickname;
+			}
+		},
+		userAccess: function(state) {
+			console.log(jwtDecode(state.token));
+			return jwtDecode(state.token).access;
 		}
 	},
 	mutations: {

@@ -58,6 +58,15 @@ public class BoardServiceImpl implements BoardService{
 		List<Post> newsPosts = postDao.findPostByNewsfeed(idMember);
 		return makeBoardList(idMember, newsPosts);
 	}
+	
+	@Override
+	public List<Board> findByAllNewsfeedScrollDown(long idMember, long lastIdPost) {
+		Map<String,Long> hashMap = new HashMap<>();
+		hashMap.put("idMember", idMember);
+		hashMap.put("idPost", lastIdPost);
+		List<Post> newsPosts = postDao.findByAllNewsfeedScrollDown(hashMap);
+		return makeBoardList(idMember, newsPosts);
+	}
 
 	@Override
 	public List<Board> findByAllDefaultSearch(long idMember) {
@@ -125,11 +134,12 @@ public class BoardServiceImpl implements BoardService{
 					tags.add(tag.getTagName());
 				}
 				List<Member> likes = memberDao.findWhoPressedTheLikeButton(post.getIdpost());
-				post.setLikeCount(likes.size());
+				//post.setLikeCount(likes.size());
 				int commentCount = commentDao.findComment(new Comment(0, 0, post.getIdpost(), null, null, null, null, 0)).size();
 				boards.add(new Board(post, tags, commentCount));
 			}
 		}
 		return boards;
 	}
+
 }

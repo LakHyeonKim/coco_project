@@ -26,6 +26,8 @@ import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.SignUpMember;
+import com.ssafy.coco.service.JwtService;
+import com.ssafy.coco.service.MailService;
 import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.BabyPost;
@@ -64,17 +66,20 @@ public class TransactionServiceImpl implements TransactionService{
 	private LikeDao likeDao;
 	@Autowired
 	private TagDao tagDao;
+	@Autowired
+	private JwtService jwtService;
+	@Autowired
+	private MailService mailService;
 	
 	/**
 	 * 
 	 * @param member 회원정보
 	 * 
 	 * 사용자가 회원 가입 했을 때 마이페이지 까지 자동으로 만들어지는 트랜잭션
-	 * @throws IOException 
-	 * @throws IllegalStateException 
+	 * @throws Exception 
 	 */
 	@Transactional
-	public long signUp(SignUpMember signUpMember) throws IllegalStateException, IOException{
+	public long signUp(SignUpMember signUpMember) throws Exception{
 		Member member = new Member(signUpMember.getIdmember(), 
 				signUpMember.getRankId(), 
 				signUpMember.getIsManager(), 
@@ -90,9 +95,11 @@ public class TransactionServiceImpl implements TransactionService{
 				signUpMember.getUpdateCreated(), 
 				signUpMember.getGrade());
 		member.setRankId(1L);
+		
+		
 		if(signUpMember.getFile() != null) {
 			MultipartFile file = signUpMember.getFile();
-			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userprofile";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
 			String imageFilePath = path + saveFileName + "";
@@ -103,6 +110,9 @@ public class TransactionServiceImpl implements TransactionService{
 		Mypage mypage= new Mypage();
 		mypage.setMemberId(member.getIdmember());
 		myPageDao.addMypage(mypage);
+		
+		String key = jwtService.makeJwt("" + member.getIdmember(), "!@323213214214324", 1);
+		mailService.sendMail(member.getId(), "[SEE-SAW] 인증 메일입니다.", "<a href=http://192.168.100.95:8888/jwt/certificationByEmail/"+key+">인증하기</a>");
 		return member.getIdmember();
 	}
 	
@@ -157,8 +167,9 @@ public class TransactionServiceImpl implements TransactionService{
 		postDao.updatePostViewCount(post.getIdpost());
 		List<PostTag> postTagList = postTagDao.findPostTag(new PostTag(0, post.getIdpost(), 0));
 		for(PostTag postTag : postTagList) {
-			if(memberTagDao.findMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 0)) == null){
+			if(memberTagDao.findMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 0)).size() == 0){
 				memberTagDao.addMemberTag(new MemberTag(0, idMember, postTag.getTagId(), 0, 1));
+				
 			}else {
 				Map<String,Long> hashMap = new HashMap<>();
 				hashMap.put("idMember", idMember);
@@ -208,6 +219,7 @@ public class TransactionServiceImpl implements TransactionService{
 	@Transactional
 	public void pushLike(long idPost, long idMember) {
 		likeDao.addLike(new Like(0, idPost, idMember, 0));
+		postDao.updatePostlikeCount(idPost);
 		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
 		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 		alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
@@ -251,7 +263,7 @@ public class TransactionServiceImpl implements TransactionService{
 		
 		if(board.getAttachments() != null) {
 			MultipartFile file = board.getAttachments();
-			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String path = System.getProperty("user.dir") + "/src/main/META-INF/resources/userfile";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
 			String filePath = path + saveFileName + "";

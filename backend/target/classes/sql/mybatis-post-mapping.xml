@@ -91,7 +91,7 @@
 		from `coco`.`post` 
 		where member_id 
 		in (select member_following from `coco`.`follow` where member_follower = #{value}) 
-		order by date_created desc
+		order by date_created desc limit 5
 	</select>
 	
 	<select id="findPostByNewsfeedOrderByLike" parameterType="long" resultType="Post">
@@ -157,7 +157,16 @@
 		order by date_created desc;
 	</select>
 	
-	
+	<select id="findByAllNewsfeedScrollDown" parameterType="hashmap" resultType="Post">
+		
+		select idpost, member_id, post_title, post_writer, date_created, update_created, code, like_count, views, image_path, access 
+		from `coco`.`post` 
+		where member_id 
+		in (select member_following from `coco`.`follow` where member_follower = #{idMember}) 
+		and date_created <![CDATA[<]]> (select date_created from `coco`.`post` where idpost = #{idPost})
+		order by date_created desc limit 5
+		
+	</select>
 
 	<insert id="addPost" parameterType="Post"
 		useGeneratedKeys="true" keyProperty="idpost">
@@ -177,6 +186,12 @@
 	<update id="updatePostUnlikeCount" parameterType="long">
 		UPDATE `coco`.`post` 
 		SET `like_count` = `like_count` - 1 
+		WHERE idpost = #{value};
+	</update>
+	
+	<update id="updatePostlikeCount" parameterType="long">
+		UPDATE `coco`.`post` 
+		SET `like_count` = `like_count` + 1 
 		WHERE idpost = #{value};
 	</update>
 

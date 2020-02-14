@@ -1,6 +1,7 @@
 package com.ssafy.coco.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,16 @@ public class PostDaoImpl implements PostDao {
 	@Override
 	public int updatePostUnlikeCount(long idPost) {
 		return sqlSession.update(ns + "updatePostUnlikeCount",idPost);
+	}
+
+	@Override
+	public int updatePostlikeCount(long idPost) {
+		return sqlSession.update(ns + "updatePostlikeCount",idPost);
+	}
+
+	@Override
+	public List<Post> findByAllNewsfeedScrollDown(Map<String, Long> hashMap) {
+		return sqlSession.selectList(ns + "findByAllNewsfeedScrollDown", hashMap);
 	}
 
 }

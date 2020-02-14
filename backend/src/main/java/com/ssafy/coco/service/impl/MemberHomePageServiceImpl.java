@@ -34,6 +34,9 @@ public class MemberHomePageServiceImpl implements MemberHomePageService{
 	
 	@Override
 	public MemberHomePage findByMemberHomePageUserID(long myIdMember, long youIdMember) {
+		if(myIdMember != youIdMember) {
+			mypageDao.updateMypageVisitedCount(youIdMember);
+		}
 		List<Mypage> myPageList = mypageDao.findMypage(new Mypage(0, youIdMember, null, null, 0, 0, 0));
 		Mypage mypage = myPageList.get(0);
 		List<Tag> myPageTagList = TagDao.findAllTagIncludedMypage(mypage.getIdmypage());
