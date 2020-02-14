@@ -23,7 +23,8 @@
 							id="input"
 							v-model="board.code"
 							label="Input"
-							@keydown="insertTab"
+							@keydown.tab="insertTab"
+							@keydown="questionCount"
 							auto-grow
 							outlined
 						/>
@@ -56,12 +57,7 @@
 		<form name="board" id="board" enctype="multipart/form-data">
 			<v-row>
 				<v-col>
-					<v-file-input
-						name="attachments"
-						v-model="board.attachments"
-						chips
-						label="첨부파일"
-					></v-file-input>
+					<v-file-input name="attachments" v-model="board.attachments" chips label="첨부파일"></v-file-input>
 				</v-col>
 			</v-row>
 			<v-row>
@@ -88,6 +84,8 @@ export default {
 	components: {},
 	data() {
 		return {
+			question: 0,
+			dictWord: "",
 			tags: [],
 			board: {
 				code: "",
@@ -104,8 +102,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -128,6 +126,45 @@ export default {
 				return false;
 			}
 			return true;
+		},
+		findWordDict() {
+			http.post(
+				"/api/findWordDictionary/",
+				{ word: this.dictWord },
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			).then(res => {
+				console.log(res);
+				this.question = 0;
+				this.dictWrod = "";
+			});
+		},
+		questionCount: function(event) {
+			console.log(event);
+			if (event.key == "?") {
+				this.question++;
+			} else if (this.question == 2) {
+				if (
+					(event.keyCode >= 48 && event.keyCode <= 57) ||
+					(event.keyCode >= 65 && event.keyCode <= 90) ||
+					(event.keyCode >= 96 && event.keyCode <= 111)
+				) {
+					this.dictWord += event.key;
+					console.log(this.dictWord);
+				} else if (event.code == "Backspace") {
+					this.dictWord = this.dictWord.slice(0, -1);
+					console.log(this.dictWord);
+				} else if (event.code == "Space") {
+					this.findWordDict();
+				} else {
+					this.question = 0;
+					this.dictWrod = "";
+				}
+			} else if (event.key == "Shift" || event.key == "CapsLock") {
+				return;
+			} else {
+				this.question = 0;
+				this.dictWord = "";
+			}
 		},
 		highlighting() {
 			Prism.highlightAll();
