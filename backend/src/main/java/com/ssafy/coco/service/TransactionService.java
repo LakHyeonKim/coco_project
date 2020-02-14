@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
+import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.vo.Comment;
 import com.ssafy.coco.vo.Post;
@@ -18,4 +19,5 @@ public interface TransactionService {
 	public void pushLike(long idPost, long idMember);
 	public void unLike(long idPost, long idMember);
 	public void makePost(BoardWrite board) throws IllegalStateException, IOException;
+	public void updateMemeberInfo(MemberInfoModify memberInfoModify) throws Exception;
 }
