@@ -20,7 +20,7 @@
 		values(#{rankId},#{isManager},#{isDelete},
 		#{nickname}, #{id},
 		#{password}, #{email}, #{gitUrl}, #{kakaoUrl},
-		#{instagramUrl},now(),now(),#{imageUrl},#{refreshToken})
+		#{instagramUrl},DATE_ADD(NOW(), INTERVAL 9 HOUR),DATE_ADD(NOW(), INTERVAL 9 HOUR),#{imageUrl},#{refreshToken})
 	</sql>
 	<sql id="update-Member">
 		update member set
@@ -33,7 +33,7 @@
 		git_url = #{gitUrl},
 		kakao_url = #{kakaoUrl},
 		instagram_url = #{instagramUrl},
-		update_created = now(),
+		update_created = DATE_ADD(NOW(), INTERVAL 9 HOUR),
 		image_url = #{imageUrl},
 		refreshToken = #{refreshToken}
 		where

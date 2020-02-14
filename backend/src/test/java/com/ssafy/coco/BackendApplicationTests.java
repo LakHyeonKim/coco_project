@@ -12,6 +12,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +41,18 @@ import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.PostTag;
 import com.ssafy.coco.vo.Tag;
 import com.ssafy.coco.vo.WordDictionary;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleBrowserClientRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.people.v1.PeopleService;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 @SpringBootTest
 class BackendApplicationTests {
@@ -63,6 +76,10 @@ class BackendApplicationTests {
 
 	@Test
 	void relationVoContextLoads() throws Exception {
+		setUp();
+	}
+
+	public void testWD() throws ParseException {
 		String inputString = "python";
 		List<Tag> list = tagService.findAllTag();
 		WordDictionary inputTestWD = new WordDictionary();
@@ -70,7 +87,8 @@ class BackendApplicationTests {
 			inputString = tag.getTagName();
 			inputTestWD.setWord(inputString);
 			int size = wordDictionaryService.findWordDictionary(inputTestWD).size();
-			if(size!=0) continue;
+			if (size != 0)
+				continue;
 			HttpHeaders headers = new HttpHeaders();
 			RestTemplate restTemplate = new RestTemplate();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -86,9 +104,10 @@ class BackendApplicationTests {
 			JSONObject data = (JSONObject) p.parse(bodys);
 
 			JSONArray items = (JSONArray) data.get("items");
-			if(items == null) continue;
+			if (items == null)
+				continue;
 			JSONObject item;
-			
+
 			for (int i = 0; i < items.size(); i++) {
 				item = (JSONObject) items.get(i);
 
@@ -96,7 +115,8 @@ class BackendApplicationTests {
 				String link = item.get("link").toString();
 				String snippet = item.get("snippet").toString();
 				JSONObject pagemap = (JSONObject) item.get("pagemap");
-				if(pagemap==null) continue;
+				if (pagemap == null)
+					continue;
 				JSONArray cse_thumbnail = (JSONArray) pagemap.get("cse_thumbnail");
 				String src = null;
 				if (cse_thumbnail != null) {
@@ -115,7 +135,46 @@ class BackendApplicationTests {
 			}
 		}
 		System.out.println("Ss");
+	}
 
+	public void setUp() throws IOException {
+		HttpTransport httpTransport = new NetHttpTransport();
+		JacksonFactory jsonFactory = new JacksonFactory();
+
+		// Go to the Google API Console, open your application's
+		// credentials page, and copy the client ID and client secret.
+		// Then paste them into the following code.
+		String clientId = "942056096181-qb0ht69ht9qqiolcfhaluk23hl0t428i.apps.googleusercontent.com";
+		String clientSecret = "kaqz1mBd2kgPLDku9nLAf4Wj";
+
+		// Or your redirect URL for web based applications.
+		String redirectUrl = "http://localhost:8888";
+		String scope = "https://www.googleapis.com/auth/contacts.readonly";
+
+		// Step 1: Authorize -->
+		String authorizationUrl = new GoogleBrowserClientRequestUrl(clientId, redirectUrl, Arrays.asList(scope))
+				.build();
+
+		// Point or redirect your user to the authorizationUrl.
+		System.out.println("Go to the following link in your browser:");
+		System.out.println(authorizationUrl);
+
+		// Read the authorization code from the standard input stream.
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("What is the authorization code?");
+		String code = in.readLine();
+		// End of Step 1 <--
+
+		// Step 2: Exchange -->
+		GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(httpTransport, jsonFactory,
+				clientId, clientSecret, code, redirectUrl).execute();
+		// End of Step 2 <--
+
+		GoogleCredential credential = new GoogleCredential.Builder().setTransport(httpTransport)
+				.setJsonFactory(jsonFactory).setClientSecrets(clientId, clientSecret).build()
+				.setFromTokenResponse(tokenResponse);
+
+		PeopleService peopleService = new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
 	}
 
 	/*

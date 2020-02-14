@@ -37,6 +37,7 @@ public class BoardController {
 	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 (뉴스피드 페이지용)", response = List.class)
 	@RequestMapping(value = "/findByAllNewsfeed", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByAllNewsfeed(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
+		System.out.println("!!"+jwt);
 		List<Board> answers = boardService.findByAllNewsfeed(idMember);
 			if (answers.isEmpty()) {
 				return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -77,7 +78,7 @@ public class BoardController {
 	@ApiOperation(value = "사용자의 선호 태그 기반으로 모두 찾아줌 (검색 페이지용)", response = List.class)
 	@RequestMapping(value = "/findByAllDefaultSearch", method = RequestMethod.POST)
 	public ResponseEntity<List<Board>> findByAllDefaultSearch(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
-		System.out.println(jwt);
+		System.out.println("디폴트"+jwt);
 		List<Board> answers = boardService.findByAllDefaultSearch(idMember);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
