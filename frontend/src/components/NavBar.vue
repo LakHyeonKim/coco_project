@@ -2,6 +2,7 @@
 	<!-- 모바일 화면에서 width 줄어들 때 구성요소 잘리는 현상 -->
 	<!-- 웹 화면에서 구성요소 링크 범위 조절 -->
 	<div id="navbar">
+		<notifications group="foo" />
 		<ul>
 			<li>
 				<!-- <router-link to="/mypage"> -->
@@ -38,7 +39,8 @@
 					src="../assets/kakao_logo.png"
 					@click="toggleMenu()"
 				/>
-				<Room v-if="!isHidden"></Room>
+				<Room v-if="!isHidden" v-bind:isHiddenDetail="isHiddenDetail" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></Room>
+				<RoomDetail v-bind:isHiddenDetail="isHiddenDetail" v-if="!isHidden&&isHiddenDetail" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></RoomDetail>
 			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
@@ -50,19 +52,85 @@
 <script>
 import router from '../router'
 import Room from '@/components/Room'
+import RoomDetail from '@/components/RoomDetail'
+import SockJS from 'sockjs-client'
+import Stomp from 'webstomp-client'
 
 export default {
 	name: 'NavBar',
 	components: {
-		Room
+		Room,
+		RoomDetail
 	},
 	data () {
 		return {
 			isHidden: true,
-			preUrl: ''
+			isHiddenDetail: false,
+			preUrl: '',
+			isfirst: true,
+			timerID: 0,
+			latest_alarm_id: 0,
+			soloconnected: false,
+			solo_send_message: '',
 		}
 	},
 	methods: {
+		updateIsHiddenDetail(value){
+			this.isHiddenDetail = value;
+		},
+		alarm () {
+      		setInterval(this.solosend, 5000)
+		},
+		solosend () {
+      		console.log("Send message:" + this.solo_send_message);
+      		if (this.stompClient && this.stompClient.connected) {
+        		const msg = { memberId: this.solo_send_message }
+        		console.log(JSON.stringify(msg));
+        		this.stompClient.send('/app/info', JSON.stringify(msg), {})
+      		}
+		},
+		soloconnect() {
+      		this.socket = new SockJS("http://localhost:8081/gs-guide-websocket");
+      		this.stompClient = Stomp.over(this.socket);
+      		this.stompClient.connect(
+        		{},
+        		frame => {
+          			this.soloconnected = true;
+          			console.log(frame);
+          			this.stompClient.subscribe("/user/queue/info", tick => {
+            			console.log(JSON.parse(tick.body).idalarm);
+            			if (this.latest_alarm_id < JSON.parse(tick.body).idalarm) {
+              				if (!this.isfirst) {
+                				this.$notify({
+                  					group: "foo",
+                  					title: "Important message",
+                  					text:
+                    					JSON.parse(tick.body).memberCaller +
+                    					"님에게서 알림이 도착했어요~"
+                				});
+                				//this.solo_received_messages.push(JSON.parse(tick.body));
+              				}
+              				this.isfirst = false;
+            			}
+            			this.latest_alarm_id = JSON.parse(tick.body).idalarm;
+          			});
+        		},
+        		error => {
+          			console.log(error);
+          			this.soloconnected = false;
+        		}
+      		);
+		},
+		disconnect() {
+      		if (this.stompClient) {
+        		this.stompClient.disconnect();
+      		}
+      		clearInterval(this.timerID);
+      		this.soloconnected = false;
+		},
+		tickleConnection() {
+      		this.soloconnected ? this.disconnect() : this.connect();
+    	},
 		toggleMenu () {
 			this.isHidden = !this.isHidden
 		},
@@ -78,6 +146,14 @@ export default {
 				window.location.reload(true);
 			}
 		}
+	},
+	mounted(){
+		this.solo_send_message = this.$session.get("id");
+		this.soloconnect()
+		this.alarm()
+	},
+	destroyed(){
+		this.disconnect()
 	}
 }
 </script>

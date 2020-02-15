@@ -17,12 +17,14 @@ import { i18n } from "./i18n";
 import "./vee-validate";
 import VueMarkdown from "vue-markdown";
 import VoerroTagsInput from "@voerro/vue-tagsinput";
+import Notifications from 'vue-notification';
 
 Vue.config.productionTip = false;
 
 Vue.use(VueSimplemde);
 Vue.use(Vuetify);
 Vue.use(VueSession);
+Vue.use(Notifications);
 
 Vue.component("v-gravatar", Gravatar);
 Vue.component("ImgInputer", ImgInputer);

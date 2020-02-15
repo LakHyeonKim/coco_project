@@ -4,7 +4,7 @@
 
 <mapper namespace="AlarmMapper">
 	<select id="findLatestAlarm" resultType="alarm" parameterType="long">
-		select idalarm, member_caller, member_receiver, post_id, like_id, follow_id, is_read, access
+		select idalarm, member_caller, member_receiver, post_id, like_id, follow_id, is_read, access, date_created
 		from coco.alarm where member_receiver = #{value} order by idalarm desc limit 1;
 	</select>
 </mapper>

@@ -24,7 +24,6 @@ public class ChatController {
     public void message(Message message) {
         if (Message.MessageType.ENTER.equals(message.getType()))
             message.setContext(message.getNickName() + "님이 입장하셨습니다.");
-        messageService.addMessage(message);
-        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), messageService.addMessage(message));
     }
 }

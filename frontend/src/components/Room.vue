@@ -1,5 +1,5 @@
 <template>
-	<div id="open">
+	<div id="openRoom">
 		<div id="roomWrap">
 			<div id="roomList">
 				<div id="roomHeader">
@@ -10,7 +10,6 @@
 						class="roomEl active"
 						v-for="item in chatrooms"
 						v-bind:key="item.idroom"
-						v-on:click="enterRoom(item)"
 					>
 						<p v-if="item.idroom != 0">
 							방번호::{{ item.idroom }}___방제목::
@@ -19,7 +18,15 @@
 						<button
 							id="buttonStyle"
 							type="button"
-							@click="deleteRoom"
+							@click="enterRoom(item)"
+							v-if="item.memberId == senderStatic"
+						>
+							채팅방 입장
+						</button>
+						<button
+							id="buttonStyle"
+							type="button"
+							@click="deleteRoom(item.idroom)"
 							v-if="item.memberId == senderStatic"
 						>
 							채팅방 삭제
@@ -28,36 +35,43 @@
 				</div>
 			</div>
 		</div>
-		<input
-			id="inputStyle"
-			type="text"
-			v-model="room_name"
-			@keyup.enter="createRoom"
-		/>
-		<button id="buttonStyle" type="button" @click="createRoom">
-			채팅방 개설
-		</button>
-		<RoomDetail v-if="isRoomDetail"> </RoomDetail>
+		<div>
+			<input
+				id="inputStyle"
+				type="text"
+				v-model="room_name"
+				@keyup.enter="createRoom"
+			/>
+			<button id="buttonStyle" type="button" @click="createRoom">
+				채팅방 개설
+			</button>
+			<input
+				id="inputStyle"
+				type="text"
+				v-model="search_room_name"
+				@keyup.enter="searchRoom"
+			/>
+			<button id="buttonStyle" type="button" @click="searchRoom">
+				채팅방 검색
+			</button>
+		</div>
 	</div>
 </template>
 
 <script>
 import axios from 'axios'
-import RoomDetail from '@/components/RoomDetail'
 
 export default {
 	name: 'Room',
+	props:["isHiddenDetail"],
 	data () {
 		return {
 			senderStatic: 0,
-			isHidden: true,
-			isRoomDetail: false,
+			isHidden: this.isHiddenDetail,
 			room_name: '',
+			search_room_name:'',
 			chatrooms: []
 		}
-	},
-	components: {
-		RoomDetail
 	},
 	created () {
 		this.findAllRoom()
@@ -69,6 +83,9 @@ export default {
 				console.log(response)
 				this.chatrooms = response.data
 			})
+		},
+		searchRoom: function(){
+			
 		},
 		createRoom: function () {
 			if ('' === this.room_name) {
@@ -94,14 +111,31 @@ export default {
 					})
 			}
 		},
-		deleteRoom: function () {},
+		deleteRoom: function (idroom) {
+			axios
+				.delete('http://localhost:8081/chat/room/' + idroom)
+				.then(response => {
+					console.log(response)
+					alert(
+						'방 삭제를 성공하였습니다.'
+					)
+					this.findAllRoom()
+					this.$emit("updateIsHiddenDetail",false)
+				})
+				.catch(response =>{
+					console.log(response)
+					alert('채팅방 삭제를 실패하였습니다.')
+				})
+		},
 		enterRoom: function (item) {
 			localStorage.setItem('wschat.member_id', this.senderStatic)
 			localStorage.setItem('wschat.idroom', item.idroom)
-			this.isRoomDetail = true
-			this.isRoomDetail = false
+			//console.log(this.isHidden)
+			this.$emit("updateIsHiddenDetail",!this.isHidden)
+			// console.log(this.isHidden)
+			this.$emit("updateIsHiddenDetail",false)
 			setTimeout(() => {
-				this.isRoomDetail = true
+				this.$emit("updateIsHiddenDetail",true)
 			}, 1)
 		}
 	}
@@ -117,7 +151,8 @@ input {
 	border-block-color: black;
 }
 
-#open {
+#openRoom {
+	float: left;
 	background-color: white;
 	position: relative;
 	left: 50px;
@@ -141,17 +176,17 @@ input {
 }
 
 #roomList {
-	border: 1px solid rgb(221, 187, 210);
-	border-radius: 5px;
+	
+	border-radius: 10px;
 }
 
 #roomSelect {
-	border: 1px solid rgb(221, 187, 210);
+	
 	border-radius: 5px;
 }
 
 #roomHeader {
-	background-color: #7d4879;
+	background-color: #a794a5;
 	color: rgb(0, 0, 0);
 	height: 40px;
 	font-size: 18px;
