@@ -71,7 +71,39 @@
 			<input type="hidden" name="code" v-model="board.code" />
 			<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 		</form>
-	</v-container>
+		<v-row justify="center">
+    		<v-dialog v-model="dialog" scrollable overflowed>
+				<template v-slot:activator="{ on }">
+					<v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
+				</template>
+				<v-card>
+					<v-card-title>
+						<span class="headline">Use Google's location service?</span>
+					</v-card-title>
+					<v-card-text>Lorem ipsum dolor sit amet, semper quis, sapien id natoque elit.</v-card-text>
+					<agile ref="carousel" fade :dots="true">
+						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
+							<p>{{ dict.word }}</p>
+							<p>{{ dict.description }}</p>
+							<p>{{ dict.link}}</p>
+							<p>{{ dict.thumbnailSrc }}</p>
+						</div>
+						<div class="test1"></div>
+						<div class="test2"></div>
+						<div class="test3"></div>
+						<img class="test4" src="1.jpg" alt="">
+						<v-icon slot="prevButton">mdi-chevron-left</v-icon>
+						<template slot="prevButton">prev</template>
+						<template slot="nextButton">next</template>
+						<v-icon slot="nextButton">mdi-chevron-right</v-icon>
+					</agile>
+					<v-card-actions>
+						<v-btn color="green darken-1" text @click="dialog = false">Disagree</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+  		</v-row>
+	</v-container>	
 </template>
 
 <script>
@@ -81,11 +113,15 @@ import http from "../http-common";
 
 export default {
 	name: "NewPage",
-	components: {},
+	components: {
+	},
 	data() {
 		return {
+			dialog: false,
 			question: 0,
 			dictWord: "",
+			dictArray: [],
+
 			tags: [],
 			board: {
 				code: "",
@@ -134,8 +170,10 @@ export default {
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			).then(res => {
 				console.log(res);
+				this.dictArray = res.data;
 				this.question = 0;
-				this.dictWrod = "";
+				this.dictWord = "";
+				this.dialog = true;
 			});
 		},
 		questionCount: function(event) {
@@ -157,7 +195,7 @@ export default {
 					this.findWordDict();
 				} else {
 					this.question = 0;
-					this.dictWrod = "";
+					this.dictWord = "";
 				}
 			} else if (event.key == "Shift" || event.key == "CapsLock") {
 				return;
@@ -239,5 +277,53 @@ export default {
 	color: white;
 	font-weight: 400;
 	background: rgba(160, 23, 98, 0.5);
+}
+.test1 {
+	height: 100px;
+	background-color: black;
+}
+.test2 {
+	height: 100px;
+	background-color: red;
+}
+.test3 {
+	height: 100px;
+	background-color: blue;
+}
+.agile__actions {
+	margin-top: 20px;
+}
+.agile__actions ul{
+	padding: 0;
+}
+.agile__dots {
+	margin: 16px 0;
+	padding: 0;
+}
+.agile__dot {
+	margin: 0 10px;
+}
+.agile__dot button {
+	background-color: #eee;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	display: block;
+	font-size: 0;
+	line-height: 0;
+	margin: 0;
+	padding: 0;
+	transition-duration: .3s;
+	height: 10px;
+	width: 10px;
+}
+.agile__dot--current {
+	border-radius: 50%;
+}
+.agile__dot--current button {
+	background-color: #888;
+}
+.agile__dot:hover button {
+	background-color: #888;
 }
 </style>
