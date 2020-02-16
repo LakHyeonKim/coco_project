@@ -2,7 +2,7 @@
 	<!-- 모바일 화면에서 width 줄어들 때 구성요소 잘리는 현상 -->
 	<!-- 웹 화면에서 구성요소 링크 범위 조절 -->
 	<div id="navbar">
-		<notifications group="foo" />
+		<notifications  group="foo" />
 		<ul>
 			<li>
 				<!-- <router-link to="/mypage"> -->
@@ -35,12 +35,13 @@
 			</li>
 			<li class="nav_menu">
 				<img
-					class="nav_menu_img"
+					class="nav_menu_drag"
 					src="../assets/kakao_logo.png"
-					@click="toggleMenu()"
+					@dblclick="toggleMenu()"
+					@mousedown="startDrag($event)"
 				/>
-				<Room v-if="!isHidden" v-bind:isHiddenDetail="isHiddenDetail" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></Room>
-				<RoomDetail v-bind:isHiddenDetail="isHiddenDetail" v-if="!isHidden&&isHiddenDetail" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></RoomDetail>
+				<Room id="openRoom" v-if="!isHidden" v-bind:toChild="toChild" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></Room>
+				<RoomDetail id="openDetail" v-bind:toChild="toChild" v-if="!isHidden&&toChild.isHiddenDetail" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></RoomDetail>
 			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
@@ -64,19 +65,55 @@ export default {
 	},
 	data () {
 		return {
+			toChild:{
+				isHiddenDetail: false,
+				left: 0,
+				top: 0
+			},
 			isHidden: true,
-			isHiddenDetail: false,
 			preUrl: '',
 			isfirst: true,
 			timerID: 0,
 			latest_alarm_id: 0,
 			soloconnected: false,
 			solo_send_message: '',
+			div_L: 0,
+			div_T: 0,
+			targetObj: null
 		}
 	},
 	methods: {
+		getLeft(){
+			return parseInt(this.targetObj[0].style.left.replace("px",""));
+		},
+		getTop(){
+			return parseInt(this.targetObj[0].style.top.replace("px",""));
+		},
+		moveDrag(e){
+			var e_obj = window.event? window.event : e;
+			this.div_L = e_obj.clientX;
+			this.div_T = e_obj.clientY;
+			document.getElementsByClassName("nav_menu_drag")[0].style.left = e_obj.clientX + "px";
+			document.getElementsByClassName("nav_menu_drag")[0].style.top = e_obj.clientY + "px";
+     		return false;
+		},
+		stopDrag(){
+			document.onmousemove = null;
+			document.onmouseup = null;
+		},
+		startDrag(e){
+			this.targetObj = document.getElementsByClassName("nav_menu_drag");
+			var e_obj = window.event? window.event : e;
+			this.div_L = e_obj.clientX;
+			this.div_T = e_obj.clientY;
+			this.toChild.left = e_obj.clientX;
+			this.toChild.top = e_obj.clientY;
+			document.onmousemove = this.moveDrag;
+			document.onmouseup = this.stopDrag;
+			if(e_obj.preventDefault) e_obj.preventDefault();
+		},
 		updateIsHiddenDetail(value){
-			this.isHiddenDetail = value;
+			this.toChild.isHiddenDetail = value;
 		},
 		alarm () {
       		setInterval(this.solosend, 5000)
@@ -101,13 +138,33 @@ export default {
             			console.log(JSON.parse(tick.body).idalarm);
             			if (this.latest_alarm_id < JSON.parse(tick.body).idalarm) {
               				if (!this.isfirst) {
-                				this.$notify({
+								if(JSON.parse(tick.body).postId > 0 && JSON.parse(tick.body).likeId > 0 && JSON.parse(tick.body).followId == 0){
+									this.$notify({
                   					group: "foo",
                   					title: "Important message",
                   					text:
-                    					JSON.parse(tick.body).memberCaller +
-                    					"님에게서 알림이 도착했어요~"
-                				});
+                    					JSON.parse(tick.body).nickname +
+                    					" 님이 포스트에 좋아요를 눌렀어요~"
+                					});
+								}
+                				else if(JSON.parse(tick.body).postId > 0 && JSON.parse(tick.body).likeId == 0 && JSON.parse(tick.body).followId == 0){
+									this.$notify({
+                  					group: "foo",
+                  					title: "Important message",
+                  					text:
+                    					JSON.parse(tick.body).nickname +
+                    					" 님이 포스트에 댓글을 달았어요~"
+                					});
+								}
+								else if(JSON.parse(tick.body).postId == 0 && JSON.parse(tick.body).likeId == 0 && JSON.parse(tick.body).followId > 0){
+									this.$notify({
+                  					group: "foo",
+                  					title: "Important message",
+                  					text:
+                    					JSON.parse(tick.body).nickname +
+                    					" 님이 팔로우를 했어요~"
+                					});
+								}
                 				//this.solo_received_messages.push(JSON.parse(tick.body));
               				}
               				this.isfirst = false;
@@ -152,13 +209,18 @@ export default {
 		this.soloconnect()
 		this.alarm()
 	},
-	destroyed(){
+	beforeDestroy(){
 		this.disconnect()
 	}
 }
 </script>
 
 <style>
+
+.vue-notification {
+	background-color: #7d4879;
+}
+
 #navbar {
 	position: fixed;
 	top: 0;
@@ -191,6 +253,15 @@ export default {
 
 .nav_menu {
 	height: 50px;
+}
+
+.nav_menu_drag{
+	height: 50px;
+	position:absolute; 
+	left:100px;
+	top:100px; 
+	cursor:pointer;
+	cursor:hand;
 }
 
 .nav_menu_img {
@@ -230,6 +301,7 @@ export default {
 		width: 35px;
 		padding: 3px;
 	}
+
 }
 @media screen and (max-width: 330px) {
 	#profile {

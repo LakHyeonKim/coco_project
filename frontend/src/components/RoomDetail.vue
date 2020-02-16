@@ -1,5 +1,5 @@
 <template>
-	<div id="detialOpen">
+	<div class="openDetail">
 	<div id="chatWrap">
 		<div id="chatHeader">{{ room.roomName }} 
 			<button id="buttonStyle" type="button" @click="outChatRoom">
@@ -68,7 +68,7 @@ import axios from 'axios'
 
 export default {
 	name: 'RoomDetail',
-	props:["isHiddenDetail"],
+	props:["toChild"],
 	data () {
 		return {
 			roomId: 0,
@@ -77,7 +77,7 @@ export default {
 			room: {},
 			message: '',
 			messages: [],
-			isHidden:this.isHiddenDetail
+			isHidden:this.toChild.isHiddenDetail
 		}
 	},
 	created () {
@@ -85,6 +85,23 @@ export default {
 		this.memberId = localStorage.getItem('wschat.member_id')
 		this.nickName = this.$session.get('nickname')
 		this.findRoom()
+	},
+	mounted(){
+		var standardWidth = window.innerWidth / 2;
+		var standardHeight = window.innerHeight / 2;
+		if(standardWidth > this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left+510) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left-910) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-1070) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left-910) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth > this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left+510) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-1070) + "px";
+		}
 	},
 	methods: {
 		outChatRoom: function(){
@@ -178,6 +195,20 @@ export default {
 </script>
 
 <style>
+.openDetail {
+	float: left;
+	background-color: white;
+	position: relative;
+	left: 560px;
+	bottom: 410px;
+	width: 400px;
+	height: 930%;
+	padding: 10px;
+	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
+	border-radius: 15px;
+	overflow: auto;
+}
+
 #chatWrap {
 	width: 100%;
 	border: 1px solid #ddd;
@@ -197,20 +228,6 @@ export default {
 	height: 100px;
 	overflow-y: auto;
 	padding: 10px;
-}
-
-#detialOpen {
-	float: left;
-	background-color: white;
-	position: relative;
-	left: 560px;
-	bottom: 410px;
-	width: 400px;
-	height: 930%;
-	padding: 10px;
-	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
-	border-radius: 15px;
-	overflow: auto;
 }
 
 .myMsg {

@@ -1,5 +1,5 @@
 <template>
-	<div id="openRoom">
+	<div class="openRoom">
 		<div id="roomWrap">
 			<div id="roomList">
 				<div id="roomHeader">
@@ -19,7 +19,6 @@
 							id="buttonStyle"
 							type="button"
 							@click="enterRoom(item)"
-							v-if="item.memberId == senderStatic"
 						>
 							채팅방 입장
 						</button>
@@ -63,11 +62,11 @@ import axios from 'axios'
 
 export default {
 	name: 'Room',
-	props:["isHiddenDetail"],
+	props:["toChild"],
 	data () {
 		return {
 			senderStatic: 0,
-			isHidden: this.isHiddenDetail,
+			isHidden: this.toChild.isHiddenDetail,
 			room_name: '',
 			search_room_name:'',
 			chatrooms: []
@@ -76,6 +75,23 @@ export default {
 	created () {
 		this.findAllRoom()
 		this.senderStatic = this.$session.get('id')
+	},
+	mounted(){
+		var standardWidth = window.innerWidth / 2;
+		var standardHeight = window.innerHeight / 2;
+		if(standardWidth > this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openRoom")[0].style.left = (this.toChild.left) + "px";
+			document.getElementsByClassName("openRoom")[0].style.top = (this.toChild.top-270) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openRoom")[0].style.left = (this.toChild.left-500) + "px";
+			document.getElementsByClassName("openRoom")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openRoom")[0].style.left = (this.toChild.left-500) + "px";
+			document.getElementsByClassName("openRoom")[0].style.top = (this.toChild.top-270) + "px";
+		}else if(standardWidth > this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openRoom")[0].style.left = this.toChild.left + "px";
+			document.getElementsByClassName("openRoom")[0].style.top = (this.toChild.top-670) + "px";
+		}
 	},
 	methods: {
 		findAllRoom: function () {
@@ -147,11 +163,7 @@ export default {
 	width: 100%;
 }
 
-input {
-	border-block-color: black;
-}
-
-#openRoom {
+.openRoom {
 	float: left;
 	background-color: white;
 	position: relative;
@@ -163,6 +175,10 @@ input {
 	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
 	border-radius: 15px;
 	overflow: auto;
+}
+
+input {
+	border-block-color: black;
 }
 
 #inputStyle {

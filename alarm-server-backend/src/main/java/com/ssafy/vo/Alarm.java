@@ -14,7 +14,35 @@ public class Alarm{
 	int isRead;//1 : 확인 //  0 : 확인 안함
 	int access;//0:기본값  // 1:비공개 //  2:삭제
 	String dateCreated;
+	String nickname;
 	
+	
+	public Alarm(long idalarm, long memberCaller, long memberReceiver, long postId, long likeId, long followId,
+			int isRead, int access, String dateCreated, String nickname) {
+		super();
+		this.idalarm = idalarm;
+		this.memberCaller = memberCaller;
+		this.memberReceiver = memberReceiver;
+		this.postId = postId;
+		this.likeId = likeId;
+		this.followId = followId;
+		this.isRead = isRead;
+		this.access = access;
+		this.dateCreated = dateCreated;
+		this.nickname = nickname;
+	}
+
+
+	public String getNickname() {
+		return nickname;
+	}
+
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+
 	public Alarm() {
 		super();
 	}
@@ -50,7 +78,7 @@ public class Alarm{
 	public String toString() {
 		return "Alarm [idalarm=" + idalarm + ", memberCaller=" + memberCaller + ", memberReceiver=" + memberReceiver
 				+ ", postId=" + postId + ", likeId=" + likeId + ", followId=" + followId + ", isRead=" + isRead
-				+ ", access=" + access + ", dateCreated=" + dateCreated + "]";
+				+ ", access=" + access + ", dateCreated=" + dateCreated + ", nickname=" + nickname + "]";
 	}
 
 
