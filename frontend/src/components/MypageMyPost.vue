@@ -36,35 +36,39 @@
 				v-for="(item, index) in posts"
 				:key="item.post.idpost"
 			>
-				<div
-					style="margin: 10px;"
-					@click.prevent="goDetail(item.post.idpost)"
-				>
-					<div
-						v-for="tag in item.tags"
-						:key="tag.idtag"
-						style="display: inline-block;"
-					>
-						<span
-							class="post_tag"
-							:style="selTag == tag ? selStyle : tagStyle"
-							@click="getSearchData(2, tag)"
+				<div style="margin: 10px;">
+					<div @click.prevent="goDetail(item.post.idpost)">
+						<div
+							v-for="tag in item.tags"
+							:key="tag.idtag"
+							style="display: inline-block;"
 						>
-							{{ tag }}
-						</span>
-					</div>
-					<div class="post_title">
-						{{ item.post.postTitle }}
-					</div>
-					<div class="post_create">
-						<img class="post_profile" src="../assets/user.png" />
-						<div class="post_nickname">
-							{{ item.post.postWriter }}
+							<span
+								class="post_tag"
+								:style="selTag == tag ? selStyle : tagStyle"
+								@click="getSearchData(2, tag)"
+							>
+								{{ tag }}
+							</span>
 						</div>
-						<div class="post_date">{{ item.post.dateCreated }}</div>
-					</div>
-					<div class="post_code">
-						{{ item.post.code }}
+						<div class="post_title">
+							{{ item.post.postTitle }}
+						</div>
+						<div class="post_create">
+							<img
+								class="post_profile"
+								src="../assets/user.png"
+							/>
+							<div class="post_nickname">
+								{{ item.post.postWriter }}
+							</div>
+							<div class="post_date">
+								{{ item.post.dateCreated }}
+							</div>
+						</div>
+						<div class="post_code">
+							{{ item.post.code }}
+						</div>
 					</div>
 					<div class="like_comment">
 						<img
@@ -78,7 +82,14 @@
 							width="35px"
 							@click.stop="like(item.post.idpost, index)"
 						/>
-						<div class="like_text">{{ item.post.likeCount }}</div>
+						<MemberList class="counting_click">
+							<div slot="click">
+								<div class="like_text">
+									{{ item.post.likeCount }}
+								</div>
+							</div>
+						</MemberList>
+						<!-- <div class="like_text">{{ item.post.likeCount }}</div> -->
 						<img
 							src="../assets/icon/chat.png"
 							class="comment_img"
@@ -98,14 +109,17 @@
 import http from "../http-common";
 import store from "../store";
 import MypageMyMenu from "@/components/MypageMyMenu";
+import MemberList from "@/components/MemberList";
 export default {
 	name: "MypageMyPost",
 	store,
 	components: {
-		MypageMyMenu
+		MypageMyMenu,
+		MemberList
 	},
 	data() {
 		return {
+			dialog: false,
 			noContents: false,
 			posts: "",
 			postTags: "",
@@ -149,6 +163,7 @@ export default {
 		};
 	},
 	methods: {
+		test() {},
 		search() {
 			if (this.menuSel == "") {
 				alert("검색조건을 선택해주세요!");
@@ -159,6 +174,9 @@ export default {
 				return;
 			}
 			this.getSearchData(this.menuSel, this.menu_text);
+		},
+		goDetail(detail) {
+			this.$router.push({ name: "detail", params: { idPost: detail } });
 		},
 		getSearchData(sel, text) {
 			let address = "";

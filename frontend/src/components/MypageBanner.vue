@@ -18,7 +18,6 @@
 							: userInfo.member.imageUrl
 					"
 				/>
-				<!-- <img id="imgUser" :src="userInfo.member.imageUrl" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
 						<div id="nickname">{{ userInfo.member.nickname }}</div>
@@ -64,7 +63,7 @@
 				</div>
 
 				<div id="counting">
-					<FollowList
+					<MemberList
 						:userInfo="userInfo"
 						:followList="followList"
 						class="counting_click"
@@ -74,9 +73,9 @@
 								>팔로잉 {{ userInfo.followingCount }}</span
 							>
 						</div>
-					</FollowList>
+					</MemberList>
 					<span class="counting_sub">·</span>
-					<FollowList
+					<MemberList
 						:userInfo="userInfo"
 						:followList="followList"
 						class="counting_click"
@@ -86,7 +85,7 @@
 								>팔로워 {{ userInfo.followerCount }}</span
 							>
 						</div>
-					</FollowList>
+					</MemberList>
 					<span class="counting_sub">·</span>
 					<span class="counting_sub"
 						>게시글 {{ userInfo.totalPostCount }}</span
@@ -102,14 +101,14 @@ import http from "../http-common";
 import store from "../store";
 import MypagePWCheck from "./MypagePWCheck.vue";
 import MypageFollowCheck from "./MypageFollowCheck.vue";
-import FollowList from "./FollowList.vue";
+import MemberList from "./MemberList.vue";
 import "../assets/styles/check_btn.css";
 export default {
 	name: "MypageBanner",
 	components: {
 		MypagePWCheck,
 		MypageFollowCheck,
-		FollowList
+		MemberList
 	},
 	store,
 	data() {
