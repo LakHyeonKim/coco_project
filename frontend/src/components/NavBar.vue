@@ -10,7 +10,7 @@
 					id="profile"
 					:src="
 						$session.get('imageUrl') == undefined
-							? './img/icons/user.png'
+							? '../img/icons/user.png'
 							: $session.get('imageUrl')
 					"
 				/>
@@ -38,7 +38,7 @@
 			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
-			</li> -->
+			</li>-->
 		</ul>
 	</div>
 </template>
@@ -97,6 +97,7 @@ export default {
 	border-radius: 25px;
 	margin-bottom: 20px;
 	width: 40px;
+	height: 40px;
 	cursor: pointer;
 }
 
@@ -129,6 +130,7 @@ export default {
 
 	#profile {
 		width: 35px;
+		height: 35px;
 		margin-bottom: 0;
 	}
 
@@ -150,6 +152,7 @@ export default {
 	#profile {
 		cursor: pointer;
 		width: 30px;
+		height: 30px;
 	}
 	.nav_menu_img {
 		width: 30px;

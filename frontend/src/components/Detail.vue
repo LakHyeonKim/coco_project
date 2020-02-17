@@ -7,7 +7,7 @@
 				<br />
 				<div id="post-head">
 					<div id="profile-img">
-						<v-avatar size="30">
+						<v-avatar size="40">
 							<img src="imagePath" alt="user-img" v-if="imagePath" />
 							<img src="../assets/user.png" alt="default-img" v-else />
 							<!-- <v-gravatar :email="postWriter" alt="gravatar" :size="50" /> -->
@@ -40,7 +40,14 @@
 
 			<div id="additionBox">
 				<div id="hash-tags">
-					<v-btn class="mr-2" v-for="tag in tags" :key="tag.idtag" small outlined>
+					<v-btn
+						class="mr-2"
+						v-for="tag in tags"
+						:key="tag.idtag"
+						@click="searchHashtag(tag)"
+						small
+						outlined
+					>
 						<v-icon left>mdi-music-accidental-sharp</v-icon>
 						{{ tag.tagName }}
 					</v-btn>
@@ -65,22 +72,6 @@
 				<comment-create :idPost="idPost" :memberId="memberId" @addComment="addComment"></comment-create>
 
 				<comment-list :comments="comments"></comment-list>
-
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
-
-				<div>likeCount {{ likeCount }}</div>
-				<div>filePath{{ filePath }}</div>
-				<div>order{{ order }}</div>
-				<div>tags{{ tags }}</div>
-				<div>comments{{ comments }}</div>
-				<div>likes{{ likes }}</div>
-				<div>babyPosts{{ babyPosts }}</div>
-				<div>commentCount{{ commentCount }}</div>
-				<div>attachments{{ attachments }}</div>
 			</div>
 		</div>
 	</div>
@@ -154,6 +145,12 @@ export default {
 		},
 		addComment(comment) {
 			this.$emit("addComment", comment);
+		},
+		searchHashtag(hashtag) {
+			console.log(hashtag);
+			this.$store.state.searchtag = hashtag.tagName;
+			this.$router.push({ name: "search" });
+			console.log(hashtag);
 		}
 	},
 	updated() {
