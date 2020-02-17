@@ -234,10 +234,37 @@ export default {
 									);
 									this.$store.state.token =
 										res.data.accessToken;
+
+									// decode
+									let decode = this.$store.getters.decode;
+									console.log("decode :: ");
+									console.log(decode);
 									this.$session.set(
 										"id",
-										Number(this.$store.getters.userId)
+										Number(decode.idmember)
 									);
+									this.$session.set(
+										"nickName",
+										decode.nickname
+									);
+									this.$session.set("rankId", decode.rankId);
+									this.$session.set(
+										"isDelete",
+										decode.isDelete
+									);
+									this.$session.set(
+										"imageUrl",
+										decode.imgUrl
+									);
+									this.$session.set("grade", decode.grade);
+									this.$session.set(
+										"isManager",
+										decode.isManager
+									);
+									this.$session.set("email", decode.id);
+									// end_decocde
+
+									this.loading = false;
 									this.loadingTop = false;
 									router.push("/newsfeed");
 									console.log("LOGIN then ", res);

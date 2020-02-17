@@ -128,20 +128,34 @@ export default {
 								res.data.refreshToken
 							);
 							this.$store.state.token = res.data.accessToken;
-							this.$session.set(
-								"id",
-								Number(this.$store.getters.userId)
-							);
-							this.$session.set(
-								"access",
-								Number(this.$store.getters.userAccess)
-							);
-							this.$session.set(
-								"nickname",
-								this.$store.getters.userNickname
-							);
-							// this.$session.set("targetId", 10);
-							this.loadingTop = false;
+
+							// decode
+							let decode = this.$store.getters.decode;
+							console.log("decode :: ");
+							console.log(decode);
+							this.$session.set("id", Number(decode.idmember));
+							this.$session.set("nickName", decode.nickname);
+							this.$session.set("rankId", decode.rankId);
+							this.$session.set("isDelete", decode.isDelete);
+							this.$session.set("imageUrl", decode.imgUrl);
+							this.$session.set("grade", decode.grade);
+							this.$session.set("isManager", decode.isManager);
+							this.$session.set("email", decode.id);
+							// end_decocde
+
+							// this.$session.set(
+							// 	"id",
+							// 	Number(this.$store.getters.userId)
+							// );
+							// this.$session.set(
+							// 	"access",
+							// 	Number(this.$store.getters.userAccess)
+							// );
+							// this.$session.set(
+							// 	"nickname",
+							// 	this.$store.getters.userNickname
+							// );
+							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);
 						} else {
