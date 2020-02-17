@@ -1,28 +1,22 @@
 <template>
 	<div>
 		<div class="templatePage">
-			<div class="tagInput">
-				<tags-input
-					v-model="tags"
-					element-id="tags"
-					placeholder="해시태그"
-					add-tags-on-space
-					add-tags-on-blur
-				></tags-input>
+			<div class="tagInput" autocomplete="off">
+				<div class="autocomplete">
+					<tags-input
+						v-model="tags"
+						element-id="tags"
+						placeholder="해시태그"
+						add-tags-on-space
+					></tags-input>
+				</div>
 			</div>
 			<form name="board" enctype="multipart/form-data">
 				<div class="submitInput">
-					<button class="submitButton" @click="posting">
-						WRITE
-					</button>
+					<button class="submitButton" @click.prevent="posting">WRITE</button>
 				</div>
 				<div class="title">
-					<input
-						type="text"
-						placeholder="제목"
-						class="titleInput"
-						v-model="board.postTitle"
-					/>
+					<input type="text" placeholder="제목" class="titleInput" v-model="board.postTitle" />
 				</div>
 				<div class="codeInput">
 					<v-tabs right color="rgba(0, 0, 0, 0.5)" hide-slider>
@@ -32,9 +26,9 @@
 							<v-container>
 								<v-textarea
 									name="post.code"
-									id="input"
 									v-model="board.code"
-									@keydown="insertTab"
+									@keydown.tab="insertTab"
+									@keydown="questionCount"
 									auto-grow
 									rounded
 									placeholder="내용"
@@ -56,29 +50,54 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
-					<v-file-input
-						name="attachments"
-						v-model="board.attachments"
-						label="첨부파일"
-						color="rgb(0, 0, 0)"
-					></v-file-input>
+					<v-file-input name="attachments" v-model="board.attachments" label="첨부파일" color="rgb(0, 0, 0)"></v-file-input>
 				</div>
 				<div class="footerBox"></div>
-				<input
-					type="hidden"
-					name="postTitle"
-					v-model="board.postTitle"
-				/>
-				<input
-					type="hidden"
-					name="postWriter"
-					v-model="board.postWriter"
-				/>
+				<input type="hidden" name="postTitle" v-model="board.postTitle" />
+				<input type="hidden" name="postWriter" v-model="board.postWriter" />
 				<input type="hidden" name="memberId" v-model="board.memberId" />
 				<input type="hidden" name="code" v-model="board.code" />
 				<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 			</form>
 		</div>
+		<v-row justify="center">
+			<v-dialog v-model="dialog" scrollable overflowed @keydown.enter="insertDescription">
+				<v-card>
+					<v-card-actions class="d-flex justify-end">
+						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
+					</v-card-actions>
+					<agile ref="carousel" fade :dots="true">
+						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
+							<v-card-title>
+								<span class="headline">
+									<v-icon>mdi-file-document-box-search-outline</v-icon>
+									{{ dict.word }}
+								</span>
+							</v-card-title>
+							<v-card-text class="d-flex">
+								<v-img :src="dict.thumbnailSrc" v-show="dict.thumbnailSrc" width="100"></v-img>
+								<div class="ml-4 space-between">
+									<h3>{{ dict.title }}</h3>
+									<br />
+									<p>
+										{{ dict.description }}
+										<a
+											:href="dict.link"
+											target="_blank"
+											style="color: rgba(125, 72, 121, 0.85)"
+										>자세히 보기</a>
+									</p>
+								</div>
+							</v-card-text>
+						</div>
+						<v-icon slot="prevButton">mdi-chevron-left</v-icon>
+						<template slot="prevButton">prev</template>
+						<template slot="nextButton">next</template>
+						<v-icon slot="nextButton">mdi-chevron-right</v-icon>
+					</agile>
+				</v-card>
+			</v-dialog>
+		</v-row>
 	</div>
 </template>
 
@@ -92,6 +111,11 @@ export default {
 	components: {},
 	data() {
 		return {
+			dialog: false,
+			question: 0,
+			dictWord: "",
+			dictArray: [],
+
 			tags: [],
 			board: {
 				code: "",
@@ -100,7 +124,12 @@ export default {
 				postWriter: "",
 				tags: [],
 				attachments: null
-			}
+			},
+			stack: [
+				"Java", "Python", "C++", "C", "Go",
+				"Spring", "php", "Vue.js", "Javascript", "C#",
+				
+			]
 		};
 	},
 	methods: {
@@ -108,8 +137,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -133,10 +162,62 @@ export default {
 			}
 			return true;
 		},
+		findWordDict() {
+			http.post(
+				"/api/findWordDictionary/",
+				{ word: this.dictWord },
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(res => {
+					console.log(res);
+					this.dictArray = [];
+					this.dictArray = res.data;
+					this.question = 0;
+					this.dictWord = "";
+					this.dialog = true;
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		},
+		questionCount: function(event) {
+			if (event.key == "?") {
+				this.question++;
+			} else if (this.question == 2) {
+				if (
+					(event.keyCode >= 48 && event.keyCode <= 57) ||
+					(event.keyCode >= 65 && event.keyCode <= 90) ||
+					(event.keyCode >= 96 && event.keyCode <= 111)
+				) {
+					this.dictWord += event.key;
+				} else if (event.code == "Backspace") {
+					this.dictWord = this.dictWord.slice(0, -1);
+				} else if (event.code == "Space") {
+					this.findWordDict();
+				} else {
+					this.question = 0;
+					this.dictWord = "";
+				}
+			} else if (event.key == "Shift" || event.key == "CapsLock") {
+				return;
+			} else {
+				this.question = 0;
+				this.dictWord = "";
+			}
+		},
+		insertDescription() {
+			let index = this.$refs.carousel.getCurrentSlide();
+			this.board.code += this.dictArray[index].description;
+			this.dialog = false;
+		},
 		highlighting() {
 			Prism.highlightAll();
 		},
 		posting() {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
 			if (this.board.postTitle && this.board.code) {
 				this.board.tags = [];
 				for (let i = 0; i < this.tags.length; ++i) {
@@ -145,31 +226,159 @@ export default {
 
 				let formData = new FormData(document.forms.namedItem("board"));
 				formData.append("tags", this.board.tags);
-
-				http.post("/trc/makePost/", formData)
+				http.post("/trc/makePost/", formData, {
+					headers: { Authorization: this.$session.get("accessToken") }
+				})
 					.then(res => {
+						console.log("makePost res ", res);
 						alert("글이 성공적으로 작성되었습니다.");
 						// this.$session.set("targetId", this.$session.get("id"));
-						router.push("/mypage/" + this.$session.get("id"));
+						router.push({
+							name: "mypage",
+							params: { no: this.$session.get("id") }
+						});
 					})
 					.catch(err => {
+						console.log("makePost err ", err);
 						alert("글 작성 중 문제가 생겼습니다.");
+						console.log(err);
 						router.push("/newpage");
 					});
 			} else {
-				alert("글을 작성해 주세요")
+				alert("글을 작성해 주세요");
 			}
+		},
+		autocomplete(inp, arr) {
+			/*the autocomplete function takes two arguments,
+			the text field element and an array of possible autocompleted values:*/
+			var currentFocus;
+			/*execute a function when someone writes in the text field:*/
+			inp.addEventListener("input", function(e) {
+				var a,
+					b,
+					i,
+					val = this.value;
+				/*close any already open lists of autocompleted values*/
+				closeAllLists();
+				if (!val) {
+					return false;
+				}
+				currentFocus = -1;
+				/*create a DIV element that will contain the items (values):*/
+				a = document.createElement("DIV");
+				a.setAttribute("id", this.id + "autocomplete-list");
+				a.setAttribute("class", "autocomplete-items");
+				/*append the DIV element as a child of the autocomplete container:*/
+				this.parentNode.appendChild(a);
+				/*for each item in the array...*/
+				for (i = 0; i < arr.length; i++) {
+					/*check if the item starts with the same letters as the text field value:*/
+					if (
+						arr[i].substr(0, val.length).toUpperCase() ==
+						val.toUpperCase()
+					) {
+						/*create a DIV element for each matching element:*/
+						b = document.createElement("DIV");
+						/*make the matching letters bold:*/
+						b.innerHTML =
+							"<strong>" +
+							arr[i].substr(0, val.length) +
+							"</strong>";
+						b.innerHTML += arr[i].substr(val.length);
+						/*insert a input field that will hold the current array item's value:*/
+						b.innerHTML +=
+							"<input type='hidden' value='" + arr[i] + "'>";
+						/*execute a function when someone clicks on the item value (DIV element):*/
+						b.addEventListener("click", function(e) {
+							/*insert the value for the autocomplete text field:*/
+							inp.value = this.getElementsByTagName(
+								"input"
+							)[0].value;
+							// console.log(this.getElementsByTagName("input")[0].value)
+							// document.getElementsByTagName("input")[1].value.append({key:"", value:this.getElementsByTagName("input")[0].value})
+							console.log(
+								document.getElementsByTagName("input")[1].value
+							);
+							/*close the list of autocompleted values,
+							(or any other open lists of autocompleted values:*/
+							closeAllLists();
+						});
+						a.appendChild(b);
+					}
+				}
+			});
+			/*execute a function presses a key on the keyboard:*/
+			inp.addEventListener("keydown", function(e) {
+				var x = document.getElementById(this.id + "autocomplete-list");
+				if (x) x = x.getElementsByTagName("div");
+				if (e.keyCode == 40) {
+					/*If the arrow DOWN key is pressed,
+					increase the currentFocus variable:*/
+					currentFocus++;
+					/*and and make the current item more visible:*/
+					addActive(x);
+				} else if (e.keyCode == 38) {
+					//up
+					/*If the arrow UP key is pressed,
+					decrease the currentFocus variable:*/
+					currentFocus--;
+					/*and and make the current item more visible:*/
+					addActive(x);
+				} else if (e.keyCode == 13) {
+					/*If the ENTER key is pressed, prevent the form from being submitted,*/
+					e.preventDefault();
+					if (currentFocus > -1) {
+						/*and simulate a click on the "active" item:*/
+						if (x) x[currentFocus].click();
+					}
+				}
+			});
+			function addActive(x) {
+				/*a function to classify an item as "active":*/
+				if (!x) return false;
+				/*start by removing the "active" class on all items:*/
+				removeActive(x);
+				if (currentFocus >= x.length) currentFocus = 0;
+				if (currentFocus < 0) currentFocus = x.length - 1;
+				/*add class "autocomplete-active":*/
+				x[currentFocus].classList.add("autocomplete-active");
+			}
+			function removeActive(x) {
+				/*a function to remove the "active" class from all autocomplete items:*/
+				for (var i = 0; i < x.length; i++) {
+					x[i].classList.remove("autocomplete-active");
+				}
+			}
+			function closeAllLists(elmnt) {
+				/*close all autocomplete lists in the document,
+				except the one passed as an argument:*/
+				var x = document.getElementsByClassName("autocomplete-items");
+				for (var i = 0; i < x.length; i++) {
+					if (elmnt != x[i] && elmnt != inp) {
+						x[i].parentNode.removeChild(x[i]);
+					}
+				}
+			}
+			/*execute a function when someone clicks in the document:*/
+			document.addEventListener("click", function(e) {
+				closeAllLists(e.target);
+			});
 		}
 	},
 	mounted() {
 		Prism.plugins.autoloader.use_minified = false;
 		this.board.memberId = this.$session.get("id");
 		console.log("memberId newpage mounted ", this.board.memberId);
-		// 닉네임 재확인 안할방법 찾아보기
 		this.$store.state.token = this.$session.get("accessToken");
 		this.board.postWriter = this.$store.getters.userNickname;
 		console.log("nickname this ", this.board.postWriter);
 		console.log("nickname vuex ", this.$store.getters.userNickname);
+		this.autocomplete(
+			document.querySelector(
+				"#subBox > div > div > div > div > div.tags-input-wrapper-default.tags-input > input[type=text]:nth-child(1)"
+			),
+			this.stack
+		);
 	},
 	updated() {
 		Prism.highlightAll();
@@ -262,6 +471,70 @@ export default {
 	background-color: white;
 	height: 200px;
 }
+<<<<<<< HEAD
+
+.autocomplete-items {
+	position: absolute;
+	border: 1px solid #d4d4d4;
+	border-bottom: none;
+	border-top: none;
+	z-index: 99;
+	/*position the autocomplete items to be the same width as the container:*/
+	top: 100%;
+	left: 0;
+	right: 0;
+}
+.autocomplete-items div {
+	padding: 10px;
+	cursor: pointer;
+	background-color: #fff;
+	border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+	/*when hovering an item:*/
+	background-color: #e9e9e9;
+}
+.autocomplete-active {
+	/*when navigating through the items using the arrow keys:*/
+	background-color: DodgerBlue !important;
+	color: #ffffff;
+}
+.agile__actions {
+	margin-top: 20px;
+}
+.agile__actions ul {
+	padding: 0;
+}
+.agile__dots {
+	margin: 16px 0;
+	padding: 0;
+}
+.agile__dot {
+	margin: 0 10px;
+}
+.agile__dot button {
+	background-color: #eee;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	display: block;
+	font-size: 0;
+	line-height: 0;
+	margin: 0;
+	padding: 0;
+	transition-duration: 0.3s;
+	height: 10px;
+	width: 10px;
+}
+.agile__dot--current {
+	border-radius: 50%;
+}
+.agile__dot--current button {
+	background-color: #888;
+}
+.agile__dot:hover button {
+	background-color: #888;
+}
 @media screen and (max-width: 600px) {
 	.templatePage {
 		height: 100%;
@@ -303,13 +576,41 @@ export default {
 		color: gray;
 		font-size: 20px;
 	}
-	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div {
+	#subBox
+		> div
+		> form
+		> div.codeInput
+		> div
+		> div.v-window.v-item-group.theme--light.v-tabs-items
+		> div
+		> div.v-window-item.v-window-item--active
+		> div {
 		padding: 0px;
 	}
-	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div > div {
+	#subBox
+		> div
+		> form
+		> div.codeInput
+		> div
+		> div.v-window.v-item-group.theme--light.v-tabs-items
+		> div
+		> div.v-window-item.v-window-item--active
+		> div
+		> div {
 		padding-top: 0px;
 	}
-	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div > div > div > div.v-input__slot {
+	#subBox
+		> div
+		> form
+		> div.codeInput
+		> div
+		> div.v-window.v-item-group.theme--light.v-tabs-items
+		> div
+		> div.v-window-item.v-window-item--active
+		> div
+		> div
+		> div
+		> div.v-input__slot {
 		width: 100%;
 		padding: 0px;
 	}

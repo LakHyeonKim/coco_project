@@ -2,8 +2,12 @@
 	<div class="container boxform">
 		<div id="innerbox">
 			<div class="login-div">
-				<div v-if="loading" class="spinner-border" role="status">
-					<span class="sr-only">Loading...</span>
+				<div
+					id="loading"
+					:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+					v-if="loadingTop"
+				>
+					<div class="loader"></div>
 				</div>
 				<form v-else class="loginform" @submit.prevent="login">
 					<img
@@ -58,9 +62,11 @@
 				<div v-for="(error, idx) in errors" :key="idx">{{ error }}</div>
 			</div>
 			<div id="forgotpwd">
-				<button @click.prevent="findPwd()">
-					<p>비밀번호를 잊으셨나요?</p>
-				</button>
+				<findPassword>
+					<div slot="click">
+						<a id="findpwd" slot="click">비밀번호를 잊으셨나요?</a>
+					</div>
+				</findPassword>
 			</div>
 		</div>
 		<div id="downBox">
@@ -76,6 +82,7 @@
 </template>
 
 <script>
+import FindPassword from "../views/FindPassword";
 import http from "../http-common";
 import router from "../router";
 import FirebaseService from "@/services/FirebaseService";
@@ -83,20 +90,30 @@ import FirebaseService from "@/services/FirebaseService";
 
 export default {
 	name: "LoginForm",
+	components: {
+		FindPassword
+	},
 	data() {
 		return {
 			credentials: {
 				id: "",
 				password: ""
 			},
-			loading: false,
-			errors: []
+			errors: [],
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			}
 		};
 	},
 	methods: {
 		login() {
 			if (this.checkForm()) {
-				this.loading = true;
+				this.loadingTop = true;
+				console.log("login form ", this.credentials);
 				http.post("/jwt/login/", this.credentials)
 					.then(res => {
 						console.log("login res", res);
@@ -111,19 +128,33 @@ export default {
 								res.data.refreshToken
 							);
 							this.$store.state.token = res.data.accessToken;
-							this.$session.set(
-								"id",
-								Number(this.$store.getters.userId)
-							);
-							this.$session.set(
-								"access",
-								Number(this.$store.getters.userAccess)
-							);
-							this.$session.set(
-								"nickname",
-								this.$store.getters.userNickname
-							);
-							// this.$session.set("targetId", 10);
+
+							// decode
+							let decode = this.$store.getters.decode;
+							console.log("decode :: ");
+							console.log(decode);
+							this.$session.set("id", Number(decode.idmember));
+							this.$session.set("nickName", decode.nickname);
+							this.$session.set("rankId", decode.rankId);
+							this.$session.set("isDelete", decode.isDelete);
+							this.$session.set("imageUrl", decode.imageUrl);
+							this.$session.set("grade", decode.grade);
+							this.$session.set("isManager", decode.isManager);
+							this.$session.set("email", decode.id);
+							// end_decocde
+
+							// this.$session.set(
+							// 	"id",
+							// 	Number(this.$store.getters.userId)
+							// );
+							// this.$session.set(
+							// 	"access",
+							// 	Number(this.$store.getters.userAccess)
+							// );
+							// this.$session.set(
+							// 	"nickname",
+							// 	this.$store.getters.userNickname
+							// );
 							this.loading = false;
 							router.push("/newsfeed");
 							console.log("LOGIN then ", res);
@@ -132,16 +163,17 @@ export default {
 								err;
 							});
 							alert("아이디와 비밀번호를 확인해 주십시오.");
-							this.loading = false;
+							this.loadingTop = false;
 						}
 					})
 					.catch(err => {
-						this.loading = false;
+						this.loadingTop = false;
 						// this.$store.dispatch("endLoading");
 						console.log("LOGIN err ", err);
 					});
 			} else {
 				console.log("LOGIN ", "fail");
+				this.loadingTop = false;
 			}
 		},
 		checkForm() {
@@ -231,6 +263,22 @@ export default {
 </script>
 
 <style scoped>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 20px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+}
 .boxform {
 	min-height: 450px;
 	width: 350px;
@@ -298,6 +346,12 @@ input::placeholder {
 #forgotpwd {
 	font-size: 11px;
 	text-align: center;
+	margin-bottom: 20px;
+}
+#findpwd {
+	text-decoration: none;
+	color: black;
+	font-size: 12px;
 }
 #downBox {
 	display: grid;

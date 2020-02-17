@@ -8,7 +8,14 @@
 			</p>
 		</div>
 		<hr style="width:100%; display:inline-block;" />
-		<validation-observer ref="form">
+		<div
+			id="loading"
+			:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+			v-if="loadingTop"
+		>
+			<div class="loader"></div>
+		</div>
+		<validation-observer v-else ref="form">
 			<form
 				@submit.prevent="register"
 				id="formData"
@@ -177,7 +184,14 @@ export default {
 		duplicate_id: [],
 		duplicate_nickname: [],
 		idcheck: false,
-		nicknamecheck: false
+		nicknamecheck: false,
+		loadingTop: false,
+		loadingStyleOn: {
+			display: "grid"
+		},
+		loadingStyleOff: {
+			display: "none"
+		}
 	}),
 
 	methods: {
@@ -192,12 +206,13 @@ export default {
 			formData.set("file", this.$refs.profile.file);
 
 			if (this.onSubmit() && this.idcheck && this.nicknameCheck) {
-				this.$store.dispatch("startLoading");
+				this.loadingTop = true;
+				// this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", formData);
 				http.post("/jwt/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
-						this.$store.dispatch("endLoading");
+						// this.$store.dispatch("endLoading");
 						alert("회원가입이 성공적으로 완료되었습니다.");
 						const credentials = {
 							id: this.signUpMember.id,
@@ -219,11 +234,38 @@ export default {
 									);
 									this.$store.state.token =
 										res.data.accessToken;
+
+									// decode
+									let decode = this.$store.getters.decode;
+									console.log("decode :: ");
+									console.log(decode);
 									this.$session.set(
 										"id",
-										Number(this.$store.getters.userId)
+										Number(decode.idmember)
 									);
+									this.$session.set(
+										"nickName",
+										decode.nickname
+									);
+									this.$session.set("rankId", decode.rankId);
+									this.$session.set(
+										"isDelete",
+										decode.isDelete
+									);
+									this.$session.set(
+										"imageUrl",
+										decode.imgUrl
+									);
+									this.$session.set("grade", decode.grade);
+									this.$session.set(
+										"isManager",
+										decode.isManager
+									);
+									this.$session.set("email", decode.id);
+									// end_decocde
+
 									this.loading = false;
+									this.loadingTop = false;
 									router.push("/newsfeed");
 									console.log("LOGIN then ", res);
 								} else {
@@ -233,22 +275,25 @@ export default {
 									alert(
 										"아이디와 비밀번호를 확인해 주십시오."
 									);
-									this.loading = false;
+									this.loadingTop = false;
 								}
 							})
 							.catch(err => {
-								this.loading = false;
+								this.loadingTop = false;
 								// this.$store.dispatch("endLoading");
 								console.log("LOGIN err ", err);
 							});
 					})
 					.catch(err => {
-						this.$store.dispatch("endLoading");
+						// this.$store.dispatch("endLoading");
+						this.loadingTop = false;
 						console.log("REGISTER catch ", err);
 					});
 				// http.post("/jwt/sendEmailkey/", formData);
 			} else {
 				console.log("REGISTER ", "검증 실패");
+				alert("중복확인을 해주세요");
+				this.loadingTop = false;
 			}
 		},
 		// previewImage: function(event) {
@@ -274,8 +319,8 @@ export default {
 			this.$refs.form.validate();
 		},
 		idCheck() {
+			this.duplicate_id = [];
 			if (this.signUpMember.id) {
-				this.duplicate_id = [];
 				console.log("DUPLICATE ", this.signUpMember.id);
 				http.post("/jwt/check", {
 					id: this.signUpMember.id
@@ -301,8 +346,8 @@ export default {
 			}
 		},
 		nicknameCheck() {
+			this.duplicate_nickname = [];
 			if (this.signUpMember.nickname) {
-				this.duplicate_nickname = [];
 				const requestForm = {
 					nickname: this.signUpMember.nickname
 				};
@@ -351,6 +396,22 @@ export default {
 </script>
 
 <style scoped>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 20px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+}
 #backBox {
 	display: grid;
 	justify-content: center;
