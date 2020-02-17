@@ -316,7 +316,7 @@ public class TransactionServiceImpl implements TransactionService {
 			file.transferTo(new File(path, saveFileName));
 			modifyMypage.setBannerImagePath(filePath);
 		}
-		if(!memberInfoModify.getBannerImage().getOriginalFilename().equals("")) {
+		if(!memberInfoModify.getProfileImage().getOriginalFilename().equals("")) {
 			MultipartFile file = memberInfoModify.getProfileImage();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();

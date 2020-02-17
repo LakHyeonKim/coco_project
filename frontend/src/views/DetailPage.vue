@@ -114,6 +114,8 @@ export default {
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
+				console.log(this.$session.get("id"))
+				console.log(res.data.post.memberId)
 				http.post(
 					"/api/findFollow",
 					{

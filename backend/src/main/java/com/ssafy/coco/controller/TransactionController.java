@@ -111,6 +111,7 @@ public class TransactionController {
 	@ApiOperation(value = "member 정보 수정 이미지 삭제 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/deleteMemberProfile", method = RequestMethod.POST)
 	public ResponseEntity<Integer> deleteMemberProfile(@RequestHeader(value="Authorization")String jwt, @RequestBody long idMember) throws Exception {
+		System.out.println("dkdkdkd");
 		transactionService.deleteMemberProfile(idMember);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
