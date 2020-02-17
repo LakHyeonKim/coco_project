@@ -12,7 +12,11 @@
 			<div id="info_desc">
 				<img
 					id="imgUser"
-					src="http://192.168.100.57:8888/userprofile/ktt7566@naver.com_face-with-uneven-eyes-and-wavy-mouth.png"
+					:src="
+						userInfo.member.imageUrl == ''
+							? './img/icons/user.png'
+							: userInfo.member.imageUrl
+					"
 				/>
 				<!-- <img id="imgUser" :src="userInfo.member.imageUrl" /> -->
 				<div id="info_desc_mid">
@@ -321,7 +325,6 @@ export default {
 	margin-right: 10px;
 	margin-top: 3px;
 	border-radius: 50%;
-	background-color: rgba(255, 255, 255, 0.3);
 }
 #info_title {
 	font-size: 25px;

@@ -28,12 +28,18 @@
 							:maxSize="10240"
 							ref="bannerImage"
 							@onExceed="exceedHandler"
-							:img-src="member.bannerImgUrl"
+							:img-src="member.bannerImageUrl"
 							size="small"
 							class="img"
+							:disabled="disabled"
 						/>
 						<br />배너 이미지
-						<span class="deleteImg">삭제</span>
+						<span
+							class="deleteImg"
+							@click="disabled ? '' : deleteImg(true)"
+						>
+							삭제
+						</span>
 					</div>
 
 					<div id="profile_img">
@@ -49,9 +55,15 @@
 							:img-src="member.profileImageUrl"
 							size="small"
 							class="img"
+							:disabled="disabled"
 						/>
 						<br />프로필 이미지
-						<span class="deleteImg">삭제</span>
+						<span
+							class="deleteImg"
+							@click="disabled ? '' : deleteImg(false)"
+						>
+							삭제
+						</span>
 					</div>
 				</div>
 
@@ -69,6 +81,7 @@
 								label="닉네임"
 								:error-messages="errors[0] ? errors[0] : []"
 								color="gray"
+								:disabled="disabled"
 							></v-text-field>
 						</validation-provider>
 					</div>
@@ -81,6 +94,7 @@
 						label="마이페이지 타이틀"
 						color="gray"
 						v-model="member.bannerText"
+						:disabled="disabled"
 					></v-text-field>
 				</div>
 
@@ -98,6 +112,7 @@
 						:max-tags="10"
 						id="tagsInput"
 						placeholder
+						:disabled="disabled"
 					/>
 				</div>
 
@@ -118,6 +133,7 @@
 							:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
 							@click:append="pwd1 = !pwd1"
 							color="gray"
+							:disabled="disabled"
 						></v-text-field>
 					</validation-provider>
 				</div>
@@ -136,6 +152,7 @@
 							:append-icon="pwd2 ? 'mdi-eye' : 'mdi-eye-off'"
 							@click:append="pwd2 = !pwd2"
 							color="gray"
+							:disabled="disabled"
 						></v-text-field>
 					</validation-provider>
 				</div>
@@ -146,6 +163,7 @@
 						label="Git url(선택)"
 						color="gray"
 						name="gitUrl"
+						:disabled="disabled"
 					></v-text-field>
 				</div>
 
@@ -155,6 +173,7 @@
 						label="Kakao url(선택)"
 						color="gray"
 						name="kakaoUrl"
+						:disabled="disabled"
 					></v-text-field>
 				</div>
 
@@ -164,11 +183,49 @@
 						label="Instagram url(선택)"
 						color="gray"
 						name="instagramUrl"
+						:disabled="disabled"
 					></v-text-field>
 				</div>
 
-				<v-btn class="my-2" @click="updateForm">수정하기</v-btn>
-				<!-- <button class="btn" @click="clear">초기화</button> -->
+				<v-btn
+					class="my-2"
+					@click="updateForm"
+					id="modify_btn"
+					:disabled="disabled"
+				>
+					수정하기
+				</v-btn>
+				<v-dialog v-model="dialog" width="350" :disabled="disabled">
+					<template v-slot:activator="{ on }">
+						<v-btn v-on="on" class="my-2" :disabled="disabled">
+							탈퇴하기
+						</v-btn>
+					</template>
+
+					<v-card class="d_container">
+						<div
+							style="font-family: '궁서체'; font-size: 25px; font-weight: bold; color: red; margin-bottom: 3px"
+						>
+							정말 탈퇴하시겠습니까?
+						</div>
+						<div style="display: inline-block;">
+							<img
+								src="../assets/icon/error.png"
+								width="30px"
+								style="margin-bottom: 5px; float: left;"
+							/>
+							<div style="float: left; margin-top: 3px;">
+								삭제한 정보는 복구가 불가능합니다!!!
+							</div>
+						</div>
+						<button class="d_btn" @click="deleteMember()">
+							네
+						</button>
+						<button class="d_btn" @click="dialog = false">
+							아니오
+						</button>
+					</v-card>
+				</v-dialog>
 			</form>
 		</validation-observer>
 		<div id="blank"></div>
@@ -177,7 +234,7 @@
 <script>
 import http from "../http-common";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
-import VueTagsInput from "@johmun/vue-tags-input";
+import { VueTagsInput, createTags } from "@johmun/vue-tags-input";
 
 export default {
 	name: "InfoModifyForm",
@@ -188,6 +245,8 @@ export default {
 	},
 	data() {
 		return {
+			disabled: false,
+			dialog: false,
 			member: {
 				id: "",
 				profileImageUrl: "",
@@ -213,17 +272,48 @@ export default {
 	},
 
 	methods: {
+		deleteMember() {},
+		deleteImg(flag) {
+			let address = "";
+			if (flag) {
+				address = "/trc/deleteMemberBannerImage";
+			} else {
+				address = "/trc/deleteMemberProfile";
+			}
+			if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+			http.post(address, Number(this.$session.get("id")), {
+				headers: { Authorization: this.$session.get("accessToken") }
+			})
+				.then(res => {
+					console.log("DELETE then ", res);
+					if (flag) {
+						this.member.bannerImageUrl = "";
+						this.bannerImage = null;
+					} else {
+						this.member.profileImageUrl = "";
+						this.profileImage = null;
+					}
+					alert("삭제되었습니다 ~");
+				})
+				.catch(err => {
+					this.$store.dispatch("endLoading");
+					console.log("DELETE catch ", err);
+				});
+		},
 		updateForm() {
-			// let formData = new FormData(document.getElementById("formData"));
-			// formData.set("file", this.$refs.profile.file);
 			if (!this.duplicate) {
 				alert("닉네임 중복확인이 필요합니다!");
 				return;
 			}
-			if (this.onSubmit()) {
+
+			if (this.onSubmit() && window.confirm("정말 수정하시겠습니까?")) {
+				this.disabled = true;
 				// this.$store.dispatch("startLoading");
 
 				this.t_tags = [];
+
+				console.log(this.tags);
 				for (let i = 0; i < this.tags.length; ++i) {
 					this.t_tags.push(this.tags[i].text);
 				}
@@ -232,11 +322,18 @@ export default {
 					document.getElementById("updateForm")
 				);
 				formData.append("tags", this.t_tags);
-				formData.append("tags", "");
 				formData.append("idmember", this.$session.get("id"));
-				console.log(this.$refs.bannerImage.file);
-				formData.set("bannerImage", this.$refs.bannerImage.file);
-				formData.set("profileImage", this.$refs.profileImage.file);
+
+				if (this.$refs.bannerImage.file) {
+					console.log("bannerImg file exist");
+					formData.set("bannerImage", this.$refs.bannerImage.file);
+				}
+
+				console.log(this.$refs.profileImage.file);
+				if (this.$refs.profileImage.file) {
+					console.log("profile file exist");
+					formData.set("profileImage", this.$refs.profileImage.file);
+				}
 
 				console.log("UPDATE beforeaxios");
 				for (var pair of formData.entries()) {
@@ -248,6 +345,7 @@ export default {
 					.then(res => {
 						console.log("UPDATE then ", res);
 						alert("회원정보가 수정되었습니다.");
+						this.disabled = false;
 					})
 					.catch(err => {
 						this.$store.dispatch("endLoading");
@@ -257,16 +355,6 @@ export default {
 				console.log("UPDATE ", "검증 실패");
 			}
 		},
-		// previewImage: function(event) {
-		//    var input = event.target;
-		//    if (input.files && input.files[0]) {
-		//       var reader = new FileReader();
-		//       reader.onload = e => {
-		//          this.singUpMember.file = e.target.result;
-		//       };
-		//       reader.readAsDataURL(input.files[0]);
-		//    }
-		// },
 		onSubmit() {
 			this.$refs.form.validate().then(success => {
 				if (!success) {
@@ -285,7 +373,9 @@ export default {
 		nickCheck() {
 			if (this.nickName_duplication == this.member.nickName) return;
 			if (this.member.nickName) {
-				http.post("/jwt/checkNickName", { nickname: this.nickName })
+				http.post("/jwt/checkNickName", {
+					nickname: this.member.nickName
+				})
 					.then(res => {
 						console.log("DUPLICATE then ", res);
 						if (res.status == "204") {
@@ -326,6 +416,8 @@ export default {
 				console.log(res.data);
 				this.member = res.data;
 				this.nickName_duplication = this.member.nickName;
+				this.tags = createTags(this.member.tags, []);
+				console.log(this.tags);
 			})
 			.catch(error => {
 				console.log(error);
@@ -340,6 +432,9 @@ export default {
 </script>
 
 <style>
+#modify_btn {
+	margin-right: 10px;
+}
 .img {
 	margin-bottom: 10px;
 }
@@ -388,7 +483,7 @@ export default {
 
 #img_div {
 	display: inline-block;
-	padding: 15px;
+	padding: 30px;
 	text-align: center;
 }
 
@@ -396,9 +491,18 @@ export default {
 	float: left;
 }
 
+#back_img > div {
+	height: 120px;
+}
+
 #profile_img {
 	float: left;
 	margin-left: 40px;
+}
+
+#profile_img > div {
+	width: 120px;
+	height: 120px;
 }
 
 #nick_div {
@@ -443,14 +547,6 @@ export default {
 	#blank {
 		height: 20vw;
 		width: 100%;
-	}
-
-	#back_img > div {
-		width: 140px;
-	}
-
-	#profile_img > div {
-		width: 140px;
 	}
 
 	#img_div {

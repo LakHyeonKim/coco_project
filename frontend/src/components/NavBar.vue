@@ -8,7 +8,11 @@
 				<img
 					@click="getMypage()"
 					id="profile"
-					src="../assets/user.png"
+					:src="
+						$session.get('imgUrl') == undefined
+							? './img/icons/user.png'
+							: $session.get('imgUrl')
+					"
 				/>
 				<!-- </router-link> -->
 			</li>
@@ -91,7 +95,6 @@ export default {
 
 #profile {
 	border-radius: 25px;
-	background-color: white;
 	margin-bottom: 20px;
 	width: 40px;
 	cursor: pointer;
