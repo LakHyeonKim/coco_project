@@ -5,11 +5,12 @@
 			<div id="headInnerBox">
 				<label for="searchBox">
 					<img
-						src="../assets/logoo.png"
+						src="../assets/CC_Logo.png"
 						alt="logo_image"
 						id="searchLogo"
 					/>
 				</label>
+				<!-- <p id="codeCoworker">Code Coworker</p> -->
 				<form v-on:submit.prevent="searchwords" id="serachBox">
 					<v-select
 						id="options"
@@ -19,7 +20,8 @@
 						item-color="black"
 						color="rgba(0, 0, 0, 0.5)"
 						placeholder="검색조건"
-						style="width: 8vw; float: left; font-size: 15px; transform: translateY(-10%); "
+						height="28px"
+						style="width: 100px; float: left; font-size: 15px; transform: translateY(-13%); "
 					></v-select>
 					<input
 						type="text"
@@ -34,7 +36,6 @@
 						/>
 					</button>
 				</form>
-				<p id="codeCoworker">Code Coworker</p>
 			</div>
 		</div>
 	</div>
@@ -95,7 +96,7 @@ export default {
 #searchInput {
 	display: inline-block;
 	vertical-align: middle;
-	border-bottom: 1px solid black;
+	border-bottom: 0.25px solid gray;
 	width: 20vw;
 	margin-left: 5px;
 	margin-right: 10px;
@@ -115,5 +116,49 @@ export default {
 }
 #codeCoworker {
 	display: none;
+}
+@media screen and (max-width: 600px) {
+	#header {
+		height: 65px;
+	}
+	#headInnerBox {
+		text-align: center;
+		padding: 0px;
+		padding-top: 15px;
+	}
+	#searchLogo {
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		vertical-align: middle;
+		margin-right: 10px;
+	}
+	#serachBox {
+		display: inline-block;
+	}
+	#searchInput {
+		display: inline-block;
+		vertical-align: middle;
+		border-bottom: 1px solid black;
+		width: 40vw;
+		margin-left: 5px;
+		margin-right: 10px;
+	}
+	::placeholder {
+		color: black;
+		font-size: 20px;
+	}
+	#searchButton {
+		display: inline-block;
+		vertical-align: middle;
+		height: 25px;
+	}
+	.searchIcon {
+		width: 25px;
+		color: black;
+	}
+	#codeCoworker {
+		display: none;
+	}
 }
 </style>

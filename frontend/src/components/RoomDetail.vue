@@ -1,43 +1,47 @@
 <template>
+	<div class="openDetail">
 	<div id="chatWrap">
-		<div id="chatHeader">{{ room.roomName }}</div>
+		<div id="chatHeader">{{ room.roomName }} 
+			<button id="buttonStyle" type="button" @click="outChatRoom">
+				나가기
+			</button>
+			<button id="buttonStyle" type="button" @click="enterList">
+				참여자
+			</button>
+		</div>
 		<div id="chatRoom">
 			<div
 				id="chatLog"
 				v-for="message in messages"
-				:key="message.idmessage"
+				:key="message.dateCreated"
 			>
 				<div
 					class="noticMsg"
 					v-if="
-						message.memberId != memberId &&
-							message.idmessage != 0 &&
-							message.type == 'ENTER'
+						message.type == 'ENTER'
 					"
 				>
-					<span class="msg">{{ message.context }}</span>
+					{{message.dateCreated}} <span class="msg">{{ message.context }}</span>
 				</div>
 				<div
 					class="anotherMsg"
 					v-if="
 						message.memberId != memberId &&
-							message.idmessage != 0 &&
 							message.type == 'TALK'
 					"
 				>
 					<span class="anotherName">{{ message.nickName }}</span>
-					<span class="msg">{{ message.context }}</span>
+					{{message.dateCreated}} <span class="msg">{{ message.context }}</span>
 				</div>
 				<div
 					class="myMsg"
 					v-if="
 						message.memberId == memberId &&
-							message.idmessage != 0 &&
 							message.type == 'TALK'
 					"
 				>
 					<span class="anotherName">{{ message.nickName }}</span>
-					<span class="msg">{{ message.context }}</span>
+					{{message.dateCreated}} <span class="msg">{{ message.context }}</span>
 				</div>
 			</div>
 		</div>
@@ -54,6 +58,7 @@
 			보내기
 		</button>
 	</div>
+	</div>
 </template>
 
 <script>
@@ -63,21 +68,49 @@ import axios from 'axios'
 
 export default {
 	name: 'RoomDetail',
+	props:["toChild"],
 	data () {
 		return {
 			roomId: 0,
 			memberId: 0,
+			nickName:'',
 			room: {},
 			message: '',
-			messages: []
+			messages: [],
+			isHidden:this.toChild.isHiddenDetail
 		}
 	},
 	created () {
 		this.roomId = localStorage.getItem('wschat.idroom')
 		this.memberId = localStorage.getItem('wschat.member_id')
+		this.nickName = this.$session.get('nickname')
 		this.findRoom()
 	},
+	mounted(){
+		var standardWidth = window.innerWidth / 2;
+		var standardHeight = window.innerHeight / 2;
+		if(standardWidth > this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left+510) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left-910) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-1070) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left-910) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth > this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left+510) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-1070) + "px";
+		}
+	},
 	methods: {
+		outChatRoom: function(){
+			this.messages = []
+			this.$emit("updateIsHiddenDetail",!this.isHidden)
+		},
+		enterList: function(){
+
+		},
 		findRoom: function () {
 			axios
 				.get('http://localhost:8081/chat/room/' + this.roomId)
@@ -89,6 +122,7 @@ export default {
 				.get('http://localhost:8081/chat/messages/' + this.roomId)
 				.then(response => {
 					this.messages = response.data
+					console.log(this.messages)
 				})
 			this.connect()
 		},
@@ -100,7 +134,7 @@ export default {
 						type: 'TALK',
 						roomId: this.roomId,
 						memberId: this.memberId,
-						nickName: this.memberId + '번 님',
+						nickName: this.nickName,
 						context: this.message
 					},
 					{}
@@ -131,7 +165,7 @@ export default {
 						message => {
 							var recv = JSON.parse(message.body)
 							this.recvMessage(recv)
-							this.chatOnScroll()
+							setTimeout(this.chatOnScroll,250)
 						}
 					)
 					this.stompClient.send(
@@ -141,7 +175,7 @@ export default {
 								type: 'ENTER',
 								memberId: this.$data.memberId,
 								roomId: this.$data.roomId,
-								nickName: this.$data.memberId + '번 님'
+								nickName: this.nickName
 							},
 							{}
 						)
@@ -154,18 +188,27 @@ export default {
 		},
 		chatOnScroll: function () {
 			var objDiv = document.getElementById('chatRoom')
-			console.log(objDiv.scrollTop)
-			console.log( objDiv.scrollHeight)
 			objDiv.scrollTop = objDiv.scrollHeight
 		}
-	},
-	watch:{
-		
 	}
 }
 </script>
 
 <style>
+.openDetail {
+	float: left;
+	background-color: white;
+	position: relative;
+	left: 560px;
+	bottom: 410px;
+	width: 400px;
+	height: 930%;
+	padding: 10px;
+	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
+	border-radius: 15px;
+	overflow: auto;
+}
+
 #chatWrap {
 	width: 100%;
 	border: 1px solid #ddd;

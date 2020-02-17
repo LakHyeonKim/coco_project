@@ -5,25 +5,13 @@
 			@click="toggleMenu()"
 			:src="
 				isHidden
-					? '../img/icons/menu_w.png'
-					: '../img/icons/close_w.png'
+					? '../img/icons/menu_g.png'
+					: '../img/icons/close_g.png'
 			"
 			width="25px"
 		/>
 		<!-- blur 생각해보기 -->
 		<div id="open" v-if="!isHidden">
-			<div id="search">
-				<v-select
-					label="검색조건"
-					:items="items"
-					color="rgba(0, 0, 0, 0.5)"
-					item-color="black"
-					id="search_sel"
-					style="float: left; width: 80px; font-size: 15px;"
-				/>
-				<input type="text" id="search_text" />
-				<img id="search_img" src="../assets/icon/search_b.png" />
-			</div>
 			<ul id="list" v-for="item in tags" :key="item">
 				<li>#{{ item }}</li>
 			</ul>
@@ -36,12 +24,14 @@ import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
-	props: {
-		no: null
-	},
 	data() {
 		return {
-			items: ["전체", "#", "글제목", "글내용"],
+			items: [
+				{ text: "전체", value: "1" },
+				{ text: "#", value: "2" },
+				{ text: "글제목", value: "3" },
+				{ text: "글내용", value: "4" }
+			],
 			isHidden: true,
 			tags: ""
 		};
@@ -53,32 +43,10 @@ export default {
 			console.log(this.tags);
 		}
 	}
-	// updated() {
-	// 	console.log("태그가 오나,,?");
-	// 	console.log(store.state.tags);
-	// }
 };
 </script>
 
 <style>
-#search {
-	margin-left: 10px;
-	display: inline-block;
-	width: 300px;
-}
-#search_text {
-	float: left;
-	/* margin-left: 5px; */
-	margin-top: 19px;
-	width: 150px;
-	height: 30px;
-	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
-}
-#search_img {
-	margin-top: 15px;
-	float: left;
-	width: 25px;
-}
 #menu {
 	position: fixed;
 	text-align: right;

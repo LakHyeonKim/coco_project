@@ -15,10 +15,12 @@ import SearchPage from "./views/SearchPage.vue";
 import DetailPage from "./views/DetailPage.vue";
 import FindPassword from "./views/FindPassword.vue";
 import InfoModify from "./views/InfoModify";
+import AlarmPage from "./views/AlarmPage";
 
 Vue.use(VueRouter);
 
-const routes = [{
+const routes = [
+	{
 		path: "/",
 		name: "home",
 		component: Home
@@ -101,6 +103,11 @@ const routes = [{
 		component: InfoModify
 	},
 	{
+		path: "/alarm",
+		name: "alarm",
+		component: AlarmPage
+	},
+	{
 		path: "*",
 		name: "notfound",
 		component: NewsFeed
@@ -116,7 +123,7 @@ const router = new VueRouter({
 router.beforeEach(function(to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (
-		to.matched.some(function (routeInfo) {
+		to.matched.some(function(routeInfo) {
 			return routeInfo.meta.authRequired;
 		})
 	) {

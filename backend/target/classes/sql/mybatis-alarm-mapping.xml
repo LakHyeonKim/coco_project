@@ -43,7 +43,7 @@
 	<select id="findAlarm" resultType="Alarm" parameterType="Alarm">
 		<include refid="select-Alarm"></include>
 		<where>
-			access = access
+			access = ${access}
 			<if test="idalarm !=0">
 				AND
 				idalarm = ${idalarm}

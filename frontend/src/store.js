@@ -13,11 +13,8 @@ export default new Vuex.Store({
 		idPost: 0,
 		searchtag: "",
 		tags: null,
-		nickname: ""
-		// init: true,
-		// memberemail: "",
-		// accessToken: "",
-		// refreshToken: "",
+		nickname: "",
+		isCheck: 0
 	},
 	getters: {
 		userId: function(state) {
@@ -41,6 +38,10 @@ export default new Vuex.Store({
 			} else {
 				return state.nickname;
 			}
+		},
+		userAccess: function(state) {
+			console.log(jwtDecode(state.token));
+			return jwtDecode(state.token).access;
 		}
 	},
 	mutations: {

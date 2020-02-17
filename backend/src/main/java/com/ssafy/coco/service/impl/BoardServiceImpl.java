@@ -72,6 +72,9 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public List<Board> findByAllDefaultSearch(long idMember) {
 		List<Post> defaultPosts = postDao.findPostByFrequency(idMember);
+		if(defaultPosts.size() == 0) {
+			defaultPosts.addAll(postDao.findAllPost());
+		}
 		return makeBoardList(idMember, defaultPosts);
 	}
 

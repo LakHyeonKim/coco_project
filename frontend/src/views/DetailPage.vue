@@ -3,6 +3,7 @@
 	<!-- 로딩된 정보를 넘겨 받아서 바로 띄워주면? -->
 	<div id="detailMain">
 		<detail
+			:isFollow="this.isFollow"
 			:idPost="this.detail.post.idpost"
 			:memberId="this.detail.post.memberId"
 			:postTitle="this.detail.post.postTitle"
@@ -24,6 +25,9 @@
 			:commentCount="this.detail.commentCount"
 			:attachments="this.detail.attachments"
 			id="compo"
+			@updateLike="updateLike"
+			@addComment="addComment"
+			@updateFollow="updateFollow"
 		></detail>
 	</div>
 </template>
@@ -35,9 +39,9 @@ import http from "../http-common";
 
 export default {
 	name: "DetailPage",
-	props: ["no"],
 	data() {
 		return {
+			isFollow: 0,
 			detail: {
 				post: {
 					idPost: 0,
@@ -78,21 +82,63 @@ export default {
 			return store.state.idPost;
 		}
 	},
-	methods: {},
-	mounted() {
+	methods: {
+		updateLike(like) {
+			if (like == 1) {
+				this.detail.post.likeCheck = 1;
+			} else {
+				this.detail.post.likeCheck = 0;
+			}
+			this.detail.post.likeCount += like;
+		},
+		addComment(comment) {
+			comment.dateCreated = "방금 전";
+			comment.updateCreated = "방금 전";
+			comment.idcomment = 0;
+			this.detail.comments.push(comment);
+		},
+		updateFollow() {
+			this.isFollow = !this.isFollow;
+		}
+	},
+	created() {
 		const requestForm = {
 			idMember: this.$session.get("id"),
 			idPost: this.$route.params.idPost
 		};
-		http.post("/api/findByBoardDetailPostId/", requestForm)
+		const headers = {
+			Authorization: this.$session.get("accessToken")
+		};
+
+		http.post("/api/findByBoardDetailPostId/", requestForm, { headers })
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
+				http.post(
+					"/api/findFollow",
+					{
+						memberFollower: res.data.post.memberId,
+						memberFollowing: this.$session.get("id")
+					},
+					{
+						headers: {
+							Authorization: this.$session.get("accessToken")
+						}
+					}
+				).then(res => {
+					console.log(res);
+					if (res.status == 200) {
+						this.isFollow = 1;
+					} else if (res.status == 204) {
+						this.isFollow = 0;
+					}
+				});
 			})
 			.catch(err => {
 				console.log("detail err ", err);
 			});
-	}
+	},
+	mounted() {}
 };
 </script>
 

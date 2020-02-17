@@ -7,7 +7,7 @@
 			<div id="headInnerBox">
 				<label for="searchBox">
 					<img
-						src="../assets/logoo.png"
+						src="../assets/CC_Logo.png"
 						alt="logo_image"
 						id="searchLogo"
 					/>
@@ -18,13 +18,14 @@
 					id="searchBox"
 					placeholder="없으면 허전해"
 				/>
-				<p id="codeCoworker">Code Coworker</p>
+				<div id="codeCoworker">Code Coworker</div>
 			</div>
 		</div>
 		<div id="blankBox"></div>
 		<div id="mainBox">
 			<PostList id="subBox"></PostList>
 		</div>
+		<div class="footerBlank"></div>
 	</div>
 </template>
 
@@ -33,6 +34,9 @@ import PostList from "../components/PostList";
 
 export default {
 	name: "NewsFeed",
+	data() {
+		return {};
+	},
 	components: {
 		PostList
 	},
@@ -100,13 +104,15 @@ export default {
 	#header {
 		position: fixed;
 		width: 100%;
-		height: 50px;
 		z-index: 1;
 		/* background-color: white; */
 		border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 	}
 	#headInnerBox {
-		padding: 10px;
+		padding: 20px 10px 20px 10px;
+		/* vertical-align: middle; */
+		/* align-content: center;
+		justify-content: center; */
 	}
 	#searchLogo {
 		display: inline-block;
@@ -116,21 +122,34 @@ export default {
 	}
 	#codeCoworker {
 		display: inline-block;
+		font-size: 20px;
+		margin: 0px;
+		/* padding-top: 10px; */
 	}
 	#searchBox {
 		display: none;
 	}
 	#blankBox {
-		height: 30px;
+		display: block;
+		height: 75px;
 	}
 	#mainBox {
-		align-content: center;
-		justify-content: center;
+		/* display: block; */
+		/* align-content: center;
+		justify-content: center; */
 		/* background-color: blueviolet; */
 	}
 	#subBox {
 		width: 100%;
 		padding-left: 0;
+	}
+	.footerBlank {
+		display: block;
+		top: auto;
+		bottom: 0;
+		height: 17vw;
+		width: 100%;
+		padding: 0;
 	}
 }
 </style>

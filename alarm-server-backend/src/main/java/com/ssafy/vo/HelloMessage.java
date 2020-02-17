@@ -1,22 +1,22 @@
 package com.ssafy.vo;
 
 public class HelloMessage {
-	private String memberId;
+	private long memberId;
 	
 	public HelloMessage() {
 		super();
 	}
 
-	public HelloMessage(String memberId) {
+	public HelloMessage(long memberId) {
 		super();
 		this.memberId = memberId;
 	}
 
-	public String getMemberId() {
+	public long getMemberId() {
 		return memberId;
 	}
 
-	public void setMemberId(String memberId) {
+	public void setMemberId(long memberId) {
 		this.memberId = memberId;
 	}
 

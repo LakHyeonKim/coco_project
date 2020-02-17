@@ -15,7 +15,7 @@ public class MessageServiceImpl implements MessageService {
 
 	@Autowired
 	private MessageDAO messageDAO;
-	
+
 	@Override
 	public List<Message> findAllMessage() {
 		return messageDAO.findAllMessage();
@@ -25,7 +25,7 @@ public class MessageServiceImpl implements MessageService {
 	public List<Message> findMessage(Message message) {
 		return messageDAO.findMessage(message);
 	}
-	
+
 	@Transactional
 	@Override
 	public Message addMessage(Message message) {
