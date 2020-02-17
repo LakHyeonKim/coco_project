@@ -76,6 +76,8 @@ public class TransactionServiceImpl implements TransactionService {
 	private MailService mailService;
 	@Autowired
 	private MyPageTagDao myPageTagDao;
+	
+	private static final String IP = "192.168.100.57";
 
 	/**
 	 * 
@@ -99,8 +101,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
-			String ip = "192.168.100.95";
-			String imageFilePath = "http://"+ ip + ":8888/userprofile/" + saveFileName + "";
+			String imageFilePath = "http://"+ IP + ":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}
@@ -266,8 +267,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String ip = "192.168.100.95";
-			String filePath = "http://"+ ip +":8888/userfile/" + saveFileName + "";
+			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}
@@ -311,8 +311,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String ip = "192.168.100.95";
-			String filePath = "http://"+ ip +":8888/userbanner/" + saveFileName + "";
+			String filePath = "http://"+ IP +":8888/userbanner/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMypage.setBannerImagePath(filePath);
 		}
@@ -321,8 +320,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String ip = "192.168.100.95";
-			String filePath = "http://"+ ip +":8888/userprofile/" + saveFileName + "";
+			String filePath = "http://"+ IP +":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMember.setImageUrl(filePath);
 		}
