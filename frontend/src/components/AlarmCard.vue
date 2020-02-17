@@ -1,24 +1,60 @@
 <template>
-	<div id="alarmCard">
-		<div id="userImgDiv" @click="test()">
-			<img id="userImg" src="../assets/CC_Logo.png" alt="" />
+	<div>
+		<div id="alarmCard" v-if="!isReadChange">
+			<div id="userImgDiv">
+				<!-- <img id="userImg" :src="userImg" alt="" /> -->
+				<!-- {{ userImg }} -->
+			</div>
+			<div id="content">
+				<p v-if="this.followId" class="line-clamp-content">
+					<b>{{ userNickname }}</b
+					>가 나를 팔로우 하였습니다.
+					<br />
+				</p>
+				<p v-else class="line-clamp-content">
+					<b>{{ userNickname }}</b
+					>가 내 글을 좋아요 하였습니다: <b>{{ postTitle }}</b>
+					<br />
+				</p>
+				<div style="font-size:12px">{{ dateCreated }}</div>
+			</div>
+			<div id="isRead">
+				<button
+					id="readButton"
+					v-if="!isReadChange"
+					@click="isReaded()"
+				>
+					<a id="readText">READ</a>
+				</button>
+			</div>
 		</div>
-		<div id="content">
-			<pre>
-                누가 뭐를 했다
-                if 팔로우, 누가 나를 팔로우했다
-                if 좋아요, 누가 내 글을 좋아요했다: 글 제목
-                3줄 제한 걸기
-				asdfasdf
-				asdfasdfsad
-				fas
-				
-            </pre>
-		</div>
-		<div id="isRead">
-			<button id="readButton">
-				<a href="" id="readText">READ</a>
-			</button>
+
+		<div id="alarmCard" class="Effect" v-else>
+			<div id="userImgDiv">
+				<!-- <img id="userImg" :src="userImg" alt="" /> -->
+				<!-- {{ userImg }} -->
+			</div>
+			<div id="content">
+				<p v-if="this.followId" class="line-clamp-content">
+					{{ userNickname }}가 나를 팔로우 하였습니다.
+					<br />
+				</p>
+				<p v-else class="line-clamp-content">
+					{{ userNickname }}가 내 글을 좋아요 하였습니다:
+					{{ postTitle }}
+					<br />
+				</p>
+				<div style="font-size:12px">{{ dateCreated }}</div>
+			</div>
+			<div id="isRead">
+				<button
+					id="readButton"
+					v-if="!isReadChange"
+					@click="isReaded()"
+				>
+					<a id="readText">READ</a>
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -28,20 +64,74 @@ import http from "../http-common";
 
 export default {
 	name: "AlarmList",
+	props: {
+		access: {},
+		dateCreated: {},
+		followId: {},
+		idalarm: {},
+		isRead: {},
+		likeId: {},
+		memberCaller: {},
+		memberReceiver: {},
+		postId: {}
+	},
+	data() {
+		return {
+			userNickname: "",
+			userImg: "",
+			postTitle: "",
+			isReadChange: 0
+		};
+	},
 	methods: {
-		test() {
-			console.log(this.$session.get("accessToken"));
+		isReaded() {
+			this.isReadChange = 1;
+			const token = this.$session.get("accessToken");
 			const headers = {
-				Authorization: this.$session.get("accessToken")
+				Authorization: token
 			};
-			http.get("/api/findAllMember", {
-				headers
-			})
+			const requestForm = {
+				idalarm: this.idalarm,
+				isRead: 1
+			};
+			console.log(headers);
+			console.log(requestForm);
+			http.put("/api/updateAlarm", requestForm, { headers })
 				.then(res => {
-					console.log(res);
+					console.log("alarm update res ", res);
 				})
 				.catch(err => {
-					console.log(err);
+					console.log("alarm update res ", err);
+				});
+		}
+	},
+	mounted() {
+		this.isReadChange = this.isRead;
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		http.post(
+			"/api/findMember",
+			{ idmember: this.memberCaller },
+			{ headers }
+		)
+			.then(res => {
+				console.log("findMember res ", res);
+				this.userNickname = res.data[0].nickname;
+				this.userImg = res.data[0].imageUrl;
+			})
+			.catch(err => {
+				console.log("findMember err ", err);
+			});
+		if (this.postId) {
+			http.post("/api/findPost", { idpost: this.postId }, { headers })
+				.then(res => {
+					console.log("findPost res ", res);
+					this.postTitle = res.data[0].postTitle;
+				})
+				.catch(err => {
+					console.log("findPost err ", err);
 				});
 		}
 	}
@@ -49,38 +139,87 @@ export default {
 </script>
 
 <style scoped>
+.Effect {
+	filter: grayscale(100%);
+	-webkit-filter: grayscale(100%);
+	color: rgba(0, 0, 0, 0.5);
+}
 #alarmCard {
 	height: 100%;
-	border: 1px solid red;
+	/* border-top: 1px solid red; */
+	border-bottom: 0.75px solid rgba(0, 0, 0, 0.2);
+	display: flex;
+	margin: 5px auto 5px auto;
 }
 #userImgDiv {
 	display: inline-block;
+	margin: 10px;
+	height: 50px;
 }
 #userImg {
-	width: 60px;
+	width: 50px;
 }
 #userImg {
 }
 #content {
 	display: inline-block;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 100%;
+}
+#content > p {
+	margin: 0px;
+	font-size: 15px;
+}
+.line-clamp-content {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 }
 #isRead {
 	display: inline-block;
+	margin: auto 10px auto 10px;
 }
 #readButton {
 	/* margin: 25px auto 25px auto;
 	padding-right: 7vw; */
-	width: 75px;
-	height: 30px;
+	width: 60px;
+	height: 25px;
 	background-color: rgba(160, 23, 98, 0.5);
 	border-radius: 5px;
 }
 #readText {
 	/* width: 100px;
 	height: 50px; */
-	font-size: 20px;
+	font-size: 17px;
 	color: white;
-
 	text-decoration: none;
+}
+@media screen and (max-width: 600px) {
+	#alarmCard {
+		margin: 3px auto 3px auto;
+	}
+	#userImgDiv {
+		height: 40px;
+	}
+	#userImg {
+		width: 40px;
+	}
+	#content {
+		display: inline-block;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	#content > p {
+		font-size: 13px;
+	}
+	#readButton {
+		width: 40px;
+		height: 24px;
+	}
+	#readText {
+		font-size: 13px;
+	}
 }
 </style>
