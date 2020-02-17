@@ -13,21 +13,32 @@
 	</sql>
 	<sql id="insert-Alarm">
 		insert into coco.alarm
-		(member_caller,member_receiver, post_id,
+		(member_caller,member_receiver,
+		post_id,
 		like_id, follow_id, is_read, access,date_created)
 
 		values(#{memberCaller},#{memberReceiver},
-		#{postId},#{likeId},#{followId},#{isRead},#{access},DATE_ADD(NOW(), INTERVAL 9 HOUR))
+		#{postId},#{likeId},#{followId},#{isRead},#{access},DATE_ADD(NOW(),
+		INTERVAL 9 HOUR))
 	</sql>
 	<sql id="update-Alarm">
 		update alarm set
-		member_caller=#{memberCaller},
-		member_receiver=#{memberReceiver},
-		post_id=#{postId},
-		like_id=#{likeId},
-		follow_id=#{followId},
-		is_read=#{isRead},
-		access=#{access}
+		<if test="memberCaller !=0">
+			member_caller = #{memberCaller},
+		</if>
+		<if test="memberReceiver !=0">
+			member_receiver=#{memberReceiver},
+		</if>
+		<if test="postId !=0">
+			post_id = #{postId},
+		</if>
+		<if test="likeId !=0">
+			like_id = #{likeId},
+		</if>
+		<if test="followId !=0">
+			follow_id = #{followId},
+		</if>
+		is_read = #{isRead}
 		where
 		idalarm=#{idalarm}
 	</sql>
@@ -68,10 +79,13 @@
 				AND
 				follow_id = ${followId}
 			</if>
-			<if test="isRead !=0">
+			<if test="dateCreated =='TT'">
 				AND
-				is_read = ${isRead}
+				DATE_SUB(NOW(), INTERVAL 7 DAY)<![CDATA[<]]>
+				date_created
 			</if>
+			<!-- <if test="isRead !=0"> AND is_read = ${isRead} </if> -->
+
 		</where>
 		order by date_created desc;
 	</select>

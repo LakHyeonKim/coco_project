@@ -13,6 +13,7 @@ import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Tokens;
 
 public interface JwtService {
+	public String makeJwt(Member member, int time) throws Exception;
 	public String makeJwt(HttpServletRequest res) throws Exception;
 	public String makeJwt(String id, String pwd) throws Exception;
 	public String makeJwt(String idmember, int time) throws Exception;

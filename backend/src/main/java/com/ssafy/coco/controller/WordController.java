@@ -66,7 +66,8 @@ public class WordController {
 			JSONParser p = new JSONParser();
 
 			String uri = "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q="
-					+ inputString + "&start=1";
+					+ inputString;
+			//+"&start=0"
 			ResponseEntity<String> rest_reponse;
 			rest_reponse = restTemplate.getForEntity(uri, String.class);
 
@@ -96,7 +97,8 @@ public class WordController {
 				WordDictionary wd = new WordDictionary();
 				wd.setWord(inputString);
 				wd.setLink(link);
-				wd.setDescription(title + "\n" + snippet);
+				wd.setTitle(title);
+				wd.setDescription(snippet);
 				wd.setThumbnailSrc(src);
 				wordDictionaryService.addWordDictionary(wd);
 			}
@@ -148,7 +150,8 @@ public class WordController {
 			WordDictionary wd = new WordDictionary();
 			wd.setWord(inputString);
 			wd.setLink(link);
-			wd.setDescription(title + "\n" + snippet);
+			wd.setTitle(title);
+			wd.setDescription(snippet);
 			wd.setThumbnailSrc(src);
 			wordDictionaryService.addWordDictionary(wd);
 		}

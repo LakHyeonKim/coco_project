@@ -306,7 +306,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String filePath = "http://localhost:8888/userbanner/" + saveFileName + "";
+			String filePath = "http://192.168.100.95:8888/userbanner/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMypage.setBannerImagePath(filePath);
 		}
@@ -315,7 +315,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String filePath = "http://localhost:8888/userprofile/" + saveFileName + "";
+			String filePath = "http://192.168.100.95:8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMember.setImageUrl(filePath);
 		}
