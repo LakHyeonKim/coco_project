@@ -216,13 +216,13 @@ export default {
 		}
 	},
 	mounted() {
-		console.log("MypageBanner : " + this.no);
+		console.log("MypageBanner : " + this.$route.params.no);
 		const token = this.$session.get("accessToken");
 		const headers = {
 			Authorization: token
 		};
 		console.log("myPage banner headers", headers);
-		if (this.$session.get("id") == this.no) {
+		if (this.$session.get("id") == this.$route.params.no) {
 			this.isUser = true;
 		}
 		console.log("isUser : " + this.isUser);
@@ -303,14 +303,12 @@ export default {
 	margin: 0 auto;
 	text-align: center;
 	height: 35vw;
-	/* text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5); */
 }
 #infoBox {
 	position: relative;
 	display: inline-block;
 	z-index: 1;
 	top: -160px;
-	/* background-color: rgba(0, 0, 0, 0.3); */
 	width: 80%;
 	height: 130px;
 	padding: 10px;
@@ -353,17 +351,6 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-/* #checkFollow {
-	text-shadow: 0 0;
-	margin: 0 auto;
-	z-index: 1;
-	width: 100px;
-	height: 100px;
-	background-color: rgba(255, 255, 255);
-	color: black;
-	border-radius: 5px;
-	box-shadow: 0.5px 0.5px 7px rgba(0, 0, 0, 0.3);
-} */
 
 @media screen and (max-width: 600px) {
 	#settings {
@@ -372,10 +359,6 @@ export default {
 	#imgBannerBox {
 		height: 50vw;
 	}
-	/* #imgUser {
-		width: 50px;
-		height: 50px;
-	} */
 	#infoBox {
 		top: -160px;
 	}

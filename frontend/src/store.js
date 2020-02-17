@@ -7,20 +7,29 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 	state: {
 		token: null,
-		user: "",
+		idmember: 0,
+		id: "",
+		imgUrl: "",
+		grade: "",
+		nickname: "",
+		isManager: 0,
+		isDelete: 0,
+		rankId: 0,
 		loading: false,
 		postDetail: [],
 		idPost: 0,
 		searchtag: "",
 		tags: null,
-		nickname: "",
 		isCheck: 0
 	},
 	getters: {
-		userId: function(state) {
-			console.log(jwtDecode(state.token));
-			return jwtDecode(state.token).idmember;
+		decode: function(state) {
+			return jwtDecode(state.token);
 		},
+		// userId: function(state) {
+		// 	console.log(jwtDecode(state.token));
+		// 	return jwtDecode(state.token).idmember;
+		// },
 		isLoggedIn: function(state) {
 			return state.token ? true : false;
 		},
@@ -30,19 +39,20 @@ export default new Vuex.Store({
 					Authorization: "JWT " + state.token
 				}
 			};
-		},
-		userNickname: function(state) {
-			if (!state.nickname) {
-				console.log(jwtDecode(state.token));
-				return jwtDecode(state.token).nickname;
-			} else {
-				return state.nickname;
-			}
-		},
-		userAccess: function(state) {
-			console.log(jwtDecode(state.token));
-			return jwtDecode(state.token).access;
 		}
+		// userNickname: function(state) {
+		// 	if (!state.nickname) {
+		// 		console.log(jwtDecode(state.token));
+		// 		return jwtDecode(state.token).nickname;
+		// 	} else {
+		// 		return state.nickname;
+		// 	}
+		// },
+
+		// userAccess: function(state) {
+		// 	console.log(jwtDecode(state.token));
+		// 	return jwtDecode(state.token).access;
+		// }
 	},
 	mutations: {
 		setToken: function(state, token) {

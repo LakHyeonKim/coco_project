@@ -3,13 +3,12 @@
 		<validation-observer ref="form">
 			<form
 				@submit.prevent="updateForm"
-				id="formData"
 				name="updateForm"
+				id="updateForm"
 				enctype="multipart/form-data"
 			>
 				<div class="info_div">
 					<v-text-field
-						name="id"
 						label="아이디"
 						v-model="member.id"
 						readonly
@@ -31,8 +30,10 @@
 							@onExceed="exceedHandler"
 							:img-src="member.bannerImgUrl"
 							size="small"
+							class="img"
 						/>
 						<br />배너 이미지
+						<span class="deleteImg">삭제</span>
 					</div>
 
 					<div id="profile_img">
@@ -43,12 +44,14 @@
 							bottomText="Drop file here or click"
 							exceedSizeText="사진의 크기가 초과하였습니다"
 							:maxSize="10240"
-							ref="bannerImage"
+							ref="profileImage"
 							@onExceed="exceedHandler"
 							:img-src="member.profileImageUrl"
 							size="small"
+							class="img"
 						/>
 						<br />프로필 이미지
+						<span class="deleteImg">삭제</span>
 					</div>
 				</div>
 
@@ -69,9 +72,7 @@
 							></v-text-field>
 						</validation-provider>
 					</div>
-					<div id="duplicate_btn" @click="nickCheck">
-						중복확인
-					</div>
+					<div id="duplicate_btn" @click="nickCheck">중복확인</div>
 				</div>
 
 				<div class="info_div">
@@ -79,12 +80,13 @@
 						name="bannerText"
 						label="마이페이지 타이틀"
 						color="gray"
+						v-model="member.bannerText"
 					></v-text-field>
 				</div>
 
 				<div style="margin-bottom: 20px;">
 					<span style="color: gray; font-size: 12px;">
-						마이페이지 태그
+						마이페이지 태그 (10개 제한)
 					</span>
 					<VueTagsInput
 						v-model="tag"
@@ -95,22 +97,29 @@
 						allow-edit-tags
 						:max-tags="10"
 						id="tagsInput"
-						placeholder=""
+						placeholder
 					/>
 				</div>
 
 				<div class="info_div">
-					<v-text-field
-						name="password"
-						v-model="member.password"
-						label="비밀번호"
-						:counter="16"
-						:type="pwd1 ? 'text' : 'password'"
-						:error-messages="errors[0] ? errors[0] : []"
-						:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
-						@click:append="pwd1 = !pwd1"
-						color="gray"
-					></v-text-field>
+					<validation-provider
+						name="비밀번호 "
+						vid="confirmation"
+						rules="min:8|max:16|password"
+						v-slot="{ errors }"
+					>
+						<v-text-field
+							name="password"
+							v-model="pwd"
+							label="비밀번호"
+							:counter="16"
+							:type="pwd1 ? 'text' : 'password'"
+							:error-messages="errors[0] ? errors[0] : []"
+							:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
+							@click:append="pwd1 = !pwd1"
+							color="gray"
+						></v-text-field>
+					</validation-provider>
 				</div>
 
 				<div class="info_div">
@@ -136,6 +145,7 @@
 						v-model="member.gitUrl"
 						label="Git url(선택)"
 						color="gray"
+						name="gitUrl"
 					></v-text-field>
 				</div>
 
@@ -144,6 +154,7 @@
 						v-model="member.kakaoUrl"
 						label="Kakao url(선택)"
 						color="gray"
+						name="kakaoUrl"
 					></v-text-field>
 				</div>
 
@@ -152,11 +163,12 @@
 						v-model="member.instagramUrl"
 						label="Instagram url(선택)"
 						color="gray"
+						name="instagramUrl"
 					></v-text-field>
 				</div>
 
-				<v-btn class="mr-4" type="submit">수정하기</v-btn>
-				<v-btn @click="clear">초기화</v-btn>
+				<v-btn class="my-2" @click="updateForm">수정하기</v-btn>
+				<!-- <button class="btn" @click="clear">초기화</button> -->
 			</form>
 		</validation-observer>
 		<div id="blank"></div>
@@ -164,14 +176,9 @@
 </template>
 <script>
 import http from "../http-common";
-import router from "../router";
-import {
-	ValidationProvider,
-	ValidationObserver,
-	extend,
-	validate
-} from "vee-validate";
+import { ValidationProvider, ValidationObserver } from "vee-validate";
 import VueTagsInput from "@johmun/vue-tags-input";
+
 export default {
 	name: "InfoModifyForm",
 	components: {
@@ -179,106 +186,86 @@ export default {
 		ValidationObserver,
 		VueTagsInput
 	},
-	data: () => ({
-		temp_id: "temp@naver.com",
-		member: {
-			id: "",
-			profileImageUrl: "",
-			bannerImageUrl: "",
-			nickName: "",
-			gitUrl: "",
-			kakaoUrl: "",
-			instagramUrl: "",
-			password: ""
-		},
-		profileImage: "",
-		bannerImage: "",
-		pwd1: false,
-		pwd2: false,
-		passwordConfirm: "",
-		duplicate: false,
-		idcheck: false,
-		tag: "",
-		tags: []
-	}),
+	data() {
+		return {
+			member: {
+				id: "",
+				profileImageUrl: "",
+				bannerImageUrl: "",
+				nickName: "",
+				gitUrl: "",
+				kakaoUrl: "",
+				instagramUrl: "",
+				password: "",
+				bannerText: ""
+			},
+			pwd: "",
+			profileImage: "",
+			bannerImage: "",
+			pwd1: false,
+			pwd2: false,
+			passwordConfirm: "",
+			duplicate: true,
+			nickName_duplication: "",
+			tag: "",
+			tags: []
+		};
+	},
 
 	methods: {
 		updateForm() {
 			// let formData = new FormData(document.getElementById("formData"));
 			// formData.set("file", this.$refs.profile.file);
+			if (!this.duplicate) {
+				alert("닉네임 중복확인이 필요합니다!");
+				return;
+			}
+			if (this.onSubmit()) {
+				// this.$store.dispatch("startLoading");
 
-			if (this.onSubmit() && this.idcheck) {
-				this.$store.dispatch("startLoading");
-				// console.log("REGISTER beforeaxios ", formData);
-				// http.post("/trc/signUp/", formData)
-				// 	.then(res => {
-				// 		console.log("REGISTER then ", res);
+				this.t_tags = [];
+				for (let i = 0; i < this.tags.length; ++i) {
+					this.t_tags.push(this.tags[i].text);
+				}
 
-				// 		http.post("/jwt/login/", {
-				// 			id: this.signUpMember.id,
-				// 			password: this.signUpMember.password
-				// 		},
-				// { headers: { Authorization: this.$session.get("accessToken") } })
-				// 			.then(res => {
-				// 				console.log(res);
-				// 				if (res.status != "204") {
-				// 					this.$session.start();
-				// 					this.$session.set(
-				// 						"accessToken",
-				// 						res.data.accessToken
-				// 					);
-				// 					this.$session.set(
-				// 						"refreshToken",
-				// 						res.data.refreshToken
-				// 					);
-				// 					this.$store.state.token =
-				// 						res.data.accessToken;
-				// 					this.$session.set(
-				// 						"id",
-				// 						Number(this.$store.getters.userId)
-				// 					);
-				// 					this.$session.set("targetId", 10);
-				// 					this.loading = false;
-				// 					router.push("/newsfeed");
-				// 					console.log("LOGIN then ", res);
-				// 				} else {
-				// 					router.push("/").catch(err => {
-				// 						err;
-				// 					});
-				// 					alert(
-				// 						"아이디와 비밀번호를 확인해 주십시오."
-				// 					);
-				// 					this.loading = false;
-				// 				}
-				// 			})
-				// 			.catch(err => {
-				// 				this.loading = false;
-				// 				// this.$store.dispatch("endLoading");
-				// 				console.log("LOGIN err ", err);
-				// 			});
+				let formData = new FormData(
+					document.getElementById("updateForm")
+				);
+				formData.append("tags", this.t_tags);
+				formData.append("tags", "");
+				formData.append("idmember", this.$session.get("id"));
+				console.log(this.$refs.bannerImage.file);
+				formData.set("bannerImage", this.$refs.bannerImage.file);
+				formData.set("profileImage", this.$refs.profileImage.file);
 
-				// 		this.$store.dispatch("endLoading");
-				// 		alert("회원가입이 성공적으로 완료되었습니다.");
-				// 		router.push("/");
-				// 	})
-				// 	.catch(err => {
-				// 		this.$store.dispatch("endLoading");
-				// 		console.log("REGISTER catch ", err);
-				// 	});
-				// http.post("/jwt/sendEmailkey/", formData);
+				console.log("UPDATE beforeaxios");
+				for (var pair of formData.entries()) {
+					console.log(pair[0] + ", " + pair[1]);
+				}
+				http.post("/trc/updateMemeberInfo/", formData, {
+					headers: { Authorization: this.$session.get("accessToken") }
+				})
+					.then(res => {
+						console.log("UPDATE then ", res);
+						alert("회원정보가 수정되었습니다.");
+					})
+					.catch(err => {
+						this.$store.dispatch("endLoading");
+						console.log("UPDATE catch ", err);
+					});
 			} else {
-				console.log("REGISTER ", "검증 실패");
+				console.log("UPDATE ", "검증 실패");
 			}
 		},
 		// previewImage: function(event) {
-		// 	var input = event.target;
-		// 	if (input.files && input.files[0]) {
-		// 		var reader = new FileReader();
-		// 		reader.onload = e => {
-		// 			this.singUpMember.file = e.target.result;
-		// 		};
-		// 		reader.readAsDataURL(input.files[0]);
-		// 	}
+		//    var input = event.target;
+		//    if (input.files && input.files[0]) {
+		//       var reader = new FileReader();
+		//       reader.onload = e => {
+		//          this.singUpMember.file = e.target.result;
+		//       };
+		//       reader.readAsDataURL(input.files[0]);
+		//    }
 		// },
 		onSubmit() {
 			this.$refs.form.validate().then(success => {
@@ -296,19 +283,16 @@ export default {
 			this.$refs.form.validate();
 		},
 		nickCheck() {
-			if (this.member.nickname) {
+			if (this.nickName_duplication == this.member.nickName) return;
+			if (this.member.nickName) {
 				http.post("/jwt/checkNickName", { nickname: this.nickName })
 					.then(res => {
 						console.log("DUPLICATE then ", res);
 						if (res.status == "204") {
-							this.duplicate_nickname.push(
-								"사용하실수 있는 닉네임입니다."
-							);
+							alert("사용하실수 있는 닉네임입니다.");
 							this.duplicate = true;
 						} else {
-							this.duplicate_nickname.push(
-								"닉네임이 중복되었습니다."
-							);
+							alert("닉네임이 중복되었습니다.");
 							this.duplicate = false;
 						}
 					})
@@ -328,10 +312,10 @@ export default {
 	mounted() {
 		// this.localize("ko", this.dictionary)
 		// if (this.$store.state.isCheck == 0) {
-		// 	alert("잘못된 접근입니다!");
-		// 	this.$router.push("/mypage/" + this.$session.get("id"));
+		//    alert("잘못된 접근입니다!");
+		//    this.$router.push("/mypage/" + this.$session.get("id"));
 		// } else {
-		// 	this.$store.state.isCheck = 0;
+		//    this.$store.state.isCheck = 0;
 		// }
 
 		http.post("/api/findByMemberHomePageModify", this.$session.get("id"), {
@@ -341,6 +325,7 @@ export default {
 				console.log("findByMemberHomepageModify");
 				console.log(res.data);
 				this.member = res.data;
+				this.nickName_duplication = this.member.nickName;
 			})
 			.catch(error => {
 				console.log(error);
@@ -355,6 +340,20 @@ export default {
 </script>
 
 <style>
+.img {
+	margin-bottom: 10px;
+}
+.deleteImg {
+	padding: 3px;
+	text-decoration: underline;
+	font-size: 13px;
+	cursor: pointer;
+	color: gray;
+}
+.deleteImg:hover {
+	color: silver;
+	font-style: italic;
+}
 #tagsInput {
 	background: none;
 }
@@ -436,6 +435,10 @@ export default {
 	overflow: hidden;
 }
 
+#blank {
+	height: 50px;
+}
+
 @media screen and (max-width: 600px) {
 	#blank {
 		height: 20vw;
@@ -444,12 +447,10 @@ export default {
 
 	#back_img > div {
 		width: 140px;
-		/* height: 100px; */
 	}
 
 	#profile_img > div {
 		width: 140px;
-		/* height: 100px; */
 	}
 
 	#img_div {
