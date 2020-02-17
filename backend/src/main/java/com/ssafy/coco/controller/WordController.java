@@ -96,10 +96,10 @@ public class WordController {
 				}
 				WordDictionary wd = new WordDictionary();
 				wd.setWord(inputString);
-				wd.setLink(link);
+				wd.setLink(link==null?"":link);
 				wd.setTitle(title);
 				wd.setDescription(snippet);
-				wd.setThumbnailSrc(src);
+				wd.setThumbnailSrc(src==null?"":src);
 				wordDictionaryService.addWordDictionary(wd);
 			}
 		}
@@ -149,10 +149,10 @@ public class WordController {
 			}
 			WordDictionary wd = new WordDictionary();
 			wd.setWord(inputString);
-			wd.setLink(link);
+			wd.setLink(link==null?"":link);
 			wd.setTitle(title);
 			wd.setDescription(snippet);
-			wd.setThumbnailSrc(src);
+			wd.setThumbnailSrc(src==null?"":src);
 			wordDictionaryService.addWordDictionary(wd);
 		}
 	}

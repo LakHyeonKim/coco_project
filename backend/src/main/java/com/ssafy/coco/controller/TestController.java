@@ -12,6 +12,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -69,6 +71,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,8 +101,23 @@ public class TestController {
 	@Autowired
 	MailService mailService;
 
+	
 	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
-	@RequestMapping(value = "/downloadFile}", method = RequestMethod.GET)
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+	public ResponseEntity<Resource> download() throws IOException {
+		Path path = Paths.get("src/main/webapp/userfile/dsad.txt");
+		System.out.println("download 파일네임:"+path.getFileName());
+		String contentType = Files.probeContentType(path);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE,contentType);
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=1" + path.getFileName().toString());
+		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "파일 다운로드", response = List.class)
+	@RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		File file = new File("src/main/webapp/userfile/", "0_git.png");
@@ -116,9 +136,9 @@ public class TestController {
 			fileName = new String("ssd".getBytes("UTF-8"), "iso-8859-1");
 		}
 		// 형식을 모르는 파일첨부용 contentType
-		response.setContentType("application/octet-stream");
+		response.setContentType("blob");
 		// 다운로드와 다운로드될 파일이름
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		response.setHeader("Content-Disposition", "attachment; filename=" + "0_vue.png");
 		// 파일복사
 		FileCopyUtils.copy(in, response.getOutputStream());
 		in.close();
