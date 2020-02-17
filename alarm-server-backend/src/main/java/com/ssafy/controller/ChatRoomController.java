@@ -3,9 +3,12 @@ package com.ssafy.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,5 +74,13 @@ public class ChatRoomController {
     	Message message = new Message();
     	message.setRoomId(roomId);
         return messageService.findMessage(message);
+    }
+    
+    @DeleteMapping("/room/{roomId}")
+    public ResponseEntity deleteRoom(@PathVariable long roomId) {
+    	Room tempRoom = new Room();
+    	tempRoom.setIdroom(roomId);
+    	roomService.deleteRoom(tempRoom);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

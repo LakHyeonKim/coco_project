@@ -53,7 +53,8 @@ public class TransactionController {
 	
 	@ApiOperation(value = "포스트 달기 (Transaction) ", response = List.class)
 	@PostMapping("/makePost")
-	public ResponseEntity<Integer> makePost(BoardWrite board) throws Exception {
+	public ResponseEntity<Integer> makePost(@RequestHeader(value="Authorization")String jwt,BoardWrite board) throws Exception {
+		System.out.println("메이크 포스터안 jwt:"+jwt);
 		transactionService.makePost(board);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
@@ -102,11 +103,25 @@ public class TransactionController {
 	
 	@ApiOperation(value = "member 정보 수정 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/updateMemeberInfo", method = RequestMethod.POST)
-	public ResponseEntity<Integer> updateMemeberInfo(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberInfoModify memberInfoModify) throws Exception {
+	public ResponseEntity<Integer> updateMemeberInfo(@RequestHeader(value="Authorization")String jwt, MemberInfoModify memberInfoModify) throws Exception {
 		transactionService.updateMemeberInfo(memberInfoModify);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "member 정보 수정 이미지 삭제 (Transaction) ", response = List.class)
+	@RequestMapping(value = "/deleteMemberProfile", method = RequestMethod.POST)
+	public ResponseEntity<Integer> deleteMemberProfile(@RequestHeader(value="Authorization")String jwt, @RequestBody long idMember) throws Exception {
+		System.out.println("dkdkdkd");
+		transactionService.deleteMemberProfile(idMember);
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "member 정보 수정 배너 이미지 삭제 (Transaction) ", response = List.class)
+	@RequestMapping(value = "/deleteMemberBannerImage", method = RequestMethod.POST)
+	public ResponseEntity<Integer> deleteMemberBannerImage(@RequestHeader(value="Authorization")String jwt, @RequestBody long idMember) throws Exception {
+		transactionService.deleteMemberBannerImage(idMember);
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
 	
 	/* 알아보고 삭제 해야 할 것*/
 	

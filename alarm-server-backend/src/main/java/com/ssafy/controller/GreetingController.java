@@ -21,7 +21,7 @@ public class GreetingController {
 	@MessageMapping("/info")
 	@SendToUser("/queue/info")
 	public Alarm alram(HelloMessage message) throws Exception {
-		long idMember = Long.parseLong(message.getMemberId());
+		long idMember = message.getMemberId();
 		Alarm alarm = alarmService.findLatestAlarm(idMember);
 		return alarm;
 	}

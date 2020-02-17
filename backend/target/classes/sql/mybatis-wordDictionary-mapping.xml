@@ -8,20 +8,21 @@
 <mapper namespace="WordDictionary_Mapper">
 
 	<sql id="select-WordDictionary">
-		select idword_dictionary, word,	description, link,thumbnail_src
+		select idword_dictionary, word,	description, link,thumbnail_src,title
 		from word_dictionary
 	</sql>
 	<sql id="insert-WordDictionary">
 		insert into word_dictionary
-		(word,	description, link,thumbnail_src)
-		values(#{word},#{description},#{link},#{thumbnailSrc})
+		(word,	description, link,thumbnail_src,title)
+		values(#{word},#{description},#{link},#{thumbnailSrc},#{title})
 	</sql>
 	<sql id="update-WordDictionary">
 		update word_dictionary set
 		word=#{word},
 		description=#{description},
 		link = #{link},
-		thumbnail_src = #{thumbnailSrc};
+		thumbnail_src = #{thumbnailSrc},
+		title=#{title}
 		where
 		idword_dictionary=#{idwordDictionary}
 	</sql>
@@ -37,7 +38,6 @@
 		<include refid="select-WordDictionary"></include>
 		<where>
 			<if test="idwordDictionary!= 0">
-				AND
 				idword_dictionary = ${idwordDictionary}
 			</if>
 			
@@ -49,6 +49,10 @@
 			<if test="description !=null">
 				AND
 				description = '${description}'
+			</if>
+			<if test="title !=null">
+				AND
+				title = '${title}'
 			</if>
 		</where>
 	</select>

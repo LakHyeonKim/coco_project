@@ -114,11 +114,13 @@ export default {
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
+				console.log(this.$session.get("id"))
+				console.log(res.data.post.memberId)
 				http.post(
 					"/api/findFollow",
 					{
-						memberFollower: res.data.post.memberId,
-						memberFollowing: this.$session.get("id")
+						memberFollower: this.$session.get("id"),
+						memberFollowing: res.data.post.memberId
 					},
 					{
 						headers: {

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONArray;
@@ -53,6 +56,7 @@ import com.google.api.services.people.v1.model.ListConnectionsResponse;
 import com.google.api.services.people.v1.model.Person;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -79,19 +83,44 @@ class BackendApplicationTests {
 
 	@Test
 	void relationVoContextLoads() throws Exception {
-		setUp();
+//		System.out.println(Member.encryptSHA256Iter("1234", 4));
+		testWD();
 	}
+	/*
+	 * public void downloadFile(FileVO fileVO, HttpServletRequest request,
+	 * HttpServletResponse response) throws Exception {
+	 * 
+	 * File file = new File("src/main/webapp/userfile/", "0_git.png");
+	 * 
+	 * BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+	 * 
+	 * //User-Agent : 어떤 운영체제로 어떤 브라우저를 서버( 홈페이지 )에 접근하는지 확인함 String header =
+	 * request.getHeader("User-Agent"); String fileName;
+	 * 
+	 * if ((header.contains("MSIE")) || (header.contains("Trident")) ||
+	 * (header.contains("Edge"))) { //인터넷 익스플로러 10이하 버전, 11버전, 엣지에서 인코딩 fileName =
+	 * URLEncoder.encode(boardfile.getFileOrgName(), "UTF-8"); } else { //나머지 브라우저에서
+	 * 인코딩 fileName = new String(boardfile.getFileOrgName().getBytes("UTF-8"),
+	 * "iso-8859-1"); } //형식을 모르는 파일첨부용 contentType
+	 * response.setContentType("application/octet-stream"); //다운로드와 다운로드될 파일이름
+	 * response.setHeader("Content-Disposition", "attachment; filename=\""+ fileName
+	 * + "\""); //파일복사 FileCopyUtils.copy(in, response.getOutputStream());
+	 * in.close(); response.getOutputStream().flush();
+	 * response.getOutputStream().close(); }
+	 */
 
 	public void testWD() throws ParseException {
-		String inputString = "python";
+		String inputString = "8";
 		List<Tag> list = tagService.findAllTag();
 		WordDictionary inputTestWD = new WordDictionary();
 		for (Tag tag : list) {
-			inputString = tag.getTagName();
+//			inputString = tag.getTagName();
+			inputString = "8";
 			inputTestWD.setWord(inputString);
 			int size = wordDictionaryService.findWordDictionary(inputTestWD).size();
-			if (size != 0)
-				continue;
+			/*
+			 * if (size != 0) continue;
+			 */
 			HttpHeaders headers = new HttpHeaders();
 			RestTemplate restTemplate = new RestTemplate();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

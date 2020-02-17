@@ -12,11 +12,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,11 +59,21 @@ import com.ssafy.coco.vo.Tokens;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +100,124 @@ public class TestController {
 	MemberService memberService;
 	@Autowired
 	MailService mailService;
+
+	
+	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+	public ResponseEntity<Resource> download() throws IOException {
+		Path path = Paths.get("src/main/webapp/userfile/dsad.txt");
+		System.out.println("download 파일네임:"+path.getFileName());
+		String contentType = Files.probeContentType(path);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE,contentType);
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=1" + path.getFileName().toString());
+		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "파일 다운로드", response = List.class)
+	@RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
+	public void downloadFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		File file = new File("src/main/webapp/userfile/", "0_git.png");
+
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+
+		// User-Agent : 어떤 운영체제로 어떤 브라우저를 서버( 홈페이지 )에 접근하는지 확인함
+		String header = request.getHeader("User-Agent");
+		String fileName;
+
+		if ((header.contains("MSIE")) || (header.contains("Trident")) || (header.contains("Edge"))) {
+			// 인터넷 익스플로러 10이하 버전, 11버전, 엣지에서 인코딩
+			fileName = URLEncoder.encode("ssd", "UTF-8");
+		} else {
+			// 나머지 브라우저에서 인코딩
+			fileName = new String("ssd".getBytes("UTF-8"), "iso-8859-1");
+		}
+		// 형식을 모르는 파일첨부용 contentType
+		response.setContentType("blob");
+		// 다운로드와 다운로드될 파일이름
+		response.setHeader("Content-Disposition", "attachment; filename=" + "0_vue.png");
+		// 파일복사
+		FileCopyUtils.copy(in, response.getOutputStream());
+		in.close();
+		response.getOutputStream().flush();
+		response.getOutputStream().close();
+	}
+
+	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
+	@RequestMapping(value = "/fileDown/{bno}", method = RequestMethod.GET)
+	private void fileDown(@PathVariable int bno, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+
+		request.setCharacterEncoding("UTF-8");
+		// FileVO fileVO = mBoardService.fileDetailService(bno);
+
+		// 파일 업로드된 경로
+		try {
+			String fileUrl = "src/main/webapp/userfile/";
+//          fileUrl += "/";
+			String savePath = fileUrl;
+			String fileName = "0_git.png";
+
+			// 실제 내보낼 파일명
+			String oriFileName = "test name";
+			InputStream in = null;
+			OutputStream os = null;
+			File file = null;
+			boolean skip = false;
+			String client = "";
+
+			// 파일을 읽어 스트림에 담기
+			try {
+				file = new File(savePath, fileName);
+				System.out.println(file.getAbsoluteFile());
+				in = new FileInputStream(file);
+			} catch (FileNotFoundException fe) {
+				skip = true;
+			}
+
+			client = request.getHeader("User-Agent");
+
+			// 파일 다운로드 헤더 지정
+			response.reset();
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Description", "JSP Generated Data");
+
+			if (!skip) {
+				// IE
+				if (client.indexOf("MSIE") != -1) {
+					response.setHeader("Content-Disposition", "attachment; filename=\""
+							+ java.net.URLEncoder.encode(oriFileName, "UTF-8").replaceAll("\\+", "\\ ") + "\"");
+					// IE 11 이상.
+				} else if (client.indexOf("Trident") != -1) {
+					response.setHeader("Content-Disposition", "attachment; filename=\""
+							+ java.net.URLEncoder.encode(oriFileName, "UTF-8").replaceAll("\\+", "\\ ") + "\"");
+				} else {
+					// 한글 파일명 처리
+					response.setHeader("Content-Disposition",
+							"attachment; filename=\"" + new String(oriFileName.getBytes("UTF-8"), "ISO8859_1") + "\"");
+					response.setHeader("Content-Type", "application/octet-stream; charset=utf-8");
+				}
+				response.setHeader("Content-Length", "" + file.length());
+				os = response.getOutputStream();
+				byte b[] = new byte[(int) file.length()];
+				int leng = 0;
+				while ((leng = in.read(b)) > 0) {
+					os.write(b, 0, leng);
+				}
+			} else {
+				response.setContentType("text/html;charset=UTF-8");
+				System.out.println("<script language='javascript'>alert('파일을 찾을 수 없습니다');history.back();</script>");
+			}
+			in.close();
+			os.close();
+		} catch (Exception e) {
+			System.out.println("ERROR : " + e.getMessage());
+		}
+
+	}
 
 	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
