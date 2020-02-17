@@ -1,0 +1,30 @@
+<template>
+	<div>
+		<div id="commentListCard" v-for="comment in comments.slice().reverse()" :key="comment.idcomment">
+			<comment-item :comment="comment"></comment-item>
+		</div>
+	</div>
+</template>
+
+<script>
+import CommentItem from "./CommentItem";
+export default {
+	name: "CommentList",
+	components: {
+		CommentItem
+	},
+	props: {
+		comments: {}
+	}
+};
+</script>
+
+<style>
+#commentListCard {
+	background: white;
+	margin: 20px 0 0;
+	padding: 10px 20px 15px;
+	border: 1px solid rgba(0, 0, 0, 0.09);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+</style>

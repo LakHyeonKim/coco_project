@@ -24,48 +24,25 @@
 						v-model="searchSel"
 					/>
 					<input v-model="menu_text" type="text" id="search_text" />
-					<img
-						id="search_img"
-						@click="search()"
-						src="../assets/icon/search_b.png"
-					/>
+					<img id="search_img" @click="search()" src="../assets/icon/search_b.png" />
 				</div>
 			</div>
-			<div
-				class="post"
-				v-for="(item, index) in posts"
-				:key="item.post.idpost"
-			>
-				<div
-					style="margin: 10px;"
-					@click.prevent="goDetail(item.post.idpost)"
-				>
-					<div
-						v-for="tag in item.tags"
-						:key="tag.idtag"
-						style="display: inline-block;"
-					>
+			<div class="post" v-for="(item, index) in posts" :key="item.post.idpost">
+				<div style="margin: 10px;" @click.prevent="goDetail(item.post.idpost)">
+					<div v-for="tag in item.tags" :key="tag.idtag" style="display: inline-block;">
 						<span
 							class="post_tag"
 							:style="selTag == tag ? selStyle : tagStyle"
 							@click="getSearchData(2, tag)"
-						>
-							{{ tag }}
-						</span>
+						>{{ tag }}</span>
 					</div>
-					<div class="post_title">
-						{{ item.post.postTitle }}
-					</div>
+					<div class="post_title">{{ item.post.postTitle }}</div>
 					<div class="post_create">
 						<img class="post_profile" src="../assets/user.png" />
-						<div class="post_nickname">
-							{{ item.post.postWriter }}
-						</div>
+						<div class="post_nickname">{{ item.post.postWriter }}</div>
 						<div class="post_date">{{ item.post.dateCreated }}</div>
 					</div>
-					<div class="post_code">
-						{{ item.post.code }}
-					</div>
+					<div class="post_code">{{ item.post.code }}</div>
 					<div class="like_comment">
 						<img
 							:id="item.post.idpost"
@@ -79,19 +56,14 @@
 							@click.stop="like(item.post.idpost, index)"
 						/>
 						<div class="like_text">{{ item.post.likeCount }}</div>
-						<img
-							src="../assets/icon/chat.png"
-							class="comment_img"
-						/>
+						<img src="../assets/icon/chat.png" class="comment_img" />
 						<div class="comment_text">{{ item.commentCount }}</div>
 					</div>
 				</div>
 				<div class="line" />
 			</div>
 		</div>
-		<div v-if="noContents" id="noContents">
-			검색한 내용의 포스트가 존재하지 않습니다
-		</div>
+		<div v-if="noContents" id="noContents">검색한 내용의 포스트가 존재하지 않습니다</div>
 	</div>
 </template>
 <script>
@@ -159,6 +131,9 @@ export default {
 				return;
 			}
 			this.getSearchData(this.menuSel, this.menu_text);
+		},
+		goDetail(detail) {
+			this.$router.push({ name: "detail", params: { idPost: detail } });
 		},
 		getSearchData(sel, text) {
 			let address = "";
