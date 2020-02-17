@@ -20,4 +20,6 @@ public interface TransactionService {
 	public void unLike(long idPost, long idMember);
 	public void makePost(BoardWrite board) throws IllegalStateException, IOException;
 	public void updateMemeberInfo(MemberInfoModify memberInfoModify) throws Exception;
+	public void deleteMemberProfile(long idMember);
+	public void deleteMemberBannerImage(long idMember);
 }

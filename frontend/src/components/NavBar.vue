@@ -28,9 +28,12 @@
 					<img class="nav_menu_img" src="../assets/icon/search.png" />
 				</router-link>
 			</li>
-			<li class="nav_menu">
-				<router-link to="/alarm">
-					<img class="nav_menu_img" src="../assets/icon/alarm.png" />
+			<li class="nav_menu" @click="alarmIconReset">
+				<router-link to="/alarm"> 
+					<img v-if="alarmIcon" class="nav_menu_img" src="../assets/icon/alarm.png" />
+					<img v-if="followIcon" class="nav_menu_img image blinking" src="../assets/icon/follow.png" />
+					<img v-if="likeIcon" class="nav_menu_img image blinking" src="../assets/icon/like.png" />
+					<img v-if="commentIcon" class="nav_menu_img image blinking" src="../assets/icon/comment.png" />
 				</router-link>
 			</li>
 			<li class="nav_menu">
@@ -79,10 +82,20 @@ export default {
 			solo_send_message: '',
 			div_L: 0,
 			div_T: 0,
-			targetObj: null
+			targetObj: null,
+			alarmIcon: true,
+			followIcon: false,
+			likeIcon: false,
+			commentIcon: false
 		}
 	},
 	methods: {
+		alarmIconReset(){
+			this.alarmIcon = true
+			this.followIcon = false
+			this.likeIcon = false
+			this.commentIcon = false
+		},
 		getLeft(){
 			return parseInt(this.targetObj[0].style.left.replace("px",""));
 		},
@@ -145,7 +158,11 @@ export default {
                   					text:
                     					JSON.parse(tick.body).nickname +
                     					" 님이 포스트에 좋아요를 눌렀어요~"
-                					});
+									});
+									this.alarmIcon = false;
+									this.likeIcon = true;
+									this.followIcon = false;
+									this.commentIcon = false;
 								}
                 				else if(JSON.parse(tick.body).postId > 0 && JSON.parse(tick.body).likeId == 0 && JSON.parse(tick.body).followId == 0){
 									this.$notify({
@@ -154,7 +171,11 @@ export default {
                   					text:
                     					JSON.parse(tick.body).nickname +
                     					" 님이 포스트에 댓글을 달았어요~"
-                					});
+									});
+									this.alarmIcon = false;
+									this.likeIcon = false;
+									this.followIcon = false;
+									this.commentIcon = true;
 								}
 								else if(JSON.parse(tick.body).postId == 0 && JSON.parse(tick.body).likeId == 0 && JSON.parse(tick.body).followId > 0){
 									this.$notify({
@@ -163,7 +184,11 @@ export default {
                   					text:
                     					JSON.parse(tick.body).nickname +
                     					" 님이 팔로우를 했어요~"
-                					});
+									});
+									this.alarmIcon = false;
+									this.likeIcon = false;
+									this.followIcon = true;
+									this.commentIcon = false;
 								}
                 				//this.solo_received_messages.push(JSON.parse(tick.body));
               				}
@@ -216,6 +241,24 @@ export default {
 </script>
 
 <style>
+
+.blinking{
+	-webkit-animation:blink 0.5s ease-in-out infinite alternate;
+    -moz-animation:blink 0.5s ease-in-out infinite alternate;
+    animation:blink 0.5s ease-in-out infinite alternate;
+}
+@-webkit-keyframes blink{
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+@-moz-keyframes blink{
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+@keyframes blink{
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
 
 .vue-notification {
 	background-color: #7d4879;
