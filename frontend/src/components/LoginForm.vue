@@ -137,7 +137,7 @@ export default {
 							this.$session.set("nickName", decode.nickname);
 							this.$session.set("rankId", decode.rankId);
 							this.$session.set("isDelete", decode.isDelete);
-							this.$session.set("imageUrl", decode.imgUrl);
+							this.$session.set("imageUrl", decode.imageUrl);
 							this.$session.set("grade", decode.grade);
 							this.$session.set("isManager", decode.isManager);
 							this.$session.set("email", decode.id);

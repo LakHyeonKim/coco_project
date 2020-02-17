@@ -9,9 +9,9 @@
 					@click="getMypage()"
 					id="profile"
 					:src="
-						$session.get('imgUrl') == undefined
+						$session.get('imageUrl') == undefined
 							? './img/icons/user.png'
-							: $session.get('imgUrl')
+							: $session.get('imageUrl')
 					"
 				/>
 				<!-- </router-link> -->
