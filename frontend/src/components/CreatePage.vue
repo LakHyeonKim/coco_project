@@ -12,17 +12,10 @@
 			</div>
 			<form name="board" enctype="multipart/form-data">
 				<div class="submitInput">
-					<button class="submitButton" @click="posting">
-						WRITE
-					</button>
+					<button class="submitButton" @click="posting">WRITE</button>
 				</div>
 				<div class="title">
-					<input
-						type="text"
-						placeholder="제목"
-						class="titleInput"
-						v-model="board.postTitle"
-					/>
+					<input type="text" placeholder="제목" class="titleInput" v-model="board.postTitle" />
 				</div>
 				<div class="codeInput">
 					<v-tabs right color="rgba(0, 0, 0, 0.5)" hide-slider>
@@ -56,29 +49,54 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
-					<v-file-input
-						name="attachments"
-						v-model="board.attachments"
-						label="첨부파일"
-						color="rgb(0, 0, 0)"
-					></v-file-input>
+					<v-file-input name="attachments" v-model="board.attachments" label="첨부파일" color="rgb(0, 0, 0)"></v-file-input>
 				</div>
 				<div class="footerBox"></div>
-				<input
-					type="hidden"
-					name="postTitle"
-					v-model="board.postTitle"
-				/>
-				<input
-					type="hidden"
-					name="postWriter"
-					v-model="board.postWriter"
-				/>
+				<input type="hidden" name="postTitle" v-model="board.postTitle" />
+				<input type="hidden" name="postWriter" v-model="board.postWriter" />
 				<input type="hidden" name="memberId" v-model="board.memberId" />
 				<input type="hidden" name="code" v-model="board.code" />
 				<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 			</form>
 		</div>
+		<v-row justify="center">
+			<v-dialog v-model="dialog" scrollable overflowed @keydown.enter="insertDescription">
+				<v-card>
+					<v-card-actions class="d-flex justify-end">
+						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
+					</v-card-actions>
+					<agile ref="carousel" fade :dots="true">
+						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
+							<v-card-title>
+								<span class="headline">
+									<v-icon>mdi-file-document-box-search-outline</v-icon>
+									{{ dict.word }}
+								</span>
+							</v-card-title>
+							<v-card-text class="d-flex">
+								<v-img :src="dict.thumbnailSrc" v-show="dict.thumbnailSrc" width="100"></v-img>
+								<div class="ml-4 space-between">
+									<h3>{{ dict.title }}</h3>
+									<br />
+									<p>
+										{{ dict.description }}
+										<a
+											:href="dict.link"
+											target="_blank"
+											style="color: rgba(125, 72, 121, 0.85)"
+										>자세히 보기</a>
+									</p>
+								</div>
+							</v-card-text>
+						</div>
+						<v-icon slot="prevButton">mdi-chevron-left</v-icon>
+						<template slot="prevButton">prev</template>
+						<template slot="nextButton">next</template>
+						<v-icon slot="nextButton">mdi-chevron-right</v-icon>
+					</agile>
+				</v-card>
+			</v-dialog>
+		</v-row>
 	</div>
 </template>
 
@@ -92,6 +110,11 @@ export default {
 	components: {},
 	data() {
 		return {
+			dialog: false,
+			question: 0,
+			dictWord: "",
+			dictArray: [],
+
 			tags: [],
 			board: {
 				code: "",
@@ -108,8 +131,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -132,6 +155,54 @@ export default {
 				return false;
 			}
 			return true;
+		},
+		findWordDict() {
+			http.post(
+				"/api/findWordDictionary/",
+				{ word: this.dictWord },
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(res => {
+					console.log(res);
+					this.dictArray = [];
+					this.dictArray = res.data;
+					this.question = 0;
+					this.dictWord = "";
+					this.dialog = true;
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		},
+		questionCount: function(event) {
+			if (event.key == "?") {
+				this.question++;
+			} else if (this.question == 2) {
+				if (
+					(event.keyCode >= 48 && event.keyCode <= 57) ||
+					(event.keyCode >= 65 && event.keyCode <= 90) ||
+					(event.keyCode >= 96 && event.keyCode <= 111)
+				) {
+					this.dictWord += event.key;
+				} else if (event.code == "Backspace") {
+					this.dictWord = this.dictWord.slice(0, -1);
+				} else if (event.code == "Space") {
+					this.findWordDict();
+				} else {
+					this.question = 0;
+					this.dictWord = "";
+				}
+			} else if (event.key == "Shift" || event.key == "CapsLock") {
+				return;
+			} else {
+				this.question = 0;
+				this.dictWord = "";
+			}
+		},
+		insertDescription() {
+			let index = this.$refs.carousel.getCurrentSlide();
+			this.board.code += this.dictArray[index].description;
+			this.dialog = false;
 		},
 		highlighting() {
 			Prism.highlightAll();
@@ -157,7 +228,7 @@ export default {
 						router.push("/newpage");
 					});
 			} else {
-				alert("글을 작성해 주세요")
+				alert("글을 작성해 주세요");
 			}
 		}
 	},
@@ -262,6 +333,42 @@ export default {
 	background-color: white;
 	height: 200px;
 }
+.agile__actions {
+	margin-top: 20px;
+}
+.agile__actions ul {
+	padding: 0;
+}
+.agile__dots {
+	margin: 16px 0;
+	padding: 0;
+}
+.agile__dot {
+	margin: 0 10px;
+}
+.agile__dot button {
+	background-color: #eee;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	display: block;
+	font-size: 0;
+	line-height: 0;
+	margin: 0;
+	padding: 0;
+	transition-duration: 0.3s;
+	height: 10px;
+	width: 10px;
+}
+.agile__dot--current {
+	border-radius: 50%;
+}
+.agile__dot--current button {
+	background-color: #888;
+}
+.agile__dot:hover button {
+	background-color: #888;
+}
 @media screen and (max-width: 600px) {
 	.templatePage {
 		height: 100%;
@@ -303,13 +410,41 @@ export default {
 		color: gray;
 		font-size: 20px;
 	}
-	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div {
+	#subBox
+		> div
+		> form
+		> div.codeInput
+		> div
+		> div.v-window.v-item-group.theme--light.v-tabs-items
+		> div
+		> div.v-window-item.v-window-item--active
+		> div {
 		padding: 0px;
 	}
-	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div > div {
+	#subBox
+		> div
+		> form
+		> div.codeInput
+		> div
+		> div.v-window.v-item-group.theme--light.v-tabs-items
+		> div
+		> div.v-window-item.v-window-item--active
+		> div
+		> div {
 		padding-top: 0px;
 	}
-	#subBox > div > form > div.codeInput > div > div.v-window.v-item-group.theme--light.v-tabs-items > div > div.v-window-item.v-window-item--active > div > div > div > div.v-input__slot {
+	#subBox
+		> div
+		> form
+		> div.codeInput
+		> div
+		> div.v-window.v-item-group.theme--light.v-tabs-items
+		> div
+		> div.v-window-item.v-window-item--active
+		> div
+		> div
+		> div
+		> div.v-input__slot {
 		width: 100%;
 		padding: 0px;
 	}
