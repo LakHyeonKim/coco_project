@@ -2,6 +2,7 @@ package com.ssafy.coco.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.ssafy.coco.dao.LikeDao;
 import com.ssafy.coco.dao.MemberDao;
 import com.ssafy.coco.dao.MemberTagDao;
 import com.ssafy.coco.dao.MyPageDao;
+import com.ssafy.coco.dao.MyPageTagDao;
 import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
@@ -38,6 +40,7 @@ import com.ssafy.coco.vo.Like;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.MemberTag;
 import com.ssafy.coco.vo.Mypage;
+import com.ssafy.coco.vo.MypageTag;
 import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.PostTag;
 import com.ssafy.coco.vo.Tag;
@@ -71,6 +74,8 @@ public class TransactionServiceImpl implements TransactionService {
 	private JwtService jwtService;
 	@Autowired
 	private MailService mailService;
+	@Autowired
+	private MyPageTagDao myPageTagDao;
 
 	/**
 	 * 
@@ -94,7 +99,8 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
-			String imageFilePath = "http://localhost:8888/userprofile/" + saveFileName + "";
+			String ip = "192.168.100.57";
+			String imageFilePath = "http://"+ ip + ":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}
@@ -137,8 +143,6 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Transactional
 	public void makeBabyPost(Post baby, Post parent) {
-		long parentPostId;
-		long receiver;
 		postDao.addPost(baby);
 		BabyPost babyPost = new BabyPost(0, parent.getIdpost(), baby.getIdpost());
 		babyPostDao.addBabyPost(babyPost);
@@ -262,7 +266,8 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String filePath = "http://localhost:8888/userfile/" + saveFileName + "";
+			String ip = "192.168.100.57";
+			String filePath = "http://"+ ip +":8888/userfile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}
@@ -301,26 +306,44 @@ public class TransactionServiceImpl implements TransactionService {
 		Member modifyMember = member.get(0);
 		Mypage modifyMypage = mypage.get(0);
 		
-		if(memberInfoModify.getBannerImage() != null) {
+		if(!memberInfoModify.getBannerImage().getOriginalFilename().equals("")) {
 			MultipartFile file = memberInfoModify.getBannerImage();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String filePath = "http://localhost:8888/userbanner/" + saveFileName + "";
+			String ip = "192.168.100.57";
+			String filePath = "http://"+ ip +":8888/userbanner/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMypage.setBannerImagePath(filePath);
 		}
-		if(memberInfoModify.getProfileImage() != null) {
+		if(!memberInfoModify.getBannerImage().getOriginalFilename().equals("")) {
 			MultipartFile file = memberInfoModify.getProfileImage();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String filePath = "http://localhost:8888/userprofile/" + saveFileName + "";
+			String ip = "192.168.100.57";
+			String filePath = "http://"+ ip +":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMember.setImageUrl(filePath);
 		}
 		if(!memberInfoModify.getTags().equals("")) {
+			MypageTag myPageTag = new MypageTag();
+			myPageTag.setMypageId(modifyMypage.getIdmypage());
+			myPageTagDao.deleteMypageTag(myPageTag);
 			
+			String[] splitedTags = memberInfoModify.getTags().split(",");
+			for(String tag : splitedTags) {
+				int size = tagDao.findTag(new Tag(0, tag, 0, 0, null, null, null)).size();
+				if (size == 0) {
+					tagDao.addTag(new Tag(0, tag, 0, 1, null, null, null));
+					long tagId = tagDao.findTag(new Tag(0, tag, 0, 0, null, null, null)).get(0).getIdtag();
+					myPageTagDao.addMypageTag(new MypageTag(0, modifyMypage.getIdmypage(), tagId));
+				} else {
+					tagDao.updateTagIncludedCount(tag);
+					long tagId = tagDao.findTag(new Tag(0, tag, 0, 0, null, null, null)).get(0).getIdtag();
+					myPageTagDao.addMypageTag(new MypageTag(0, modifyMypage.getIdmypage(), tagId));
+				}
+			}
 		}
 		if(!memberInfoModify.getNickName().equals(""))
 			modifyMember.setNickname(memberInfoModify.getNickName());
@@ -337,5 +360,25 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		memberDao.updateMember(modifyMember);
 		myPageDao.updateMypage(modifyMypage);
+	}
+
+	@Transactional
+	@Override
+	public void deleteMemberProfile(long idMember) {
+		Member member = new Member();
+		member.setIdmember(idMember);
+		Member findedMember = memberDao.findMember(member).get(0);
+		findedMember.setImageUrl("");
+		memberDao.updateMember(findedMember);
+	}
+
+	@Transactional
+	@Override
+	public void deleteMemberBannerImage(long idMember) {
+		Mypage mypage = new Mypage();
+		mypage.setMemberId(idMember);
+		Mypage findedMypage = myPageDao.findMypage(mypage).get(0);
+		findedMypage.setBannerImagePath("");
+		myPageDao.updateMypage(findedMypage);
 	}
 }
