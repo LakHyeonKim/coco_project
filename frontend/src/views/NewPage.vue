@@ -77,7 +77,7 @@
 					<v-card-actions class="d-flex justify-end">
 						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
 					</v-card-actions>
-					<agile ref="carousel" fade :dots="true" v-model="carouselPage">
+					<agile ref="carousel" fade :dots="true">
 						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
 							<v-card-title>
 								<span class="headline">
@@ -86,7 +86,7 @@
 								</span>
 							</v-card-title>
 							<v-card-text class="d-flex">
-								<v-img :src="dict.thumbnailSrc" v-if="dict.thumbnailSrc" width="100"></v-img>
+								<v-img :src="dict.thumbnailSrc" v-show="dict.thumbnailSrc" width="100"></v-img>
 								<div class="ml-4 space-between">
 									<h3>{{ dict.title }}</h3>
 									<br />
@@ -123,7 +123,6 @@ export default {
 	data() {
 		return {
 			dialog: false,
-			carouselPage: 1,
 			question: 0,
 			dictWord: "",
 			dictArray: [],
