@@ -9,7 +9,7 @@
 						</td>
 						<td>
 							<!-- 소개 페이지 연결 -->
-							<a class="link" href="#footer">SEESAW</a> (
+							<a class="link">SEESAW</a> (
 							<a
 								class="link"
 								href="https://lab.ssafy.com/webmobile1-sub2/s02p12d105"
@@ -22,15 +22,16 @@
 							<img src="../assets/logo/pin.png" width="20px" />
 						</td>
 						<td>
-							(주)멀티캠퍼스 서울특별시 강남구 언주로 508
-							10-17층<br />(역삼동, 서울상록빌딩)
+							경상북도 구미시 임수동 94-1 창의동 304호 SSAFY<br />
 						</td>
 					</tr>
 					<tr>
 						<td class="info_img">
 							<img src="../assets/logo/phone.png" width="20px" />
 						</td>
-						<td>010-2228-6223</td>
+						<td>
+							<button @click="goUs()">Contact Us</button>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -42,11 +43,24 @@
 			</div>
 		</div>
 		<div id="footer_bottom">© All right Reversed.</div>
+		<div id="goAdmin" @click="goAdmin()"></div>
 	</div>
 </template>
 
 <script>
-export default { name: "MypageFooter" };
+import router from "../router";
+
+export default {
+	name: "MypageFooter",
+	methods: {
+		goUs() {
+			router.push("/cc");
+		},
+		goAdmin() {
+			router.push("/admin");
+		}
+	}
+};
 </script>
 
 <style>
@@ -54,7 +68,7 @@ export default { name: "MypageFooter" };
 #footer {
 	font-family: "Noto Sans KR", sans-serif;
 	background-color: rgba(125, 72, 121, 0.85);
-	height: 300px;
+	height: 200px;
 	text-align: center;
 	color: white;
 	width: 100%;
@@ -106,7 +120,14 @@ export default { name: "MypageFooter" };
 	margin-left: 10px;
 	margin-right: 10px;
 }
-
+#goAdmin {
+	width: 80px;
+	height: 80px;
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0);
+	right: 0;
+	bottom: 0;
+}
 @media screen and (max-width: 900px) {
 	#tech,
 	#info {

@@ -9,6 +9,9 @@
 						alt="logo_image"
 						id="searchLogo"
 					/>
+					<div id="CC">
+						CODE COWORKERS
+					</div>
 				</label>
 				<!-- <p id="codeCoworker">Code Coworker</p> -->
 				<form v-on:submit.prevent="searchwords" id="serachBox">
@@ -65,7 +68,28 @@ export default {
 		selectOption(values) {
 			// console.log(value);
 			this.value = values;
+		},
+		scrollEvent() {
+			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+				document.getElementById("header").style.height = "50px";
+				document.getElementById("headInnerBox").style.padding = "10px";
+				document.getElementById("CC").style.display = "inline-block";
+				document.getElementById("serachBox").style.display = "none";
+			} else {
+				document.getElementById("header").style.height = "75px";
+				document.getElementById("headInnerBox").style.padding = "20px 10px 20px 10px";
+				document.getElementById("CC").style.display = "none";
+				document.getElementById("serachBox").style.display = "inline-block";
+			}
 		}
+	},
+	created: function() {
+		console.log("크리에이트는 언제 찍힐까");
+		window.addEventListener("scroll", this.scrollEvent);
+	},
+	beforeDestroy: function() {
+		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };
 </script>
@@ -78,10 +102,12 @@ export default {
 	z-index: 1;
 	background-color: white;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	transition: 0.2s;
 }
 #headInnerBox {
 	text-align: center;
 	padding: 20px 10px 20px 10px;
+	/* transition: 0.2s; */
 }
 #searchLogo {
 	display: inline-block;
@@ -90,6 +116,9 @@ export default {
 	vertical-align: middle;
 	margin-right: 10px;
 }
+#CC {
+	display: none;
+}
 #serachBox {
 	display: inline-block;
 }
@@ -97,13 +126,18 @@ export default {
 	display: inline-block;
 	vertical-align: middle;
 	border-bottom: 0.25px solid gray;
-	width: 20vw;
 	margin-left: 5px;
 	margin-right: 10px;
+	width: 130px;
+	-webkit-transition: width 0.4s ease-in-out;
+	transition: width 0.4s ease-in-out;
+}
+#searchInput:focus {
+	width: 25vw;
 }
 ::placeholder {
 	color: black;
-	font-size: 20px;
+	font-size: 18px;
 }
 #searchButton {
 	display: inline-block;

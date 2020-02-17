@@ -16,6 +16,10 @@ import DetailPage from "./views/DetailPage.vue";
 import FindPassword from "./views/FindPassword.vue";
 import InfoModify from "./views/InfoModify";
 import AlarmPage from "./views/AlarmPage";
+import CodeCoworkers from "./views/CodeCoworkers";
+import Admin from "./views/Admin";
+import AdminPost from "./components/AdminPost";
+import AdminMember from "./components/AdminMember";
 
 Vue.use(VueRouter);
 
@@ -106,6 +110,34 @@ const routes = [
 		path: "/alarm",
 		name: "alarm",
 		component: AlarmPage
+	},
+	{
+		path: "/cc",
+		name: "codecoworkers",
+		component: CodeCoworkers
+	},
+	{
+		path: "/admin",
+		name: "admin",
+		component: Admin
+	},
+	{
+		path: "/admin/post/:no",
+		name: "adminpost",
+		component: AdminPost,
+		props: true
+		// meta: {
+		// 	authRequired: true
+		// }
+	},
+	{
+		path: "/admin/member/:no",
+		name: "adminmember",
+		component: AdminMember,
+		props: true
+		// meta: {
+		// 	authRequired: true
+		// }
 	},
 	{
 		path: "*",

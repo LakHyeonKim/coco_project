@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: backend
+Implementation-Version: 1.1.0-SNAPSHOT
+Built-By: multicampus
+Implementation-Vendor-Id: com.ssafy
+Build-Jdk: 1.8.0_192
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/backend
+Created-By: Maven Integration for Eclipse
+

@@ -6,7 +6,20 @@ public class Mypage {
 	String bannerImagePath;
 	String bannerText;
 	int access;
+	long todayVisitedCount;
+	long totalVisitedCount;
 	
+	public Mypage(long idmypage, long memberId, String bannerImagePath, String bannerText, int access,
+			long todayVisitedCount, long totalVisitedCount) {
+		super();
+		this.idmypage = idmypage;
+		this.memberId = memberId;
+		this.bannerImagePath = bannerImagePath;
+		this.bannerText = bannerText;
+		this.access = access;
+		this.todayVisitedCount = todayVisitedCount;
+		this.totalVisitedCount = totalVisitedCount;
+	}
 	public Mypage() {
 		super();
 	}
@@ -17,6 +30,21 @@ public class Mypage {
 		this.bannerImagePath = bannerImagePath;
 		this.bannerText = bannerText;
 		this.access = access;
+	}
+	
+	
+	
+	public long getTodayVisitedCount() {
+		return todayVisitedCount;
+	}
+	public void setTodayVisitedCount(long todayVisitedCount) {
+		this.todayVisitedCount = todayVisitedCount;
+	}
+	public long getTotalVisitedCount() {
+		return totalVisitedCount;
+	}
+	public void setTotalVisitedCount(long totalVisitedCount) {
+		this.totalVisitedCount = totalVisitedCount;
 	}
 	public long getIdmypage() {
 		return idmypage;
@@ -51,10 +79,8 @@ public class Mypage {
 	@Override
 	public String toString() {
 		return "Mypage [idmypage=" + idmypage + ", memberId=" + memberId + ", bannerImagePath=" + bannerImagePath
-				+ ", bannerText=" + bannerText + ", access=" + access + "]";
+				+ ", bannerText=" + bannerText + ", access=" + access + ", todayVisitedCount=" + todayVisitedCount
+				+ ", totalVisitedCount=" + totalVisitedCount + "]";
 	}
-	
-	
-	
 	
 }

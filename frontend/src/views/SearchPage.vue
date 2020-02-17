@@ -3,6 +3,12 @@
 		<searchBar @searchwords="searchwords"></searchBar>
 		<div id="searchMain">
 			<div id="compo">
+				<div
+					id="loading"
+					:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+				>
+					<div v-if="loadingTop" class="loader"></div>
+				</div>
 				<searchFavTag id="tags" @favtag="searchwords"></searchFavTag>
 				<div>
 					<div v-for="i in searches.length" :key="i">
@@ -46,7 +52,14 @@ export default {
 		return {
 			searches: [],
 			keyword: "",
-			idMember: 0
+			idMember: 0,
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			}
 		};
 	},
 	components: {
@@ -56,6 +69,7 @@ export default {
 	},
 	methods: {
 		searchwords(word, value) {
+			this.loadingTop = true;
 			// alert("넘어왔다");
 			console.log("word $ value ", word, value);
 			const token = this.$session.get("accessToken");
@@ -76,9 +90,11 @@ export default {
 						.then(res => {
 							console.log("search TITLE words then ", res);
 							this.searches = res.data;
+							this.loadingTop = false;
 						})
 						.catch(err => {
 							console.log("search TITLE words catch ", err);
+							this.loadingTop = false;
 						});
 				} else if (value == 2) {
 					http.post("api/findByPostCodeKeyword/", searchword, {
@@ -87,9 +103,11 @@ export default {
 						.then(res => {
 							console.log("search CODE words then ", res);
 							this.searches = res.data;
+							this.loadingTop = false;
 						})
 						.catch(err => {
 							console.log("search CODE words catch ", err);
+							this.loadingTop = false;
 						});
 				} else if (value == 3) {
 					http.post("api/findByPostWriterKeyword/", searchword, {
@@ -98,27 +116,33 @@ export default {
 						.then(res => {
 							console.log("search WRITER words then ", res);
 							this.searches = res.data;
+							this.loadingTop = false;
 						})
 						.catch(err => {
 							console.log("search WRITER words catch ", err);
+							this.loadingTop = false;
 						});
 				} else if (value == 4) {
 					http.post("api/findByTagKeyword/", searchword, { headers })
 						.then(res => {
 							console.log("search TAG words then ", res);
 							this.searches = res.data;
+							this.loadingTop = false;
 						})
 						.catch(err => {
 							console.log("search TAG words catch ", err);
+							this.loadingTop = false;
 						});
 				} else {
 					http.post("/api/findByAllKeyword/", searchword, { headers })
 						.then(res => {
 							console.log("searchwords then ", res);
 							this.searches = res.data;
+							this.loadingTop = false;
 						})
 						.catch(err => {
 							console.log("searchwords catch ", err);
+							this.loadingTop = false;
 						});
 				}
 			} else {
@@ -170,6 +194,7 @@ export default {
 		}
 	},
 	mounted() {
+		this.loadingTop = true;
 		this.idMember = this.$session.get("id");
 		console.log("mounted", this.idMember);
 		const tagforsearch = this.$store.state.searchtag;
@@ -190,10 +215,12 @@ export default {
 					this.searches = res.data;
 					this.$store.state.searchtag = "";
 					console.log("tagforsearch then res change", tagforsearch);
+					this.loadingTop = false;
 					return;
 				})
 				.catch(err => {
 					console.log("searchtags catch ", err);
+					this.loadingTop = false;
 				});
 		} else {
 			http.post("/api/findByAllDefaultSearch/", this.idMember, {
@@ -202,9 +229,11 @@ export default {
 				.then(res => {
 					console.log("search default mounted then", res);
 					this.searches = res.data;
+					this.loadingTop = false;
 				})
 				.catch(err => {
 					console.log("search default mounted catch", err);
+					this.loadingTop = false;
 				});
 		}
 	}
@@ -212,6 +241,22 @@ export default {
 </script>
 
 <style>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 100px auto 20px auto;
+	display: grid;
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+}
 #searchMain {
 	display: grid;
 	height: 100%;

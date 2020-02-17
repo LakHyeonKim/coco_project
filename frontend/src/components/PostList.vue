@@ -1,7 +1,10 @@
 <template>
 	<v-layout wrap>
-		<div @click="test()">
-			If Y wanna check this.flag, Click Here
+		<div
+			id="loading"
+			:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+		>
+			<div v-if="loadingTop" class="loader"></div>
 		</div>
 		<v-flex v-for="i in posts.length" :key="i" class="postList">
 			<post
@@ -26,6 +29,9 @@
 				id="post"
 			></post>
 		</v-flex>
+		<div id="loading" :style="loading ? loadingStyleOn : loadingStyleOff">
+			<div v-if="loading" class="loader"></div>
+		</div>
 	</v-layout>
 </template>
 <script>
@@ -40,20 +46,21 @@ export default {
 			mapPosts: new Map(),
 			scrollY: 0,
 			timer: null,
-			flag: true
+			flag: true,
+			loading: false,
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			}
 		};
 	},
 	components: {
 		Post
 	},
 	methods: {
-		test() {
-			console.log("flag check", this.flag);
-			// console.log(
-			// 	window.scrollY >=
-			// 		document.body.offsetHeight - window.innerHeight - 150
-			// );
-		},
 		like(postNum, index) {
 			const token = this.$session.get("accessToken");
 			const headers = {
@@ -106,6 +113,7 @@ export default {
 			};
 			// console.log("scroll headers event ", headers);
 			if (window.scrollY == 0) {
+				this.loadingTop = true;
 				http.post("/api/findByAllNewsfeed/", this.$session.get("id"), {
 					headers
 				})
@@ -123,9 +131,11 @@ export default {
 						console.log("getpost then 3", this.mapPosts);
 						this.posts = [...this.mapPosts];
 						console.log(this.posts);
+						this.loadingTop = false;
 					})
 					.catch(err => {
 						console.log("getpost catch ", err);
+						// this.loadingTop = false;
 					});
 			}
 
@@ -142,6 +152,7 @@ export default {
 					"flagflagflagflag asdjflkasjdlfkajsdlfkajsldfkjalsdkfjalskdfj"
 				);
 				this.flag = false;
+				this.loading = true;
 				const requestForm = {
 					member: {
 						idmember: this.$session.get("id")
@@ -168,15 +179,21 @@ export default {
 						this.posts = [...this.mapPosts];
 						console.log(this.posts);
 						this.flag = true;
+						this.loading = false;
 					})
 					.catch(err => {
 						console.log("getpost catch ", err);
 						this.flag = true;
+						this.loading = false;
+						document
+							.querySelector("#loading")
+							.setAttribute("style", "display:none");
 					});
 			}
 		}
 	},
 	mounted() {
+		this.loadingTop = true;
 		console.log("마운트는 언제 찍힐까");
 		const token = this.$session.get("accessToken");
 		const headers = {
@@ -196,10 +213,12 @@ export default {
 				console.log("getpost then 3", this.mapPosts);
 				this.posts = [...this.mapPosts];
 				console.log(this.posts);
+				this.loadingTop = false;
 				window.addEventListener("scroll", this.scrollEvent);
 			})
 			.catch(err => {
 				console.log("getpost catch ", err);
+				this.loadingTop = false;
 			});
 	},
 	// created: function() {
@@ -216,6 +235,30 @@ export default {
 <style>
 #post {
 	margin: 12px;
+}
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 100px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 @media screen and (max-width: 600px) {
 	.postList {

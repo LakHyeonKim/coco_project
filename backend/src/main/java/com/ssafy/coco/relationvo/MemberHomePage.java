@@ -2,36 +2,60 @@ package com.ssafy.coco.relationvo;
 
 import java.util.List;
 
+import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Mypage;
-import com.ssafy.coco.vo.Tag;
 
 public class MemberHomePage {
-	private MemberInfo memberInfo;
+	private Member member;
 	private Mypage mypage;
-	private List<Tag> tags;
+	private List<String> tags;
 	private long followingCount;
 	private long followerCount;
+	private int totalPostCount;
+	private int isFollow;
 	
-	public MemberHomePage() {
-		super();
+	public int getIsFollew() {
+		return isFollow;
 	}
 
-	public MemberHomePage(MemberInfo memberInfo, Mypage mypage, List<Tag> tags, long followingCount,
-			long followerCount) {
+	public void setIsFollew(int isFollew) {
+		this.isFollow = isFollew;
+	}
+
+	public MemberHomePage(Member member, Mypage mypage, List<String> tags, long followingCount, long followerCount,
+			int totalPostCount, int isFollew) {
 		super();
-		this.memberInfo = memberInfo;
+		this.member = member;
 		this.mypage = mypage;
 		this.tags = tags;
 		this.followingCount = followingCount;
 		this.followerCount = followerCount;
+		this.totalPostCount = totalPostCount;
+		this.isFollow = isFollew;
 	}
 
-	public MemberInfo getMemberInfo() {
-		return memberInfo;
+	public MemberHomePage() {
+		super();
 	}
 
-	public void setMemberInfo(MemberInfo memberInfo) {
-		this.memberInfo = memberInfo;
+	public MemberHomePage(Member member, Mypage mypage, List<String> tags, long followingCount, long followerCount,
+			int totalPostCount) {
+		super();
+		this.member = member;
+		this.mypage = mypage;
+		this.tags = tags;
+		this.followingCount = followingCount;
+		this.followerCount = followerCount;
+		this.totalPostCount = totalPostCount;
+	}
+	
+
+	public Member getMember() {
+		return member;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
 	}
 
 	public Mypage getMypage() {
@@ -42,11 +66,11 @@ public class MemberHomePage {
 		this.mypage = mypage;
 	}
 
-	public List<Tag> getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
 
@@ -66,10 +90,21 @@ public class MemberHomePage {
 		this.followerCount = followerCount;
 	}
 
+	public int getTotalPostCount() {
+		return totalPostCount;
+	}
+
+	public void setTotalPostCount(int totalPostCount) {
+		this.totalPostCount = totalPostCount;
+	}
+
 	@Override
 	public String toString() {
-		return "MemberHomePage [memberInfo=" + memberInfo + ", mypage=" + mypage + ", tags=" + tags
-				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + "]";
+		return "MemberHomePage [member=" + member + ", mypage=" + mypage + ", tags=" + tags + ", followingCount="
+				+ followingCount + ", followerCount=" + followerCount + ", totalPostCount=" + totalPostCount
+				+ ", isFollew=" + isFollow + "]";
 	}
+	
+	
 	
 }

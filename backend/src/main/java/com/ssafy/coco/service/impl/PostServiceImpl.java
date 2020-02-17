@@ -105,4 +105,19 @@ public class PostServiceImpl implements PostService{
 	public int updatePostViewCount(long idPost) {
 		return postDao.updatePostViewCount(idPost);
 	}
+
+	@Override
+	public List<Post> findPostByNewsfeedOrderByLike(long idMemberFollower) {
+		return postDao.findPostByNewsfeedOrderByLike(idMemberFollower);
+	}
+
+	@Override
+	public int updatePostUnlikeCount(long idPost) {
+		return postDao.updatePostUnlikeCount(idPost);
+	}
+
+	@Override
+	public int updatePostlikeCount(long idPost) {
+		return postDao.updatePostlikeCount(idPost);
+	}
 }
