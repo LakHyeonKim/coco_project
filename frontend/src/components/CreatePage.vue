@@ -12,7 +12,7 @@
 			</div>
 			<form name="board" enctype="multipart/form-data">
 				<div class="submitInput">
-					<button class="submitButton" @click="posting">WRITE</button>
+					<button class="submitButton" @click.prevent="posting">WRITE</button>
 				</div>
 				<div class="title">
 					<input type="text" placeholder="제목" class="titleInput" v-model="board.postTitle" />
@@ -27,7 +27,8 @@
 									name="post.code"
 									id="input"
 									v-model="board.code"
-									@keydown="insertTab"
+									@keydown.tab="insertTab"
+									@keydown="questionCount"
 									auto-grow
 									rounded
 									placeholder="내용"
@@ -217,14 +218,20 @@ export default {
 				let formData = new FormData(document.forms.namedItem("board"));
 				formData.append("tags", this.board.tags);
 
-				http.post("/trc/makePost/", formData)
+				http.post("/trc/makePost/", formData, {
+					headers: { Authorization: this.$session.get("accessToken") }
+				})
 					.then(res => {
 						alert("글이 성공적으로 작성되었습니다.");
 						// this.$session.set("targetId", this.$session.get("id"));
-						router.push("/mypage/" + this.$session.get("id"));
+						router.push({
+							name: "mypage",
+							params: { no: this.$session.get("id") }
+						});
 					})
 					.catch(err => {
 						alert("글 작성 중 문제가 생겼습니다.");
+						console.log(err);
 						router.push("/newpage");
 					});
 			} else {
@@ -236,7 +243,6 @@ export default {
 		Prism.plugins.autoloader.use_minified = false;
 		this.board.memberId = this.$session.get("id");
 		console.log("memberId newpage mounted ", this.board.memberId);
-		// 닉네임 재확인 안할방법 찾아보기
 		this.$store.state.token = this.$session.get("accessToken");
 		this.board.postWriter = this.$store.getters.userNickname;
 		console.log("nickname this ", this.board.postWriter);

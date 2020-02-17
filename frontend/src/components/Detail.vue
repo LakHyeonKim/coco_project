@@ -65,9 +65,10 @@
 				<div id="commentCreateCard">
 					<v-card class="mx-auto">
 						<v-card-text id="commentCreateInfo">
-							<v-avatar size="40">
-								<img src="../assets/user.png" alt="default-img" />
-							</v-avatar>
+							<!-- <v-avatar size="40">
+								<img :src="$session.get('imgUrl')" alt="../assets/user.png" />
+							</v-avatar>-->
+							<img id="commentCreaterImg" :src="$session.get('imgUrl')" alt="../assets/user.png" />
 							<v-card-title id="commentCreatePlaceholder" v-show="!show" @click="moveinFocus">댓글을 작성해주세요</v-card-title>
 							<v-card-subtitle id="commentCreateNickname" v-show="show">{{ $session.get("nickname") }}</v-card-subtitle>
 						</v-card-text>
@@ -299,6 +300,10 @@ export default {
 #commentCreateInfo {
 	display: flex;
 	align-items: center;
+}
+#commentCreaterImg {
+	width: 40px;
+	border-radius: 50%;
 }
 #commentCreatePlaceholder {
 	width: 100%;
