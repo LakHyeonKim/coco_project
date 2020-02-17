@@ -197,7 +197,8 @@ public class AuthorityController {
 		if (idmember == 0) {
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		} else {
-			String accessToken = jwtService.makeJwt("" + idmember, 1);
+			
+			String accessToken = jwtService.makeJwt(memberDao.findMember(new Member(idmember)).get(0), 1);
 			return new ResponseEntity<String>(accessToken, HttpStatus.OK);
 		}
 	}

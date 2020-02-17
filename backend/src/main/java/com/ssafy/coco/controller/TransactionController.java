@@ -53,7 +53,8 @@ public class TransactionController {
 	
 	@ApiOperation(value = "포스트 달기 (Transaction) ", response = List.class)
 	@PostMapping("/makePost")
-	public ResponseEntity<Integer> makePost(BoardWrite board) throws Exception {
+	public ResponseEntity<Integer> makePost(@RequestHeader(value="Authorization")String jwt,BoardWrite board) throws Exception {
+		System.out.println("메이크 포스터안 jwt:"+jwt);
 		transactionService.makePost(board);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
@@ -102,7 +103,7 @@ public class TransactionController {
 	
 	@ApiOperation(value = "member 정보 수정 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/updateMemeberInfo", method = RequestMethod.POST)
-	public ResponseEntity<Integer> updateMemeberInfo(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberInfoModify memberInfoModify) throws Exception {
+	public ResponseEntity<Integer> updateMemeberInfo(@RequestHeader(value="Authorization")String jwt,MemberInfoModify memberInfoModify) throws Exception {
 		transactionService.updateMemeberInfo(memberInfoModify);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}

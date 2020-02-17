@@ -20,6 +20,11 @@ public class Alarm {
 	}
 
 
+	public void setDateCreated(String dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+
 	public Alarm(long idalarm, long memberCaller, long memberReceiver, long postId, long likeId, long followId,
 			int isRead, int access, String dateCreated) {
 		super();

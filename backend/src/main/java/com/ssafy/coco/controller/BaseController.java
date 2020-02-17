@@ -126,7 +126,11 @@ public class BaseController {
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
 	public ResponseEntity<List<Alarm>> findAlarm(@RequestBody Alarm alarm) throws Exception {
+		alarm.setDateCreated("TT");
 		List<Alarm> answers = alarmService.findAlarm(alarm);
+		
+		System.out.println(alarm);
+		System.out.println(answers);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
@@ -145,7 +149,9 @@ public class BaseController {
 
 	@ApiOperation(value = "알람 수정", response = List.class)
 	@RequestMapping(value = "/updateAlarm", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateAlarm(@RequestBody Alarm alarm) throws Exception {
+	public ResponseEntity<Integer> updateAlarm(@RequestHeader(value="Authorization")String jwt,@RequestBody Alarm alarm) throws Exception {
+		System.out.println(jwt);
+		System.out.println("알람수정"+alarm);
 		int answer = alarmService.updateAlarm(alarm);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
