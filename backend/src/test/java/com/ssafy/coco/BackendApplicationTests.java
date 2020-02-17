@@ -79,7 +79,7 @@ class BackendApplicationTests {
 
 	@Test
 	void relationVoContextLoads() throws Exception {
-		setUp();
+		System.out.println(Member.encryptSHA256Iter("1234", 4));
 	}
 
 	public void testWD() throws ParseException {

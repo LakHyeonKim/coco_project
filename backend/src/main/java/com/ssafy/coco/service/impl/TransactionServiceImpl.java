@@ -83,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
 	public long signUp(SignUpMember signUpMember) throws Exception {
 		Member member = new Member(signUpMember.getIdmember(), signUpMember.getRankId(), signUpMember.getIsManager(),
 				signUpMember.getIsDelete(), signUpMember.getNickname(), signUpMember.getId(),
-				signUpMember.getPassword(), signUpMember.getEmail(), signUpMember.getGitUrl(),
+				Member.encryptSHA256Iter(signUpMember.getPassword(), signUpMember.getPassword().length()), signUpMember.getEmail(), signUpMember.getGitUrl(),
 				signUpMember.getKakaoUrl(), signUpMember.getInstagramUrl(), signUpMember.getDateCreated(),
 				signUpMember.getUpdateCreated(), signUpMember.getGrade());
 		member.setRankId(1L);
