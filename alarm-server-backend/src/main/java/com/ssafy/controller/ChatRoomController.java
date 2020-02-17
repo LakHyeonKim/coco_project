@@ -59,17 +59,17 @@ public class ChatRoomController {
 
     @GetMapping("/room/{roomId}")
     @ResponseBody
-    public Room roomInfo(@PathVariable long idroom) {
+    public Room roomInfo(@PathVariable long roomId) {
     	Room searchRoom = new Room();
-    	searchRoom.setIdroom(idroom);
+    	searchRoom.setIdroom(roomId);
         return roomService.findRoom(searchRoom).get(0);
     }
     
     @GetMapping("/messages/{roomId}")
     @ResponseBody
-    public Message roomMessage(@PathVariable long roomId) {
+    public List<Message> roomMessage(@PathVariable long roomId) {
     	Message message = new Message();
     	message.setRoomId(roomId);
-        return messageService.findMessage(message).get(0);
+        return messageService.findMessage(message);
     }
 }

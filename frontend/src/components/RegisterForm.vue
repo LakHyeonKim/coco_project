@@ -148,7 +148,7 @@ export default {
 			if (this.onSubmit() && this.idcheck) {
 				this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", formData);
-				http.post("/trc/signUp/", formData)
+				http.post("/jwt/signUp/", formData)
 					.then(res => {
 						console.log("REGISTER then ", res);
 
@@ -236,7 +236,7 @@ export default {
 			if (this.signUpMember.id) {
 				this.duplicate = [];
 				console.log("DUPLICATE ", this.signUpMember.id);
-				http.post("/api/check", {
+				http.post("/jwt/check", {
 					id: this.signUpMember.id
 				})
 					.then(res => {

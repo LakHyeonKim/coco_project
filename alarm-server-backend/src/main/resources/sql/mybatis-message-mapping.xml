@@ -4,12 +4,12 @@
 
 <mapper namespace="MessageMapper">
 	<sql id="select-message">
-		select idmessage, room_id, room_number, member_id, nick_name, date_created, context, type
+		select idmessage, room_id, member_id, nick_name, date_created, context, type
 		from `coco`.`message`
 	</sql>
 	<sql id="insert-message">
 		insert into `coco`.`message`
-		(room_id, room_number, member_id, nick_name, date_created, context, type)
+		(room_id, member_id, nick_name, date_created, context, type)
 		values(#{roomId}, #{memberId}, #{nickName}, now(), #{context}, #{type})
 	</sql>
 
@@ -22,16 +22,8 @@
 	<select id="findMessage" resultType="Message" parameterType="Message">
 		<include refid="select-message"></include>
 		<where>
-			<if test="idmessage !=0">
-				idmessage = ${idmessage}
-			</if>
 			<if test="roomId !=0">
-				AND
 				room_id = ${roomId}
-			</if>
-			<if test="roomNumber !=null">
-				AND
-				room_number = ${roomNumber}
 			</if>
 			<if test="memberId !=0">
 				AND
@@ -39,15 +31,15 @@
 			</if>
 			<if test="nickName !=null">
 				AND
-				nick_name = ${nickName}
+				nick_name = '${nickName}'
 			</if>
 			<if test="context !=null">
 				AND
-				context like '%${context}%'
+				context = '${context}'
 			</if>
 			<if test="type !=null">
 				AND
-				type = ${type}
+				type = '${type}'
 			</if>
 		</where>
 		order by date_created asc;

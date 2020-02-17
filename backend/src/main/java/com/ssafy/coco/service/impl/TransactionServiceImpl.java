@@ -315,6 +315,9 @@ public class TransactionServiceImpl implements TransactionService {
 			file.transferTo(new File(path, saveFileName));
 			modifyMember.setImageUrl(filePath);
 		}
+		if(!memberInfoModify.getTags().equals("")) {
+			
+		}
 		if(!memberInfoModify.getNickName().equals(""))
 			modifyMember.setNickname(memberInfoModify.getNickName());
 		if(!memberInfoModify.getGitUrl().equals(""))
