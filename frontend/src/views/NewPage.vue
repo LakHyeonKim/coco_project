@@ -72,38 +72,44 @@
 			<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 		</form>
 		<v-row justify="center">
-    		<v-dialog v-model="dialog" scrollable overflowed>
-				<template v-slot:activator="{ on }">
-					<v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
-				</template>
+			<v-dialog v-model="dialog" scrollable overflowed @keydown.enter="insertDescription">
 				<v-card>
-					<v-card-title>
-						<span class="headline">Use Google's location service?</span>
-					</v-card-title>
-					<v-card-text>Lorem ipsum dolor sit amet, semper quis, sapien id natoque elit.</v-card-text>
-					<agile ref="carousel" fade :dots="true">
+					<v-card-actions class="d-flex justify-end">
+						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
+					</v-card-actions>
+					<agile ref="carousel" fade :dots="true" v-model="carouselPage">
 						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
-							<p>{{ dict.word }}</p>
-							<p>{{ dict.description }}</p>
-							<p>{{ dict.link}}</p>
-							<p>{{ dict.thumbnailSrc }}</p>
+							<v-card-title>
+								<span class="headline">
+									<v-icon>mdi-file-document-box-search-outline</v-icon>
+									{{ dict.word }}
+								</span>
+							</v-card-title>
+							<v-card-text class="d-flex">
+								<v-img :src="dict.thumbnailSrc" v-if="dict.thumbnailSrc" width="100"></v-img>
+								<div class="ml-4 space-between">
+									<h3>{{ dict.title }}</h3>
+									<br />
+									<p>
+										{{ dict.description }}
+										<a
+											:href="dict.link"
+											target="_blank"
+											style="color: rgba(125, 72, 121, 0.85)"
+										>자세히 보기</a>
+									</p>
+								</div>
+							</v-card-text>
 						</div>
-						<div class="test1"></div>
-						<div class="test2"></div>
-						<div class="test3"></div>
-						<img class="test4" src="1.jpg" alt="">
 						<v-icon slot="prevButton">mdi-chevron-left</v-icon>
 						<template slot="prevButton">prev</template>
 						<template slot="nextButton">next</template>
 						<v-icon slot="nextButton">mdi-chevron-right</v-icon>
 					</agile>
-					<v-card-actions>
-						<v-btn color="green darken-1" text @click="dialog = false">Disagree</v-btn>
-					</v-card-actions>
 				</v-card>
 			</v-dialog>
-  		</v-row>
-	</v-container>	
+		</v-row>
+	</v-container>
 </template>
 
 <script>
@@ -113,11 +119,11 @@ import http from "../http-common";
 
 export default {
 	name: "NewPage",
-	components: {
-	},
+	components: {},
 	data() {
 		return {
 			dialog: false,
+			carouselPage: 1,
 			question: 0,
 			dictWord: "",
 			dictArray: [],
@@ -168,16 +174,20 @@ export default {
 				"/api/findWordDictionary/",
 				{ word: this.dictWord },
 				{ headers: { Authorization: this.$session.get("accessToken") } }
-			).then(res => {
-				console.log(res);
-				this.dictArray = res.data;
-				this.question = 0;
-				this.dictWord = "";
-				this.dialog = true;
-			});
+			)
+				.then(res => {
+					console.log(res);
+					this.dictArray = [];
+					this.dictArray = res.data;
+					this.question = 0;
+					this.dictWord = "";
+					this.dialog = true;
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		},
 		questionCount: function(event) {
-			console.log(event);
 			if (event.key == "?") {
 				this.question++;
 			} else if (this.question == 2) {
@@ -187,10 +197,8 @@ export default {
 					(event.keyCode >= 96 && event.keyCode <= 111)
 				) {
 					this.dictWord += event.key;
-					console.log(this.dictWord);
 				} else if (event.code == "Backspace") {
 					this.dictWord = this.dictWord.slice(0, -1);
-					console.log(this.dictWord);
 				} else if (event.code == "Space") {
 					this.findWordDict();
 				} else {
@@ -216,7 +224,9 @@ export default {
 			let formData = new FormData(document.forms.namedItem("board"));
 			formData.append("tags", this.board.tags);
 
-			http.post("/trc/makePost/", formData)
+			http.post("/trc/makePost/", formData, {
+				headers: { Authorization: this.$session.get("accessToken") }
+			})
 				.then(res => {
 					alert("글이 성공적으로 작성되었습니다.");
 					this.$session.set("targetId", this.$session.get("id"));
@@ -225,6 +235,11 @@ export default {
 				.catch(err => {
 					alert("글 작성 중 문제가 생겼습니다.");
 				});
+		},
+		insertDescription() {
+			let index = this.$refs.carousel.getCurrentSlide();
+			this.board.code += this.dictArray[index].description;
+			this.dialog = false;
 		}
 	},
 	mounted() {
@@ -293,7 +308,7 @@ export default {
 .agile__actions {
 	margin-top: 20px;
 }
-.agile__actions ul{
+.agile__actions ul {
 	padding: 0;
 }
 .agile__dots {
@@ -313,7 +328,7 @@ export default {
 	line-height: 0;
 	margin: 0;
 	padding: 0;
-	transition-duration: .3s;
+	transition-duration: 0.3s;
 	height: 10px;
 	width: 10px;
 }
