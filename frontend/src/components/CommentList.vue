@@ -1,7 +1,11 @@
 <template>
 	<div>
-		<div id="commentListCard" v-for="comment in comments.slice().reverse()" :key="comment.idcomment">
-			<comment-item :comment="comment"></comment-item>
+		<div
+			id="commentListCard"
+			v-for="commentInfo in commentInfos.slice().reverse()"
+			:key="commentInfo.comment.idcomment"
+		>
+			<comment-item :commentInfo="commentInfo"></comment-item>
 		</div>
 	</div>
 </template>
@@ -14,7 +18,7 @@ export default {
 		CommentItem
 	},
 	props: {
-		comments: {}
+		commentInfos: {}
 	}
 };
 </script>

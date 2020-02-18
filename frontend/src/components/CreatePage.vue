@@ -3,12 +3,7 @@
 		<div class="templatePage">
 			<div class="tagInput" autocomplete="off">
 				<div class="autocomplete">
-					<tags-input
-						v-model="tags"
-						element-id="tags"
-						placeholder="해시태그"
-						add-tags-on-space
-					></tags-input>
+					<tags-input v-model="tags" element-id="tags" placeholder="해시태그" add-tags-on-space></tags-input>
 				</div>
 			</div>
 			<form name="board" enctype="multipart/form-data">
@@ -126,9 +121,16 @@ export default {
 				attachments: null
 			},
 			stack: [
-				"Java", "Python", "C++", "C", "Go",
-				"Spring", "php", "Vue.js", "Javascript", "C#",
-				
+				"Java",
+				"Python",
+				"C++",
+				"C",
+				"Go",
+				"Spring",
+				"php",
+				"Vue.js",
+				"Javascript",
+				"C#"
 			]
 		};
 	},
@@ -214,19 +216,37 @@ export default {
 			Prism.highlightAll();
 		},
 		posting() {
-			const token = this.$session.get("accessToken");
-			const headers = {
-				Authorization: token
-			};
 			if (this.board.postTitle && this.board.code) {
 				this.board.tags = [];
 				for (let i = 0; i < this.tags.length; ++i) {
 					this.board.tags.push(this.tags[i].value);
 				}
 
-				let formData = new FormData(document.forms.namedItem("board"));
-				formData.append("tags", this.board.tags);
-				http.post("/trc/makePost/", formData, {
+				let newformData = new FormData(
+					document.forms.namedItem("board")
+				);
+				newformData.append("tags", this.board.tags);
+				let requestAddress = "";
+				let formData;
+				if (this.$store.state.parent) {
+					requestAddress = "/trc/makeBabyPost/";
+					formData = {
+						parent: this.$store.state.parent,
+						son: newformData
+					};
+				} else {
+					requestAddress = "/trc/makePost/";
+					formData = newformData;
+				}
+
+				// for (var pair of formData.parent.entries()) {
+				// 	console.log(pair[0] + ", " + pair[1]);
+				// }
+				// for (var pair of formData.son.entries()) {
+				// 	console.log(pair[0] + ", " + pair[1]);
+				// }
+
+				http.post(requestAddress, formData, {
 					headers: { Authorization: this.$session.get("accessToken") }
 				})
 					.then(res => {
@@ -471,9 +491,7 @@ export default {
 	background-color: white;
 	height: 200px;
 }
-<<<<<<< HEAD
-
-.autocomplete-items {
+<<<<<<< head .autocomplete-items {
 	position: absolute;
 	border: 1px solid #d4d4d4;
 	border-bottom: none;

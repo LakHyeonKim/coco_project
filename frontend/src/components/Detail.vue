@@ -1,15 +1,15 @@
 <template>
-	<div>
+	<div id="compo">
 		<div id="blankBox"></div>
 		<div id="detailBox">
 			<div>
-				<h1>{{ postTitle }}</h1>
-				<br />
+				<p id="post-title">{{ postTitle }}</p>
+				<v-btn id="babyPostCreate" @click="babyPostCreate">babypost</v-btn>
 				<div id="post-head">
 					<div id="profile-img">
 						<v-avatar size="40">
-							<img src="imagePath" alt="user-img" v-if="imagePath" />
-							<img src="../assets/user.png" alt="default-img" v-else />
+							<img :src="postWriterProfileImage" alt="../assets/user.png" />
+							<!-- <img src="../assets/user.png" alt="default-img"/> -->
 							<!-- <v-gravatar :email="postWriter" alt="gravatar" :size="50" /> -->
 						</v-avatar>
 					</div>
@@ -17,20 +17,37 @@
 					<div id="profile-info">
 						<p id="user-nickname">
 							{{ postWriter }}
-							<v-btn class="ml-2 follow-btn" color="indigo" height="20px" @click="follow" outlined small>
+							<v-btn
+								class="ml-2 follow-btn"
+								color="indigo"
+								height="20px"
+								v-show="!isUser()"
+								@click="follow"
+								outlined
+								small
+							>
 								<span v-show="!isFollow">팔로우</span>
 								<span v-show="isFollow">팔로잉</span>
 								<v-icon v-show="!isFollow" small>mdi-plus-thick</v-icon>
 								<v-icon v-show="isFollow" small>mdi-check-bold</v-icon>
 							</v-btn>
 						</p>
-						<span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span>
-						<span id="post-info" v-if="views > 1">views</span>
-						<span id="post-info" v-else>view</span>
+						<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
+						<div id="post-info">
+							<span v-if="dateCreated == updateCreated">{{ dateCreated }} · {{ views }} &nbsp;</span>
+							<span v-else>{{ updateCreated }}(수정됨) · {{ views }} &nbsp;</span>
+							<span v-if="views > 1">views</span>
+							<span v-else>view</span>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div>
+			<div id="divide-line"></div>
+			<div id="fileBox">
+				<p>파일첨부</p>
+				<a @click="test">{{ filePath }}</a>
+			</div>
+			<div id="postBox">
 				<vue-markdown
 					class="line-numbers match-braces rainbow-braces show-invisibles"
 					:source="code"
@@ -62,18 +79,24 @@
 					></MediumClap>
 					<div id="addition-action" class="ma-4">
 						<button>
-							<v-icon>fa fa-ellipsis-h</v-icon>
+							<v-icon @click="test">fa fa-ellipsis-h</v-icon>
 						</button>
 					</div>
 				</div>
 
 				<div id="divide-line"></div>
 
-				<comment-create :idPost="idPost" :memberId="memberId" @addComment="addComment"></comment-create>
+				<comment-create
+					:idPost="idPost"
+					:memberId="memberId"
+					:commentCount="commentCount"
+					@addComment="addComment"
+				></comment-create>
 
-				<comment-list :comments="comments"></comment-list>
+				<comment-list :commentInfos="commentInfos" :receiver="memberId"></comment-list>
 			</div>
 		</div>
+		<div id="blankBox"></div>
 	</div>
 </template>
 <script>
@@ -106,16 +129,55 @@ export default {
 		likeCheck: {},
 		order: {},
 		tags: {},
-		comments: {},
+		commentInfos: {},
 		likes: {},
 		babyPosts: {},
 		commentCount: {},
-		attachments: {}
+		postWriterProfileImage: {}
 	},
 	data() {
 		return {};
 	},
 	methods: {
+		babyPostCreate() {
+			let parent = new FormData();
+			parent.set("idpost", this.idPost);
+			parent.set("memberId", this.memberId);
+			parent.set("postTitle", this.postTitle);
+			parent.set("postWriter", this.postWriter);
+			parent.set("code", this.code);
+			parent.set("likeCount", this.likeCount);
+			parent.set("views", this.views);
+			parent.set("imagePath", this.imagePath);
+			parent.set("filePath", this.filePath);
+			parent.set("access", this.access);
+			parent.set("likeCheck", this.likeCheck);
+			parent.set("order", this.order);
+			this.$store.state.parent = parent;
+
+			// this.$store.state.parent = {
+			// 	idpost: this.idpost,
+			// 	memberId: this.memberId,
+			// 	postTitle: this.postTitle,
+			// 	postWriter: this.postWriter,
+			// 	code: this.code,
+			// 	likeCount: this.likeCount,
+			// 	views: this.views,
+			// 	imagePath: this.imagePath,
+			// 	filePath: this.filePath,
+			// 	access: this.access,
+			// 	likeCheck: this.likeCheck,
+			// 	order: this.order
+			// };
+			this.$router.push({ name: "newpage" });
+		},
+		isUser() {
+			if (this.$session.get("id") != this.memberId) {
+				return false;
+			} else {
+				return true;
+			}
+		},
 		follow() {
 			let requestAddress = "";
 			if (this.isFollow) {
@@ -151,6 +213,24 @@ export default {
 			this.$store.state.searchtag = hashtag.tagName;
 			this.$router.push({ name: "search" });
 			console.log(hashtag);
+		},
+		test() {
+			http.get("/test/download", { responseType: "blob" })
+				.then(res => {
+					const url = window.URL.createObjectURL(
+						new Blob([res.data], { type: res.data.type })
+					);
+					const link = document.createElement("a");
+					link.href = url;
+					link.setAttribute("download", "sdsd");
+					document.body.appendChild(link);
+					link.click();
+					console.log(link);
+					console.log(res);
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		}
 	},
 	updated() {
@@ -162,15 +242,25 @@ export default {
 </script>
 
 <style scoped>
+#compo {
+	display: grid;
+	justify-content: center;
+}
+#post-title {
+	font-size: 32px;
+}
 #post-head {
 	display: flex;
-	margin: 7px;
+	margin-top: 32px;
 	/* style="display: inline-block; line-height: 10px" */
 }
 #profile-img {
 	width: 40px;
 	height: 40px;
+	margin-left: 10px;
 	margin-right: 10px;
+	border: 1px solid silver;
+	border-radius: 50%;
 }
 #user-nickname {
 	font-size: 15px;
@@ -189,6 +279,13 @@ export default {
 	background-color: aliceblue;
 	width: 65vw;
 	height: 100%;
+}
+#fileBox {
+	display: flex;
+	justify-content: flex-end;
+}
+#postBox {
+	margin-top: 2em;
 }
 #additionBox {
 	margin-top: 40px;
