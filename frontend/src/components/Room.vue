@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import alarmHttp from "../http-alarm";
 
 export default {
 	name: 'Room',
@@ -95,7 +95,7 @@ export default {
 	},
 	methods: {
 		findAllRoom: function () {
-			axios.get('http://localhost:8081/chat/rooms').then(response => {
+			alarmHttp.get('/chat/rooms').then(response => {
 				console.log(response)
 				this.chatrooms = response.data
 			})
@@ -108,8 +108,8 @@ export default {
 				alert('방 제목을 입력해 주십시요.')
 				return
 			} else {
-				axios
-					.post('http://localhost:8081/chat/room', {
+				alarmHttp
+					.post('/chat/room', {
 						roomName: this.room_name,
 						memberId: this.$session.get('id')
 					})
@@ -128,8 +128,8 @@ export default {
 			}
 		},
 		deleteRoom: function (idroom) {
-			axios
-				.delete('http://localhost:8081/chat/room/' + idroom)
+			alarmHttp
+				.delete('/chat/room/' + idroom)
 				.then(response => {
 					console.log(response)
 					alert(
@@ -192,18 +192,17 @@ input {
 }
 
 #roomList {
-	
 	border-radius: 10px;
 }
 
 #roomSelect {
 	
-	border-radius: 5px;
+	border-radius: 10px;
 }
 
 #roomHeader {
 	background-color: #a794a5;
-	color: rgb(0, 0, 0);
+	color: rgb(255, 255, 255);
 	height: 40px;
 	font-size: 18px;
 	line-height: 40px;

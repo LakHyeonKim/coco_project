@@ -93,7 +93,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int findIdByRefreshToken(String refToken) {
+	public List<Member>  findIdByRefreshToken(String refToken) {
 		return memberDao.findIdByRefreshToken(refToken);
 	}
 

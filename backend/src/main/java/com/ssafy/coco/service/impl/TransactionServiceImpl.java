@@ -25,6 +25,7 @@ import com.ssafy.coco.dao.MyPageTagDao;
 import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
+import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.MemberInfoModify;
@@ -76,7 +77,22 @@ public class TransactionServiceImpl implements TransactionService {
 	private MailService mailService;
 	@Autowired
 	private MyPageTagDao myPageTagDao;
+	// 글쓴사람이랑 보낸사람이랑 포스트아이디
+	@Transactional
+	public void deleteComment(long postId,long receiver,long caller,long commentId ) {
+		Comment comment = new Comment();
+		comment.setIdcomment(commentId);
+		commentDao.deleteComment(comment);
+		Alarm alarm = new Alarm();
+		alarm.setMemberReceiver(receiver);
+		alarm.setMemberCaller(caller);
+		alarm.setPostId(postId);
+		alarmDao.deleteAlarm(alarm);
+	}
+	
+	private static final String IP = "192.168.100.57";
 
+	
 	/**
 	 * 
 	 * @param member 회원정보
@@ -99,8 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
-			String ip = "192.168.100.95";
-			String imageFilePath = "http://"+ ip + ":8888/userprofile/" + saveFileName + "";
+			String imageFilePath = "http://"+ IP + ":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}
@@ -139,14 +154,50 @@ public class TransactionServiceImpl implements TransactionService {
 	 * @param receiver     알람 받는 사람
 	 * 
 	 *                     포스트에 포스트 형식 댓글을 작성 하였을 때 알람 까지 트랜잭션
+	 * @throws IOException 
+	 * @throws IllegalStateException 
 	 */
 
 	@Transactional
-	public void makeBabyPost(Post baby, Post parent) {
-		postDao.addPost(baby);
-		BabyPost babyPost = new BabyPost(0, parent.getIdpost(), baby.getIdpost());
-		babyPostDao.addBabyPost(babyPost);
-		Alarm alarm = new Alarm(0, baby.getMemberId(), parent.getMemberId(), parent.getIdpost(), 0, 0, 0, 0);
+	public void makeBabyPost(BabyBoardWrite babyBoardWrite) throws IllegalStateException, IOException {
+		Post post = new Post();
+		post.setCode(babyBoardWrite.getCode());
+		post.setMemberId(babyBoardWrite.getMemberId());
+		post.setPostTitle(babyBoardWrite.getPostTitle());
+		post.setPostWriter(babyBoardWrite.getPostWriter());
+
+		String[] splitTag = babyBoardWrite.getTags().split(",");
+
+		if (!babyBoardWrite.getAttachments().getOriginalFilename().equals("")) {
+			MultipartFile file = babyBoardWrite.getAttachments();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
+			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			post.setFilePath(filePath);
+		}
+		
+		long idPost = postDao.addPost(post);
+		idPost = post.getIdpost();
+		
+		for (String splitedTag : splitTag) {
+			if (splitedTag.equals(""))
+				break;
+			int size = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).size();
+			if (size == 0) {
+				tagDao.addTag(new Tag(0, splitedTag, 0, 1, null, null, null));
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
+				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
+			} else {
+				tagDao.updateTagIncludedCount(splitedTag);
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
+				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
+			}
+		}
+		
+		babyPostDao.addBabyPost(new BabyPost(0, babyBoardWrite.getParentIdPost(), idPost));
+		Alarm alarm = new Alarm(0, babyBoardWrite.getMemberId(), babyBoardWrite.getParentIdMember(), babyBoardWrite.getParentIdPost(), 0, 0, 0, 0);
 		alarmDao.addAlarm(alarm);
 	}
 
@@ -266,8 +317,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String ip = "192.168.100.95";
-			String filePath = "http://"+ ip +":8888/userfile/" + saveFileName + "";
+			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}
@@ -311,8 +361,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String ip = "192.168.100.95";
-			String filePath = "http://"+ ip +":8888/userbanner/" + saveFileName + "";
+			String filePath = "http://"+ IP +":8888/userbanner/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMypage.setBannerImagePath(filePath);
 		}
@@ -321,8 +370,7 @@ public class TransactionServiceImpl implements TransactionService {
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String ip = "192.168.100.95";
-			String filePath = "http://"+ ip +":8888/userprofile/" + saveFileName + "";
+			String filePath = "http://"+ IP +":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			modifyMember.setImageUrl(filePath);
 		}

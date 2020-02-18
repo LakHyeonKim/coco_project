@@ -14,7 +14,6 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String[] EXCLUDE_PATHS = {
 			  "/jwt/**",
     };
-
     @Autowired
     private JwtInterceptor jwtInterceptor;
 

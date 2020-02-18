@@ -14,6 +14,6 @@ public interface MemberDao {
 	public int deleteMember(Member member);
 	public List<Member> findFollowingMemberList(long idMemberFollower);
 	public List<Member> findFollowerMemberList(long idMemeberFollowing);
-	public int findIdByRefreshToken(String refToken);
+	public List<Member> findIdByRefreshToken(String refToken);
 	public int updateRefreshToken(Member member);
 }

@@ -17,8 +17,12 @@
 	</sql>
 	<sql id="update-Like">
 		update coco.like set
-		post_id=#{postId},
-		member_id=#{memberId},
+		<if test="postId != 0">
+			post_id=#{postId},
+		</if>
+		<if test="memberId != 0">
+			member_id=#{memberId},
+		</if>
 		access=#{access}
 		where
 		idlike=#{idlike}
