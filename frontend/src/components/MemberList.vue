@@ -19,9 +19,9 @@
 							<img
 								class="f_img"
 								:src="
-									f.member.imgUrl == null
+									f.member.imageUrl == null
 										? '../img/icons/user.png'
-										: f.member.imgUrl
+										: f.member.imageUrl
 								"
 							/>
 							<div class="f_nick_div">
@@ -80,7 +80,6 @@ export default {
 			isNone: false,
 			dialog: false,
 			following_btn: {
-				// marginLeft: "10px",
 				backgroundColor: "white",
 				borderRadius: "5px",
 				color: "gray",
@@ -88,7 +87,6 @@ export default {
 				border: "1px solid silver"
 			},
 			follow_btn: {
-				// marginLeft: "10px",
 				backgroundColor: "rgb(192, 110, 155)",
 				borderRadius: "5px",
 				color: "white",
@@ -141,7 +139,9 @@ export default {
 <style>
 .f_img {
 	width: 40px;
-	border: 1px solid gray;
+	height: 40px;
+	overflow: hidden;
+	border: 1px solid silver;
 	border-radius: 50%;
 	float: left;
 }

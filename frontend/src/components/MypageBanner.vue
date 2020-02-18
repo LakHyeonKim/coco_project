@@ -4,6 +4,7 @@
 			<img
 				id="imgBanner"
 				:src="
+					userInfo.mypage.bannerImagePath == null ||
 					userInfo.mypage.bannerImagePath == ''
 						? '../img/back.jpg'
 						: userInfo.mypage.bannerImagePath
@@ -17,14 +18,7 @@
 			</div>
 			<div id="info_title">{{ userInfo.mypage.bannerText }}</div>
 			<div id="info_desc">
-				<img
-					id="imgUser"
-					:src="
-						userInfo.member.imageUrl == ''
-							? '../img/icons/user.png'
-							: userInfo.member.imageUrl
-					"
-				/>
+				<img id="imgUser" :src="$store.state.targetImgUrl" />
 				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
@@ -249,8 +243,13 @@ export default {
 			.then(response => {
 				this.userInfo = response.data;
 				store.state.tags = this.userInfo.tags;
+
+				if (this.userInfo.member.imageUrl == "")
+					store.state.targetImgUrl = "../img/icons/user.png";
+				else store.state.targetImgUrl = this.userInfo.member.imageUrl;
+
 				console.log("Banner mounted()");
-				console.log(response);
+				console.log(response.data);
 				if (this.userInfo.isFollew == 1) {
 					this.f_current = "팔로잉";
 				} else {

@@ -293,6 +293,7 @@ export default {
 					} else {
 						this.member.profileImageUrl = "";
 						this.profileImage = null;
+						this.$session.remove("imageUrl");
 					}
 					alert("삭제되었습니다 ~");
 				})
