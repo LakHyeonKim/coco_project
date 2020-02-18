@@ -97,7 +97,6 @@
 								<div
 									class="like_text"
 									@click="getLike(item.post.idpost)"
-									:list_len="likeList.length"
 								>
 									{{ item.post.likeCount }}
 								</div>
