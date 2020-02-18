@@ -72,10 +72,12 @@ export default {
 	},
 	methods: {
 		logout() {
+			this.isBlock = false;
 			this.$session.destroy();
 			router.push("/");
 		},
 		getMypage() {
+			this.isBlock = false;
 			console.log(this.$route.fullPath);
 			let location = "/mypage/" + this.$session.get("id");
 
@@ -190,6 +192,11 @@ export default {
 	.nav_menu_img {
 		width: 35px;
 		padding: 3px;
+	}
+	#navbar li ul {
+		top: auto;
+		bottom: 17vw;
+		left: 10vw;
 	}
 }
 @media screen and (max-width: 330px) {
