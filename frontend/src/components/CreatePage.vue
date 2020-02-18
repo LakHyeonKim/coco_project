@@ -256,8 +256,9 @@ export default {
 		posting() {
 			if (this.board.postTitle && this.board.code) {
 				this.board.tags = [];
+
 				for (let i = 0; i < this.tags.length; ++i) {
-					this.board.tags.push(this.tags[i].value);
+					this.board.tags.push(this.tags[i].text);
 				}
 
 				let newformData = new FormData(

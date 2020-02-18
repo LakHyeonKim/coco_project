@@ -4,13 +4,16 @@
 		<div id="detailBox">
 			<div>
 				<p id="post-title">{{ postTitle }}</p>
-				<v-btn id="babyPostCreate" @click="babyPostCreate">babypost</v-btn>
+				<v-btn id="babyPostCreate" @click="babyPostCreate"
+					>babypost</v-btn
+				>
 				<div id="post-head">
 					<div id="profile-img">
 						<v-avatar size="40">
-							<img :src="postWriterProfileImage" alt="../assets/user.png" />
-							<!-- <img src="../assets/user.png" alt="default-img"/> -->
-							<!-- <v-gravatar :email="postWriter" alt="gravatar" :size="50" /> -->
+							<img
+								:src="postWriterProfileImage"
+								alt="../assets/icon/user.png"
+							/>
 						</v-avatar>
 					</div>
 
@@ -28,14 +31,23 @@
 							>
 								<span v-show="!isFollow">팔로우</span>
 								<span v-show="isFollow">팔로잉</span>
-								<v-icon v-show="!isFollow" small>mdi-plus-thick</v-icon>
-								<v-icon v-show="isFollow" small>mdi-check-bold</v-icon>
+								<v-icon v-show="!isFollow" small
+									>mdi-plus-thick</v-icon
+								>
+								<v-icon v-show="isFollow" small
+									>mdi-check-bold</v-icon
+								>
 							</v-btn>
 						</p>
 						<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
 						<div id="post-info">
-							<span v-if="dateCreated == updateCreated">{{ dateCreated }} · {{ views }} &nbsp;</span>
-							<span v-else>{{ updateCreated }}(수정됨) · {{ views }} &nbsp;</span>
+							<span v-if="dateCreated == updateCreated"
+								>{{ dateCreated }} · {{ views }} &nbsp;</span
+							>
+							<span v-else
+								>{{ updateCreated }}(수정됨) ·
+								{{ views }} &nbsp;</span
+							>
 							<span v-if="views > 1">views</span>
 							<span v-else>view</span>
 						</div>
@@ -93,7 +105,10 @@
 					@addComment="addComment"
 				></comment-create>
 
-				<comment-list :commentInfos="commentInfos" :receiver="memberId"></comment-list>
+				<comment-list
+					:commentInfos="commentInfos"
+					:receiver="memberId"
+				></comment-list>
 			</div>
 		</div>
 		<div id="blankBox"></div>
@@ -243,8 +258,10 @@ export default {
 
 <style scoped>
 #compo {
-	display: grid;
-	justify-content: center;
+	/* display: grid;
+	justify-content: center; */
+	width: 80%;
+	margin: 0 auto;
 }
 #post-title {
 	font-size: 32px;
@@ -277,7 +294,7 @@ export default {
 }
 #detailBox {
 	background-color: aliceblue;
-	width: 65vw;
+	width: 100%;
 	height: 100%;
 }
 #fileBox {
