@@ -145,8 +145,10 @@ public class AuthorityController {
 			HttpServletResponse response, HttpSession session) throws Exception {
 		// System.out.println(code);
 		JsonNode token = jwtService.getAccessToken(code);
+		System.out.println(token);
 		JsonNode profile = jwtService.getKakaoUserInfo(token.path("access_token").toString());
 		Member vo = jwtService.changeData(profile);
+		System.out.println("카카오 브이오"+vo);
 		Member searchMember = new Member();
 		searchMember.setId(vo.getId());
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -172,6 +174,7 @@ public class AuthorityController {
 		String password = (String) map.get("password");
 		Tokens tokens = jwtService.login(id, password);
 		if (tokens != null) {
+			System.out.println("로그인 컨트롤러 성공");
 			return new ResponseEntity(tokens, HttpStatus.OK);
 		} else {
 			System.out.println("failfail");
@@ -193,12 +196,14 @@ public class AuthorityController {
 	@ApiOperation(value = "리프레쉬 토큰을 통한 액세스 토큰 발급", response = List.class)
 	@RequestMapping(value = "/getAccessTokenByRefreshToken/", method = RequestMethod.POST)
 	public ResponseEntity<String> getAccessTokenByRefreshToken(@RequestBody String refToken) throws Exception {
-		int idmember = memberDao.findIdByRefreshToken(refToken);
-		if (idmember == 0) {
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		System.out.println("리프레쉬 토큰 컨트롤러안"+refToken);
+		List<Member> list = memberDao.findIdByRefreshToken(refToken);
+		if (list.size()==0) {
+			System.out.println("레프 실패");
+			return new ResponseEntity<String>(HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		} else {
-			
-			String accessToken = jwtService.makeJwt(memberDao.findMember(new Member(idmember)).get(0), 1);
+			System.out.println("레프 성공");
+			String accessToken = jwtService.makeJwt(list.get(0), 1);
 			return new ResponseEntity<String>(accessToken, HttpStatus.OK);
 		}
 	}

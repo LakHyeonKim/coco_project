@@ -56,8 +56,9 @@
 	</sql>
 	
 	<!-- 전체 검색 -->
-	<select id="findIdByRefreshToken" parameterType="string" resultType="integer">
-		select idmember from member where refreshToken=#{value}
+	<select id="findIdByRefreshToken" parameterType="string" resultType="Member">
+		<include refid="select-Member"></include>
+		 where refreshToken=#{value}
 	</select>
 	<update id="updateRefreshToken" parameterType="Member">
 		update member set
@@ -139,6 +140,8 @@
 		from `coco`.`member` as m join `coco`.`rank` as r 
 		where  m.rank_id = r.idrank and idmember in (select member_id from `coco`.`like` where post_id = #{value});
 	</select>
+	
+	
 
 	<insert id="addMember" parameterType="Member"
 		useGeneratedKeys="true" keyProperty="idmember">

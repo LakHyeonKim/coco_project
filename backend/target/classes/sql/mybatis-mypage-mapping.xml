@@ -33,7 +33,7 @@
 			today_visited_count=#{todayVisitedCount},
 		</if>
 		<if test="totalVisitedCount != 0">
-			total_visited_count=#{totalVisitedCount}
+			total_visited_count=#{totalVisitedCount},
 		</if>
 		access=#{access}
 		where

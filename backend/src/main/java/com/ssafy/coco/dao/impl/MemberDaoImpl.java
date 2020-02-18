@@ -65,8 +65,8 @@ public class MemberDaoImpl implements MemberDao{
 	}
 
 	@Override
-	public int findIdByRefreshToken(String refToken) {
-		return sqlSession.selectOne(ns+"findIdByRefreshToken",refToken);
+	public List<Member> findIdByRefreshToken(String refToken) {
+		return sqlSession.selectList(ns+"findIdByRefreshToken",refToken);
 	}
 
 	@Override

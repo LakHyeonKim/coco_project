@@ -32,6 +32,14 @@ public class JwtInterceptor implements HandlerInterceptor {
 		System.out.println(request.getMethod());
 		// System.out.println(request.getPathInfo());
 		if(request.getMethod().equals("OPTIONS")) return true;
+		else
+		{
+			if(token.equals(""))
+			{
+				response.setStatus(203);
+				return false;
+			}
+		}
 		if (token == null) {
 			System.out.println("토큰값이 null 입니다.");
 			System.out.println(token);
@@ -49,7 +57,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 				response.setStatus(203);
 				return false;
 		}
-
 		// return true;
 
 	}
