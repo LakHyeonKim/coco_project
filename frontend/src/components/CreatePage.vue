@@ -1,22 +1,29 @@
 <template>
 	<div>
 		<div class="templatePage">
-			<div class="tagInput" autocomplete="off">
-				<div class="autocomplete">
-					<tags-input
-						v-model="tags"
-						element-id="tags"
-						placeholder="해시태그"
-						add-tags-on-space
-					></tags-input>
-				</div>
-			</div>
 			<form name="board" enctype="multipart/form-data">
-				<div class="submitInput">
-					<button class="submitButton" @click.prevent="posting">WRITE</button>
+				<div id="tagInput_div">
+					<span style="color: gray; font-size: 12px;">
+						마이페이지 태그 (10개 제한)
+					</span>
+					<VueTagsInput
+						v-model="tag"
+						:tags="tags"
+						@tags-changed="newTags => (tags = newTags)"
+						:add-on-key="[13, 32, 9, ':', ';']"
+						add-on-blur
+						allow-edit-tags
+						:max-tags="10"
+						placeholder
+						id="tagInput"
+					/>
 				</div>
-				<div class="title">
-					<input type="text" placeholder="제목" class="titleInput" v-model="board.postTitle" />
+				<div id="write_title">
+					<v-text-field
+						label="제목"
+						color="gray"
+						v-model="board.postTitle"
+					/>
 				</div>
 				<div class="codeInput">
 					<v-tabs right color="rgba(0, 0, 0, 0.5)" hide-slider>
@@ -50,32 +57,68 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
-					<v-file-input name="attachments" v-model="board.attachments" label="첨부파일" color="rgb(0, 0, 0)"></v-file-input>
+					<v-file-input
+						name="attachments"
+						v-model="board.attachments"
+						label="첨부파일"
+						color="rgb(0, 0, 0)"
+					></v-file-input>
 				</div>
+
+				<div id="create_top">
+					<button id="write_btn" @click.prevent="posting">
+						WRITE
+					</button>
+				</div>
+
 				<div class="footerBox"></div>
-				<input type="hidden" name="postTitle" v-model="board.postTitle" />
-				<input type="hidden" name="postWriter" v-model="board.postWriter" />
+				<input
+					type="hidden"
+					name="postTitle"
+					v-model="board.postTitle"
+				/>
+				<input
+					type="hidden"
+					name="postWriter"
+					v-model="board.postWriter"
+				/>
 				<input type="hidden" name="memberId" v-model="board.memberId" />
 				<input type="hidden" name="code" v-model="board.code" />
 				<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 			</form>
 		</div>
 		<v-row justify="center">
-			<v-dialog v-model="dialog" scrollable overflowed @keydown.enter="insertDescription">
+			<v-dialog
+				v-model="dialog"
+				scrollable
+				overflowed
+				@keydown.enter="insertDescription"
+			>
 				<v-card>
 					<v-card-actions class="d-flex justify-end">
-						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
+						<v-icon @click="dialog = false"
+							>mdi-close-circle-outline</v-icon
+						>
 					</v-card-actions>
 					<agile ref="carousel" fade :dots="true">
-						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
+						<div
+							v-for="dict in dictArray"
+							:key="dict.idwordDictionary"
+						>
 							<v-card-title>
 								<span class="headline">
-									<v-icon>mdi-file-document-box-search-outline</v-icon>
+									<v-icon
+										>mdi-file-document-box-search-outline</v-icon
+									>
 									{{ dict.word }}
 								</span>
 							</v-card-title>
 							<v-card-text class="d-flex">
-								<v-img :src="dict.thumbnailSrc" v-show="dict.thumbnailSrc" width="100"></v-img>
+								<v-img
+									:src="dict.thumbnailSrc"
+									v-show="dict.thumbnailSrc"
+									width="100"
+								></v-img>
 								<div class="ml-4 space-between">
 									<h3>{{ dict.title }}</h3>
 									<br />
@@ -85,7 +128,8 @@
 											:href="dict.link"
 											target="_blank"
 											style="color: rgba(125, 72, 121, 0.85)"
-										>자세히 보기</a>
+											>자세히 보기</a
+										>
 									</p>
 								</div>
 							</v-card-text>
@@ -105,17 +149,18 @@
 import router from "../router";
 import Prism from "../prism";
 import http from "../http-common";
+import VueTagsInput from "@johmun/vue-tags-input";
 
 export default {
 	name: "NewPage",
-	components: {},
+	components: { VueTagsInput },
 	data() {
 		return {
 			dialog: false,
 			question: 0,
 			dictWord: "",
 			dictArray: [],
-
+			tag: "",
 			tags: [],
 			board: {
 				code: "",
@@ -132,8 +177,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-				? event.charCode
-				: event.which;
+					? event.charCode
+					: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -245,9 +290,8 @@ export default {
 		this.board.memberId = this.$session.get("id");
 		console.log("memberId newpage mounted ", this.board.memberId);
 		this.$store.state.token = this.$session.get("accessToken");
-		this.board.postWriter = this.$store.getters.userNickname;
-		console.log("nickname this ", this.board.postWriter);
-		console.log("nickname vuex ", this.$store.getters.userNickname);
+		this.board.postWriter = this.$session.get("nickName");
+		console.log("nickname : ", this.$session.get("nickName"));
 	},
 	updated() {
 		Prism.highlightAll();
@@ -262,84 +306,35 @@ export default {
 * {
 	font-family: "Noto Sans KR", Courier;
 }
-.tags-input-wrapper-default {
-	background: white;
-	line-height: 2;
-	border: none;
-	border: 0.5px solid rgba(128, 128, 128, 0.5);
-	border-radius: 8px;
-}
-.tags-input-wrapper-default input::placeholder {
-	color: gray;
+/* tag input */
+#tagInput_div {
+	width: 100%;
 }
 
-.tags-input-badge {
-	font-size: 100%;
-}
-
-.tags-input-remove::before,
-.tags-input-remove::after {
-	background: white;
-}
-.tags-input-badge-selected-default {
-	color: white;
-	font-weight: 400;
-	background: rgba(160, 23, 98, 0.5);
-}
-.templatePage {
-	height: 100%;
-	background-color: white;
-}
-.tagInput {
-	float: left;
-	width: 68%;
-	margin: 25px auto 25px auto;
-	padding: 0px 0px 0px 10vw;
-}
-.submitInput {
-	/* display:grid;
-	justify-content: end; */
-	float: right;
-	margin: 25px auto 25px auto;
-	padding-right: 7vw;
-}
-.submitButton {
-	width: 100px;
-	height: 50px;
-	font-size: 20px;
-	color: white;
-	background-color: rgba(160, 23, 98, 0.5);
+#tagInput > div {
 	border-radius: 5px;
 }
-.title {
-	width: 80%;
-	margin: 0px auto 0px auto;
-	padding: 150px 40px 20px 40px;
-	border-bottom: 0.5px solid rgba(128, 128, 128, 0.5);
-}
-.titleInput {
+
+.vue-tags-input[data-v-61d92e31] {
+	max-width: none;
 	width: 100%;
-	height: 60px;
-	font-size: 30px;
 }
-.title > ::placeholder {
-	color: gray;
-	font-size: 30px;
+
+.vue-tags-input .ti-tag {
+	position: relative;
+	background: rgba(160, 23, 98, 0.5);
+	color: white;
 }
-.codeInput {
-	width: 80%;
-	margin: 0px auto 0px auto;
+
+.vue-tags-input .ti-new-tag-input.ti-invalid {
+	color: silver;
 }
-.attachInput {
-	/* display:inline-block; */
-	width: 82%;
-	margin: 0px auto 0px auto;
-	padding: 0px 40px 0px 40px;
+
+.vue-tags-input .ti-tag.ti-valid.ti-deletion-mark {
+	background: rgba(160, 23, 98, 1);
 }
-.footerBox {
-	background-color: white;
-	height: 200px;
-}
+
+/* dic */
 .agile__actions {
 	margin-top: 20px;
 }
@@ -376,98 +371,71 @@ export default {
 .agile__dot:hover button {
 	background-color: #888;
 }
-@media screen and (max-width: 600px) {
-	.templatePage {
-		height: 100%;
-		background-color: white;
-	}
-	.tagInput {
-		float: left;
-		width: 68%;
-		margin: 25px auto 25px auto;
-		padding: 0px 0px 0px 5vw;
-	}
-	.submitInput {
-		/* display:grid;
-		justify-content: end; */
-		float: right;
-		margin: 25px auto 25px auto;
-		padding-right: 5vw;
-	}
-	.submitButton {
-		width: 70px;
-		height: 45px;
-		font-size: 15px;
-		color: white;
-		background-color: rgba(160, 23, 98, 0.5);
-		border-radius: 5px;
-	}
-	.title {
-		width: 90%;
-		margin: 0px 5vw 0px 5vw;
-		padding: 150px 0px 10px 0px;
-		border-bottom: 0.5px solid rgba(128, 128, 128, 0.5);
-	}
-	.titleInput {
-		width: 100%;
-		height: 50px;
-		font-size: 20px;
-	}
-	.title > ::placeholder {
-		color: gray;
-		font-size: 20px;
-	}
-	#subBox
-		> div
-		> form
-		> div.codeInput
-		> div
-		> div.v-window.v-item-group.theme--light.v-tabs-items
-		> div
-		> div.v-window-item.v-window-item--active
-		> div {
-		padding: 0px;
-	}
-	#subBox
-		> div
-		> form
-		> div.codeInput
-		> div
-		> div.v-window.v-item-group.theme--light.v-tabs-items
-		> div
-		> div.v-window-item.v-window-item--active
-		> div
-		> div {
-		padding-top: 0px;
-	}
-	#subBox
-		> div
-		> form
-		> div.codeInput
-		> div
-		> div.v-window.v-item-group.theme--light.v-tabs-items
-		> div
-		> div.v-window-item.v-window-item--active
-		> div
-		> div
-		> div
-		> div.v-input__slot {
-		width: 100%;
-		padding: 0px;
-	}
-	.codeInput {
-		width: 90%;
-		margin: 0px 5vw 0px 5vw;
-	}
-	.attachInput {
-		/* display:inline-block; */
-		width: 90%;
-		margin: 0px 5vw 0px 5vw;
-		padding: 0px;
-	}
-	.footerBox {
-		/* background-color: white; */
-		height: 0px;
-	}
+
+/* etc */
+.templatePage {
+	background-color: white;
+	height: 100%;
+	padding: 10px;
+}
+#create_top {
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#write_btn {
+	float: right;
+	border: 1px solid rgba(160, 23, 98, 0.5);
+	color: rgba(160, 23, 98, 0.5);
+	width: 100%;
+	margin-top: 30px;
+	font-size: 25px;
+	padding: 20px;
+	transition: all 0.3s ease;
+	outline: none;
+}
+
+#write_btn:hover {
+	background-color: rgba(160, 23, 98, 0.5);
+	color: white;
+}
+
+#write_btn:active {
+	background-color: rgba(160, 23, 98, 0.7);
+	border: 1px solid rgba(160, 23, 98, 0.7);
+	color: white;
+}
+
+#subBox
+	> div.templatePage
+	> form
+	> div.codeInput
+	> div
+	> div.v-window.v-item-group.theme--light.v-tabs-items
+	> div
+	> div.v-window-item.v-window-item--active
+	> div
+	> div
+	> div
+	> div.v-input__slot,
+#subBox
+	> div.templatePage
+	> form
+	> div.codeInput
+	> div
+	> div.v-window.v-item-group.theme--light.v-tabs-items
+	> div
+	> div.v-window-item.v-window-item--active
+	> div {
+	padding: 0;
+}
+
+.codeInput {
+	margin-bottom: 20px;
+}
+
+.footerBox {
+	height: 200px;
 }
 </style>
