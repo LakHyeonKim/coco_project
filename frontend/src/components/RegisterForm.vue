@@ -386,6 +386,11 @@ export default {
 	},
 	mounted() {
 		// this.localize("ko", this.dictionary)
+		if (this.$session.has("useremail")) {
+			this.signUpMember.id = this.$session.get("useremail");
+			this.idCheck();
+			this.$session.remove("useremail");
+		}
 	},
 	computed: {
 		loading: function() {

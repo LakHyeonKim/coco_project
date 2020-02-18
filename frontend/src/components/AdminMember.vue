@@ -86,16 +86,25 @@
 				</th>
 			</tr>
 		</table>
+
+		<button @click="Update()">수정</button>
+		<button @click="goBack()">취소</button>
 	</div>
 </template>
 
 <script>
 import http from "../http-common";
+import router from "../router";
 
 export default {
 	name: "AdminMember",
 	data() {
 		return {
+			requestForm: {
+				headers: {
+					Authorization: ""
+				}
+			},
 			memberUpdate: {
 				idmember: 0,
 				id: "",
@@ -114,12 +123,50 @@ export default {
 			}
 		};
 	},
+	methods: {
+		Update() {
+			console.log(this.requestForm);
+			const requestForm = {
+				// idmember: this.memberUpdate.idmember,
+				// id: this.memberUpdate.id,
+				email: this.memberUpdate.email,
+				nickname: this.memberUpdate.nickname,
+				password: this.memberUpdate.password,
+				// grade: this.memberUpdate.grade,
+				rankId: this.memberUpdate.rankId,
+				gitUrl: this.memberUpdate.gitUrl,
+				instagramUrl: this.memberUpdate.instagramUrl,
+				kakaoUrl: this.memberUpdate.kakaoUrl,
+				imageUrl: this.memberUpdate.imageUrl,
+				isManager: this.memberUpdate.isManager,
+				isDelete: this.memberUpdate.isDelete
+			};
+			http.put("/api/updateMember", requestForm, this.requestForm)
+				.then(res => {
+					console.log(res);
+					document.location.reload();
+					alert("수정완료");
+				})
+				.catch(err => {
+					console.log(err);
+					alert("에러");
+				});
+		},
+		goBack() {
+			router.push("/admin");
+		}
+	},
 	mounted() {
+		this.requestForm.headers.Authorization = this.$session.get(
+			"accessToken"
+		);
+		console.log(this.requestForm);
+		document.querySelector("#navbar").setAttribute("style", "display:none");
 		const memberInfo = {
 			idmember: this.$route.params.no
 		};
 		// console.log(postInfo);
-		http.post("/api/findMember", memberInfo)
+		http.post("/api/findMember", memberInfo, this.requestForm)
 			.then(res => {
 				console.log("get member res ", res);
 				this.memberUpdate.email = res.data[0].email;
@@ -140,6 +187,11 @@ export default {
 			.catch(err => {
 				console.log("get member err ", err);
 			});
+	},
+	destroyed() {
+		document
+			.querySelector("#navbar")
+			.setAttribute("style", "display:fixed");
 	}
 };
 </script>

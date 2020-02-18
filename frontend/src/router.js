@@ -20,6 +20,9 @@ import CodeCoworkers from "./views/CodeCoworkers";
 import Admin from "./views/Admin";
 import AdminPost from "./components/AdminPost";
 import AdminMember from "./components/AdminMember";
+import AdminTag from "./components/AdminTag";
+import AdminComment from "./components/AdminComment";
+import AdminFollow from "./components/AdminFollow";
 
 Vue.use(VueRouter);
 
@@ -126,18 +129,30 @@ const routes = [
 		name: "adminpost",
 		component: AdminPost,
 		props: true
-		// meta: {
-		// 	authRequired: true
-		// }
 	},
 	{
 		path: "/admin/member/:no",
 		name: "adminmember",
 		component: AdminMember,
 		props: true
-		// meta: {
-		// 	authRequired: true
-		// }
+	},
+	{
+		path: "/admin/tag/:no",
+		name: "admintag",
+		component: AdminTag,
+		props: true
+	},
+	{
+		path: "/admin/comment/:no",
+		name: "admincomment",
+		component: AdminComment,
+		props: true
+	},
+	{
+		path: "/admin/follow/:no",
+		name: "adminfollow",
+		component: AdminFollow,
+		props: true
 	},
 	{
 		path: "*",
