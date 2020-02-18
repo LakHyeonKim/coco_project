@@ -3,7 +3,7 @@
 		<MypageBanner />
 		<MypageMyPost />
 		<MypageFooter />
-		<div id="blank"></div>
+		<div id="mypage_blank"></div>
 	</div>
 </template>
 
@@ -31,9 +31,10 @@ export default {
 * {
 	font-family: "Noto Sans KR", Courier;
 }
+
 @media screen and (max-width: 600px) {
-	#blank {
-		height: 10vw;
+	#mypage_blank {
+		height: 15vw;
 	}
 }
 </style>

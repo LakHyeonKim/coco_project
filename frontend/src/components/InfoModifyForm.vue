@@ -274,27 +274,65 @@ export default {
 	methods: {
 		deleteMember() {},
 		deleteImg(flag) {
+			if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
 			let address = "";
 			if (flag) {
 				address = "/trc/deleteMemberBannerImage";
 			} else {
 				address = "/trc/deleteMemberProfile";
 			}
-			if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
 			http.post(address, Number(this.$session.get("id")), {
-				headers: { Authorization: this.$session.get("accessToken") }
+				headers: {
+					Authorization:
+						this.$session.get("accessToken") == undefined
+							? null
+							: this.$session.get("accessToken")
+				}
 			})
-				.then(res => {
-					console.log("DELETE then ", res);
-					if (flag) {
-						this.member.bannerImageUrl = "";
-						this.bannerImage = null;
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log("ref");
+								console.log(ref);
+								console.log(
+									this.$session.get("refreshToken") ==
+										undefined
+										? null
+										: this.$session.get("refreshToken")
+								);
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
 					} else {
-						this.member.profileImageUrl = "";
-						this.profileImage = null;
+						console.log("DELETE then ", response);
+						if (flag) {
+							this.member.bannerImageUrl = "";
+							this.bannerImage = null;
+						} else {
+							this.member.profileImageUrl = "";
+							this.profileImage = null;
+							this.$session.remove("imageUrl");
+						}
+						alert("삭제되었습니다 ~");
 					}
-					alert("삭제되었습니다 ~");
 				})
 				.catch(err => {
 					this.$store.dispatch("endLoading");
@@ -340,12 +378,71 @@ export default {
 					console.log(pair[0] + ", " + pair[1]);
 				}
 				http.post("/trc/updateMemeberInfo/", formData, {
-					headers: { Authorization: this.$session.get("accessToken") }
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
 				})
-					.then(res => {
-						console.log("UPDATE then ", res);
-						alert("회원정보가 수정되었습니다.");
-						this.disabled = false;
+					.then(response => {
+						if (response.status == 203) {
+							console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									console.log("ref");
+									console.log(ref);
+									console.log(
+										this.$session.get("refreshToken") ==
+											undefined
+											? null
+											: this.$session.get("refreshToken")
+									);
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										window.location.reload(true);
+									}
+								})
+								.catch(error => {
+									console.log(error);
+								});
+						} else {
+							console.log("UPDATE then ", response);
+							this.$session.set("nickName", this.member.nickname);
+
+							if (this.$refs.profileImage.file) {
+								console.log(
+									"http://192.168.100.57:8888/userprofile/" +
+										this.$session.get("id") +
+										"_" +
+										this.profileImage.name
+								);
+								this.$session.set(
+									"imageUrl",
+									"http://192.168.100.57:8888/userprofile/" +
+										this.$session.get("id") +
+										"_" +
+										this.profileImage.name
+								);
+							}
+							alert("회원정보가 수정되었습니다.");
+							this.$router.push(
+								"/mypage/" + this.$session.get("id")
+							);
+							// this.disabled = false;
+						}
 					})
 					.catch(err => {
 						this.$store.dispatch("endLoading");
@@ -409,15 +506,50 @@ export default {
 		// }
 
 		http.post("/api/findByMemberHomePageModify", this.$session.get("id"), {
-			headers: { Authorization: this.$session.get("accessToken") }
+			headers: {
+				Authorization:
+					this.$session.get("accessToken") == undefined
+						? null
+						: this.$session.get("accessToken")
+			}
 		})
-			.then(res => {
-				console.log("findByMemberHomepageModify");
-				console.log(res.data);
-				this.member = res.data;
-				this.nickName_duplication = this.member.nickName;
-				this.tags = createTags(this.member.tags, []);
-				console.log(this.tags);
+			.then(response => {
+				if (response.status == 203) {
+					console.log("refresh token -> server");
+					http.post(
+						"/jwt/getAccessTokenByRefreshToken/",
+						this.$session.get("refreshToken") == undefined
+							? null
+							: this.$session.get("refreshToken")
+					)
+						.then(ref => {
+							console.log("ref");
+							console.log(ref);
+							console.log(
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							);
+							if (ref.status == 203) {
+								this.$session.destroy();
+								alert("로그인 정보가 만료되었습니다.");
+								this.$router.push("/");
+							} else {
+								this.$session.set("accessToken", ref.data);
+								window.location.reload(true);
+							}
+						})
+						.catch(error => {
+							console.log(error);
+						});
+				} else {
+					console.log("findByMemberHomepageModify");
+					console.log(response.data);
+					this.member = response.data;
+					this.nickName_duplication = this.member.nickName;
+					this.tags = createTags(this.member.tags, []);
+					console.log(this.tags);
+				}
 			})
 			.catch(error => {
 				console.log(error);
@@ -543,21 +675,43 @@ export default {
 	height: 50px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
 	#blank {
 		height: 20vw;
 		width: 100%;
 	}
 
 	#img_div {
-		padding: 30px;
+		padding: 10px;
+	}
+
+	#back_img > div {
+		height: 100px;
+		width: 120px;
+	}
+
+	#profile_img {
+		margin-left: 20px;
+	}
+
+	#profile_img > div {
+		width: 100px;
+		height: 100px;
+	}
+
+	#nick_text {
+		width: 75%;
+	}
+
+	#duplicate_btn {
+		width: 23%;
 	}
 }
 
 @media screen and (max-width: 500px) {
 	#modify {
 		width: 80%;
-		margin-top: 50px;
+		margin-top: 70px;
 	}
 }
 </style>

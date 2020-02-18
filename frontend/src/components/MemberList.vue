@@ -6,6 +6,10 @@
 			</template>
 
 			<v-card class="d_container">
+				<div v-if="followList != null && followList.length == 0">
+					해당 정보가 없습니다 ㅠㅠ
+				</div>
+
 				<div v-for="(f, idx) in followList" :key="f.member.idmember">
 					<div class="f_div">
 						<div
@@ -15,9 +19,9 @@
 							<img
 								class="f_img"
 								:src="
-									f.member.imgUrl == null
+									f.member.imageUrl == null
 										? '../img/icons/user.png'
-										: f.member.imgUrl
+										: f.member.imageUrl
 								"
 							/>
 							<div class="f_nick_div">
@@ -73,9 +77,9 @@ export default {
 	},
 	data() {
 		return {
+			isNone: false,
 			dialog: false,
 			following_btn: {
-				// marginLeft: "10px",
 				backgroundColor: "white",
 				borderRadius: "5px",
 				color: "gray",
@@ -83,7 +87,6 @@ export default {
 				border: "1px solid silver"
 			},
 			follow_btn: {
-				// marginLeft: "10px",
 				backgroundColor: "rgb(192, 110, 155)",
 				borderRadius: "5px",
 				color: "white",
@@ -108,12 +111,48 @@ export default {
 				this.followList[this.otherIdx].isFollow = 1;
 			}
 
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				memberFollowing: this.followList[this.otherIdx].member.idmember
-			})
+			http.post(
+				address,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.followList[this.otherIdx].member
+						.idmember
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
 				.then(response => {
 					console.log(response);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post("/jwt/getAccessTokenByRefreshToken/", {
+							refToken:
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+						})
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -131,7 +170,9 @@ export default {
 <style>
 .f_img {
 	width: 40px;
-	border: 1px solid gray;
+	height: 40px;
+	overflow: hidden;
+	border: 1px solid silver;
 	border-radius: 50%;
 	float: left;
 }

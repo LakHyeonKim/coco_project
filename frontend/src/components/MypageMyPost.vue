@@ -1,6 +1,6 @@
 <template>
 	<div id="posts">
-		<MypageMyMenu @search="search" />
+		<MypageMyMenu :search="getSearchData" />
 		<div id="post_list">
 			<div id="post_top">
 				<v-select
@@ -23,16 +23,32 @@
 						id="search_sel"
 						v-model="searchSel"
 					/>
-					<input v-model="menu_text" type="text" id="search_text" />
-					<img id="search_img" @click="search()" src="../assets/icon/search_b.png" />
+					<input
+						v-model="menu_text"
+						type="text"
+						id="search_text"
+						@keypress.enter="search()"
+					/>
+					<img
+						id="search_img"
+						@click="search()"
+						src="../assets/icon/search_b.png"
+					/>
 				</div>
+			</div>
+			<div
+				id="loading"
+				:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+				v-if="loadingTop"
+			>
+				<div class="loader"></div>
 			</div>
 			<div
 				class="post"
 				v-for="(item, index) in posts"
 				:key="item.post.idpost"
 			>
-				<div style="margin: 10px;">
+				<div style="margin: 10px;" class="post_click">
 					<div @click.prevent="goDetail(item.post.idpost)">
 						<div
 							v-for="tag in item.tags"
@@ -40,9 +56,12 @@
 							style="display: inline-block;"
 						>
 							<span
-								class="post_tag"
-								:style="selTag == tag ? selStyle : tagStyle"
-								@click="getSearchData(2, tag)"
+								:class="
+									selTag == tag
+										? { post_tag_deep: true }
+										: { post_tag: true }
+								"
+								@click.stop="getSearchData(2, tag)"
 							>
 								{{ tag }}
 							</span>
@@ -53,7 +72,7 @@
 						<div class="post_create">
 							<img
 								class="post_profile"
-								src="../assets/user.png"
+								:src="$store.state.targetImgUrl"
 							/>
 							<div class="post_nickname">
 								{{ item.post.postWriter }}
@@ -78,9 +97,15 @@
 							width="35px"
 							@click.stop="like(item.post.idpost, index)"
 						/>
-						<MemberList class="counting_click">
+						<MemberList
+							class="counting_click"
+							:followList="likeList"
+						>
 							<div slot="click">
-								<div class="like_text">
+								<div
+									class="like_text"
+									@click="getLike(item.post.idpost)"
+								>
 									{{ item.post.likeCount }}
 								</div>
 							</div>
@@ -96,7 +121,9 @@
 				<div class="line" />
 			</div>
 		</div>
-		<div v-if="noContents" id="noContents">검색한 내용의 포스트가 존재하지 않습니다</div>
+		<div v-if="noContents" id="noContents">
+			검색한 내용의 포스트가 존재하지 않습니다
+		</div>
 	</div>
 </template>
 <script>
@@ -113,6 +140,13 @@ export default {
 	},
 	data() {
 		return {
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			},
 			dialog: false,
 			noContents: false,
 			posts: "",
@@ -130,7 +164,7 @@ export default {
 			],
 			address: "",
 			selTag: "",
-			selStyle: {
+			post_tag_deep: {
 				float: "left",
 				marginRight: "6px",
 				fontSize: "13px",
@@ -140,7 +174,7 @@ export default {
 				color: "white",
 				backgroundColor: "#7d4879"
 			},
-			tagStyle: {
+			post_tag: {
 				float: "left",
 				marginRight: "6px",
 				fontSize: "13px",
@@ -153,11 +187,65 @@ export default {
 			menuSel: "",
 			menu_text: "",
 			searchSel: "",
-			orderSel: ""
+			orderSel: "",
+			likeList: {}
 		};
 	},
 	methods: {
-		test() {},
+		getLike(idx) {
+			http.post(
+				"/api/findWhoPressedTheLikeButton",
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: idx
+					}
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.getLike(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log("getLike()");
+						console.log(response.data);
+						this.likeList = response.data;
+					}
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
 		search() {
 			if (this.menuSel == "") {
 				alert("검색조건을 선택해주세요!");
@@ -184,6 +272,8 @@ export default {
 				address = "/api/findByPostCodeKeywordMyPosts";
 			}
 			this.orderSel = null;
+			this.posts = "";
+			this.loadingTop = true;
 			http.post(
 				address,
 				{
@@ -192,27 +282,56 @@ export default {
 					order: 4,
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					if (sel == 2) this.selTag = text;
-					else this.selTag = "";
-					this.posts = response.data;
-					console.log(this.posts.length);
-					if (this.posts.length == 0) this.noContents = true;
-					else this.noContents = false;
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						if (sel == 2) this.selTag = text;
+						else this.selTag = "";
+						this.posts = response.data;
+						console.log(this.posts.length);
+						if (this.posts.length == 0) this.noContents = true;
+						else this.noContents = false;
+					}
 				})
 				.catch(error => {
 					console.log(error);
-				});
+				})
+				.finally(() => (this.loadingTop = false));
 		},
 		chnagePostSel(idx) {
 			console.log(idx);
-			this.selTag = "";
-			// console.log(document.getElementById("search_sel").value);
-			// document.getElementById("search_sel").selected = undefined;
-			// document.getElementById("search_sel").items = this.items;
-			this.searchSel = null;
+
 			http.post(
 				"/api/findByMyPosts/",
 				{
@@ -220,15 +339,53 @@ export default {
 					order: idx,
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					this.posts = response.data;
-					console.log(this.posts);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.chnagePostSel(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						this.selTag = "";
+						this.searchSel = null;
+						this.posts = "";
+						this.loadingTop = true;
+
+						this.posts = response.data;
+						console.log(this.posts);
+					}
 				})
 				.catch(error => {
 					console.log(error);
-				});
+				})
+				.finally(() => (this.loadingTop = false));
 		},
 		changeMenuSel(idx) {
 			this.menuSel = idx;
@@ -258,8 +415,40 @@ export default {
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
-				.then(res => {
-					console.log(res);
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									if (this.posts[index].post.likeCheck == 1) {
+										this.posts[index].post.likeCheck = 0;
+										this.posts[index].post.likeCount--;
+									} else {
+										this.posts[index].post.likeCheck = 1;
+										this.posts[index].post.likeCount++;
+									}
+									this.like(postNum, index);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log(response);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -274,6 +463,7 @@ export default {
 		}
 	},
 	mounted() {
+		this.loadingTop = true;
 		console.log("MypageMyPost : " + this.$route.params.no);
 		http.post(
 			"/api/findByMyPosts/",
@@ -282,7 +472,14 @@ export default {
 				order: 4,
 				youIdMember: this.$route.params.no
 			},
-			{ headers: { Authorization: this.$session.get("accessToken") } }
+			{
+				headers: {
+					Authorization:
+						this.$session.get("accessToken") == undefined
+							? null
+							: this.$session.get("accessToken")
+				}
+			}
 		)
 			.then(response => {
 				this.posts = response.data;
@@ -290,12 +487,30 @@ export default {
 			})
 			.catch(error => {
 				console.log(error);
-			});
-		// .finally(() => (this.loading = false));
+			})
+			.finally(() => (this.loadingTop = false));
 	}
 };
 </script>
 <style>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 20px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+	margin-top: 100px;
+	margin-bottom: 200px;
+}
 #noContents {
 	text-align: center;
 	padding-top: 100px;
@@ -313,12 +528,16 @@ export default {
 	float: left;
 	margin-top: 19px;
 	padding: 0;
-	width: 300px;
+	width: 15vw;
 	height: 30px;
 	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
+	-webkit-transition: width 0.4s ease-in-out;
+	transition: width 0.4s ease-in-out;
 }
+
 #search_text:focus {
 	outline: none;
+	width: 30vw;
 }
 #search_img {
 	margin-top: 20px;
@@ -387,7 +606,7 @@ export default {
 	/* id : orderSel */
 	#post_top
 		> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select {
-		width: 90px;
+		width: 70px;
 	}
 
 	#post_top
@@ -410,7 +629,10 @@ export default {
 	}
 
 	#search_text {
-		width: 130px;
+		width: 15vw;
+	}
+	#search_text:focus {
+		width: 25vw;
 	}
 }
 
@@ -425,10 +647,21 @@ export default {
 	border-bottom: 1.5px solid rgba(0, 0, 0, 0.06);
 }
 
+.post_click {
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.post_click:hover {
+	box-shadow: 0.5px 0.5px 5px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+}
+
 .post {
 	margin-top: 20px;
 	font-weight: 300;
 }
+
 #post_list {
 	width: 80%;
 	margin: 0 auto;
@@ -441,20 +674,34 @@ export default {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.post_tag {
+.post_tag_deep {
 	float: left;
-	/* margin-right: 6px;
+	cursor: pointer;
+	margin-right: 6px;
 	font-size: 13px;
 	border-radius: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 	color: white;
-	background-color: rgba(160, 23, 98, 0.5); */
-	cursor: pointer;
+	background-color: #7d4879;
 }
+
 .post_tag:hover {
 	background-color: #7d4879;
 }
+
+.post_tag {
+	float: left;
+	cursor: pointer;
+	margin-right: 6px;
+	font-size: 13px;
+	border-radius: 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: white;
+	background-color: rgba(160, 23, 98, 0.5);
+}
+
 .post_create {
 	display: inline-block;
 	height: 30px;
@@ -463,8 +710,9 @@ export default {
 	float: left;
 	border-radius: 50%;
 	width: 20px;
+	height: 20px;
 	margin-top: 4px;
-	border: 1px solid rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(0, 0, 0, 0.2);
 	margin-right: 3px;
 }
 .post_nickname {

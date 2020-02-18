@@ -111,6 +111,10 @@ export default {
 			// console.log("alsdkfjlaskdfj", this.idPost);
 			// store.dispatch("saveIdPost", this.idPost);
 			// console.log("idPOst", store.state.idPost);
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
 			const requestForm = {
 				member: {
 					idmember: this.$session.get("id")
@@ -120,7 +124,7 @@ export default {
 				}
 			};
 			console.log("goDetail requestForm ", requestForm);
-			http.post("/trc/postClick/", requestForm)
+			http.post("/trc/postClick/", requestForm, { headers })
 				.then(res => {
 					console.log("postclick then ", res);
 				})

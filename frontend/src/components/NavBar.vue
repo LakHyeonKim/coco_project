@@ -4,18 +4,34 @@
 	<div id="navbar">
 		<notifications group="foo" />
 		<ul>
-			<li>
-				<!-- <router-link to="/mypage"> -->
+			<!-- <li>
 				<img
 					@click="getMypage()"
 					id="profile"
 					:src="
 						$session.get('imageUrl') == undefined
-							? './img/icons/user.png'
+							? '../img/icons/user.png'
 							: $session.get('imageUrl')
 					"
 				/>
-				<!-- </router-link> -->
+			</li>-->
+			<li id="profile_menu">
+				<img
+					@click="isBlock = !isBlock"
+					id="profile"
+					:src="
+						$session.get('imageUrl') == undefined
+							? '../img/icons/user.png'
+							: $session.get('imageUrl')
+					"
+				/>
+				<ul
+					id="profile_sub"
+					:style="isBlock ? 'display: block' : 'display: none'"
+				>
+					<li id="mypage_li" @click="getMypage()">마이페이지</li>
+					<li @click="logout()">로그아웃</li>
+				</ul>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/newsfeed">
@@ -23,9 +39,11 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="/newpage">
-					<img class="nav_menu_img" src="../assets/icon/plus.png" />
-				</router-link>
+				<img
+					class="nav_menu_img"
+					@click="goNewPage()"
+					src="../assets/icon/plus.png"
+				/>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/search">
@@ -89,7 +107,7 @@
 			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
-			</li> -->
+			</li>-->
 		</ul>
 	</div>
 </template>
@@ -127,8 +145,10 @@ export default {
 			alarmIcon: true,
 			followIcon: false,
 			likeIcon: false,
-			commentIcon: false
-		}
+			commentIcon: false,
+			preUrl: "",
+			isBlock: false
+		};
 	},
 	methods: {
 		alarmIconReset () {
@@ -136,6 +156,15 @@ export default {
 			this.followIcon = false
 			this.likeIcon = false
 			this.commentIcon = false
+        },
+		goNewPage() {
+			this.$store.state.parent = null;
+			router.push("/newpage");
+		},
+		logout() {
+			this.isBlock = false;
+			this.$session.destroy();
+			router.push("/");
 		},
 		getLeft () {
 			return parseInt(this.targetObj[0].style.left.replace('px', ''))
@@ -278,9 +307,10 @@ export default {
 		toggleMenu () {
 			this.isHidden = !this.isHidden
 		},
-		getMypage () {
-			console.log(this.$route.fullPath)
-			let location = '/mypage/' + this.$session.get('id')
+		getMypage() {
+			this.isBlock = false;
+			console.log(this.$route.fullPath);
+			let location = "/mypage/" + this.$session.get("id");
 
 			if (this.$route.fullPath != location) {
 				router.push(location).catch(err => {
@@ -410,7 +440,35 @@ export default {
 	border-radius: 25px;
 	margin-bottom: 20px;
 	width: 40px;
+	height: 40px;
 	cursor: pointer;
+}
+
+#navbar li ul {
+	list-style: none;
+	display: none;
+	background-color: rgb(243, 230, 250);
+	position: fixed;
+	color: rgba(0, 0, 0, 0.7);
+	margin: 0px;
+	padding: 0px;
+	z-index: 200;
+	left: 55px;
+	top: 30px;
+	/* border-radius: 10px; */
+	font-size: 15px;
+	box-shadow: 0.2px 0.2px 3px 0.5px rgba(0, 0, 0, 0.3);
+}
+#navbar li ul li {
+	padding: 10px;
+	cursor: pointer;
+}
+#navbar li ul li:hover {
+	background-color: rgb(168, 136, 185);
+	color: white;
+}
+#mypage_li {
+	border-bottom: 1px solid silver;
 }
 
 #navbar > ul > li {
@@ -451,6 +509,7 @@ export default {
 
 	#profile {
 		width: 35px;
+		height: 35px;
 		margin-bottom: 0;
 	}
 
@@ -467,11 +526,17 @@ export default {
 		width: 35px;
 		padding: 3px;
 	}
+	#navbar li ul {
+		top: auto;
+		bottom: 17vw;
+		left: 10vw;
+	}
 }
 @media screen and (max-width: 330px) {
 	#profile {
 		cursor: pointer;
 		width: 30px;
+		height: 30px;
 	}
 	.nav_menu_img {
 		width: 30px;

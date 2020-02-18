@@ -54,7 +54,7 @@
 				<!-- <div style="display:inline-block">
 					<LoginFormForKakao></LoginFormForKakao>
 				</div>-->
-				<a @click.prevent="getCode">
+				<a @click.prevent="getCode" target="_blank">
 					<img src="../assets/kakao_logo.png" class="logos" />
 				</a>
 			</div>
@@ -139,24 +139,29 @@ export default {
 							this.$session.set("isDelete", decode.isDelete);
 							this.$session.set("imageUrl", decode.imageUrl);
 							this.$session.set("grade", decode.grade);
-							this.$session.set("isManager", decode.isManager);
 							this.$session.set("email", decode.id);
-							// end_decocde
-
-							// this.$session.set(
-							// 	"id",
-							// 	Number(this.$store.getters.userId)
-							// );
-							// this.$session.set(
-							// 	"access",
-							// 	Number(this.$store.getters.userAccess)
-							// );
-							// this.$session.set(
-							// 	"nickname",
-							// 	this.$store.getters.userNickname
-							// );
-							this.loading = false;
-							router.push("/newsfeed");
+							this.$session.set("isManager", decode.isManager);
+							console.log(
+								"asdfasdf",
+								typeof this.$session.get("isManager")
+							);
+							if (this.$session.get("isManager") == 0) {
+								this.$session.clear();
+								alert("이메일 인증을 해주세요");
+								this.loadingTop = false;
+								document.location.reload();
+							} else if (this.$session.get("isManager") == 7) {
+								alert("관리자");
+								this.loadingTop = false;
+								router.push("/admin");
+								document.location.reload();
+							} else {
+								alert("잠깐만");
+								this.loadingTop = false;
+								router.push("/newsfeed");
+							}
+							this.loadingTop = false;
+							// router.push("/newsfeed");
 							console.log("LOGIN then ", res);
 						} else {
 							router.push("/").catch(err => {
@@ -201,6 +206,7 @@ export default {
 			console.log(useremail);
 			http.post("/jwt/snsLogin/", useremail)
 				.then(res => {
+					this.loadingTop = true;
 					console.log("google login res ", res);
 					if (res.data.accessToken) {
 						console.log("google login if ", res);
@@ -210,13 +216,42 @@ export default {
 							res.data.refreshToken
 						);
 						this.$store.state.token = res.data.accessToken;
-						this.$session.set(
-							"id",
-							Number(this.$store.getters.userId)
+						let decode = this.$store.getters.decode;
+						console.log("decode :: ");
+						console.log(decode);
+						this.$session.set("id", Number(decode.idmember));
+						this.$session.set("nickName", decode.nickname);
+						this.$session.set("rankId", decode.rankId);
+						this.$session.set("isDelete", decode.isDelete);
+						this.$session.set("imageUrl", decode.imageUrl);
+						this.$session.set("grade", decode.grade);
+						this.$session.set("email", decode.id);
+						this.$session.set("isManager", decode.isManager);
+						console.log(
+							"asdfasdf",
+							typeof this.$session.get("isManager")
 						);
-						router.push("/newsfeed");
+						if (this.$session.get("isManager") == 0) {
+							this.$session.clear();
+							alert("이메일 인증을 해주세요");
+							this.loadingTop = false;
+							document.location.reload();
+						} else if (this.$session.get("isManager") == 7) {
+							alert("관리자");
+							this.loadingTop = false;
+							router.push("/admin");
+							document.location.reload();
+						} else {
+							alert("잠깐만");
+							this.loadingTop = false;
+							router.push("/newsfeed");
+						}
+						this.loadingTop = false;
+						// router.push("/newsfeed");
+						console.log("LOGIN then ", res);
 					} else {
 						console.log("google res else", res);
+						this.$session.set("useremail", useremail);
 						router.push("/register");
 					}
 				})
@@ -237,20 +272,55 @@ export default {
 		if (code[1]) {
 			const sendCode = code[1].slice(1);
 			// alert(sendCode);
-			http.get("/test/kakaologin2", { params: { code: sendCode } })
+			http.get("/jwt/kakaologin", { params: { code: sendCode } })
 				.then(res => {
+					this.loadingTop = true;
 					console.log("kakao res", res.data);
 					console.log("kakao res", res.data.accessToken);
 					if (res.data.accessToken) {
+						this.$session.start();
 						this.$session.set("accessToken", res.data.accessToken);
 						this.$session.set(
 							"refreshToken",
 							res.data.refreshToken
 						);
-						this.$session.set("id", res.data.Member.idmember);
-						router.push("/newsfeed");
+						this.$store.state.token = res.data.accessToken;
+						let decode = this.$store.getters.decode;
+						console.log("decode :: ");
+						console.log(decode);
+						this.$session.set("id", Number(decode.idmember));
+						this.$session.set("nickName", decode.nickname);
+						this.$session.set("rankId", decode.rankId);
+						this.$session.set("isDelete", decode.isDelete);
+						this.$session.set("imageUrl", decode.imageUrl);
+						this.$session.set("grade", decode.grade);
+						this.$session.set("email", decode.id);
+						this.$session.set("isManager", decode.isManager);
+						console.log(
+							"asdfasdf",
+							typeof this.$session.get("isManager")
+						);
+						if (this.$session.get("isManager") == 0) {
+							this.$session.clear();
+							alert("이메일 인증을 해주세요");
+							this.loadingTop = false;
+							document.location.reload();
+						} else if (this.$session.get("isManager") == 7) {
+							alert("관리자");
+							this.loadingTop = false;
+							router.push("/admin");
+							document.location.reload();
+						} else {
+							alert("잠깐만");
+							this.loadingTop = false;
+							router.push("/newsfeed");
+						}
+						this.loadingTop = false;
+						// router.push("/newsfeed");
+						console.log("LOGIN then ", res);
 					} else {
 						console.log("kakao res else", res);
+						this.$session.set("useremail", res.data.id);
 						router.push("/register");
 					}
 				})

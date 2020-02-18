@@ -1,7 +1,15 @@
 <template>
 	<div id="banner">
 		<div id="imgBannerBox">
-			<img id="imgBanner" src="../assets/back.jpg" />
+			<img
+				id="imgBanner"
+				:src="
+					userInfo.mypage.bannerImagePath == null ||
+					userInfo.mypage.bannerImagePath == ''
+						? '../img/back.jpg'
+						: userInfo.mypage.bannerImagePath
+				"
+			/>
 		</div>
 		<div id="infoBox">
 			<div id="today">
@@ -10,14 +18,8 @@
 			</div>
 			<div id="info_title">{{ userInfo.mypage.bannerText }}</div>
 			<div id="info_desc">
-				<img
-					id="imgUser"
-					:src="
-						userInfo.member.imageUrl == ''
-							? './img/icons/user.png'
-							: userInfo.member.imageUrl
-					"
-				/>
+				<img id="imgUser" :src="$store.state.targetImgUrl" />
+				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
 						<div id="nickname">{{ userInfo.member.nickname }}</div>
@@ -119,7 +121,8 @@ export default {
 				mypage: {
 					todayVisitedCount: 0,
 					totalVisitedCount: 0,
-					bannerText: ""
+					bannerText: "",
+					bannerImagePath: ""
 				},
 				member: {
 					imageUrl: "",
@@ -152,6 +155,9 @@ export default {
 		};
 	},
 	methods: {
+		test() {
+			this.$session.remove("accessToken");
+		},
 		pwCheck() {
 			alert(this.input_pw);
 			this.$router.push("/infoModify");
@@ -178,10 +184,39 @@ export default {
 					memberFollower: this.$session.get("id"),
 					memberFollowing: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
 					console.log(response);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -206,12 +241,123 @@ export default {
 					myIdMemeber: this.$session.get("id"),
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					console.log("Banner getFollow()");
-					this.followList = response.data;
-					console.log(this.followList);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.getFollow(flag);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log("Banner getFollow()");
+						this.followList = response.data;
+						console.log(this.followList);
+					}
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
+		mount() {
+			console.log("MypageBanner : " + this.$route.params.no);
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			console.log("myPage banner headers", headers);
+			if (this.$session.get("id") == this.$route.params.no) {
+				this.isUser = true;
+			}
+			console.log("isUser : " + this.isUser);
+			http.post(
+				"/api/findByMemberHomePageUserID/",
+				{
+					myIdMemeber: this.$session.get("id"),
+					youIdMember: this.$route.params.no
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
+				.then(response => {
+					console.log(response.status);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log("ref");
+								console.log(ref);
+								console.log(
+									this.$session.get("refreshToken") ==
+										undefined
+										? null
+										: this.$session.get("refreshToken")
+								);
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.mount();
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						this.userInfo = response.data;
+						store.state.tags = this.userInfo.tags;
+
+						if (this.userInfo.member.imageUrl == "")
+							store.state.targetImgUrl = "../img/icons/user.png";
+						else
+							store.state.targetImgUrl = this.userInfo.member.imageUrl;
+
+						console.log("Banner mounted()");
+						console.log(response.data);
+						if (this.userInfo.isFollew == 1) {
+							this.f_current = "팔로잉";
+						} else {
+							this.f_current = "팔로우";
+						}
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -219,38 +365,7 @@ export default {
 		}
 	},
 	mounted() {
-		console.log("MypageBanner : " + this.$route.params.no);
-		const token = this.$session.get("accessToken");
-		const headers = {
-			Authorization: token
-		};
-		console.log("myPage banner headers", headers);
-		if (this.$session.get("id") == this.$route.params.no) {
-			this.isUser = true;
-		}
-		console.log("isUser : " + this.isUser);
-		http.post(
-			"/api/findByMemberHomePageUserID/",
-			{
-				myIdMemeber: this.$session.get("id"),
-				youIdMember: this.$route.params.no
-			},
-			{ headers: { Authorization: this.$session.get("accessToken") } }
-		)
-			.then(response => {
-				this.userInfo = response.data;
-				store.state.tags = this.userInfo.tags;
-				console.log("Banner mounted()");
-				console.log(response);
-				if (this.userInfo.isFollew == 1) {
-					this.f_current = "팔로잉";
-				} else {
-					this.f_current = "팔로우";
-				}
-			})
-			.catch(error => {
-				console.log(error);
-			});
+		this.mount();
 	}
 };
 </script>

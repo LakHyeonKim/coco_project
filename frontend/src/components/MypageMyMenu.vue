@@ -13,7 +13,7 @@
 		<!-- blur 생각해보기 -->
 		<div id="open" v-if="!isHidden">
 			<ul id="list" v-for="item in tags" :key="item">
-				<li>#{{ item }}</li>
+				<li class="menu_tags" @click="searchTag(item)">#{{ item }}</li>
 			</ul>
 		</div>
 		<div></div>
@@ -24,6 +24,9 @@ import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
+	props: {
+		search: {}
+	},
 	data() {
 		return {
 			items: [
@@ -37,6 +40,10 @@ export default {
 		};
 	},
 	methods: {
+		searchTag(item) {
+			this.isHidden = true;
+			this.search(2, item);
+		},
 		toggleMenu() {
 			this.isHidden = !this.isHidden;
 			this.tags = store.state.tags;
@@ -53,6 +60,14 @@ export default {
 	top: 0;
 	right: 0;
 	z-index: 1;
+}
+.menu_tags {
+	cursor: pointer;
+	margin: 3px;
+}
+#list > li:hover {
+	/* box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.267); */
+	background-color: rgba(150, 23, 98, 0.7);
 }
 #imgMenu {
 	right: 0;

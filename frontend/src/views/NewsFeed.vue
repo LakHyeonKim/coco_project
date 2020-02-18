@@ -1,7 +1,4 @@
 <template>
-	<!-- 웹 화면에서 사이즈가 줄어들 경우 좋아요, 댓글 튀어나감 (해쉬태그가 2줄이 되는 경우에) -->
-	<!-- header 구성요소 -->
-	<!-- 스택 로고 위치, 공간차지 -->
 	<div id="backBox">
 		<div id="header">
 			<div id="headInnerBox">
@@ -12,12 +9,6 @@
 						id="searchLogo"
 					/>
 				</label>
-				<input
-					type="text"
-					v-on:change="onInput"
-					id="searchBox"
-					placeholder="없으면 허전해"
-				/>
 				<div id="codeCoworker">Code Coworker</div>
 			</div>
 		</div>
@@ -41,9 +32,32 @@ export default {
 		PostList
 	},
 	methods: {
-		onInput(e) {
-			console.log(e.target.value);
+		scrollEvent() {
+			if (
+				document.body.scrollTop > 50 ||
+				document.documentElement.scrollTop > 50
+			) {
+				document.getElementById("header").style.height = "50px";
+				document.getElementById("headInnerBox").style.padding = "10px";
+				document.getElementById("CC").style.display = "inline-block";
+				document.getElementById("serachBox").style.display = "none";
+			} else {
+				document.getElementById("header").style.height = "75px";
+				document.getElementById("headInnerBox").style.padding =
+					"20px 10px 20px 10px";
+				document.getElementById("CC").style.display = "none";
+				document.getElementById("serachBox").style.display =
+					"inline-block";
+			}
 		}
+	},
+	created: function() {
+		console.log("크리에이트는 언제 찍힐까");
+		window.addEventListener("scroll", this.scrollEvent);
+	},
+	beforeDestroy: function() {
+		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };
 </script>
@@ -59,6 +73,7 @@ export default {
 	z-index: 1;
 	background-color: white;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	transition: 0.2s;
 }
 #headInnerBox {
 	text-align: center;
@@ -142,6 +157,7 @@ export default {
 	#subBox {
 		width: 100%;
 		padding-left: 0;
+		padding-right: 0;
 	}
 	.footerBlank {
 		display: block;
