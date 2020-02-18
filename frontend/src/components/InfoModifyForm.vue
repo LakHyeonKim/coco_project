@@ -345,21 +345,25 @@ export default {
 					.then(res => {
 						console.log("UPDATE then ", res);
 						this.$session.set("nickName", this.member.nickname);
-						console.log(
-							"http://192.168.100.57:8888/userprofile/" +
-								this.$session.get("id") +
-								"_" +
-								this.profileImage.name
-						);
-						this.$session.set(
-							"imageUrl",
-							"http://192.168.100.57:8888/userprofile/" +
-								this.$session.get("id") +
-								"_" +
-								this.profileImage.name
-						);
+
+						if (this.$refs.profileImage.file) {
+							console.log(
+								"http://192.168.100.57:8888/userprofile/" +
+									this.$session.get("id") +
+									"_" +
+									this.profileImage.name
+							);
+							this.$session.set(
+								"imageUrl",
+								"http://192.168.100.57:8888/userprofile/" +
+									this.$session.get("id") +
+									"_" +
+									this.profileImage.name
+							);
+						}
 						alert("회원정보가 수정되었습니다.");
-						this.disabled = false;
+						this.$router.push("/mypage/" + this.$session.get("id"));
+						// this.disabled = false;
 					})
 					.catch(err => {
 						this.$store.dispatch("endLoading");
