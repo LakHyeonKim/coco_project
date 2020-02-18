@@ -148,19 +148,19 @@ export default {
 							if (this.$session.get("isManager") == 0) {
 								this.$session.clear();
 								alert("이메일 인증을 해주세요");
-								this.loading = false;
+								this.loadingTop = false;
 								document.location.reload();
 							} else if (this.$session.get("isManager") == 7) {
 								alert("관리자");
-								this.loading = false;
+								this.loadingTop = false;
 								router.push("/admin");
 								document.location.reload();
 							} else {
 								alert("잠깐만");
-								this.loading = false;
+								this.loadingTop = false;
 								router.push("/newsfeed");
 							}
-							this.loading = false;
+							this.loadingTop = false;
 							// router.push("/newsfeed");
 							console.log("LOGIN then ", res);
 						} else {
@@ -206,6 +206,7 @@ export default {
 			console.log(useremail);
 			http.post("/jwt/snsLogin/", useremail)
 				.then(res => {
+					this.loadingTop = true;
 					console.log("google login res ", res);
 					if (res.data.accessToken) {
 						console.log("google login if ", res);
@@ -224,9 +225,30 @@ export default {
 						this.$session.set("isDelete", decode.isDelete);
 						this.$session.set("imageUrl", decode.imageUrl);
 						this.$session.set("grade", decode.grade);
-						this.$session.set("isManager", decode.isManager);
 						this.$session.set("email", decode.id);
-						router.push("/newsfeed");
+						this.$session.set("isManager", decode.isManager);
+						console.log(
+							"asdfasdf",
+							typeof this.$session.get("isManager")
+						);
+						if (this.$session.get("isManager") == 0) {
+							this.$session.clear();
+							alert("이메일 인증을 해주세요");
+							this.loadingTop = false;
+							document.location.reload();
+						} else if (this.$session.get("isManager") == 7) {
+							alert("관리자");
+							this.loadingTop = false;
+							router.push("/admin");
+							document.location.reload();
+						} else {
+							alert("잠깐만");
+							this.loadingTop = false;
+							router.push("/newsfeed");
+						}
+						this.loadingTop = false;
+						// router.push("/newsfeed");
+						console.log("LOGIN then ", res);
 					} else {
 						console.log("google res else", res);
 						this.$session.set("useremail", useremail);
@@ -252,6 +274,7 @@ export default {
 			// alert(sendCode);
 			http.get("/jwt/kakaologin", { params: { code: sendCode } })
 				.then(res => {
+					this.loadingTop = true;
 					console.log("kakao res", res.data);
 					console.log("kakao res", res.data.accessToken);
 					if (res.data.accessToken) {
@@ -277,19 +300,27 @@ export default {
 							"asdfasdf",
 							typeof this.$session.get("isManager")
 						);
-						if (this.$session.get("isManager") == "0") {
+						if (this.$session.get("isManager") == 0) {
 							this.$session.clear();
 							alert("이메일 인증을 해주세요");
+							this.loadingTop = false;
+							document.location.reload();
 						} else if (this.$session.get("isManager") == 7) {
 							alert("관리자");
+							this.loadingTop = false;
 							router.push("/admin");
+							document.location.reload();
 						} else {
 							alert("잠깐만");
+							this.loadingTop = false;
 							router.push("/newsfeed");
 						}
+						this.loadingTop = false;
+						// router.push("/newsfeed");
+						console.log("LOGIN then ", res);
 					} else {
 						console.log("kakao res else", res);
-						// this.$session.set("useremail", useremail);
+						this.$session.set("useremail", res.data.id);
 						router.push("/register");
 					}
 				})

@@ -254,19 +254,37 @@ export default {
 									);
 									this.$session.set(
 										"imageUrl",
-										decode.imgUrl
+										decode.imageUrl
 									);
 									this.$session.set("grade", decode.grade);
+									this.$session.set("email", decode.id);
 									this.$session.set(
 										"isManager",
 										decode.isManager
 									);
-									this.$session.set("email", decode.id);
-									// end_decocde
-
-									this.loading = false;
+									console.log(
+										"asdfasdf",
+										typeof this.$session.get("isManager")
+									);
+									if (this.$session.get("isManager") == 0) {
+										this.$session.clear();
+										alert("이메일 인증을 해주세요");
+										this.loadingTop = false;
+										document.location.reload();
+									} else if (
+										this.$session.get("isManager") == 7
+									) {
+										alert("관리자");
+										this.loadingTop = false;
+										router.push("/admin");
+										document.location.reload();
+									} else {
+										alert("잠깐만");
+										this.loadingTop = false;
+										router.push("/newsfeed");
+									}
 									this.loadingTop = false;
-									router.push("/newsfeed");
+									// router.push("/newsfeed");
 									console.log("LOGIN then ", res);
 								} else {
 									router.push("/").catch(err => {
@@ -390,11 +408,6 @@ export default {
 			this.signUpMember.id = this.$session.get("useremail");
 			this.idCheck();
 			this.$session.remove("useremail");
-		}
-	},
-	computed: {
-		loading: function() {
-			return this.$store.state.loading;
 		}
 	}
 };
