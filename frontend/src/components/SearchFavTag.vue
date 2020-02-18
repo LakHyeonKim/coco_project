@@ -41,7 +41,13 @@ export default {
 				{ tag: "react", path: "../img/stacks/react.png" },
 				{ tag: "spring", path: "../img/stacks/spring.png" },
 				{ tag: "swagger", path: "../img/stacks/swagger.png" },
-				{ tag: "vue", path: "../img/stacks/vue.png" }
+				{ tag: "R", path: "../img/stacks/R.png" },
+				{ tag: "kotlin", path: "../img/stacks/kotlin.png" },
+				{ tag: "rubyonRails", path: "../img/stacks/rubyRail.png" },
+				{ tag: "objective_C", path: "../img/stacks/objC.png" },
+				{ tag: "ruby", path: "../img/stacks/ruby.png" },
+				{ tag: "matlab", path: "../img/stacks/matlab.png" },
+				{ tag: "go", path: "../img/stacks/go.png" }
 			]
 		};
 	},
@@ -151,6 +157,23 @@ export default {
 	white-space: nowrap;
 	/* overflow-y: hidden; */
 	overflow-x: scroll;
+	overscroll-behavior: contain;
+}
+#favTag::-webkit-scrollbar {
+	width: 11px;
+	height: 8px;
+}
+#favTag::-webkit-scrollbar-track {
+	background: none;
+}
+#favTag::-webkit-scrollbar-thumb {
+	background: rgba(160, 23, 98, 0.3);
+}
+#favTag::-webkit-scrollbar-thumb:hover {
+	background: rgba(160, 23, 98, 0.3);
+}
+#favTag::-webkit-scrollbar-thumb:active {
+	background: rgba(160, 23, 98, 0.3);
 }
 #tag {
 	display: inline-block;

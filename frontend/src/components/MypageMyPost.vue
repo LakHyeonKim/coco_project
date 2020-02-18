@@ -23,7 +23,12 @@
 						id="search_sel"
 						v-model="searchSel"
 					/>
-					<input v-model="menu_text" type="text" id="search_text" />
+					<input
+						v-model="menu_text"
+						type="text"
+						id="search_text"
+						@keypress.enter="search()"
+					/>
 					<img
 						id="search_img"
 						@click="search()"
@@ -523,12 +528,16 @@ export default {
 	float: left;
 	margin-top: 19px;
 	padding: 0;
-	width: 300px;
+	width: 15vw;
 	height: 30px;
 	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
+	-webkit-transition: width 0.4s ease-in-out;
+	transition: width 0.4s ease-in-out;
 }
+
 #search_text:focus {
 	outline: none;
+	width: 30vw;
 }
 #search_img {
 	margin-top: 20px;
@@ -597,7 +606,7 @@ export default {
 	/* id : orderSel */
 	#post_top
 		> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select {
-		width: 90px;
+		width: 70px;
 	}
 
 	#post_top
@@ -620,7 +629,10 @@ export default {
 	}
 
 	#search_text {
-		width: 130px;
+		width: 15vw;
+	}
+	#search_text:focus {
+		width: 25vw;
 	}
 }
 

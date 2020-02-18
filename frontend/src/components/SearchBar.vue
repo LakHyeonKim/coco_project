@@ -70,16 +70,21 @@ export default {
 			this.value = values;
 		},
 		scrollEvent() {
-			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+			if (
+				document.body.scrollTop > 50 ||
+				document.documentElement.scrollTop > 50
+			) {
 				document.getElementById("header").style.height = "50px";
 				document.getElementById("headInnerBox").style.padding = "10px";
 				document.getElementById("CC").style.display = "inline-block";
 				document.getElementById("serachBox").style.display = "none";
 			} else {
 				document.getElementById("header").style.height = "75px";
-				document.getElementById("headInnerBox").style.padding = "20px 10px 20px 10px";
+				document.getElementById("headInnerBox").style.padding =
+					"20px 10px 20px 10px";
 				document.getElementById("CC").style.display = "none";
-				document.getElementById("serachBox").style.display = "inline-block";
+				document.getElementById("serachBox").style.display =
+					"inline-block";
 			}
 		}
 	},
@@ -174,9 +179,12 @@ export default {
 		display: inline-block;
 		vertical-align: middle;
 		border-bottom: 1px solid black;
-		width: 40vw;
+		width: 25vw;
 		margin-left: 5px;
 		margin-right: 10px;
+	}
+	#searchInput:focus {
+		width: 40vw;
 	}
 	::placeholder {
 		color: black;

@@ -55,7 +55,8 @@ export default {
 			idMember: 0,
 			loadingTop: false,
 			loadingStyleOn: {
-				display: "grid"
+				display: "grid",
+				height: "100px"
 			},
 			loadingStyleOff: {
 				display: "none"
@@ -244,7 +245,7 @@ export default {
 #loading {
 	display: none;
 	width: 100%;
-	margin: 100px auto 20px auto;
+	margin: 20px auto 20px auto;
 	display: grid;
 	justify-content: center;
 }

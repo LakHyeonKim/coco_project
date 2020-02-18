@@ -54,7 +54,8 @@ export default {
 			},
 			loadingStyleOff: {
 				display: "none"
-			}
+			},
+			loadingflag: true
 		};
 	},
 	components: {
@@ -132,6 +133,7 @@ export default {
 						this.posts = [...this.mapPosts];
 						console.log(this.posts);
 						this.loadingTop = false;
+						this.loadingflag = true;
 					})
 					.catch(err => {
 						console.log("getpost catch ", err);
@@ -146,7 +148,8 @@ export default {
 			if (
 				window.scrollY >=
 					document.body.offsetHeight - window.innerHeight - 150 &&
-				this.flag == true
+				this.flag == true &&
+				this.loadingflag == true
 			) {
 				console.log(
 					"flagflagflagflag asdjflkasjdlfkajsdlfkajsldfkjalsdkfjalskdfj"
@@ -185,9 +188,10 @@ export default {
 						console.log("getpost catch ", err);
 						this.flag = true;
 						this.loading = false;
-						document
-							.querySelector("#loading")
-							.setAttribute("style", "display:none");
+						this.loadingflag = false;
+						// document
+						// 	.querySelector("#loading")
+						// 	.setAttribute("style", "display:none");
 					});
 			}
 		}
