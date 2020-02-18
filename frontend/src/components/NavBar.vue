@@ -24,7 +24,10 @@
 							: $session.get('imageUrl')
 					"
 				/>
-				<ul id="profile_sub" :style="isBlock ? 'display: block' : 'display: none'">
+				<ul
+					id="profile_sub"
+					:style="isBlock ? 'display: block' : 'display: none'"
+				>
 					<li id="mypage_li" @click="getMypage()">마이페이지</li>
 					<li @click="logout()">로그아웃</li>
 				</ul>
@@ -35,9 +38,11 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="/newpage" @click="$store.state.parent = {}">
-					<img class="nav_menu_img" src="../assets/icon/plus.png" />
-				</router-link>
+				<img
+					class="nav_menu_img"
+					@click="goNewPage()"
+					src="../assets/icon/plus.png"
+				/>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/search">
@@ -68,6 +73,10 @@ export default {
 		};
 	},
 	methods: {
+		goNewPage() {
+			this.$store.state.parent = null;
+			router.push("/newpage");
+		},
 		logout() {
 			this.isBlock = false;
 			this.$session.destroy();
