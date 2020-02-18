@@ -6,6 +6,10 @@
 			</template>
 
 			<v-card class="d_container">
+				<div v-if="followList != null && followList.length == 0">
+					해당 정보가 없습니다 ㅠㅠ
+				</div>
+
 				<div v-for="(f, idx) in followList" :key="f.member.idmember">
 					<div class="f_div">
 						<div
@@ -73,6 +77,7 @@ export default {
 	},
 	data() {
 		return {
+			isNone: false,
 			dialog: false,
 			following_btn: {
 				// marginLeft: "10px",

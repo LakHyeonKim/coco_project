@@ -89,9 +89,16 @@
 							width="35px"
 							@click.stop="like(item.post.idpost, index)"
 						/>
-						<MemberList class="counting_click">
+						<MemberList
+							class="counting_click"
+							:followList="likeList"
+						>
 							<div slot="click">
-								<div class="like_text">
+								<div
+									class="like_text"
+									@click="getLike(item.post.idpost)"
+									:list_len="likeList.length"
+								>
 									{{ item.post.likeCount }}
 								</div>
 							</div>
@@ -173,11 +180,33 @@ export default {
 			menuSel: "",
 			menu_text: "",
 			searchSel: "",
-			orderSel: ""
+			orderSel: "",
+			likeList: {}
 		};
 	},
 	methods: {
-		test() {},
+		getLike(idx) {
+			http.post(
+				"/api/findWhoPressedTheLikeButton",
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: idx
+					}
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
+				.then(res => {
+					console.log("getLike()");
+					console.log(res.data);
+					this.likeList = res.data;
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
 		search() {
 			if (this.menuSel == "") {
 				alert("검색조건을 선택해주세요!");
