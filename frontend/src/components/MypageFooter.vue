@@ -42,8 +42,9 @@
 				<img class="logo" src="../assets/logo/mybatis.png" />
 			</div>
 		</div>
+		<div style="clear: both;"></div>
 		<div id="footer_bottom">© All right Reversed.</div>
-		<div id="goAdmin" @click="goAdmin()"></div>
+		<!-- <div id="goAdmin" @click="goAdmin()"></div> -->
 	</div>
 </template>
 
@@ -68,12 +69,13 @@ export default {
 #footer {
 	font-family: "Noto Sans KR", sans-serif;
 	background-color: rgba(125, 72, 121, 0.85);
-	height: 200px;
+	/* height: 200px; */
 	text-align: center;
 	color: white;
 	width: 100%;
 	font-weight: 300;
 	font-size: 12px;
+	/* position: relative; */
 }
 
 #footer_top {
@@ -95,10 +97,11 @@ export default {
 }
 
 #footer_bottom {
-	position: absolute;
-	bottom: 0;
+	/* position: absolute; */
+	/* bottom: 0; */
 	text-align: center;
 	width: 100%;
+	margin-top: 50px;
 	padding-bottom: 20px;
 }
 

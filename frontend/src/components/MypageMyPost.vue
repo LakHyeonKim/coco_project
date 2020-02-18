@@ -24,8 +24,19 @@
 						v-model="searchSel"
 					/>
 					<input v-model="menu_text" type="text" id="search_text" />
-					<img id="search_img" @click="search()" src="../assets/icon/search_b.png" />
+					<img
+						id="search_img"
+						@click="search()"
+						src="../assets/icon/search_b.png"
+					/>
 				</div>
+			</div>
+			<div
+				id="loading"
+				:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+				v-if="loadingTop"
+			>
+				<div class="loader"></div>
 			</div>
 			<div
 				class="post"
@@ -96,7 +107,9 @@
 				<div class="line" />
 			</div>
 		</div>
-		<div v-if="noContents" id="noContents">검색한 내용의 포스트가 존재하지 않습니다</div>
+		<div v-if="noContents" id="noContents">
+			검색한 내용의 포스트가 존재하지 않습니다
+		</div>
 	</div>
 </template>
 <script>
@@ -113,6 +126,13 @@ export default {
 	},
 	data() {
 		return {
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			},
 			dialog: false,
 			noContents: false,
 			posts: "",
@@ -184,6 +204,8 @@ export default {
 				address = "/api/findByPostCodeKeywordMyPosts";
 			}
 			this.orderSel = null;
+			this.posts = "";
+			this.loadingTop = true;
 			http.post(
 				address,
 				{
@@ -204,7 +226,8 @@ export default {
 				})
 				.catch(error => {
 					console.log(error);
-				});
+				})
+				.finally(() => (this.loadingTop = false));
 		},
 		chnagePostSel(idx) {
 			console.log(idx);
@@ -213,6 +236,8 @@ export default {
 			// document.getElementById("search_sel").selected = undefined;
 			// document.getElementById("search_sel").items = this.items;
 			this.searchSel = null;
+			this.posts = "";
+			this.loadingTop = true;
 			http.post(
 				"/api/findByMyPosts/",
 				{
@@ -228,7 +253,8 @@ export default {
 				})
 				.catch(error => {
 					console.log(error);
-				});
+				})
+				.finally(() => (this.loadingTop = false));
 		},
 		changeMenuSel(idx) {
 			this.menuSel = idx;
@@ -274,6 +300,7 @@ export default {
 		}
 	},
 	mounted() {
+		this.loadingTop = true;
 		console.log("MypageMyPost : " + this.$route.params.no);
 		http.post(
 			"/api/findByMyPosts/",
@@ -290,12 +317,30 @@ export default {
 			})
 			.catch(error => {
 				console.log(error);
-			});
-		// .finally(() => (this.loading = false));
+			})
+			.finally(() => (this.loadingTop = false));
 	}
 };
 </script>
 <style>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 20px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+	margin-top: 100px;
+	margin-bottom: 200px;
+}
 #noContents {
 	text-align: center;
 	padding-top: 100px;
