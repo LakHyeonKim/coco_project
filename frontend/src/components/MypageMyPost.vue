@@ -43,7 +43,7 @@
 				v-for="(item, index) in posts"
 				:key="item.post.idpost"
 			>
-				<div style="margin: 10px;">
+				<div style="margin: 10px;" class="post_click">
 					<div @click.prevent="goDetail(item.post.idpost)">
 						<div
 							v-for="tag in item.tags"
@@ -51,9 +51,12 @@
 							style="display: inline-block;"
 						>
 							<span
-								class="post_tag"
-								:style="selTag == tag ? selStyle : tagStyle"
-								@click="getSearchData(2, tag)"
+								:class="
+									selTag == tag
+										? { post_tag_deep: true }
+										: { post_tag: true }
+								"
+								@click.stop="getSearchData(2, tag)"
 							>
 								{{ tag }}
 							</span>
@@ -64,7 +67,7 @@
 						<div class="post_create">
 							<img
 								class="post_profile"
-								src="../assets/user.png"
+								:src="$store.state.targetImgUrl"
 							/>
 							<div class="post_nickname">
 								{{ item.post.postWriter }}
@@ -156,7 +159,7 @@ export default {
 			],
 			address: "",
 			selTag: "",
-			selStyle: {
+			post_tag_deep: {
 				float: "left",
 				marginRight: "6px",
 				fontSize: "13px",
@@ -166,7 +169,7 @@ export default {
 				color: "white",
 				backgroundColor: "#7d4879"
 			},
-			tagStyle: {
+			post_tag: {
 				float: "left",
 				marginRight: "6px",
 				fontSize: "13px",
@@ -195,12 +198,44 @@ export default {
 						idpost: idx
 					}
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
-				.then(res => {
-					console.log("getLike()");
-					console.log(res.data);
-					this.likeList = res.data;
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.getLike(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log("getLike()");
+						console.log(response.data);
+						this.likeList = response.data;
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -242,15 +277,47 @@ export default {
 					order: 4,
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					if (sel == 2) this.selTag = text;
-					else this.selTag = "";
-					this.posts = response.data;
-					console.log(this.posts.length);
-					if (this.posts.length == 0) this.noContents = true;
-					else this.noContents = false;
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						if (sel == 2) this.selTag = text;
+						else this.selTag = "";
+						this.posts = response.data;
+						console.log(this.posts.length);
+						if (this.posts.length == 0) this.noContents = true;
+						else this.noContents = false;
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -259,13 +326,7 @@ export default {
 		},
 		chnagePostSel(idx) {
 			console.log(idx);
-			this.selTag = "";
-			// console.log(document.getElementById("search_sel").value);
-			// document.getElementById("search_sel").selected = undefined;
-			// document.getElementById("search_sel").items = this.items;
-			this.searchSel = null;
-			this.posts = "";
-			this.loadingTop = true;
+
 			http.post(
 				"/api/findByMyPosts/",
 				{
@@ -273,11 +334,48 @@ export default {
 					order: idx,
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					this.posts = response.data;
-					console.log(this.posts);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.chnagePostSel(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						this.selTag = "";
+						this.searchSel = null;
+						this.posts = "";
+						this.loadingTop = true;
+
+						this.posts = response.data;
+						console.log(this.posts);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -312,8 +410,40 @@ export default {
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
-				.then(res => {
-					console.log(res);
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									if (this.posts[index].post.likeCheck == 1) {
+										this.posts[index].post.likeCheck = 0;
+										this.posts[index].post.likeCount--;
+									} else {
+										this.posts[index].post.likeCheck = 1;
+										this.posts[index].post.likeCount++;
+									}
+									this.like(postNum, index);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log(response);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -337,7 +467,14 @@ export default {
 				order: 4,
 				youIdMember: this.$route.params.no
 			},
-			{ headers: { Authorization: this.$session.get("accessToken") } }
+			{
+				headers: {
+					Authorization:
+						this.$session.get("accessToken") == undefined
+							? null
+							: this.$session.get("accessToken")
+				}
+			}
 		)
 			.then(response => {
 				this.posts = response.data;
@@ -498,10 +635,21 @@ export default {
 	border-bottom: 1.5px solid rgba(0, 0, 0, 0.06);
 }
 
+.post_click {
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.post_click:hover {
+	box-shadow: 0.5px 0.5px 5px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+}
+
 .post {
 	margin-top: 20px;
 	font-weight: 300;
 }
+
 #post_list {
 	width: 80%;
 	margin: 0 auto;
@@ -514,20 +662,34 @@ export default {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.post_tag {
+.post_tag_deep {
 	float: left;
-	/* margin-right: 6px;
+	cursor: pointer;
+	margin-right: 6px;
 	font-size: 13px;
 	border-radius: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 	color: white;
-	background-color: rgba(160, 23, 98, 0.5); */
-	cursor: pointer;
+	background-color: #7d4879;
 }
+
 .post_tag:hover {
 	background-color: #7d4879;
 }
+
+.post_tag {
+	float: left;
+	cursor: pointer;
+	margin-right: 6px;
+	font-size: 13px;
+	border-radius: 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: white;
+	background-color: rgba(160, 23, 98, 0.5);
+}
+
 .post_create {
 	display: inline-block;
 	height: 30px;
@@ -536,8 +698,9 @@ export default {
 	float: left;
 	border-radius: 50%;
 	width: 20px;
+	height: 20px;
 	margin-top: 4px;
-	border: 1px solid rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(0, 0, 0, 0.2);
 	margin-right: 3px;
 }
 .post_nickname {
