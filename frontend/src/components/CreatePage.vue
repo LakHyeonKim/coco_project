@@ -3,9 +3,7 @@
 		<div class="templatePage">
 			<form name="board" enctype="multipart/form-data">
 				<div id="tagInput_div">
-					<span style="color: gray; font-size: 12px;">
-						마이페이지 태그 (10개 제한)
-					</span>
+					<span style="color: gray; font-size: 12px;">마이페이지 태그 (10개 제한)</span>
 					<VueTagsInput
 						v-model="tag"
 						:tags="tags"
@@ -19,11 +17,7 @@
 					/>
 				</div>
 				<div id="write_title">
-					<v-text-field
-						label="제목"
-						color="gray"
-						v-model="board.postTitle"
-					/>
+					<v-text-field label="제목" color="gray" v-model="board.postTitle" />
 				</div>
 				<div class="codeInput">
 					<v-tabs right color="rgba(0, 0, 0, 0.5)" hide-slider>
@@ -57,68 +51,37 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
-					<v-file-input
-						name="attachments"
-						v-model="board.attachments"
-						label="첨부파일"
-						color="rgb(0, 0, 0)"
-					></v-file-input>
+					<v-file-input name="attachments" v-model="board.attachments" label="첨부파일" color="rgb(0, 0, 0)"></v-file-input>
 				</div>
 
 				<div id="create_top">
-					<button id="write_btn" @click.prevent="posting">
-						WRITE
-					</button>
+					<button id="write_btn" @click.prevent="posting">WRITE</button>
 				</div>
 
 				<div class="footerBox"></div>
-				<input
-					type="hidden"
-					name="postTitle"
-					v-model="board.postTitle"
-				/>
-				<input
-					type="hidden"
-					name="postWriter"
-					v-model="board.postWriter"
-				/>
+				<input type="hidden" name="postTitle" v-model="board.postTitle" />
+				<input type="hidden" name="postWriter" v-model="board.postWriter" />
 				<input type="hidden" name="memberId" v-model="board.memberId" />
 				<input type="hidden" name="code" v-model="board.code" />
 				<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 			</form>
 		</div>
 		<v-row justify="center">
-			<v-dialog
-				v-model="dialog"
-				scrollable
-				overflowed
-				@keydown.enter="insertDescription"
-			>
+			<v-dialog v-model="dialog" scrollable overflowed @keydown.enter="insertDescription">
 				<v-card>
 					<v-card-actions class="d-flex justify-end">
-						<v-icon @click="dialog = false"
-							>mdi-close-circle-outline</v-icon
-						>
+						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
 					</v-card-actions>
 					<agile ref="carousel" fade :dots="true">
-						<div
-							v-for="dict in dictArray"
-							:key="dict.idwordDictionary"
-						>
+						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
 							<v-card-title>
 								<span class="headline">
-									<v-icon
-										>mdi-file-document-box-search-outline</v-icon
-									>
+									<v-icon>mdi-file-document-box-search-outline</v-icon>
 									{{ dict.word }}
 								</span>
 							</v-card-title>
 							<v-card-text class="d-flex">
-								<v-img
-									:src="dict.thumbnailSrc"
-									v-show="dict.thumbnailSrc"
-									width="100"
-								></v-img>
+								<v-img :src="dict.thumbnailSrc" v-show="dict.thumbnailSrc" width="100"></v-img>
 								<div class="ml-4 space-between">
 									<h3>{{ dict.title }}</h3>
 									<br />
@@ -128,8 +91,7 @@
 											:href="dict.link"
 											target="_blank"
 											style="color: rgba(125, 72, 121, 0.85)"
-											>자세히 보기</a
-										>
+										>자세히 보기</a>
 									</p>
 								</div>
 							</v-card-text>
@@ -177,8 +139,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -261,29 +223,21 @@ export default {
 					this.board.tags.push(this.tags[i].text);
 				}
 
-				let newformData = new FormData(
-					document.forms.namedItem("board")
-				);
-				newformData.append("tags", this.board.tags);
-				let requestAddress = "";
-				let formData;
+				let formData = new FormData(document.forms.namedItem("board"));
+				formData.append("tags", this.board.tags);
+				let requestAddress = "/trc/makePost/";
 				if (this.$store.state.parent) {
 					requestAddress = "/trc/makeBabyPost/";
-					formData = {
-						parent: this.$store.state.parent,
-						son: newformData
-					};
-				} else {
-					requestAddress = "/trc/makePost/";
-					formData = newformData;
+					formData.append(
+						"parentIdPost",
+						this.$store.state.parent.parentIdPost
+					);
+					formData.append(
+						"parentIdMember",
+						this.$store.state.parent.parentIdMember
+					);
 				}
-
-				// for (var pair of formData.parent.entries()) {
-				// 	console.log(pair[0] + ", " + pair[1]);
-				// }
-				// for (var pair of formData.son.entries()) {
-				// 	console.log(pair[0] + ", " + pair[1]);
-				// }
+				this.$store.state.parent = {};
 
 				http.post(requestAddress, formData, {
 					headers: { Authorization: this.$session.get("accessToken") }

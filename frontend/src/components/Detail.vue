@@ -56,7 +56,7 @@
 			</div>
 			<div id="divide-line"></div>
 			<div id="fileBox">
-				<p>파일첨부</p>
+				<v-icon>mdi-file-download-outline</v-icon>
 				<a @click="test">{{ filePath }}</a>
 			</div>
 			<div id="postBox">
@@ -155,21 +155,21 @@ export default {
 	},
 	methods: {
 		babyPostCreate() {
-			let parent = new FormData();
-			parent.set("idpost", this.idPost);
-			parent.set("memberId", this.memberId);
-			parent.set("postTitle", this.postTitle);
-			parent.set("postWriter", this.postWriter);
-			parent.set("code", this.code);
-			parent.set("likeCount", this.likeCount);
-			parent.set("views", this.views);
-			parent.set("imagePath", this.imagePath);
-			parent.set("filePath", this.filePath);
-			parent.set("access", this.access);
-			parent.set("likeCheck", this.likeCheck);
-			parent.set("order", this.order);
-			this.$store.state.parent = parent;
+			// let parent = new FormData();
+			// parent.set("idpost", this.idPost);
+			// parent.set("memberId", this.memberId);
+			// parent.set("postTitle", this.postTitle);
+			// parent.set("postWriter", this.postWriter);
+			// parent.set("code", this.code);
+			// parent.set("likeCount", this.likeCount);
+			// parent.set("views", this.views);
+			// parent.set("imagePath", this.imagePath);
+			// parent.set("filePath", this.filePath);
+			// parent.set("access", this.access);
+			// parent.set("likeCheck", this.likeCheck);
+			// parent.set("order", this.order);
 
+			// this.$store.state.parent = parent;
 			// this.$store.state.parent = {
 			// 	idpost: this.idpost,
 			// 	memberId: this.memberId,
@@ -184,6 +184,10 @@ export default {
 			// 	likeCheck: this.likeCheck,
 			// 	order: this.order
 			// };
+			this.$store.state.parent = {
+				parentIdPost: this.idPost,
+				parentIdMember: this.memberId
+			};
 			this.$router.push({ name: "newpage" });
 		},
 		isUser() {
