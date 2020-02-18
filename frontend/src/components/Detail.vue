@@ -108,6 +108,7 @@
 				<comment-list
 					:commentInfos="commentInfos"
 					:receiver="memberId"
+					@commentDelete="commentDelete"
 				></comment-list>
 			</div>
 		</div>
@@ -226,6 +227,9 @@ export default {
 		},
 		addComment(comment) {
 			this.$emit("addComment", comment);
+		},
+		commentDelete(idx) {
+			this.$emit("commentDelete", idx);
 		},
 		searchHashtag(hashtag) {
 			console.log(hashtag);

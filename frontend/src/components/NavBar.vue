@@ -39,11 +39,9 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<img
-					class="nav_menu_img"
-					@click="goNewPage()"
-					src="../assets/icon/plus.png"
-				/>
+				<router-link to="/newpage">
+					<img class="nav_menu_img" src="../assets/icon/plus.png" />
+				</router-link>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/search">
@@ -157,10 +155,6 @@ export default {
 			this.likeIcon = false
 			this.commentIcon = false
         },
-		goNewPage() {
-			this.$store.state.parent = null;
-			router.push("/newpage");
-		},
 		logout() {
 			this.isBlock = false;
 			this.$session.destroy();
