@@ -1,6 +1,6 @@
 <template>
 	<div id="posts">
-		<MypageMyMenu @search="search" />
+		<MypageMyMenu :search="getSearchData" />
 		<div id="post_list">
 			<div id="post_top">
 				<v-select
