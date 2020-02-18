@@ -7,23 +7,35 @@
 
 <mapper namespace="Mypage_Mapper">
 	<sql id="select-Mypage">
-		select idmypage, member_id, banner_image_path, banner_text,	access, today_visited_count, total_visited_count
+		select idmypage, member_id, banner_image_path, banner_text,
+		access, today_visited_count, total_visited_count
 		from mypage
 	</sql>
 	<sql id="insert-Mypage">
 		insert into mypage
-		(member_id, banner_image_path, banner_text, access, today_visited_count, total_visited_count)
+		(member_id, banner_image_path,
+		banner_text, access, today_visited_count, total_visited_count)
 		values(#{memberId},#{bannerImagePath},
 		#{bannerText},#{access},#{todayVisitedCount},#{totalVisitedCount})
 	</sql>
 	<sql id="update-Mypage">
 		update mypage set
-		member_id=#{memberId},
-		banner_image_path=#{bannerImagePath},
-		banner_text=#{bannerText},
-		access=#{access},
-		today_visited_count=#{todayVisitedCount},
-		total_visited_count=#{totalVisitedCount}
+		<if test="memberId != 0">
+			member_id=#{memberId},
+		</if>
+		<if test="bannerImagePath != null">
+			banner_image_path=#{bannerImagePath},
+		</if>
+		<if test="bannerText != null">
+			banner_text=#{bannerText},
+		</if>
+		<if test="todayVisitedCount != 0">
+			today_visited_count=#{todayVisitedCount},
+		</if>
+		<if test="totalVisitedCount != 0">
+			total_visited_count=#{totalVisitedCount}
+		</if>
+		access=#{access}
 		where
 		idmypage=#{idmypage}
 	</sql>
@@ -66,14 +78,18 @@
 	<update id="updateMypage" parameterType="Mypage">
 		<include refid="update-Mypage"></include>
 	</update>
-	
+
 	<update id="updateMypageVisitedCount" parameterType="long">
-		UPDATE `coco`.`mypage` SET `today_visited_count` = `today_visited_count` + 1, `total_visited_count` = `total_visited_count` + 1 
-		WHERE member_id = #{value}
+		UPDATE
+		`coco`.`mypage` SET `today_visited_count` = `today_visited_count` + 1,
+		`total_visited_count` = `total_visited_count` + 1
+		WHERE member_id =
+		#{value}
 	</update>
-	
-	<update id="updateMypageTodayVisitedReset" >
-		UPDATE `coco`.`mypage` SET `today_visited_count` = 0
+
+	<update id="updateMypageTodayVisitedReset">
+		UPDATE
+		`coco`.`mypage` SET `today_visited_count` = 0
 	</update>
 
 	<delete id="deleteMypage" parameterType="Mypage">

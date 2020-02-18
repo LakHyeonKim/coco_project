@@ -86,10 +86,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@RestController
-@RequestMapping("/test")
-@CrossOrigin(origins = { "*" }, maxAge = 6000)
-@Api(tags = { "test Controller" }, description = "테스트 컨트롤러")
 public class TestController {
 
 	@Autowired
@@ -101,8 +97,7 @@ public class TestController {
 	@Autowired
 	MailService mailService;
 
-	
-	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
+	@ApiOperation(value = "파일 다운로드(선택)", response = List.class)
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<Resource> download() throws IOException {
 		Path path = Paths.get("src/main/webapp/userfile/dsad.txt");
@@ -116,7 +111,7 @@ public class TestController {
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "파일 다운로드", response = List.class)
+	@ApiOperation(value = "파일 다운로드2", response = List.class)
 	@RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -146,16 +141,15 @@ public class TestController {
 		response.getOutputStream().close();
 	}
 
-	@ApiOperation(value = "Google Custom Search api 사용", response = List.class)
+	@ApiOperation(value = "파일 다운로드 (브라우저별 수정 적용)", response = List.class)
 	@RequestMapping(value = "/fileDown/{bno}", method = RequestMethod.GET)
 	private void fileDown(@PathVariable int bno, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-
 		request.setCharacterEncoding("UTF-8");
 		// FileVO fileVO = mBoardService.fileDetailService(bno);
-
 		// 파일 업로드된 경로
 		try {
+			//192.185.23.95: WAR 파일 경로 찾기
 			String fileUrl = "src/main/webapp/userfile/";
 //          fileUrl += "/";
 			String savePath = fileUrl;
@@ -323,142 +317,5 @@ public class TestController {
 		System.out.println(bodys);
 
 		return rest_reponse;
-	}
-
-	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
-	@RequestMapping(value = "/googlelogin", produces = "application/json", method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public JsonNode kakaoLogin(@RequestParam("code") String code, HttpSession session) throws Exception {
-		// final String RequestUrl = "https://www.googleapis.com/oauth2/v4/token";
-		System.out.println("코드는 " + code);
-		final String RequestUrl = "https://accounts.google.com/o/oauth2/token";
-
-		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
-		postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
-		postParams.add(new BasicNameValuePair("client_id",
-				"531269159065-2p985a1qoudvhpdpc441bqvjnvqa17kq.apps.googleusercontent.com")); // REST API KEY
-		postParams.add(new BasicNameValuePair("client_secret", "DFA8yZ876AJmSKBlHj30jJU5")); // REST API KEY
-		postParams.add(new BasicNameValuePair("redirect_uri", "http://localhost:8888/test/googlelogin")); // 리다이렉트 URI
-		postParams.add(new BasicNameValuePair("code", code)); // 로그인 과정중 얻은 code 값
-		// http://192.168.100.94:8080
-		// http://192.168.100.95:8888/test/kakaologin2
-		final HttpClient client = HttpClientBuilder.create().build();
-		System.out.println("Ss");
-		final HttpPost post = new HttpPost(RequestUrl);
-		System.out.println(post);
-		JsonNode returnNode = null;
-
-		try {
-			post.setEntity(new UrlEncodedFormEntity(postParams));
-			final HttpResponse response = client.execute(post);
-			final int responseCode = response.getStatusLine().getStatusCode();
-			System.out.println(response.getStatusLine().getReasonPhrase());
-
-			System.out.println("\nSending 'POST' request to URL : " + RequestUrl);
-			System.out.println("Post parameters : " + postParams);
-			System.out.println("Response Code : " + responseCode);
-
-			// JSON 형태 반환값 처리
-			ObjectMapper mapper = new ObjectMapper();
-			returnNode = mapper.readTree(response.getEntity().getContent());
-
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			// clear resources
-		}
-
-		System.out.println("ddd");
-		// JsonNode token = jwtService.getAccessToken(code);
-		String access_token = returnNode.path("access_token").toString();
-		String refresh_token = returnNode.path("refresh_token").toString();
-
-		System.out.println("access_token:" + access_token);
-		System.out.println("refresh_token:" + refresh_token);
-		getKakaoUserInfo(access_token);
-		return returnNode;
-	}
-
-	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
-	@RequestMapping(value = "/getInform", produces = "application/json", method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public ResponseEntity<String> getInform(String code) throws Exception {
-		// TODO Auto-generated method stub
-		HttpHeaders headers = new HttpHeaders();
-		RestTemplate restTemplate = new RestTemplate();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-		parameters.add("code", code);
-		parameters.add("client_id", "762237131426-6aasgpj3j773f8p9dsrv6voiccn6o2uq.apps.googleusercontent.com");
-		parameters.add("client_secret", "eJSRiU8DNoCiN9Lgeg7PwAoi");
-		parameters.add("redirect_uri", "http://localhost:8888/test/googlelogin2");
-		parameters.add("grant_type", "authorization_code");
-
-		HttpEntity<MultiValueMap<String, String>> rest_request = new HttpEntity<>(parameters, headers);
-
-		URI uri = URI.create("https://accounts.google.com/o/oauth2/token");
-
-		ResponseEntity<String> rest_reponse;
-		rest_reponse = restTemplate.postForEntity(uri, rest_request, String.class);
-		String bodys = rest_reponse.getBody();
-		System.out.println(bodys);
-
-		return rest_reponse;
-	}
-
-	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
-	@RequestMapping(value = "/getKakaoUserInfo", produces = "application/json", method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public JsonNode getKakaoUserInfo(String token) {
-
-		System.out.println("ssadas");
-		final String RequestUrl = "https://people.googleapis.com/auth/user.emails.read";
-
-		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
-		postParams.add(new BasicNameValuePair("access_token", token));
-		final HttpClient client = HttpClientBuilder.create().build();
-		final HttpPost post = new HttpPost(RequestUrl);
-		// add header
-		// post.addHeader("Authorization", "Bearer " + token);
-
-		JsonNode returnNode = null;
-
-		try {
-			final HttpResponse response = client.execute(post);
-			final int responseCode = response.getStatusLine().getStatusCode();
-
-			System.out.println("\nSending 'POST' request to URL : " + RequestUrl);
-			System.out.println("Response Code : " + responseCode);
-
-			// JSON 형태 반환값 처리
-			ObjectMapper mapper = new ObjectMapper();
-			returnNode = mapper.readTree(response.getEntity().getContent());
-
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			// clear resources
-		}
-		return returnNode;
-
-	}
-
-	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
-	@RequestMapping(value = "/jsonTest", produces = "application/json", method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public void jsonTest(String JJ) {
-
-		System.out.println("ssadas");
-
-		System.out.println("구글구글 " + JJ);
 	}
 }

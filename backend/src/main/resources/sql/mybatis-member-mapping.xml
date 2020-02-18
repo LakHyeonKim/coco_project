@@ -24,18 +24,30 @@
 	</sql>
 	<sql id="update-Member">
 		update member set
-		rank_id=#{rankId},
-		is_manager=#{isManager},
-		is_delete=#{isDelete},
-		nickname = #{nickname},
-		password = #{password},
-		email = #{email},
+		<if test="rankId != 0">
+			rank_id=#{rankId},
+		</if>
+		<if test="nickname != null">
+			nickname = #{nickname},
+		</if>
+		<if test="password != null">
+			password = #{password},
+		</if>
+		<if test="email != null">
+			email = #{email},
+		</if>
+		<if test="imageUrl != null">
+			image_url = #{imageUrl},
+		</if>
+		<if test="refreshToken != null">
+			refreshToken = #{refreshToken},
+		</if>
 		git_url = #{gitUrl},
 		kakao_url = #{kakaoUrl},
 		instagram_url = #{instagramUrl},
 		update_created = DATE_ADD(NOW(), INTERVAL 9 HOUR),
-		image_url = #{imageUrl},
-		refreshToken = #{refreshToken}
+		is_manager=#{isManager},
+		is_delete=#{isDelete}
 		where
 		idmember=#{idmember}
 	</sql>

@@ -18,11 +18,21 @@
 	</sql>
 	<sql id="update-WordDictionary">
 		update word_dictionary set
-		word=#{word},
-		description=#{description},
-		link = #{link},
-		thumbnail_src = #{thumbnailSrc},
-		title=#{title}
+		<if test="word !=null">
+				word = '#{word}',
+		</if>
+		<if test="description !=null">
+				description=#{description},
+		</if>
+		<if test="link !=null">
+				link = #{link},
+		</if>
+		<if test="thumbnailSrc !=null">
+				thumbnail_src = #{thumbnailSrc},
+		</if>
+		<if test="title !=null">
+				title=#{title}
+		</if>
 		where
 		idword_dictionary=#{idwordDictionary}
 	</sql>

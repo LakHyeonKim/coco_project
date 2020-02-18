@@ -17,8 +17,12 @@
 	</sql>
 	<sql id="update-Follow">
 		update follow set
-		member_follower=#{memberFollower},
-		member_following=#{memberFollowing},
+		<if test="memberFollower != 0">
+			member_follower=#{memberFollower},
+		</if>
+		<if test="memberFollowing != 0">
+			member_following=#{memberFollowing},
+		</if>
 		access=#{access}
 		where
 		idfollow=#{idfollow}

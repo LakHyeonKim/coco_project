@@ -22,10 +22,17 @@
 	</sql>
 	<sql id="update-Tag">
 		update tag set
-		searched_number=#{searchedNumber},
-		included_number=#{includedNumber},
-		most_recently_mentioned_time=DATE_ADD(NOW(), INTERVAL 9 HOUR),
-		image_path=#{imagePath}
+		<if test="searchedNumber !=0">
+			searched_number=#{searchedNumber},
+		</if>
+		<if test="includedNumber !=0">
+			included_number=#{includedNumber},
+		</if>
+		<if test="imagePath != null">
+			image_path=#{imagePath},
+		</if>
+		
+		most_recently_mentioned_time=DATE_ADD(NOW(), INTERVAL 9 HOUR)
 		where
 		idtag=#{idtag}
 	</sql>
