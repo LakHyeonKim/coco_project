@@ -119,8 +119,8 @@ export default {
 				http.post(
 					"/api/findFollow",
 					{
-						memberFollower: this.$session.get("id"),
-						memberFollowing: res.data.post.memberId
+						memberFollower: res.data.post.memberId,
+						memberFollowing: this.$session.get("id")
 					},
 					{
 						headers: {

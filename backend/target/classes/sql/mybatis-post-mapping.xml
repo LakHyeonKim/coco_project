@@ -57,7 +57,9 @@
 	<select id="findPost" resultType="Post">
 		<include refid="select-Post"></include>
 		<where>
+			access = ${access}
 			<if test="idpost !=0">
+			AND
 				idpost = ${idpost}
 			</if>
 			<if test="memberId !=0">
@@ -79,11 +81,7 @@
 				AND
 				code like '%${code}%'
 			</if>
-			<if test="access !=0">
-				AND
-				access = ${access}
-			</if>
-
+			
 		</where>
 		<if test="order == 1">
 			order by like_count asc;
@@ -346,7 +344,9 @@
 	<delete id="deletePost" parameterType="Post">
 		<include refid="delete-Post"></include>
 		<where>
+			access = ${access}
 			<if test="idpost !=0">
+			AND	
 				idpost = ${idpost}
 			</if>
 			<if test="memberId !=0">
@@ -368,11 +368,6 @@
 				AND
 				code = '${code}'
 			</if>
-			<if test="access !=0">
-				AND
-				access = ${access}
-			</if>
-
 		</where>
 	</delete>
 

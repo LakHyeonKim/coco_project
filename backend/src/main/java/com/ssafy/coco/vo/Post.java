@@ -140,7 +140,10 @@ public class Post {
 	public String getDateCreated() {
 		return dateCreated;
 	}
-
+	public void setDateCreated(String s){
+		this.dateCreated = s;
+	}
+	
 	public void setDateCreated(Timestamp d) {
 
 		java.sql.Timestamp timestamp_1 = java.sql.Timestamp.valueOf(LocalDateTime.now());

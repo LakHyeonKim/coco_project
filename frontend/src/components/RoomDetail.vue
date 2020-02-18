@@ -64,7 +64,7 @@
 <script>
 import sock from 'sockjs-client'
 import ws from 'webstomp-client'
-import axios from 'axios'
+import alarmHttp from "../http-alarm";
 
 export default {
 	name: 'RoomDetail',
@@ -83,7 +83,7 @@ export default {
 	created () {
 		this.roomId = localStorage.getItem('wschat.idroom')
 		this.memberId = localStorage.getItem('wschat.member_id')
-		this.nickName = this.$session.get('nickname')
+		this.nickName = this.$session.get('nickName')
 		this.findRoom()
 	},
 	mounted(){
@@ -112,14 +112,14 @@ export default {
 
 		},
 		findRoom: function () {
-			axios
-				.get('http://localhost:8081/chat/room/' + this.roomId)
+			alarmHttp
+				.get('/chat/room/' + this.roomId)
 				.then(response => {
 					this.room = response.data
 					console.log(this.room)
 				})
-			axios
-				.get('http://localhost:8081/chat/messages/' + this.roomId)
+			alarmHttp
+				.get('/chat/messages/' + this.roomId)
 				.then(response => {
 					this.messages = response.data
 					console.log(this.messages)
@@ -154,7 +154,7 @@ export default {
 			})
 		},
 		connect: function () {
-			this.socket = new sock('http://localhost:8081/gs-guide-websocket')
+			this.socket = new sock('http://192.168.100.57:8081/gs-guide-websocket')
 			this.stompClient = ws.over(this.socket)
 			this.stompClient.connect(
 				{},
