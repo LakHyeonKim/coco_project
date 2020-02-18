@@ -127,8 +127,8 @@ export default {
 			http.post(
 				requestAddress,
 				{
-					memberFollower: this.memberId,
-					memberFollowing: this.$session.get("id")
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.memberId
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
