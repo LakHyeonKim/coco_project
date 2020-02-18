@@ -20,7 +20,7 @@
 					@click="isBlock = !isBlock"
 					id="profile"
 					:src="
-						$session.get('imageUrl') == undefined
+						$session.get('imageUrl') == undefined || $session.get('imageUrl') == ''
 							? '../img/icons/user.png'
 							: $session.get('imageUrl')
 					"
