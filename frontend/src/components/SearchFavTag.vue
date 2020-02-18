@@ -41,7 +41,13 @@ export default {
 				{ tag: "react", path: "../img/stacks/react.png" },
 				{ tag: "spring", path: "../img/stacks/spring.png" },
 				{ tag: "swagger", path: "../img/stacks/swagger.png" },
-				{ tag: "vue", path: "../img/stacks/vue.png" }
+				{ tag: "R", path: "../img/stacks/R.png" },
+				{ tag: "kotlin", path: "../img/stacks/kotlin.png" },
+				{ tag: "rubyonRails", path: "../img/stacks/rubyRail.png" },
+				{ tag: "objective_C", path: "../img/stacks/objC.png" },
+				{ tag: "ruby", path: "../img/stacks/ruby.png" },
+				{ tag: "matlab", path: "../img/stacks/matlab.png" },
+				{ tag: "go", path: "../img/stacks/go.png" }
 			]
 		};
 	},

@@ -528,7 +528,7 @@ export default {
 	float: left;
 	margin-top: 19px;
 	padding: 0;
-	width: 100px;
+	width: 15vw;
 	height: 30px;
 	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
 	-webkit-transition: width 0.4s ease-in-out;
@@ -537,7 +537,7 @@ export default {
 
 #search_text:focus {
 	outline: none;
-	width: 300px;
+	width: 30vw;
 }
 #search_img {
 	margin-top: 20px;
@@ -606,7 +606,7 @@ export default {
 	/* id : orderSel */
 	#post_top
 		> div.v-input.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-select {
-		width: 90px;
+		width: 70px;
 	}
 
 	#post_top
@@ -629,7 +629,10 @@ export default {
 	}
 
 	#search_text {
-		width: 130px;
+		width: 15vw;
+	}
+	#search_text:focus {
+		width: 25vw;
 	}
 }
 
