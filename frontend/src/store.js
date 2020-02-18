@@ -20,7 +20,7 @@ export default new Vuex.Store({
 		idPost: 0,
 		searchtag: "",
 		tags: null,
-		parent: 0
+		parent: 0,
 		isCheck: 0,
 		targetImgUrl: "../img/icons/user.png"
 	},
