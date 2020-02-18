@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AlarmMapper">
+	<select id="findLatestAlarm" resultType="alarm" parameterType="long">
+		select a.idalarm, a.member_caller, a.member_receiver, a.post_id, a.like_id, a.follow_id, a.is_read, a.access, a.date_created, m.nickname
+		from coco.alarm as a inner join coco.member as m on a.member_caller = m.idmember and member_receiver = #{value} order by idalarm desc limit 1;
+	</select>
+</mapper>

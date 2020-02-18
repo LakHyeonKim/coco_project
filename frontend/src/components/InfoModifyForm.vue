@@ -344,8 +344,26 @@ export default {
 				})
 					.then(res => {
 						console.log("UPDATE then ", res);
+						this.$session.set("nickName", this.member.nickname);
+
+						if (this.$refs.profileImage.file) {
+							console.log(
+								"http://192.168.100.57:8888/userprofile/" +
+									this.$session.get("id") +
+									"_" +
+									this.profileImage.name
+							);
+							this.$session.set(
+								"imageUrl",
+								"http://192.168.100.57:8888/userprofile/" +
+									this.$session.get("id") +
+									"_" +
+									this.profileImage.name
+							);
+						}
 						alert("회원정보가 수정되었습니다.");
-						this.disabled = false;
+						this.$router.push("/mypage/" + this.$session.get("id"));
+						// this.disabled = false;
 					})
 					.catch(err => {
 						this.$store.dispatch("endLoading");
@@ -543,21 +561,43 @@ export default {
 	height: 50px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
 	#blank {
 		height: 20vw;
 		width: 100%;
 	}
 
 	#img_div {
-		padding: 30px;
+		padding: 10px;
+	}
+
+	#back_img > div {
+		height: 100px;
+		width: 120px;
+	}
+
+	#profile_img {
+		margin-left: 20px;
+	}
+
+	#profile_img > div {
+		width: 100px;
+		height: 100px;
+	}
+
+	#nick_text {
+		width: 75%;
+	}
+
+	#duplicate_btn {
+		width: 23%;
 	}
 }
 
 @media screen and (max-width: 500px) {
 	#modify {
 		width: 80%;
-		margin-top: 50px;
+		margin-top: 70px;
 	}
 }
 </style>

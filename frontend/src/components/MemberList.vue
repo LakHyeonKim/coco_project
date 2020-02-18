@@ -6,6 +6,10 @@
 			</template>
 
 			<v-card class="d_container">
+				<div v-if="followList != null && followList.length == 0">
+					해당 정보가 없습니다 ㅠㅠ
+				</div>
+
 				<div v-for="(f, idx) in followList" :key="f.member.idmember">
 					<div class="f_div">
 						<div
@@ -73,6 +77,7 @@ export default {
 	},
 	data() {
 		return {
+			isNone: false,
 			dialog: false,
 			following_btn: {
 				// marginLeft: "10px",
@@ -108,10 +113,15 @@ export default {
 				this.followList[this.otherIdx].isFollow = 1;
 			}
 
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				memberFollowing: this.followList[this.otherIdx].member.idmember
-			})
+			http.post(
+				address,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.followList[this.otherIdx].member
+						.idmember
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log(response);
 				})

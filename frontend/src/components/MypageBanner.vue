@@ -1,7 +1,14 @@
 <template>
 	<div id="banner">
 		<div id="imgBannerBox">
-			<img id="imgBanner" src="../assets/back.jpg" />
+			<img
+				id="imgBanner"
+				:src="
+					userInfo.mypage.bannerImagePath == ''
+						? '../img/back.jpg'
+						: userInfo.mypage.bannerImagePath
+				"
+			/>
 		</div>
 		<div id="infoBox">
 			<div id="today">
@@ -14,10 +21,11 @@
 					id="imgUser"
 					:src="
 						userInfo.member.imageUrl == ''
-							? './img/icons/user.png'
+							? '../img/icons/user.png'
 							: userInfo.member.imageUrl
 					"
 				/>
+				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
 						<div id="nickname">{{ userInfo.member.nickname }}</div>
@@ -119,7 +127,8 @@ export default {
 				mypage: {
 					todayVisitedCount: 0,
 					totalVisitedCount: 0,
-					bannerText: ""
+					bannerText: "",
+					bannerImagePath: ""
 				},
 				member: {
 					imageUrl: "",

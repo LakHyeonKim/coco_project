@@ -21,10 +21,11 @@
 						solo
 						color="rgba(160, 23, 98, 0.5)"
 						v-model="input_pw"
+						@keyup.enter="pwCheck"
 					></v-text-field>
 				</div>
 				<div class="d_footer">
-					<button class="d_btn" @click="pwCheck()">
+					<button class="d_btn" @click="pwCheck">
 						확인
 					</button>
 					<button class="d_btn" @click="dialog = false">
