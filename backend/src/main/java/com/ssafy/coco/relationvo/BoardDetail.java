@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.coco.vo.Comment;
+import com.ssafy.coco.vo.Like;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.Tag;
@@ -13,49 +14,40 @@ import com.ssafy.coco.vo.Tag;
 public class BoardDetail {
 	private Post post;
 	private List<Tag> tags;
+	private List<CommentInfo> commentInfos;
 	private List<Comment> comments;
 	private List<Member> likes;
 	private List<Post> babyPosts;
 	private long commentCount;
-	@JsonIgnore
-	private MultipartFile attachments;
+	private String postWriterProfileImage;
+	private int isFollow;
 	
 	
-	public MultipartFile getAttachments() {
-		return attachments;
+	public List<Comment> getComments() {
+		return comments;
 	}
 
-	public void setAttachments(MultipartFile attachments) {
-		this.attachments = attachments;
-	}
-
-	public BoardDetail(Post post, List<Tag> tags, List<Comment> comments, List<Member> likes, List<Post> babyPosts,
-			long commentCount, MultipartFile attachments) {
-		super();
-		this.post = post;
-		this.tags = tags;
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
-		this.likes = likes;
-		this.babyPosts = babyPosts;
-		this.commentCount = commentCount;
-		this.attachments = attachments;
 	}
-
+	
 	public BoardDetail() {
 		super();
 	}
 
-	public BoardDetail(Post post, List<Tag> tags, List<Comment> comments, List<Member> likes, List<Post> babyPosts,
-			long commentCount) {
+	public BoardDetail(Post post, List<Tag> tags, List<CommentInfo> commentInfos, List<Member> likes,
+			List<Post> babyPosts, long commentCount, String postWriterProfileImage, int isFollow) {
 		super();
 		this.post = post;
 		this.tags = tags;
-		this.comments = comments;
+		this.commentInfos = commentInfos;
 		this.likes = likes;
 		this.babyPosts = babyPosts;
 		this.commentCount = commentCount;
+		this.postWriterProfileImage = postWriterProfileImage;
+		this.isFollow = isFollow;
 	}
-	
+
 	public Post getPost() {
 		return post;
 	}
@@ -72,12 +64,12 @@ public class BoardDetail {
 		this.tags = tags;
 	}
 
-	public List<Comment> getComments() {
-		return comments;
+	public List<CommentInfo> getCommentInfos() {
+		return commentInfos;
 	}
 
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
+	public void setCommentInfos(List<CommentInfo> commentInfos) {
+		this.commentInfos = commentInfos;
 	}
 
 	public List<Member> getLikes() {
@@ -104,9 +96,27 @@ public class BoardDetail {
 		this.commentCount = commentCount;
 	}
 
+	public String getPostWriterProfileImage() {
+		return postWriterProfileImage;
+	}
+
+	public void setPostWriterProfileImage(String postWriterProfileImage) {
+		this.postWriterProfileImage = postWriterProfileImage;
+	}
+
+	public int getIsFollow() {
+		return isFollow;
+	}
+
+	public void setIsFollow(int isFollow) {
+		this.isFollow = isFollow;
+	}
+
 	@Override
 	public String toString() {
-		return "BoardDetail [post=" + post + ", tags=" + tags + ", comments=" + comments + ", likes=" + likes
-				+ ", babyPosts=" + babyPosts + ", commentCount=" + commentCount + ", attachments=" + attachments + "]";
+		return "BoardDetail [post=" + post + ", tags=" + tags + ", commentInfos=" + commentInfos + ", likes=" + likes
+				+ ", babyPosts=" + babyPosts + ", commentCount=" + commentCount + ", postWriterProfileImage="
+				+ postWriterProfileImage + ", isFollow=" + isFollow + "]";
 	}
+	
 }

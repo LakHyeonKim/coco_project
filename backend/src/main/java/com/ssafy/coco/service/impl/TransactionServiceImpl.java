@@ -25,6 +25,7 @@ import com.ssafy.coco.dao.MyPageTagDao;
 import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
+import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.MemberInfoModify;
@@ -140,14 +141,50 @@ public class TransactionServiceImpl implements TransactionService {
 	 * @param receiver     알람 받는 사람
 	 * 
 	 *                     포스트에 포스트 형식 댓글을 작성 하였을 때 알람 까지 트랜잭션
+	 * @throws IOException 
+	 * @throws IllegalStateException 
 	 */
 
 	@Transactional
-	public void makeBabyPost(Post baby, Post parent) {
-		postDao.addPost(baby);
-		BabyPost babyPost = new BabyPost(0, parent.getIdpost(), baby.getIdpost());
-		babyPostDao.addBabyPost(babyPost);
-		Alarm alarm = new Alarm(0, baby.getMemberId(), parent.getMemberId(), parent.getIdpost(), 0, 0, 0, 0);
+	public void makeBabyPost(BabyBoardWrite babyBoardWrite) throws IllegalStateException, IOException {
+		Post post = new Post();
+		post.setCode(babyBoardWrite.getCode());
+		post.setMemberId(babyBoardWrite.getMemberId());
+		post.setPostTitle(babyBoardWrite.getPostTitle());
+		post.setPostWriter(babyBoardWrite.getPostWriter());
+
+		String[] splitTag = babyBoardWrite.getTags().split(",");
+
+		if (!babyBoardWrite.getAttachments().getOriginalFilename().equals("")) {
+			MultipartFile file = babyBoardWrite.getAttachments();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
+			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			post.setFilePath(filePath);
+		}
+		
+		long idPost = postDao.addPost(post);
+		idPost = post.getIdpost();
+		
+		for (String splitedTag : splitTag) {
+			if (splitedTag.equals(""))
+				break;
+			int size = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).size();
+			if (size == 0) {
+				tagDao.addTag(new Tag(0, splitedTag, 0, 1, null, null, null));
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
+				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
+			} else {
+				tagDao.updateTagIncludedCount(splitedTag);
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
+				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
+			}
+		}
+		
+		babyPostDao.addBabyPost(new BabyPost(0, babyBoardWrite.getParentIdPost(), idPost));
+		Alarm alarm = new Alarm(0, babyBoardWrite.getMemberId(), babyBoardWrite.getParentIdMember(), babyBoardWrite.getParentIdPost(), 0, 0, 0, 0);
 		alarmDao.addAlarm(alarm);
 	}
 

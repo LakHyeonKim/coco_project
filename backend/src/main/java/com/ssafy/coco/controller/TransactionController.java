@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
 import com.ssafy.coco.relationvo.BoardWrite;
@@ -61,8 +62,8 @@ public class TransactionController {
 	
 	@ApiOperation(value = "하위 포스트 달기 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/makeBabyPost", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeBabyPost(@RequestHeader(value="Authorization")String jwt,@RequestBody DoublePost doublePost) throws Exception {
-		transactionService.makeBabyPost(doublePost.getSon(),doublePost.getParent());
+	public ResponseEntity<Integer> makeBabyPost(@RequestHeader(value="Authorization")String jwt, BabyBoardWrite babyBoardWrite) throws Exception {
+		transactionService.makeBabyPost(babyBoardWrite);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
@@ -121,7 +122,7 @@ public class TransactionController {
 	public ResponseEntity<Integer> deleteMemberBannerImage(@RequestHeader(value="Authorization")String jwt, @RequestBody long idMember) throws Exception {
 		transactionService.deleteMemberBannerImage(idMember);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
-	}
+	} 
 	
 	/* 알아보고 삭제 해야 할 것*/
 	

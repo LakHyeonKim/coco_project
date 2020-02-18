@@ -192,18 +192,17 @@ input {
 }
 
 #roomList {
-	
 	border-radius: 10px;
 }
 
 #roomSelect {
 	
-	border-radius: 5px;
+	border-radius: 10px;
 }
 
 #roomHeader {
 	background-color: #a794a5;
-	color: rgb(0, 0, 0);
+	color: rgb(255, 255, 255);
 	height: 40px;
 	font-size: 18px;
 	line-height: 40px;

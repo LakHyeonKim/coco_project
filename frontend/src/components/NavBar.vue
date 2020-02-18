@@ -2,7 +2,7 @@
 	<!-- 모바일 화면에서 width 줄어들 때 구성요소 잘리는 현상 -->
 	<!-- 웹 화면에서 구성요소 링크 범위 조절 -->
 	<div id="navbar">
-		<notifications  group="foo" />
+		<notifications group="foo" />
 		<ul>
 			<li>
 				<!-- <router-link to="/mypage"> -->
@@ -33,22 +33,59 @@
 				</router-link>
 			</li>
 			<li class="nav_menu" @click="alarmIconReset">
-				<router-link to="/alarm"> 
-					<img v-if="alarmIcon" class="nav_menu_img" src="../assets/icon/alarm.png" />
-					<img v-if="followIcon" class="nav_menu_img image blinking" src="../assets/icon/follow.png" />
-					<img v-if="likeIcon" class="nav_menu_img image blinking" src="../assets/icon/like.png" />
-					<img v-if="commentIcon" class="nav_menu_img image blinking" src="../assets/icon/comment.png" />
+				<router-link to="/alarm">
+					<img
+						v-if="alarmIcon"
+						class="nav_menu_img"
+						src="../assets/icon/alarm.png"
+					/>
+					<img
+						v-if="followIcon"
+						class="nav_menu_img image blinking"
+						src="../assets/icon/follow.png"
+					/>
+					<img
+						v-if="likeIcon"
+						class="nav_menu_img image blinking"
+						src="../assets/icon/like.png"
+					/>
+					<img
+						v-if="commentIcon"
+						class="nav_menu_img image blinking"
+						src="../assets/icon/comment.png"
+					/>
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<img
+				<span class="back nav_menu_drag"  @mousedown="startDrag($event)" @dblclick="toggleMenu()">
+					<span><img class="nav_menu_img" src="../assets/icon/sms.png" />
+					</span>
+				</span>
+				<!-- <button
+					class="nav_menu_drag blinking"
+					@dblclick="toggleMenu()"
+					@mousedown="startDrag($event)"
+				>
+					CHATTING CLICK!!
+				</button> -->
+				<!-- <img
 					class="nav_menu_drag"
 					src="../assets/kakao_logo.png"
 					@dblclick="toggleMenu()"
 					@mousedown="startDrag($event)"
-				/>
-				<Room id="openRoom" v-if="!isHidden" v-bind:toChild="toChild" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></Room>
-				<RoomDetail id="openDetail" v-bind:toChild="toChild" v-if="!isHidden&&toChild.isHiddenDetail" v-on:updateIsHiddenDetail="updateIsHiddenDetail"></RoomDetail>
+				/> -->
+				<Room
+					id="openRoom"
+					v-if="!isHidden"
+					v-bind:toChild="toChild"
+					v-on:updateIsHiddenDetail="updateIsHiddenDetail"
+				></Room>
+				<RoomDetail
+					id="openDetail"
+					v-bind:toChild="toChild"
+					v-if="!isHidden && toChild.isHiddenDetail"
+					v-on:updateIsHiddenDetail="updateIsHiddenDetail"
+				></RoomDetail>
 			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
@@ -72,7 +109,7 @@ export default {
 	},
 	data () {
 		return {
-			toChild:{
+			toChild: {
 				isHiddenDetail: false,
 				left: 0,
 				top: 0
@@ -94,174 +131,257 @@ export default {
 		}
 	},
 	methods: {
-		alarmIconReset(){
+		alarmIconReset () {
 			this.alarmIcon = true
 			this.followIcon = false
 			this.likeIcon = false
 			this.commentIcon = false
 		},
-		getLeft(){
-			return parseInt(this.targetObj[0].style.left.replace("px",""));
+		getLeft () {
+			return parseInt(this.targetObj[0].style.left.replace('px', ''))
 		},
-		getTop(){
-			return parseInt(this.targetObj[0].style.top.replace("px",""));
+		getTop () {
+			return parseInt(this.targetObj[0].style.top.replace('px', ''))
 		},
-		moveDrag(e){
-			var e_obj = window.event? window.event : e;
-			this.div_L = e_obj.clientX;
-			this.div_T = e_obj.clientY;
-			document.getElementsByClassName("nav_menu_drag")[0].style.left = e_obj.clientX + "px";
-			document.getElementsByClassName("nav_menu_drag")[0].style.top = e_obj.clientY + "px";
-     		return false;
+		moveDrag (e) {
+			var e_obj = window.event ? window.event : e
+			this.div_L = e_obj.clientX
+			this.div_T = e_obj.clientY
+			if (window.innerWidth - 50 < e_obj.clientX)
+				e_obj.clientX = window.innerWidth - 50
+			if (window.innerHeight - 50 < e_obj.clientY)
+				e_obj.clientY = window.innerHeight - 50
+			if (e_obj.clientY < 0) e_obj.clientY = 0
+			document.getElementsByClassName('nav_menu_drag')[0].style.left =
+				e_obj.clientX + 'px'
+			document.getElementsByClassName('nav_menu_drag')[0].style.top =
+				e_obj.clientY + 'px'
+			return false
 		},
-		stopDrag(){
-			document.onmousemove = null;
-			document.onmouseup = null;
+		stopDrag () {
+			document.onmousemove = null
+			document.onmouseup = null
 		},
-		startDrag(e){
-			this.targetObj = document.getElementsByClassName("nav_menu_drag");
-			var e_obj = window.event? window.event : e;
-			this.div_L = e_obj.clientX;
-			this.div_T = e_obj.clientY;
-			this.toChild.left = e_obj.clientX;
-			this.toChild.top = e_obj.clientY;
-			document.onmousemove = this.moveDrag;
-			document.onmouseup = this.stopDrag;
-			if(e_obj.preventDefault) e_obj.preventDefault();
+		startDrag (e) {
+			this.targetObj = document.getElementsByClassName('nav_menu_drag')
+			var e_obj = window.event ? window.event : e
+			this.div_L = e_obj.clientX
+			this.div_T = e_obj.clientY
+			this.toChild.left = e_obj.clientX
+			this.toChild.top = e_obj.clientY
+			document.onmousemove = this.moveDrag
+			document.onmouseup = this.stopDrag
+			if (e_obj.preventDefault) e_obj.preventDefault()
 		},
-		updateIsHiddenDetail(value){
-			this.toChild.isHiddenDetail = value;
+		updateIsHiddenDetail (value) {
+			this.toChild.isHiddenDetail = value
 		},
 		alarm () {
-      		setInterval(this.solosend, 5000)
+			setInterval(this.solosend, 5000)
 		},
 		solosend () {
-      		console.log("Send message:" + this.solo_send_message);
-      		if (this.stompClient && this.stompClient.connected) {
-        		const msg = { memberId: this.solo_send_message }
-        		console.log(JSON.stringify(msg));
-        		this.stompClient.send('/app/info', JSON.stringify(msg), {})
-      		}
+			console.log('Send message:' + this.solo_send_message)
+			if (this.stompClient && this.stompClient.connected) {
+				const msg = { memberId: this.solo_send_message }
+				console.log(JSON.stringify(msg))
+				this.stompClient.send('/app/info', JSON.stringify(msg), {})
+			}
 		},
-		soloconnect() {
-      		this.socket = new SockJS("http://192.168.100.57:8081/gs-guide-websocket");
-      		this.stompClient = Stomp.over(this.socket);
-      		this.stompClient.connect(
-        		{},
-        		frame => {
-          			this.soloconnected = true;
-          			console.log(frame);
-          			this.stompClient.subscribe("/user/queue/info", tick => {
-            			console.log(JSON.parse(tick.body).idalarm);
-            			if (this.latest_alarm_id < JSON.parse(tick.body).idalarm) {
-              				if (!this.isfirst) {
-								if(JSON.parse(tick.body).postId > 0 && JSON.parse(tick.body).likeId > 0 && JSON.parse(tick.body).followId == 0){
+		soloconnect () {
+			this.socket = new SockJS(
+				'http://192.168.100.57:8081/gs-guide-websocket'
+			)
+			this.stompClient = Stomp.over(this.socket)
+			this.stompClient.connect(
+				{},
+				frame => {
+					this.soloconnected = true
+					console.log(frame)
+					this.stompClient.subscribe('/user/queue/info', tick => {
+						console.log(JSON.parse(tick.body).idalarm)
+						if (
+							this.latest_alarm_id < JSON.parse(tick.body).idalarm
+						) {
+							if (!this.isfirst) {
+								if (
+									JSON.parse(tick.body).postId > 0 &&
+									JSON.parse(tick.body).likeId > 0 &&
+									JSON.parse(tick.body).followId == 0
+								) {
 									this.$notify({
-                  					group: "foo",
-                  					title: "Important message",
-                  					text:
-                    					JSON.parse(tick.body).nickname +
-                    					" 님이 포스트에 좋아요를 눌렀어요~"
-									});
-									this.alarmIcon = false;
-									this.likeIcon = true;
-									this.followIcon = false;
-									this.commentIcon = false;
-								}
-                				else if(JSON.parse(tick.body).postId > 0 && JSON.parse(tick.body).likeId == 0 && JSON.parse(tick.body).followId == 0){
+										group: 'foo',
+										title: 'Important message',
+										text:
+											JSON.parse(tick.body).nickname +
+											' 님이 포스트에 좋아요를 눌렀어요~'
+									})
+									this.alarmIcon = false
+									this.likeIcon = true
+									this.followIcon = false
+									this.commentIcon = false
+								} else if (
+									JSON.parse(tick.body).postId > 0 &&
+									JSON.parse(tick.body).likeId == 0 &&
+									JSON.parse(tick.body).followId == 0
+								) {
 									this.$notify({
-                  					group: "foo",
-                  					title: "Important message",
-                  					text:
-                    					JSON.parse(tick.body).nickname +
-                    					" 님이 포스트에 댓글을 달았어요~"
-									});
-									this.alarmIcon = false;
-									this.likeIcon = false;
-									this.followIcon = false;
-									this.commentIcon = true;
-								}
-								else if(JSON.parse(tick.body).postId == 0 && JSON.parse(tick.body).likeId == 0 && JSON.parse(tick.body).followId > 0){
+										group: 'foo',
+										title: 'Important message',
+										text:
+											JSON.parse(tick.body).nickname +
+											' 님이 포스트에 댓글을 달았어요~'
+									})
+									this.alarmIcon = false
+									this.likeIcon = false
+									this.followIcon = false
+									this.commentIcon = true
+								} else if (
+									JSON.parse(tick.body).postId == 0 &&
+									JSON.parse(tick.body).likeId == 0 &&
+									JSON.parse(tick.body).followId > 0
+								) {
 									this.$notify({
-                  					group: "foo",
-                  					title: "Important message",
-                  					text:
-                    					JSON.parse(tick.body).nickname +
-                    					" 님이 팔로우를 했어요~"
-									});
-									this.alarmIcon = false;
-									this.likeIcon = false;
-									this.followIcon = true;
-									this.commentIcon = false;
+										group: 'foo',
+										title: 'Important message',
+										text:
+											JSON.parse(tick.body).nickname +
+											' 님이 팔로우를 했어요~'
+									})
+									this.alarmIcon = false
+									this.likeIcon = false
+									this.followIcon = true
+									this.commentIcon = false
 								}
-                				//this.solo_received_messages.push(JSON.parse(tick.body));
-              				}
-              				this.isfirst = false;
-            			}
-            			this.latest_alarm_id = JSON.parse(tick.body).idalarm;
-          			});
-        		},
-        		error => {
-          			console.log(error);
-          			this.soloconnected = false;
-        		}
-      		);
+								//this.solo_received_messages.push(JSON.parse(tick.body));
+							}
+							this.isfirst = false
+						}
+						this.latest_alarm_id = JSON.parse(tick.body).idalarm
+					})
+				},
+				error => {
+					console.log(error)
+					this.soloconnected = false
+				}
+			)
 		},
-		disconnect() {
-      		if (this.stompClient) {
-        		this.stompClient.disconnect();
-      		}
-      		clearInterval(this.timerID);
-      		this.soloconnected = false;
+		disconnect () {
+			if (this.stompClient) {
+				this.stompClient.disconnect()
+			}
+			clearInterval(this.timerID)
+			this.soloconnected = false
 		},
-		tickleConnection() {
-      		this.soloconnected ? this.disconnect() : this.connect();
-    	},
+		tickleConnection () {
+			this.soloconnected ? this.disconnect() : this.connect()
+		},
 		toggleMenu () {
 			this.isHidden = !this.isHidden
 		},
-		getMypage() {
-			console.log(this.$route.fullPath);
-			let location = "/mypage/" + this.$session.get("id");
+		getMypage () {
+			console.log(this.$route.fullPath)
+			let location = '/mypage/' + this.$session.get('id')
 
 			if (this.$route.fullPath != location) {
 				router.push(location).catch(err => {
-					console.log(err);
-				});
+					console.log(err)
+				})
 			} else {
-				window.location.reload(true);
+				window.location.reload(true)
 			}
 		}
 	},
-	mounted(){
-		this.solo_send_message = this.$session.get("id");
+	mounted () {
+		this.solo_send_message = this.$session.get('id')
 		this.soloconnect()
 		this.alarm()
 	},
-	beforeDestroy(){
+	beforeDestroy () {
 		this.disconnect()
 	}
 }
 </script>
 
 <style>
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
-.blinking{
-	-webkit-animation:blink 0.5s ease-in-out infinite alternate;
-    -moz-animation:blink 0.5s ease-in-out infinite alternate;
-    animation:blink 0.5s ease-in-out infinite alternate;
+.back {
+	margin: 1em auto;
+	font-family: 'Roboto';
 }
-@-webkit-keyframes blink{
-    0% {opacity:0;}
-    100% {opacity:1;}
+.back span {
+	font-size: 3em;
+	color: #f5f5f5;
+	background: #a77fa3;
+	display: table-cell;
+	box-shadow: inset 0 0 5px #ffffff, 0 5px 0 #ccc;
+	padding: 0 15px;
+	line-height: 50px;
+	animation: jumb 2s infinite;
+	border-radius: 3ex;
 }
-@-moz-keyframes blink{
-    0% {opacity:0;}
-    100% {opacity:1;}
+@keyframes jumb {
+	0% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-30px);
+		/* box-shadow: 0 15px 0 rgb(255, 190, 241); */
+	}
+	100% {
+		transform: translateY(0px);
+	}
 }
-@keyframes blink{
-    0% {opacity:0;}
-    100% {opacity:1;}
+.back span:nth-child(1) {
+	animation-delay: 0s;
+}
+.back span:nth-child(2) {
+	animation-delay: 0.1s;
+}
+.back span:nth-child(3) {
+	animation-delay: 0.2s;
+}
+.back span:nth-child(4) {
+	animation-delay: 0.3s;
+}
+.back span:nth-child(5) {
+	animation-delay: 0.4s;
+}
+.back span:nth-child(6) {
+	animation-delay: 0.5s;
+}
+.back span:nth-child(7) {
+	animation-delay: 0.6s;
+}
+
+.blinking {
+	-webkit-animation: blink 0.5s ease-in-out infinite alternate;
+	-moz-animation: blink 0.5s ease-in-out infinite alternate;
+	animation: blink 0.5s ease-in-out infinite alternate;
+}
+@-webkit-keyframes blink {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-moz-keyframes blink {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes blink {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .vue-notification {
@@ -301,13 +421,13 @@ export default {
 	height: 50px;
 }
 
-.nav_menu_drag{
+.nav_menu_drag {
 	height: 50px;
-	position:absolute; 
-	left:100px;
-	top:100px; 
-	cursor:pointer;
-	cursor:hand;
+	position: absolute;
+	left: 100px;
+	top: 100px;
+	cursor: pointer;
+	cursor: hand;
 }
 
 .nav_menu_img {
@@ -347,7 +467,6 @@ export default {
 		width: 35px;
 		padding: 3px;
 	}
-
 }
 @media screen and (max-width: 330px) {
 	#profile {
