@@ -23,7 +23,12 @@
 						id="search_sel"
 						v-model="searchSel"
 					/>
-					<input v-model="menu_text" type="text" id="search_text" />
+					<input
+						v-model="menu_text"
+						type="text"
+						id="search_text"
+						@keypress.enter="search()"
+					/>
 					<img
 						id="search_img"
 						@click="search()"
@@ -386,12 +391,16 @@ export default {
 	float: left;
 	margin-top: 19px;
 	padding: 0;
-	width: 300px;
+	width: 100px;
 	height: 30px;
 	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
+	-webkit-transition: width 0.4s ease-in-out;
+	transition: width 0.4s ease-in-out;
 }
+
 #search_text:focus {
 	outline: none;
+	width: 300px;
 }
 #search_img {
 	margin-top: 20px;

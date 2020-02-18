@@ -151,6 +151,23 @@ export default {
 	white-space: nowrap;
 	/* overflow-y: hidden; */
 	overflow-x: scroll;
+	overscroll-behavior: contain;
+}
+#favTag::-webkit-scrollbar {
+	width: 11px;
+	height: 8px;
+}
+#favTag::-webkit-scrollbar-track {
+	background: none;
+}
+#favTag::-webkit-scrollbar-thumb {
+	background: rgba(160, 23, 98, 0.3);
+}
+#favTag::-webkit-scrollbar-thumb:hover {
+	background: rgba(160, 23, 98, 0.3);
+}
+#favTag::-webkit-scrollbar-thumb:active {
+	background: rgba(160, 23, 98, 0.3);
 }
 #tag {
 	display: inline-block;

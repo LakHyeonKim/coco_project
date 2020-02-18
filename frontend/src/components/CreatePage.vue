@@ -209,10 +209,6 @@ export default {
 			Prism.highlightAll();
 		},
 		posting() {
-			const token = this.$session.get("accessToken");
-			const headers = {
-				Authorization: token
-			};
 			if (this.board.postTitle && this.board.code) {
 				this.board.tags = [];
 				for (let i = 0; i < this.tags.length; ++i) {
