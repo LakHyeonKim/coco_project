@@ -20,6 +20,7 @@ import com.ssafy.coco.dao.PostDao;
 import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.Board;
+import com.ssafy.coco.relationvo.OrderSearchKeyword;
 import com.ssafy.coco.service.BoardService;
 import com.ssafy.coco.vo.Comment;
 import com.ssafy.coco.vo.Like;
@@ -71,6 +72,9 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public List<Board> findByAllDefaultSearch(long idMember) {
 		List<Post> defaultPosts = postDao.findPostByFrequency(idMember);
+		if(defaultPosts.size() == 0) {
+			defaultPosts.addAll(postDao.findAllPost());
+		}
 		return makeBoardList(idMember, defaultPosts);
 	}
 
@@ -133,7 +137,7 @@ public class BoardServiceImpl implements BoardService{
 				for(Tag tag : tagList) {
 					tags.add(tag.getTagName());
 				}
-				List<Member> likes = memberDao.findWhoPressedTheLikeButton(post.getIdpost());
+				//List<Member> likes = memberDao.findWhoPressedTheLikeButton(post.getIdpost());
 				//post.setLikeCount(likes.size());
 				int commentCount = commentDao.findComment(new Comment(0, 0, post.getIdpost(), null, null, null, null, 0)).size();
 				boards.add(new Board(post, tags, commentCount));
@@ -141,5 +145,31 @@ public class BoardServiceImpl implements BoardService{
 		}
 		return boards;
 	}
+
+	@Override
+	public List<Board> findByAllKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		List<Post> list = postDao.findByAllKeywordMyPosts(orderSearchKeyword);
+		return makeBoardList(orderSearchKeyword.getMyIdMember(),list);
+	}
+
+	@Override
+	public List<Board> findByTagKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		List<Post> list = postDao.findByTagKeywordMyPosts(orderSearchKeyword);
+		return makeBoardList(orderSearchKeyword.getMyIdMember(),list);
+	}
+
+	@Override
+	public List<Board> findByPostTitleKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		List<Post> list = postDao.findByPostTitleKeywordMyPosts(orderSearchKeyword);
+		return makeBoardList(orderSearchKeyword.getMyIdMember(),list);
+	}
+
+	@Override
+	public List<Board> findByPostCodeKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		List<Post> list = postDao.findByPostCodeKeywordMyPosts(orderSearchKeyword);
+		return makeBoardList(orderSearchKeyword.getMyIdMember(),list);
+	}
+
+	
 
 }

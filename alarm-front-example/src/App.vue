@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <alarm></alarm>
+    <!-- <router-view /> -->
+    <Alarm/>
   </div>
 </template>
 
 <script>
-import Alarm from "@/components/Alarm.vue"
-
+import Alarm from "@/components/Alarm";
 
 export default {
   name: 'App',

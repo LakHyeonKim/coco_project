@@ -28,6 +28,7 @@
 				@updateLike="updateLike"
 				@addComment="addComment"
 				@updateFollow="updateFollow"
+				@commentDelete="commentDelete"
 			></detail>
 		</div>
 		<!-- <div id="detailBaby">
@@ -125,11 +126,19 @@ export default {
 		addComment(comment) {
 			comment.dateCreated = "방금 전";
 			comment.updateCreated = "방금 전";
-			comment.idcomment = 0;
-			this.detail.commentInfos.push(comment);
+			comment.access = 0;
+			this.detail.commentInfos.push({comment: comment, isFollow: 0,postWriterProfileImage: this.$session.get("imageUrl")});
 		},
 		updateFollow() {
 			this.isFollow = !this.isFollow;
+		},
+		commentDelete(idx) {
+			console.log("1", this.detail.commentInfos)
+			this.detail.commentInfos.splice(idx, 1);
+			console.log("2", this.detail.commentInfos)
+			// @remove="commentDelete"
+			// this.detail.commentInfos = this.detail.commentInfos.splice(idx, 1);
+
 		}
 	},
 	created() {
@@ -150,7 +159,7 @@ export default {
 						"/api/findByBoardDetailPostId",
 						{
 							idMember: this.$session.get("id"),
-							idPost: babyPost
+							idPost: babyPost.idPost
 						},
 						{
 							headers: {
@@ -160,7 +169,7 @@ export default {
 					)
 						.then(res => {
 							console.log(res);
-							this.babyPosts.append(res);
+							this.babyPosts.push(res);
 						})
 						.catch(err => {
 							console.log(err);

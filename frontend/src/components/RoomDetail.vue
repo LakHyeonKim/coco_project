@@ -1,0 +1,306 @@
+<template>
+	<div class="openDetail">
+	<div id="chatWrap">
+		<div id="chatHeader">{{ room.roomName }} 
+			<button id="buttonStyle" type="button" @click="outChatRoom">
+				나가기
+			</button>
+			<button id="buttonStyle" type="button" @click="enterList">
+				참여자
+			</button>
+		</div>
+		<div id="chatRoom">
+			<div
+				id="chatLog"
+				v-for="message in messages"
+				:key="message.dateCreated"
+			>
+				<div
+					class="noticMsg"
+					v-if="
+						message.type == 'ENTER'
+					"
+				>
+					{{message.dateCreated}} <span class="msg">{{ message.context }}</span>
+				</div>
+				<div
+					class="anotherMsg"
+					v-if="
+						message.memberId != memberId &&
+							message.type == 'TALK'
+					"
+				>
+					<span class="anotherName">{{ message.nickName }}</span>
+					{{message.dateCreated}} <span class="msg">{{ message.context }}</span>
+				</div>
+				<div
+					class="myMsg"
+					v-if="
+						message.memberId == memberId &&
+							message.type == 'TALK'
+					"
+				>
+					<span class="anotherName">{{ message.nickName }}</span>
+					{{message.dateCreated}} <span class="msg">{{ message.context }}</span>
+				</div>
+			</div>
+		</div>
+		<input
+			type="text"
+			autocomplete="off"
+			size="30"
+			id="message"
+			v-model="message"
+			@keyup.enter="sendMessage"
+			placeholder="메시지를 입력하세요"
+		/>
+		<button id="buttonStyle" type="button" @click="sendMessage">
+			보내기
+		</button>
+	</div>
+	</div>
+</template>
+
+<script>
+import sock from 'sockjs-client'
+import ws from 'webstomp-client'
+import alarmHttp from "../http-alarm";
+
+export default {
+	name: 'RoomDetail',
+	props:["toChild"],
+	data () {
+		return {
+			roomId: 0,
+			memberId: 0,
+			nickName:'',
+			room: {},
+			message: '',
+			messages: [],
+			isHidden:this.toChild.isHiddenDetail
+		}
+	},
+	created () {
+		this.roomId = localStorage.getItem('wschat.idroom')
+		this.memberId = localStorage.getItem('wschat.member_id')
+		this.nickName = this.$session.get('nickName')
+		this.findRoom()
+	},
+	mounted(){
+		var standardWidth = window.innerWidth / 2;
+		var standardHeight = window.innerHeight / 2;
+		if(standardWidth > this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left+510) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left-910) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-1070) + "px";
+		}else if(standardWidth <= this.toChild.left && standardHeight > this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left-910) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-670) + "px";
+		}else if(standardWidth > this.toChild.left && standardHeight <= this.toChild.top){
+			document.getElementsByClassName("openDetail")[0].style.left = (this.toChild.left+510) + "px";
+			document.getElementsByClassName("openDetail")[0].style.top = (this.toChild.top-1070) + "px";
+		}
+	},
+	methods: {
+		outChatRoom: function(){
+			this.messages = []
+			this.$emit("updateIsHiddenDetail",!this.isHidden)
+		},
+		enterList: function(){
+
+		},
+		findRoom: function () {
+			alarmHttp
+				.get('/chat/room/' + this.roomId)
+				.then(response => {
+					this.room = response.data
+					console.log(this.room)
+				})
+			alarmHttp
+				.get('/chat/messages/' + this.roomId)
+				.then(response => {
+					this.messages = response.data
+					console.log(this.messages)
+				})
+			this.connect()
+		},
+		sendMessage: function () {
+			this.stompClient.send(
+				'/app/chat/message',
+				JSON.stringify(
+					{
+						type: 'TALK',
+						roomId: this.roomId,
+						memberId: this.memberId,
+						nickName: this.nickName,
+						context: this.message
+					},
+					{}
+				)
+			)
+			this.message = ''
+		},
+		recvMessage: function (recv) {
+			this.messages.push({
+				idmessage: recv.idmessage,
+				roomId: recv.roomId,
+				memberId: recv.type == 'ENTER' ? '[알림]' : recv.memberId,
+				nickName: recv.nickName,
+				dateCreated: recv.dateCreated,
+				context: recv.context,
+				type: recv.type
+			})
+		},
+		connect: function () {
+			this.socket = new sock('http://192.168.100.57:8081/gs-guide-websocket')
+			this.stompClient = ws.over(this.socket)
+			this.stompClient.connect(
+				{},
+				frame => {
+					console.log(frame)
+					this.stompClient.subscribe(
+						'/sub/chat/room/' + this.$data.roomId,
+						message => {
+							var recv = JSON.parse(message.body)
+							this.recvMessage(recv)
+							setTimeout(this.chatOnScroll,250)
+						}
+					)
+					this.stompClient.send(
+						'/app/chat/message',
+						JSON.stringify(
+							{
+								type: 'ENTER',
+								memberId: this.$data.memberId,
+								roomId: this.$data.roomId,
+								nickName: this.nickName
+							},
+							{}
+						)
+					)
+				},
+				error => {
+					alert('error ' + error)
+				}
+			)
+		},
+		chatOnScroll: function () {
+			var objDiv = document.getElementById('chatRoom')
+			objDiv.scrollTop = objDiv.scrollHeight
+		}
+	}
+}
+</script>
+
+<style>
+.openDetail {
+	float: left;
+	background-color: white;
+	position: relative;
+	left: 560px;
+	bottom: 410px;
+	width: 400px;
+	height: 930%;
+	padding: 10px;
+	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
+	border-radius: 15px;
+	overflow: auto;
+}
+
+#chatWrap {
+	width: 100%;
+	border: 1px solid #ddd;
+}
+
+#chatHeader {
+	height: 60px;
+	color: black;
+	text-align: center;
+	line-height: 60px;
+	font-size: 25px;
+	font-weight: 900;
+	border-bottom: 1px solid #ddd;
+}
+
+#chatLog {
+	height: 100px;
+	overflow-y: auto;
+	padding: 10px;
+}
+
+.myMsg {
+	text-align: right;
+}
+
+#buttonStyle {
+	border: 1px solid black;
+	background: #7d4879;
+}
+
+.anotherMsg {
+	text-align: left;
+	margin-bottom: 5px;
+}
+
+.noticMsg {
+	text-align: center;
+}
+
+.msg {
+	display: inline-block;
+	border-radius: 15px;
+	padding: 7px 15px;
+	margin-bottom: 10px;
+	margin-top: 5px;
+}
+
+.anotherMsg > .msg {
+	background-color: #f1f0f0;
+}
+
+.myMsg > .msg {
+	background-color: #0084ff;
+	color: #fff;
+}
+
+.anotherName {
+	font-size: 12px;
+	display: block;
+}
+
+#chatForm {
+	display: block;
+	width: 100%;
+	height: 50px;
+	border-top: 2px solid #f0f0f0;
+}
+
+#message {
+	width: 85%;
+	height: calc(100% - 1px);
+	border: none;
+	padding-bottom: 0;
+	color: #000;
+	border: 1px solid black;
+}
+
+#message:focus {
+	outline: none;
+}
+
+#chatForm > input[type='submit'] {
+	outline: none;
+	border: none;
+	background: none;
+	color: #0084ff;
+	font-size: 17px;
+}
+
+#chatRoom {
+	overflow: auto;
+	height: 350px;
+	color: #000;
+}
+</style>

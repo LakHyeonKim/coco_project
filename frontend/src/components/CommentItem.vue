@@ -25,22 +25,23 @@ export default {
 	name: "CommentItem",
 	props: {
 		commentInfo: {},
-		receiver: {}
+		receiver: {},
+		idx: {}
 	},
 	methods: {
 		commentDelete() {
 			http.post(
 				"/trc/deleteComment",
 				{
-					postId: commentInfo.comment.postId,
-					caller: commentInfo.comment.memberId,
-					commentId: commentInfo.comment.idcomment,
-					receiver: receiver
+					postId: this.commentInfo.comment.postId,
+					caller: this.commentInfo.comment.memberId,
+					commentId: this.commentInfo.comment.idcomment,
+					receiver: this.receiver
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
 				.then(res => {
-					console.log(res);
+					this.$emit("commentDelete", this.idx);
 				})
 				.catch(err => {
 					console.log(err);

@@ -29,9 +29,15 @@
 				</div>
 
 				<div id="cardBody">
-					<span class="line-clamp-body">
+					<!-- <span class="line-clamp-body">
 						{{ code }}
-					</span>
+					</span> -->
+					<vue-markdown
+						class="line-numbers match-braces rainbow-braces show-invisibles line-clamp-body"
+						:source="code"
+						data-download-link
+						style="height: 500px;"
+					></vue-markdown>
 				</div>
 
 				<div id="cardFooter">
@@ -79,6 +85,7 @@
 import router from "../router";
 import store from "../store";
 import http from "../http-common";
+import Prism from "../prism";
 
 export default {
 	name: "Post",
@@ -149,11 +156,15 @@ export default {
 			// };
 			this.$emit("like", postNum, index);
 		}
+	},
+	created() {
+		Prism.highlightAll();
 	}
 };
 </script>
 
 <style scoped>
+@import "../prism.css";
 .postBox {
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);

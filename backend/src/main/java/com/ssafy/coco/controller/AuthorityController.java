@@ -21,9 +21,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.coco.dao.MemberDao;
 import com.ssafy.coco.relationvo.Board;
+import com.ssafy.coco.relationvo.SignUpMember;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService;
 import com.ssafy.coco.service.MemberService;
+import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Tokens;
@@ -54,8 +56,21 @@ public class AuthorityController {
 	MemberService memberService;
 	@Autowired
 	MailService mailService;
+	@Autowired
+	private TransactionService transactionService;
 
-	@ApiOperation(value = "id로 sns로그인", response = List.class)
+	@ApiOperation(value = "프로필 사진과 함께 가입 하기", response = List.class)
+	@PostMapping("/signUp")
+	public ResponseEntity<Integer> signUp(SignUpMember signUpMember, HttpServletRequest request) throws Exception {
+		System.out.println(signUpMember);
+		int answer = (int) transactionService.signUp(signUpMember);
+		if (answer<=0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<Integer>(answer, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "id로 구글 로그인", response = List.class)
 	@RequestMapping(value = "/snsLogin", method = RequestMethod.POST)
 	public ResponseEntity<Tokens> snsLogin(@RequestBody String id) throws Exception {
 		Member m = new Member();
@@ -71,7 +86,7 @@ public class AuthorityController {
 		} else// 존재 하면
 		{
 			m = list.get(0);
-			Tokens tokens = jwtService.login(m.getId(), m.getPassword());
+			Tokens tokens = jwtService.login(m.getId(),"superkey");
 			return new ResponseEntity<Tokens>(tokens, HttpStatus.OK);
 		}
 	}
@@ -83,8 +98,7 @@ public class AuthorityController {
 		List<Member> list = memberService.findMember(member);
 		if (list.size() > 0) {
 			Member m = list.get(0);
-			String newpwd = mailService.findPwd(m.getId(), m.getNickname(), "@2");
-			m.setPassword(newpwd);
+			m.setPassword(mailService.findPwd(m.getId(), m.getNickname(), "@2"));
 			memberService.updateMember(m);
 			return new ResponseEntity(HttpStatus.OK);
 		} else// 존재 x
@@ -96,12 +110,10 @@ public class AuthorityController {
 	@ApiOperation(value = "이메일 인증", response = List.class)
 	@RequestMapping(value = "/certificationByEmail/{key}", method = { RequestMethod.GET })
 	public ResponseEntity certificationByEmail(@PathVariable String key) throws Exception {
-		// 사용자의 id를 받아서
 		int idmember = jwtService.getIdmemberByToken(key);
 		if (idmember > 0) {
 			Member m = new Member();
-			m.setIdmember(idmember);
-			m = memberService.findMember(m).get(0);
+			m = memberService.findMember(new Member(idmember)).get(0);
 			m.setIsManager(2);
 			memberService.updateMember(m);
 			return new ResponseEntity(HttpStatus.OK);
@@ -114,7 +126,6 @@ public class AuthorityController {
 	@ApiOperation(value = "이메일 인증 메일 전송", response = List.class)
 	@RequestMapping(value = "/sendEmailKey", method = { RequestMethod.POST })
 	public ResponseEntity sendEmailKey(@RequestBody Member member) throws Exception {
-		// 사용자의 id를 받아서
 		List<Member> list = memberService.findMember(member);
 		if (list.size() > 0) {
 			Member m = list.get(0);
@@ -134,29 +145,21 @@ public class AuthorityController {
 			HttpServletResponse response, HttpSession session) throws Exception {
 		// System.out.println(code);
 		JsonNode token = jwtService.getAccessToken(code);
-		System.out.println("토토큰" + token);
+		System.out.println(token);
 		JsonNode profile = jwtService.getKakaoUserInfo(token.path("access_token").toString());
-		System.out.println("DD" + profile);
-
 		Member vo = jwtService.changeData(profile);
+		System.out.println("카카오 브이오"+vo);
 		Member searchMember = new Member();
 		searchMember.setId(vo.getId());
-		System.out.println(searchMember);
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<Member> list = memberService.findMember(searchMember);
-
-		boolean isExist = list.size() != 0 ? true : false;
-		if (isExist)// 계정 존재시에
+		if (list.size()>0)// 계정 존재시에
 		{
 			Member result = list.get(0);
-			Tokens tokens2 = jwtService.login(result.getId(), result.getPassword());
-			System.out.println("tokens2:" + tokens2.getAccessToken());
-			System.out.println("kkao:" + token.path("access_token").toString());
+			Tokens tokens2 = jwtService.login(result.getId(), "superkey");
 			String memberJson = "{\"Member\":" + objectMapper.writeValueAsString(result) + ",";
 			memberJson += "\"accessToken\":" + '"' + tokens2.getAccessToken() + '"';
 			memberJson += ",\"refreshToken\":\"" + tokens2.getRefreshToken() + "\"}";
-			System.out.println("멤버제이슨" + memberJson);
-
 			return new ResponseEntity<String>(memberJson, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>(objectMapper.writeValueAsString(vo), HttpStatus.OK);
@@ -169,10 +172,9 @@ public class AuthorityController {
 		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
 		String id = (String) map.get("id");
 		String password = (String) map.get("password");
-		System.out.println(id);
-		System.out.println(password);
 		Tokens tokens = jwtService.login(id, password);
 		if (tokens != null) {
+			System.out.println("로그인 컨트롤러 성공");
 			return new ResponseEntity(tokens, HttpStatus.OK);
 		} else {
 			System.out.println("failfail");
@@ -184,9 +186,7 @@ public class AuthorityController {
 	@RequestMapping(value = "/auth/{tt}", method = RequestMethod.GET)
 	public boolean authToken(@PathVariable String tt) throws Exception {
 		String jwt = tt;
-		System.out.println(jwt);
 		if (jwt == null) {
-			System.out.println("null");
 			return false;
 		} else {
 			return jwtService.checkJwt(jwt);
@@ -196,14 +196,32 @@ public class AuthorityController {
 	@ApiOperation(value = "리프레쉬 토큰을 통한 액세스 토큰 발급", response = List.class)
 	@RequestMapping(value = "/getAccessTokenByRefreshToken/", method = RequestMethod.POST)
 	public ResponseEntity<String> getAccessTokenByRefreshToken(@RequestBody String refToken) throws Exception {
-		System.out.println("ref!!" + refToken);
-		int idmember = memberDao.findIdByRefreshToken(refToken);
-		System.out.println(idmember + "ref!!!");
-		if (idmember == 0) {
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		System.out.println("리프레쉬 토큰 컨트롤러안"+refToken);
+		List<Member> list = memberDao.findIdByRefreshToken(refToken);
+		if (list.size()==0) {
+			System.out.println("레프 실패");
+			return new ResponseEntity<String>(HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		} else {
-			String accessToken = jwtService.makeJwt("" + idmember, 1);
+			System.out.println("레프 성공");
+			String accessToken = jwtService.makeJwt(list.get(0), 1);
 			return new ResponseEntity<String>(accessToken, HttpStatus.OK);
 		}
+	}
+	
+	@ApiOperation(value = "중복확인 ", response = List.class)
+	@RequestMapping(value = "/check", method = RequestMethod.POST)
+	public ResponseEntity<Boolean> check(@RequestBody JSONObject json) throws Exception {
+		String id = (String)json.get("id");
+		boolean answer = memberService.check(id);
+		return new ResponseEntity<Boolean>(answer, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "닉네임 중복 체크", response = List.class)
+	@RequestMapping(value = "/checkNickName", method = RequestMethod.POST)
+	public ResponseEntity<List<Alarm>> checkNickName(@RequestBody Member member) throws Exception {
+		if (memberService.findMember(member).size() >0) {
+			return new ResponseEntity<List<Alarm>>(HttpStatus.OK);
+		}
+		return new ResponseEntity(HttpStatus.NO_CONTENT);
 	}
 }

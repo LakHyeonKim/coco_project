@@ -9,6 +9,7 @@
 
 	<typeAliases>
 		<package name="com.ssafy.coco.vo" />
+		<package name="com.ssafy.coco.relationvo" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="sql/mybatis-alarm-mapping.xml" />

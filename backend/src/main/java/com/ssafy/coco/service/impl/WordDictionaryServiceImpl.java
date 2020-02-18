@@ -40,6 +40,6 @@ public class WordDictionaryServiceImpl implements WordDictionaryService{
 	public int deleteWordDictionary(WordDictionary wd) {
 		return wordDictionaryDao.deleteWordDictionary(wd);
 	}
-
+	
 
 }

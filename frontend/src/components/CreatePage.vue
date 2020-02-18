@@ -310,6 +310,9 @@ export default {
 	},
 	updated() {
 		Prism.highlightAll();
+	},
+	destroyed() {
+		this.$store.state.parent = null;
 	}
 };
 </script>
