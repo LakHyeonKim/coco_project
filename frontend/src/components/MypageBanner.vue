@@ -14,10 +14,11 @@
 					id="imgUser"
 					:src="
 						userInfo.member.imageUrl == ''
-							? './img/icons/user.png'
+							? '../img/icons/user.png'
 							: userInfo.member.imageUrl
 					"
 				/>
+				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
 						<div id="nickname">{{ userInfo.member.nickname }}</div>

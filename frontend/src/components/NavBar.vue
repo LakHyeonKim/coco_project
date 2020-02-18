@@ -3,18 +3,34 @@
 	<!-- 웹 화면에서 구성요소 링크 범위 조절 -->
 	<div id="navbar">
 		<ul>
-			<li>
-				<!-- <router-link to="/mypage"> -->
+			<!-- <li>
 				<img
 					@click="getMypage()"
 					id="profile"
 					:src="
 						$session.get('imageUrl') == undefined
-							? './img/icons/user.png'
+							? '../img/icons/user.png'
 							: $session.get('imageUrl')
 					"
 				/>
-				<!-- </router-link> -->
+			</li> -->
+			<li id="profile_menu">
+				<img
+					@click="isBlock = !isBlock"
+					id="profile"
+					:src="
+						$session.get('imageUrl') == undefined
+							? '../img/icons/user.png'
+							: $session.get('imageUrl')
+					"
+				/>
+				<ul
+					id="profile_sub"
+					:style="isBlock ? 'display: block' : 'display: none'"
+				>
+					<li id="mypage_li" @click="getMypage()">마이페이지</li>
+					<li @click="logout()">로그아웃</li>
+				</ul>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/newsfeed">
@@ -50,7 +66,8 @@ export default {
 	name: "NavBar",
 	data() {
 		return {
-			preUrl: ""
+			preUrl: "",
+			isBlock: false
 		};
 	},
 	methods: {
@@ -97,7 +114,35 @@ export default {
 	border-radius: 25px;
 	margin-bottom: 20px;
 	width: 40px;
+	height: 40px;
 	cursor: pointer;
+}
+
+#navbar li ul {
+	list-style: none;
+	display: none;
+	background-color: rgb(243, 230, 250);
+	position: fixed;
+	color: rgba(0, 0, 0, 0.7);
+	margin: 0px;
+	padding: 0px;
+	z-index: 200;
+	left: 55px;
+	top: 30px;
+	/* border-radius: 10px; */
+	font-size: 15px;
+	box-shadow: 0.2px 0.2px 3px 0.5px rgba(0, 0, 0, 0.3);
+}
+#navbar li ul li {
+	padding: 10px;
+	cursor: pointer;
+}
+#navbar li ul li:hover {
+	background-color: rgb(168, 136, 185);
+	color: white;
+}
+#mypage_li {
+	border-bottom: 1px solid silver;
 }
 
 #navbar > ul > li {
@@ -129,6 +174,7 @@ export default {
 
 	#profile {
 		width: 35px;
+		height: 35px;
 		margin-bottom: 0;
 	}
 
@@ -150,6 +196,7 @@ export default {
 	#profile {
 		cursor: pointer;
 		width: 30px;
+		height: 30px;
 	}
 	.nav_menu_img {
 		width: 30px;

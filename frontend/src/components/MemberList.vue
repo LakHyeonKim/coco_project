@@ -108,10 +108,15 @@ export default {
 				this.followList[this.otherIdx].isFollow = 1;
 			}
 
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				memberFollowing: this.followList[this.otherIdx].member.idmember
-			})
+			http.post(
+				address,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.followList[this.otherIdx].member
+						.idmember
+				},
+				{ headers: { Authorization: this.$session.get("accessToken") } }
+			)
 				.then(response => {
 					console.log(response);
 				})

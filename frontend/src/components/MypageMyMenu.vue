@@ -13,7 +13,7 @@
 		<!-- blur 생각해보기 -->
 		<div id="open" v-if="!isHidden">
 			<ul id="list" v-for="item in tags" :key="item">
-				<li>#{{ item }}</li>
+				<li class="menu_tags">#{{ item }}</li>
 			</ul>
 		</div>
 		<div></div>
@@ -53,6 +53,14 @@ export default {
 	top: 0;
 	right: 0;
 	z-index: 1;
+}
+.menu_tags {
+	cursor: pointer;
+	margin: 3px;
+}
+#list > li:hover {
+	/* box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.267); */
+	background-color: rgba(150, 23, 98, 0.7);
 }
 #imgMenu {
 	right: 0;
