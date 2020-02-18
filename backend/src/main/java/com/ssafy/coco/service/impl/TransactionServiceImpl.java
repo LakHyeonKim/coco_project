@@ -76,7 +76,20 @@ public class TransactionServiceImpl implements TransactionService {
 	private MailService mailService;
 	@Autowired
 	private MyPageTagDao myPageTagDao;
+	// 글쓴사람이랑 보낸사람이랑 포스트아이디
+	@Transactional
+	public void deleteComment(long postId,long receiver,long caller,long commentId ) {
+		Comment comment = new Comment();
+		comment.setIdcomment(commentId);
+		commentDao.deleteComment(comment);
+		Alarm alarm = new Alarm();
+		alarm.setMemberReceiver(receiver);
+		alarm.setMemberCaller(caller);
+		alarm.setPostId(postId);
+		alarmDao.deleteAlarm(alarm);
+	}
 
+	
 	/**
 	 * 
 	 * @param member 회원정보

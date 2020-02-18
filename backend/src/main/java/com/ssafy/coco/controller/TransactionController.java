@@ -27,11 +27,13 @@ import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.relationvo.SignUpMember;
+import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.TransactionService;
 import com.ssafy.coco.vo.Follow;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.PostWithTag;
+import com.ssafy.coco.vo.Tokens;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +45,23 @@ public class TransactionController {
 	
 	@Autowired
 	private TransactionService transactionService;
+	@Autowired
+	private JwtService jwtService;
 	
+	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
+	@RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
+	public ResponseEntity<Integer> deleteComment(@RequestHeader(value="Authorization")String jwt,@RequestBody JSONObject input) throws Exception {
+		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
+		Integer postId = (Integer) map.get("postId");
+		Integer receiver = (Integer) map.get("receiver");
+		Integer caller = (Integer) map.get("caller");
+		Integer commentId = (Integer) map.get("commentId");
+		
+		transactionService.deleteComment(postId, receiver, caller, commentId);
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
+	
+
 	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/makeComment", method = RequestMethod.POST)
 	public ResponseEntity<Integer> makeComment(@RequestHeader(value="Authorization")String jwt,@RequestBody BoardDetail board) throws Exception {

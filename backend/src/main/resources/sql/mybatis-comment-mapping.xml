@@ -21,9 +21,13 @@
 	</sql>
 	<sql id="update-Comment">
 		update comment set
-		comment_writer=#{commentWriter},
+		<if test="commentWriter != null">
+			comment_writer=#{commentWriter},
+		</if>
+		<if test="contents != null">
+			contents=#{contents},
+		</if>
 		update_created=DATE_ADD(NOW(), INTERVAL 9 HOUR),
-		contents=#{contents},
 		access=#{access}
 		where
 		idcomment=#{idcomment}

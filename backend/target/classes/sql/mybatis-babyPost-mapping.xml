@@ -7,9 +7,9 @@
 
 <mapper namespace="BabyPost_Mapper">
 	<sql id="select-BabyPost">
-		select 
+		select
 		idbaby_post, post_parents, post_child
-		from 
+		from
 		baby_post
 	</sql>
 	<sql id="insert-BabyPost">

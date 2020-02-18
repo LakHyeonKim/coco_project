@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -95,14 +96,14 @@ public class JwtServiceImpl implements JwtService {
 
 	public JsonNode getKakaoUserInfo(String token) {
 
-		final String RequestUrl = "https://kapi.kakao.com/v1/user/me";
+		final String RequestUrl = "https://kapi.kakao.com/v2/user/me";
 
 		final HttpClient client = HttpClientBuilder.create().build();
 		final HttpPost post = new HttpPost(RequestUrl);
 
 		// add header
 		post.addHeader("Authorization", "Bearer " + token);
-
+		post.addHeader("Content-type","application/x-www-form-urlencoded;charset=utf-8");
 		JsonNode returnNode = null;
 
 		try {
@@ -130,14 +131,15 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	public Member changeData(JsonNode userInfo) {
+
 		Member vo = new Member();
 
 		vo.setId(userInfo.path("id").asText()); // id -> vo 넣기
 
-		if (userInfo.path("kaccount_email_verified").asText().equals("true")) { // 이메일 받기 허용 한 경우
-			vo.setId(userInfo.path("kaccount_email").asText()); // email -> vo 넣기
-		} else { // 이메일 거부 할 경우 코드 추후 개발
-
+		JsonNode kakao_account= userInfo.path("kakao_account");
+		if(kakao_account.path("has_email").asText().equals("true"))
+		{
+			vo.setId(kakao_account.path("email").asText());
 		}
 
 		JsonNode properties = userInfo.path("properties"); // 추가정보 받아오기
@@ -178,7 +180,7 @@ public class JwtServiceImpl implements JwtService {
 	public String makeJwt(Member member, int time) throws Exception {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		Date expireTime = new Date();
-		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 * time);
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
@@ -208,7 +210,7 @@ public class JwtServiceImpl implements JwtService {
 	public String makeJwt(String idmember, String nickname, int access, int time) throws Exception {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		Date expireTime = new Date();
-		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 * time);
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
@@ -233,7 +235,7 @@ public class JwtServiceImpl implements JwtService {
 	public String makeJwt(String idmember, String nickname, int time) throws Exception {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		Date expireTime = new Date();
-		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 * time);
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
@@ -257,7 +259,7 @@ public class JwtServiceImpl implements JwtService {
 	public String makeJwt(String idmember, int time) throws Exception {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		Date expireTime = new Date();
-		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60);
+		expireTime.setTime(expireTime.getTime() + 1000 * 60 * 60 * time );
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
@@ -302,6 +304,7 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public boolean checkJwt(String jwt) throws Exception {
+		if(jwt.equals("")&&jwt==null) return false;
 		try {
 			System.out.println("start");
 			Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
@@ -350,10 +353,10 @@ public class JwtServiceImpl implements JwtService {
 			return HttpStatus.ACCEPTED;
 		} catch (ExpiredJwtException exception) {
 			logger.info("토큰 만료");
-			return HttpStatus.UNAUTHORIZED;
+			return HttpStatus.NON_AUTHORITATIVE_INFORMATION;
 		} catch (JwtException exception) {
 			logger.info("토큰 변조");
-			return HttpStatus.UNAUTHORIZED;
+			return HttpStatus.NON_AUTHORITATIVE_INFORMATION;
 		}
 	}
 
@@ -392,7 +395,10 @@ public class JwtServiceImpl implements JwtService {
 			m = list.get(0);
 			m.setGrade("아이언");
 			System.out.println("들어옴");
-			String refreshToken = makeJwt("" + System.currentTimeMillis(), 24 * 14);// 나중에 뭘로 할지 찾기
+			Random r = new Random();
+//			r.next
+			String refreshToken = makeJwt("" + Member.encryptSHA256Iter(r.nextInt(Integer.MAX_VALUE)+"", r.nextInt(10)), 24 * 14);// 나중에 뭘로 할지 찾기
+			System.out.println("새로운 리프레시:"+refreshToken);
 			m.setRefreshToken(refreshToken);
 			memberDao.updateRefreshToken(m);
 			Tokens tokens = new Tokens(makeJwt(m, 1),
