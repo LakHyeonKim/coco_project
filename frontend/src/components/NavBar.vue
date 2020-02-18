@@ -13,7 +13,7 @@
 							: $session.get('imageUrl')
 					"
 				/>
-			</li> -->
+			</li>-->
 			<li id="profile_menu">
 				<img
 					@click="isBlock = !isBlock"
@@ -24,10 +24,7 @@
 							: $session.get('imageUrl')
 					"
 				/>
-				<ul
-					id="profile_sub"
-					:style="isBlock ? 'display: block' : 'display: none'"
-				>
+				<ul id="profile_sub" :style="isBlock ? 'display: block' : 'display: none'">
 					<li id="mypage_li" @click="getMypage()">마이페이지</li>
 					<li @click="logout()">로그아웃</li>
 				</ul>
@@ -38,7 +35,7 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<router-link to="/newpage">
+				<router-link to="/newpage" @click="$store.state.parent = {}">
 					<img class="nav_menu_img" src="../assets/icon/plus.png" />
 				</router-link>
 			</li>
