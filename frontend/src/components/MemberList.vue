@@ -118,10 +118,41 @@ export default {
 					memberFollowing: this.followList[this.otherIdx].member
 						.idmember
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
 					console.log(response);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post("/jwt/getAccessTokenByRefreshToken/", {
+							refToken:
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+						})
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					}
 				})
 				.catch(error => {
 					console.log(error);

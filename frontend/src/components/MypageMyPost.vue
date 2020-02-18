@@ -198,12 +198,44 @@ export default {
 						idpost: idx
 					}
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
-				.then(res => {
-					console.log("getLike()");
-					console.log(res.data);
-					this.likeList = res.data;
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.getLike(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log("getLike()");
+						console.log(response.data);
+						this.likeList = response.data;
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -245,15 +277,47 @@ export default {
 					order: 4,
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					if (sel == 2) this.selTag = text;
-					else this.selTag = "";
-					this.posts = response.data;
-					console.log(this.posts.length);
-					if (this.posts.length == 0) this.noContents = true;
-					else this.noContents = false;
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						if (sel == 2) this.selTag = text;
+						else this.selTag = "";
+						this.posts = response.data;
+						console.log(this.posts.length);
+						if (this.posts.length == 0) this.noContents = true;
+						else this.noContents = false;
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -262,13 +326,7 @@ export default {
 		},
 		chnagePostSel(idx) {
 			console.log(idx);
-			this.selTag = "";
-			// console.log(document.getElementById("search_sel").value);
-			// document.getElementById("search_sel").selected = undefined;
-			// document.getElementById("search_sel").items = this.items;
-			this.searchSel = null;
-			this.posts = "";
-			this.loadingTop = true;
+
 			http.post(
 				"/api/findByMyPosts/",
 				{
@@ -276,11 +334,48 @@ export default {
 					order: idx,
 					youIdMember: this.$route.params.no
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
-					this.posts = response.data;
-					console.log(this.posts);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.chnagePostSel(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						this.selTag = "";
+						this.searchSel = null;
+						this.posts = "";
+						this.loadingTop = true;
+
+						this.posts = response.data;
+						console.log(this.posts);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -315,8 +410,40 @@ export default {
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
-				.then(res => {
-					console.log(res);
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									if (this.posts[index].post.likeCheck == 1) {
+										this.posts[index].post.likeCheck = 0;
+										this.posts[index].post.likeCount--;
+									} else {
+										this.posts[index].post.likeCheck = 1;
+										this.posts[index].post.likeCount++;
+									}
+									this.like(postNum, index);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log(response);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -340,7 +467,14 @@ export default {
 				order: 4,
 				youIdMember: this.$route.params.no
 			},
-			{ headers: { Authorization: this.$session.get("accessToken") } }
+			{
+				headers: {
+					Authorization:
+						this.$session.get("accessToken") == undefined
+							? null
+							: this.$session.get("accessToken")
+				}
+			}
 		)
 			.then(response => {
 				this.posts = response.data;

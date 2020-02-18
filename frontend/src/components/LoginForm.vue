@@ -237,7 +237,7 @@ export default {
 		if (code[1]) {
 			const sendCode = code[1].slice(1);
 			// alert(sendCode);
-			http.get("/test/kakaologin2", { params: { code: sendCode } })
+			http.get("/jwt/kakaologin", { params: { code: sendCode } })
 				.then(res => {
 					console.log("kakao res", res.data);
 					console.log("kakao res", res.data.accessToken);

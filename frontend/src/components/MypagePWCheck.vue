@@ -67,16 +67,54 @@ export default {
 					idmember: this.$session.get("id"),
 					password: this.input_pw
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
 			)
 				.then(response => {
 					console.log(response.status);
-					if (response.status == 204) {
-						alert("비밀번호가 일치하지 않습니다!");
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log("ref");
+								console.log(ref);
+								console.log(
+									this.$session.get("refreshToken") ==
+										undefined
+										? null
+										: this.$session.get("refreshToken")
+								);
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.pwCheck();
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
 					} else {
-						this.dialog = false;
-						this.$store.state.isCheck = 1;
-						this.$router.push("/infoModify/");
+						if (response.status == 204) {
+							alert("비밀번호가 일치하지 않습니다!");
+						} else {
+							this.dialog = false;
+							this.$store.state.isCheck = 1;
+							this.$router.push("/infoModify/");
+						}
 					}
 				})
 				.catch(error => {
