@@ -256,13 +256,36 @@ export default {
 		posting() {
 			if (this.board.postTitle && this.board.code) {
 				this.board.tags = [];
+
 				for (let i = 0; i < this.tags.length; ++i) {
-					this.board.tags.push(this.tags[i].value);
+					this.board.tags.push(this.tags[i].text);
 				}
 
-				let formData = new FormData(document.forms.namedItem("board"));
-				formData.append("tags", this.board.tags);
-				http.post("/trc/makePost/", formData, {
+				let newformData = new FormData(
+					document.forms.namedItem("board")
+				);
+				newformData.append("tags", this.board.tags);
+				let requestAddress = "";
+				let formData;
+				if (this.$store.state.parent) {
+					requestAddress = "/trc/makeBabyPost/";
+					formData = {
+						parent: this.$store.state.parent,
+						son: newformData
+					};
+				} else {
+					requestAddress = "/trc/makePost/";
+					formData = newformData;
+				}
+
+				// for (var pair of formData.parent.entries()) {
+				// 	console.log(pair[0] + ", " + pair[1]);
+				// }
+				// for (var pair of formData.son.entries()) {
+				// 	console.log(pair[0] + ", " + pair[1]);
+				// }
+
+				http.post(requestAddress, formData, {
 					headers: { Authorization: this.$session.get("accessToken") }
 				})
 					.then(res => {

@@ -54,7 +54,7 @@
 			</li>
 			<!-- <li class="nav_menu">
 				<a @click.prevent="logout" href="#">Logout</a>
-			</li> -->
+			</li>-->
 		</ul>
 	</div>
 </template>
