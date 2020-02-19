@@ -106,14 +106,19 @@ public class BaseController {
 	
 	@ApiOperation(value = "파일 다운로드", response = List.class)
 	@RequestMapping(value = "/download", method = RequestMethod.POST)
-	public ResponseEntity<Resource> download(long postId) throws IOException {
+	public ResponseEntity<Resource> download(@RequestHeader(value="Authorization")String jwt,@RequestBody long postId) throws IOException {
+		System.out.println("다운로드"+postId);
 		Post post = new Post();
 		post.setIdpost(postId);
 		List list = postService.findPost(post);
+		System.out.println(list);
 		if (list.size() == 0)
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		Path path = Paths.get(post.getFilePath());
-//		Path path = Paths.get("src/main/webapp/userfile/dsad.txt");
+		post = (Post) list.get(0);
+		String tempPath = post.getFilePath().substring(post.getFilePath().indexOf(":8888/")+6);
+		System.out.println(tempPath);
+		Path path = Paths.get("src/main/webapp/"+tempPath);
+//		Path path = Paths.get("src/main/webapp/userfile/0_google_logo.png");
 		System.out.println("download 파일네임:"+path.getFileName());
 		String contentType = Files.probeContentType(path);
 		
