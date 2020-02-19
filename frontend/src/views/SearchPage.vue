@@ -3,13 +3,13 @@
 		<searchBar @searchwords="searchwords"></searchBar>
 		<div id="searchMain">
 			<div id="compo">
+				<searchFavTag id="tags" @favtag="searchwords" />
 				<div
 					id="loading"
 					:style="loadingTop ? loadingStyleOn : loadingStyleOff"
 				>
 					<div v-if="loadingTop" class="loader"></div>
 				</div>
-				<searchFavTag id="tags" @favtag="searchwords"></searchFavTag>
 				<div>
 					<div v-for="i in searches.length" :key="i">
 						<SearchCard

@@ -29,9 +29,13 @@
 									? '../img/icons/user.png'
 									: postWriterProfileImage
 							"
+							@click="goMypage()"
 						/>
 						<div style="float: left;">
-							<div id="user-nickname">{{ postWriter }}</div>
+							<div id="user-nickname" @click="goMypage()">
+								{{ postWriter }}
+							</div>
+							<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
 							<div id="post-info">
 								<span v-if="dateCreated == updateCreated">
 									{{ dateCreated }} ·
@@ -138,6 +142,9 @@ export default {
 		return {};
 	},
 	methods: {
+		goMypage() {
+			this.$router.push("/mypage/" + this.memberId);
+		},
 		babyPostCreate() {
 			this.$store.state.parent = {
 				parentIdPost: this.idPost,
@@ -250,11 +257,13 @@ export default {
 	border-radius: 50%;
 	border: 1px solid silver;
 	float: left;
+	cursor: pointer;
 }
 #user-nickname {
 	font-size: 15px;
 	margin-bottom: 5px;
 	height: 17px;
+	cursor: pointer;
 }
 #post-info {
 	color: gray;
