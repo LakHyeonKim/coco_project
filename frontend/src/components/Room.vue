@@ -3,27 +3,36 @@
 		<div id="roomWrap">
 			<div id="roomList">
 				<div id="roomHeader">
-					CHAT ROOM
+					<span>CHAT ROOM</span>
+					<img
+						id="room_exit_btn"
+						@click="isHidden = !isHidden"
+						src="../assets/icon/close_b.png"
+					/>
 				</div>
 				<div id="chat_input_div">
-					<input
-						id="inputStyle"
-						type="text"
-						v-model="room_name"
-						@keyup.enter="createRoom"
-					/>
-					<button id="buttonStyle" @click="createRoom">
-						채팅방 개설
-					</button>
-					<input
-						id="inputStyle"
-						type="text"
-						v-model="search_room_name"
-						@keyup.enter="searchRoom"
-					/>
-					<button id="buttonStyle" @click="searchRoom">
-						채팅방 검색
-					</button>
+					<div style="float: left;">
+						<input
+							id="inputStyle"
+							type="text"
+							v-model="room_name"
+							@keyup.enter="createRoom"
+						/>
+						<button id="room_btn" @click="createRoom">
+							채팅방 개설
+						</button>
+					</div>
+					<div style="float: left;">
+						<input
+							id="inputStyle"
+							type="text"
+							v-model="search_room_name"
+							@keyup.enter="searchRoom"
+						/>
+						<button id="room_btn" @click="searchRoom">
+							채팅방 검색
+						</button>
+					</div>
 				</div>
 				<div id="roomSelect">
 					<div
@@ -85,41 +94,41 @@ export default {
 		this.senderStatic = this.$session.get("id");
 	},
 	mounted() {
-		var standardWidth = window.innerWidth / 2;
-		var standardHeight = window.innerHeight / 2;
-		if (
-			standardWidth > this.toChild.left &&
-			standardHeight > this.toChild.top
-		) {
-			document.getElementsByClassName("openRoom")[0].style.left =
-				this.toChild.left + "px";
-			document.getElementsByClassName("openRoom")[0].style.top =
-				this.toChild.top - 270 + "px";
-		} else if (
-			standardWidth <= this.toChild.left &&
-			standardHeight <= this.toChild.top
-		) {
-			document.getElementsByClassName("openRoom")[0].style.left =
-				this.toChild.left - 500 + "px";
-			document.getElementsByClassName("openRoom")[0].style.top =
-				this.toChild.top - 670 + "px";
-		} else if (
-			standardWidth <= this.toChild.left &&
-			standardHeight > this.toChild.top
-		) {
-			document.getElementsByClassName("openRoom")[0].style.left =
-				this.toChild.left - 500 + "px";
-			document.getElementsByClassName("openRoom")[0].style.top =
-				this.toChild.top - 270 + "px";
-		} else if (
-			standardWidth > this.toChild.left &&
-			standardHeight <= this.toChild.top
-		) {
-			document.getElementsByClassName("openRoom")[0].style.left =
-				this.toChild.left + "px";
-			document.getElementsByClassName("openRoom")[0].style.top =
-				this.toChild.top - 670 + "px";
-		}
+		// var standardWidth = window.innerWidth / 2;
+		// var standardHeight = window.innerHeight / 2;
+		// if (
+		// 	standardWidth > this.toChild.left &&
+		// 	standardHeight > this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openRoom")[0].style.left =
+		// 		this.toChild.left + "px";
+		// 	document.getElementsByClassName("openRoom")[0].style.top =
+		// 		this.toChild.top - 270 + "px";
+		// } else if (
+		// 	standardWidth <= this.toChild.left &&
+		// 	standardHeight <= this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openRoom")[0].style.left =
+		// 		this.toChild.left - 500 + "px";
+		// 	document.getElementsByClassName("openRoom")[0].style.top =
+		// 		this.toChild.top - 670 + "px";
+		// } else if (
+		// 	standardWidth <= this.toChild.left &&
+		// 	standardHeight > this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openRoom")[0].style.left =
+		// 		this.toChild.left - 500 + "px";
+		// 	document.getElementsByClassName("openRoom")[0].style.top =
+		// 		this.toChild.top - 270 + "px";
+		// } else if (
+		// 	standardWidth > this.toChild.left &&
+		// 	standardHeight <= this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openRoom")[0].style.left =
+		// 		this.toChild.left + "px";
+		// 	document.getElementsByClassName("openRoom")[0].style.top =
+		// 		this.toChild.top - 670 + "px";
+		// }
 	},
 	methods: {
 		findAllRoom: function() {
@@ -187,7 +196,32 @@ export default {
 #roomWrap {
 	width: 100%;
 }
+#room_exit_btn {
+	position: fixed;
+	right: 95px;
+	top: 28px;
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+	-webkit-transform: scale(1);
+	-moz-transform: scale(1);
+	-ms-transform: scale(1);
+	-o-transform: scale(1);
+	transform: scale(1);
+	-webkit-transition: 0.2s;
+	-moz-transition: 0.2s;
+	-ms-transition: 0.2s;
+	-o-transition: 0.2s;
+	transition: 0.2s;
+}
 
+#room_exit_btn:hover {
+	-webkit-transform: scale(1.1);
+	-moz-transform: scale(1.1);
+	-ms-transform: scale(1.1);
+	-o-transform: scale(1.1);
+	transform: scale(1.1);
+}
 .openRoom {
 	padding: 10px;
 	float: left;
@@ -205,6 +239,7 @@ export default {
 }
 
 #chat_input_div {
+	display: inline-block;
 	margin: 10px;
 }
 
@@ -215,13 +250,13 @@ export default {
 	margin: 3px;
 }
 
-#buttonStyle {
+#room_btn {
 	border: 1px solid rgba(160, 23, 98, 0.9);
 	color: rgba(160, 23, 98, 0.9);
 	padding: 0 3px 0 3px;
 	border-radius: 5px;
 }
-#buttonStyle:hover {
+#room_btn:hover {
 	background-color: rgba(160, 23, 98, 0.7);
 	color: white;
 }

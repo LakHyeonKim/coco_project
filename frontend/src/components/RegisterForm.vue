@@ -52,22 +52,12 @@
 							:error-messages="errors[0] ? errors[0] : []"
 							color="gray"
 							@keypress="isIdModi()"
+							:disabled="disabled"
 						></v-text-field>
 					</validation-provider>
 				</div>
 				<div id="idCheck" v-on:click="idCheck">
 					<p id="checkText">중복확인</p>
-				</div>
-				<div>
-					<div v-if="duplicate_id">
-						<div
-							v-for="(message, idx) in duplicate_id"
-							:key="idx"
-							id="check"
-						>
-							{{ message }}
-						</div>
-					</div>
 				</div>
 				<div id="idBox">
 					<validation-provider
@@ -88,17 +78,6 @@
 				</div>
 				<div id="idCheck" v-on:click="nicknameCheck">
 					<p id="checkText">중복확인</p>
-				</div>
-				<div>
-					<div v-if="duplicate_nickname">
-						<div
-							v-for="(message, idx) in duplicate_nickname"
-							:key="idx"
-							id="check"
-						>
-							{{ message }}
-						</div>
-					</div>
 				</div>
 				<validation-provider
 					name="비밀번호 "
@@ -191,7 +170,8 @@ export default {
 		},
 		loadingStyleOff: {
 			display: "none"
-		}
+		},
+		disabled: false
 	}),
 
 	methods: {
@@ -205,7 +185,7 @@ export default {
 			let formData = new FormData(document.getElementById("formData"));
 			formData.set("file", this.$refs.profile.file);
 
-			if (this.onSubmit() && this.idcheck && this.nicknameCheck) {
+			if (this.onSubmit() && this.idcheck && this.nicknamecheck) {
 				this.loadingTop = true;
 				// this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", formData);
@@ -279,7 +259,6 @@ export default {
 										router.push("/admin");
 										document.location.reload();
 									} else {
-										// alert("잠깐만");
 										this.loadingTop = false;
 										router.push("/newsfeed");
 									}
@@ -309,8 +288,10 @@ export default {
 					});
 				// http.post("/jwt/sendEmailkey/", formData);
 			} else {
+				if (!this.idcheck || !this.nicknameCheck)
+					alert("중복확인을 해주세요");
 				console.log("REGISTER ", "검증 실패");
-				alert("중복확인을 해주세요");
+
 				this.loadingTop = false;
 			}
 		},
@@ -326,6 +307,8 @@ export default {
 		// },
 		onSubmit() {
 			this.$refs.form.validate().then(success => {
+				console.log("onSubmit");
+				console.log(success);
 				if (!success) {
 					alert("제출양식에 맞지 않습니다.");
 					return false;
@@ -347,12 +330,10 @@ export default {
 						console.log("DUPLICATE then ", this.signUpMember.id);
 						console.log("DUPLICATE then ", res);
 						if (res.data) {
-							this.duplicate_id.push(
-								"사용하실수 있는 아이디입니다."
-							);
+							alert("사용하실수 있는 아이디입니다.");
 							this.idcheck = true;
 						} else {
-							this.duplicate_id.push("아이디가 중복되었습니다.");
+							alert("아이디가 중복되었습니다.");
 							this.idcheck = false;
 						}
 					})
@@ -360,7 +341,7 @@ export default {
 						console.log("DUPLICATE catch ", err);
 					});
 			} else {
-				this.duplicate_id.push("아이디를 입력해 주십시오.");
+				alert("아이디를 입력해 주십시오.");
 			}
 		},
 		nicknameCheck() {
@@ -378,14 +359,10 @@ export default {
 						);
 						console.log("DUPLICATE then ", res);
 						if (res.status == "204") {
-							this.duplicate_nickname.push(
-								"사용하실수 있는 닉네임입니다."
-							);
+							alert("사용하실수 있는 닉네임입니다.");
 							this.nicknamecheck = true;
 						} else {
-							this.duplicate_nickname.push(
-								"닉네임이 중복되었습니다."
-							);
+							alert("닉네임이 중복되었습니다.");
 							this.nicknamecheck = false;
 						}
 					})
@@ -393,7 +370,7 @@ export default {
 						console.log("DUPLICATE catch ", err);
 					});
 			} else {
-				this.duplicate_nickname.push("닉네임을 입력해 주십시오.");
+				alert("닉네임을 입력해 주십시오.");
 			}
 		},
 		exceedHandler(file) {
@@ -406,8 +383,10 @@ export default {
 		// this.localize("ko", this.dictionary)
 		if (this.$session.has("useremail")) {
 			this.signUpMember.id = this.$session.get("useremail");
+			this.disabled = true;
+			this.idcheck = true;
 			this.idCheck();
-			this.$session.remove("useremail");
+			this.$session.destroy();
 		}
 	}
 };
@@ -467,18 +446,24 @@ export default {
 	justify-content: left;
 }
 #idCheck {
-	display: inline-block;
-	width: 18%;
-	justify-content: right;
+	width: 65px;
+	float: right;
 	font-size: 15px;
-	width: 20%;
 	height: 35px;
 	text-align: center;
+	margin-top: 13px;
 	color: white;
 	background-color: rgba(160, 23, 98, 0.5);
 	border-radius: 5px;
 	transform: translateY(-10%);
+	cursor: pointer;
 }
+
+#idCheck:hover {
+	background-color: rgba(160, 23, 98, 0.8);
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 #checkText {
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -491,6 +476,12 @@ export default {
 	background-color: #7d4879;
 	border-radius: 5px;
 	margin-bottom: 50px;
+	outline: none;
+}
+#submitButton:hover {
+	color: #7d4879;
+	background-color: white;
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 #check {
 	color: rgba(160, 23, 98, 0.5);

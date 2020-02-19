@@ -132,7 +132,7 @@
 			</div>
 		</div>
 		<div v-if="noContents" id="noContents">
-			검색한 내용의 포스트가 존재하지 않습니다
+			해당 포스트가 존재하지 않습니다
 		</div>
 	</div>
 </template>
@@ -333,8 +333,10 @@ export default {
 						if (sel == 2) this.selTag = text;
 						else this.selTag = "";
 						this.posts = response.data;
+						console.log("여기다!");
 						console.log(this.posts.length);
-						if (this.posts.length == 0) this.noContents = true;
+						if (response.data == "" || this.posts.length == 0)
+							this.noContents = true;
 						else this.noContents = false;
 					}
 				})
@@ -501,6 +503,12 @@ export default {
 			.then(response => {
 				this.posts = response.data;
 				console.log(response);
+
+				console.log("여기다!");
+				console.log(this.posts.length);
+				if (response.data == "" || this.posts.length == 0)
+					this.noContents = true;
+				else this.noContents = false;
 			})
 			.catch(error => {
 				console.log(error);
