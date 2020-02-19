@@ -9,7 +9,8 @@
 						</td>
 						<td>
 							<!-- 소개 페이지 연결 -->
-							<a class="link">SEESAW</a> (
+							<button @click="goUs()" class="link">SEESAW</button>
+							(
 							<a
 								class="link"
 								href="https://lab.ssafy.com/webmobile1-sub2/s02p12d105"
@@ -30,7 +31,7 @@
 							<img src="../assets/logo/phone.png" width="20px" />
 						</td>
 						<td>
-							<button @click="goUs()">Contact Us</button>
+							054) 여기는-싸피싸피
 						</td>
 					</tr>
 				</table>
@@ -135,8 +136,8 @@ export default {
 	#tech,
 	#info {
 		float: none;
-		width: 400px;
-		margin: 0 auto;
+		width: 90vw;
+		margin: 0 5vw;
 	}
 
 	#tech {

@@ -27,7 +27,8 @@ pre[class*="language-"] {
 	-moz-hyphens: none;
 	-ms-hyphens: none;
 	hyphens: none;
-
+	/* max-height: 200px; */
+	box-shadow: none;
 }
 
 /* Code blocks */
@@ -39,7 +40,7 @@ pre[class*="language-"] {
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-	background: #2d2d2d;
+	background: #ffffff;
 }
 
 /* Inline code */

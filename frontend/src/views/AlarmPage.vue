@@ -7,7 +7,7 @@
 					alt="logo_image"
 					id="searchLogo"
 				/>
-				<div id="codeCoworker">Code Coworker</div>
+				<div id="CC">Code Coworker</div>
 			</div>
 		</div>
 		<div class="blankBox"></div>
@@ -52,14 +52,11 @@ export default {
 				document.getElementById("header").style.height = "50px";
 				document.getElementById("headInnerBox").style.padding = "10px";
 				document.getElementById("CC").style.display = "inline-block";
-				document.getElementById("serachBox").style.display = "none";
 			} else {
 				document.getElementById("header").style.height = "75px";
 				document.getElementById("headInnerBox").style.padding =
 					"20px 10px 20px 10px";
 				document.getElementById("CC").style.display = "none";
-				document.getElementById("serachBox").style.display =
-					"inline-block";
 			}
 		}
 	},

@@ -1,65 +1,37 @@
 <template>
 	<div>
-		<div id="alarmCard" v-if="!isReadChange">
+		<div id="alarmCard">
 			<div id="userImgDiv">
-				<!-- <img id="userImg" :src="userImg" alt="" /> -->
-				<!-- {{ userImg }} -->
+				<img
+					id="userImg"
+					:src="
+						userImg == null || userImg == ''
+							? '../img/icons/user.png'
+							: userImg
+					"
+					alt=""
+				/>
 			</div>
 			<div id="content">
 				<p v-if="this.followId" class="line-clamp-content">
-					<b>{{ userNickname }}</b
+					<b @click.prevent="goYourPage()">{{ userNickname }}</b
 					>가 나를 팔로우 하였습니다.
 					<br />
 				</p>
 				<p v-else class="line-clamp-content">
-					<b>{{ userNickname }}</b
-					>가 내 글을 좋아요 하였습니다: <b>{{ postTitle }}</b>
+					<b @click.prevent="goYourPage()">{{ userNickname }}</b
+					>가 내 글을 좋아요 하였습니다:
+					<b @click.prevent="goDetail()">{{ postTitle }}</b>
 					<br />
 				</p>
 				<div style="font-size:12px">{{ dateCreated }}</div>
-			</div>
-			<div id="isRead">
-				<button
-					id="readButton"
-					v-if="!isReadChange"
-					@click="isReaded()"
-				>
-					<a id="readText">READ</a>
-				</button>
-			</div>
-		</div>
-
-		<div id="alarmCard" class="Effect" v-else>
-			<div id="userImgDiv">
-				<!-- <img id="userImg" :src="userImg" alt="" /> -->
-				<!-- {{ userImg }} -->
-			</div>
-			<div id="content">
-				<p v-if="this.followId" class="line-clamp-content">
-					{{ userNickname }}가 나를 팔로우 하였습니다.
-					<br />
-				</p>
-				<p v-else class="line-clamp-content">
-					{{ userNickname }}가 내 글을 좋아요 하였습니다:
-					{{ postTitle }}
-					<br />
-				</p>
-				<div style="font-size:12px">{{ dateCreated }}</div>
-			</div>
-			<div id="isRead">
-				<button
-					id="readButton"
-					v-if="!isReadChange"
-					@click="isReaded()"
-				>
-					<a id="readText">READ</a>
-				</button>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import router from "../router";
 import http from "../http-common";
 
 export default {
@@ -79,34 +51,18 @@ export default {
 		return {
 			userNickname: "",
 			userImg: "",
-			postTitle: "",
-			isReadChange: 0
+			postTitle: ""
 		};
 	},
 	methods: {
-		isReaded() {
-			this.isReadChange = 1;
-			const token = this.$session.get("accessToken");
-			const headers = {
-				Authorization: token
-			};
-			const requestForm = {
-				idalarm: this.idalarm,
-				isRead: 1
-			};
-			console.log(headers);
-			console.log(requestForm);
-			http.put("/api/updateAlarm", requestForm, { headers })
-				.then(res => {
-					console.log("alarm update res ", res);
-				})
-				.catch(err => {
-					console.log("alarm update res ", err);
-				});
+		goYourPage() {
+			router.push("/mypage/" + this.memberCaller);
+		},
+		goDetail() {
+			router.push("/detail/" + this.postId);
 		}
 	},
 	mounted() {
-		this.isReadChange = this.isRead;
 		const token = this.$session.get("accessToken");
 		const headers = {
 			Authorization: token

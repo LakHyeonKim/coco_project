@@ -82,7 +82,17 @@
 							</div>
 						</div>
 						<div class="post_code">
-							{{ item.post.code }}
+							<vue-markdown
+								class="line-numbers match-braces rainbow-braces show-invisibles"
+								:source="item.post.code"
+								data-download-link
+								id="mark"
+								:style="
+									temp_width < 600
+										? 'maxHeight: 75px; width:100vw'
+										: 'maxHeight: 195px'
+								"
+							></vue-markdown>
 						</div>
 					</div>
 					<div class="like_comment">
@@ -118,7 +128,7 @@
 						<div class="comment_text">{{ item.commentCount }}</div>
 					</div>
 				</div>
-				<div class="line" />
+				<div class="slash" />
 			</div>
 		</div>
 		<div v-if="noContents" id="noContents">
@@ -131,6 +141,8 @@ import http from "../http-common";
 import store from "../store";
 import MypageMyMenu from "@/components/MypageMyMenu";
 import MemberList from "@/components/MemberList";
+import Prism from "../prism";
+
 export default {
 	name: "MypageMyPost",
 	store,
@@ -188,7 +200,9 @@ export default {
 			menu_text: "",
 			searchSel: "",
 			orderSel: "",
-			likeList: {}
+			likeList: {},
+			temp_width: 0,
+			now_width: 0
 		};
 	},
 	methods: {
@@ -460,6 +474,9 @@ export default {
 						this.posts[index].post.likeCount++;
 					}
 				});
+		},
+		onResize() {
+			this.temp_width = window.innerWidth;
 		}
 	},
 	mounted() {
@@ -489,10 +506,26 @@ export default {
 				console.log(error);
 			})
 			.finally(() => (this.loadingTop = false));
+		this.$nextTick(() => {
+			window.addEventListener("resize", this.onResize);
+		});
+	},
+	created() {
+		Prism.highlightAll();
+	},
+	watch: {
+		temp_width(newWidth, oldWidth) {
+			this.now_width = `it changed to ${newWidth} from ${oldWidth}`;
+		}
+	},
+	beforeDestroy() {
+		window.removeEventListener("resize", this.onResize);
 	}
 };
 </script>
 <style>
+@import "../prism.css";
+
 #loading {
 	display: none;
 	width: 100%;
@@ -641,7 +674,7 @@ export default {
 	width: 100%;
 }
 
-.line {
+.slash {
 	margin-top: 20px;
 	margin-bottom: 20px;
 	border-bottom: 1.5px solid rgba(0, 0, 0, 0.06);
@@ -673,6 +706,7 @@ export default {
 	padding-bottom: 5px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	overflow: hidden;
 }
 .post_tag_deep {
 	float: left;

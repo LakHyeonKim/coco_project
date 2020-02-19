@@ -100,11 +100,11 @@
 			</tr>
 		</table>
 
-		<div id="temp">
-			<!-- <div id="ttt" @click="test()">
+		<!-- <div id="temp">
+			<div id="ttt" @click="test()">
 				test
-			</div> -->
-		</div>
+			</div>
+		</div> -->
 	</div>
 </template>
 
@@ -141,7 +141,7 @@ export default {
 	},
 	methods: {
 		// test() {
-		// 	http.get("/test/download", { responseType: "blob" })
+		// 	http.get("/test/download/94", { responseType: "blob" })
 		// 		.then(res => {
 		// 			const url = window.URL.createObjectURL(
 		// 				new Blob([res.data], { type: res.data.type })
@@ -158,6 +158,7 @@ export default {
 		// 		.catch(err => {
 		// 			console.log(err);
 		// 		});
+		// },
 		// const url = window.URL.createObjectURL(
 		// 	new Blob([res.data])
 		// );
@@ -167,7 +168,6 @@ export default {
 		// document.body.appendChild(link); //이부분을 원하는 부분에 붙이고 싶다.
 		// link.click();
 		// link.parentNode.removeChild(link);
-		// },
 		allMembers() {
 			console.log(this.requestForm);
 			if (!this.membercheck) {
