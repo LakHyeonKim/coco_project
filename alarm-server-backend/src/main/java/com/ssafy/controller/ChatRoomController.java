@@ -47,6 +47,15 @@ public class ChatRoomController {
     public List<Room> room() {
         return roomService.findAllRoom();
     }
+    
+    @GetMapping("/search/{keyword}")
+    @ResponseBody
+    public List<Room> roomSearch(@PathVariable String keyword){
+    	System.out.println(keyword);
+    	Room searchRoom = new Room();
+    	searchRoom.setRoomName(keyword);
+    	return roomService.findRoom(searchRoom);
+    }
 
     @PostMapping("/room")
     @ResponseBody
@@ -67,6 +76,7 @@ public class ChatRoomController {
     	searchRoom.setIdroom(roomId);
         return roomService.findRoom(searchRoom).get(0);
     }
+    
     
     @GetMapping("/messages/{roomId}")
     @ResponseBody

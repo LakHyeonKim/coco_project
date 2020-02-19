@@ -101,7 +101,10 @@ export default {
 			})
 		},
 		searchRoom: function(){
-			
+			alarmHttp.get('/chat/search/' + encodeURI(this.search_room_name)).then(response => {
+				console.log(response)
+				this.chatrooms = response.data
+			})
 		},
 		createRoom: function () {
 			if ('' === this.room_name) {

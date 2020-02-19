@@ -41,7 +41,7 @@
 			</if>
 			<if test="roomName !=null">
 				AND
-				room_name = '${roomName}'
+				room_name like '%${roomName}%'
 			</if>
 		</where>
 		order by date_created desc;
