@@ -25,7 +25,7 @@
 				<div v-show="show">
 					<v-card-text id="commentCreateExpand">
 						<textarea
-							id="commentCreateInput"
+							:id="'commentCreateInput-' + idPost"
 							style="resize: none;"
 							@blur="moveoutFocus"
 							v-model="commentContent"
@@ -61,10 +61,15 @@ export default {
 		},
 		async moveinFocus() {
 			await this.expandCard();
-			document.getElementById("commentCreateInput").focus();
+			document
+				.getElementById(`commentCreateInput-${this.idPost}`)
+				.focus();
 		},
 		moveoutFocus() {
-			if (!document.getElementById("commentCreateInput").value) {
+			if (
+				!document.getElementById(`commentCreateInput-${this.idPost}`)
+					.value
+			) {
 				this.show = !this.show;
 			}
 		},
@@ -92,6 +97,7 @@ export default {
 			})
 				.then(res => {
 					userComment.comments[0].idcomment = res.data;
+					this.$store.state.commentContent = userComment.comments[0];
 					this.$emit("addComment", userComment.comments[0]);
 					this.commentContent = "";
 					this.show = !this.show;
@@ -129,7 +135,13 @@ export default {
 #commentCreateExpand {
 	padding: 0 16px 16px;
 }
-#commentCreateInput {
+/* #commentCreateInput {
+	width: 100%;
+	min-height: 160px;
+	overflow: visible;
+	outline: none;
+} */
+textarea[id^="commentCreateInput"] {
 	width: 100%;
 	min-height: 160px;
 	overflow: visible;

@@ -1,8 +1,8 @@
 <template>
 	<div id="el" class="canvas">
-		<div id="totalCounter" class="total-counter">{{ likeCount }}</div>
+		<div :id="'totalCounter-' + idPost" class="total-counter">{{ likeCount }}</div>
 		<div
-			id="clap"
+			:id="'clap-' + idPost"
 			class="clap-container"
 			@click="addClap"
 			@mouseover="addSonar"
@@ -13,13 +13,13 @@
 			</span>
 		</div>
 
-		<div id="clicker" class="click-counter">
+		<div :id="'clicker-' + idPost" class="click-counter">
 			<span class="counter"></span>
 		</div>
 
-		<div id="sonar-clap" class="clap-container-sonar"></div>
+		<div :id="'sonar-clap-' + idPost" class="clap-container-sonar"></div>
 
-		<div id="particles" class="particles-container">
+		<div :id="'particles-1-' + idPost" class="particles-container">
 			<div class="triangle">
 				<div class="square"></div>
 			</div>
@@ -37,7 +37,7 @@
 			</div>
 		</div>
 
-		<div id="particles-2" class="particles-container">
+		<div :id="'particles-2-' + idPost" class="particles-container">
 			<div class="triangle">
 				<div class="square"></div>
 			</div>
@@ -55,7 +55,7 @@
 			</div>
 		</div>
 
-		<div id="particles-3" class="particles-container">
+		<div :id="'particles-3-' + idPost" class="particles-container">
 			<div class="triangle">
 				<div class="square"></div>
 			</div>
@@ -106,14 +106,23 @@ export default {
 	},
 	methods: {
 		addClap() {
-			const particles = document.getElementById("particles");
-			const particles2 = document.getElementById("particles-2");
-			const particles3 = document.getElementById("particles-3");
-			const totalClickCounter = document.getElementById("totalCounter");
+			const particles = document.getElementById(
+				`particles-1-${this.idPost}`
+			);
+			const particles2 = document.getElementById(
+				`particles-2-${this.idPost}`
+			);
+			const particles3 = document.getElementById(
+				`particles-3-${this.idPost}`
+			);
+			const totalClickCounter = document.getElementById(
+				`totalCounter-${this.idPost}`
+			);
 
 			if (!this.likeCheck) {
 				// if (!this.clap.classList.contains("clicked")) {
 				this.requestAddress = "/trc/pushLike/";
+				this.$store.state.likeUpdate = 1;
 				this.$emit("updateLike", +1);
 				// this.likeCheck = 1;
 				// document.querySelector(".clap-icon").style.color = "#b4001e";
@@ -131,6 +140,7 @@ export default {
 				this.runAnimationCycle(this.clap, "scale");
 			} else {
 				this.requestAddress = "/trc/unLike/";
+				this.$store.state.likeUpdate = -1;
 				this.$emit("updateLike", -1);
 				// this.likeCheck = 0;
 				// document.querySelector(".clap-icon").style.color = "gray";
@@ -223,9 +233,9 @@ export default {
 		}
 	},
 	mounted() {
-		this.clap = document.getElementById("clap");
-		this.sonarClap = document.getElementById("sonar-clap");
-		this.clickCounter = document.getElementById("clicker");
+		this.clap = document.getElementById(`clap-${this.idPost}`);
+		this.sonarClap = document.getElementById(`sonar-clap-${this.idPost}`);
+		this.clickCounter = document.getElementById(`clicker-${this.idPost}`);
 
 		// if (!this.likeCheck) {
 		// 	document.querySelector(".clap-icon").style.color = "gray";

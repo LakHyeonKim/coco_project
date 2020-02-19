@@ -23,6 +23,7 @@ export default {
 	},
 	methods: {
 		commentDelete(idx) {
+			this.$store.state.commentDelIdx = idx;
 			this.$emit("commentDelete", idx);
 		}
 	}
