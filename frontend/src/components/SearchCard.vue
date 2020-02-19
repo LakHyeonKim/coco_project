@@ -21,7 +21,14 @@
 				</div>
 
 				<div id="cardHead">
-					<img src="../assets/user.png" id="userImg" />
+					<img
+						:src="
+							userImg == undefined || userImg == ''
+								? '../img/icons/user.png'
+								: userImg
+						"
+						id="userImg"
+					/>
 					<div id="userId" @click.stop="goYourPage(memberId)">
 						{{ postWriter }}
 					</div>
@@ -29,9 +36,17 @@
 				</div>
 
 				<div id="cardBody">
-					<span class="line-clamp-body">
-						{{ code }}
-					</span>
+					<vue-markdown
+						class="line-numbers match-braces rainbow-braces show-invisibles line-clamp-body"
+						:source="code"
+						data-download-link
+						id="mark"
+						:style="
+							temp_width < 600
+								? 'maxHeight: 75px; width:100vw'
+								: 'maxHeight: 195px'
+						"
+					></vue-markdown>
 				</div>
 
 				<div id="cardFooter">
@@ -78,6 +93,7 @@
 <script>
 import router from "../router";
 import http from "../http-common";
+import Prism from "../prism";
 
 export default {
 	name: "SearchList",
@@ -101,7 +117,10 @@ export default {
 	},
 	data() {
 		return {
-			tagforsearch: ""
+			tagforsearch: "",
+			userImg: "",
+			temp_width: 0,
+			now_width: 0
 		};
 	},
 	methods: {
@@ -154,15 +173,50 @@ export default {
 			// };
 			this.$emit("like", postNum, index);
 		}
+	},
+	mounted() {
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		http.post("/api/findMember", { idmember: this.memberId }, { headers })
+			.then(res => {
+				console.log("findMember res ", res);
+				this.userImg = res.data[0].imageUrl;
+			})
+			.catch(err => {
+				console.log("findMember err ", err);
+			});
+		this.$nextTick(() => {
+			window.addEventListener("resize", this.onResize);
+		});
+	},
+	created() {
+		Prism.highlightAll();
+	},
+	watch: {
+		temp_width(newWidth, oldWidth) {
+			this.now_width = `it changed to ${newWidth} from ${oldWidth}`;
+		}
+	},
+	beforeDestroy() {
+		window.removeEventListener("resize", this.onResize);
 	}
 };
 </script>
 
 <style scoped>
+@import "../prism.css";
+
 .postBox {
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	/* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
+	/* height: 400px; */
 	height: 100%;
+}
+.postBox:hover {
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
 }
 #cardBox {
 	margin: 13px 13px 13px 13px;
@@ -170,6 +224,7 @@ export default {
 }
 #contentBox {
 	flex: 1;
+	display: grid;
 }
 #cardHead {
 	display: inline-block;
@@ -185,6 +240,7 @@ export default {
 	float: left;
 	border-radius: 50%;
 	width: 20px;
+	height: 20px;
 	margin-top: 4px;
 	border: 1px solid rgba(0, 0, 0, 0.5);
 	margin-right: 3px;
@@ -230,8 +286,11 @@ export default {
 	background-color: rgba(160, 23, 98, 0.5);
 	white-space: nowrap;
 }
+#hashTag:hover {
+	background-color: rgba(160, 23, 98, 1);
+}
 #cardBody {
-	min-height: 75px;
+	/* min-height: 75px; */
 	margin-bottom: 5px;
 	/* margin-left: 10px; */
 }
@@ -239,7 +298,7 @@ export default {
 	color: rgb(27, 27, 27);
 	overflow: hidden;
 	display: -webkit-box;
-	-webkit-line-clamp: 3;
+	-webkit-line-clamp: 8;
 	-webkit-box-orient: vertical;
 }
 #cardFooter {
@@ -306,9 +365,9 @@ export default {
 		margin: 10px 10px 5px 10px;
 		display: block;
 	}
-	/* #contentBox {
-		flex: 1;
-	} */
+	#contentBox {
+		display: grid;
+	}
 	#cardHead {
 		/* display: inline-block; */
 		margin-bottom: 3px;
@@ -368,8 +427,9 @@ export default {
 		background-color: rgba(160, 23, 98, 0.5); */
 	}
 	#cardBody {
-		/* min-height: 75px;
-		margin-bottom: 5px; */
+		display: block;
+		/* min-height: 75px; */
+		margin-bottom: 5px;
 		/* margin-left: 10px; */
 	}
 	.line-clamp-body {
@@ -380,7 +440,8 @@ export default {
 		-webkit-box-orient: vertical; */
 	}
 	#cardFooter {
-		/* display: inline-block; */
+		display: block;
+		position: unset;
 	}
 	.like_img {
 		/* float: left;

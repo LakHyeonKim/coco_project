@@ -274,12 +274,12 @@ export default {
 									} else if (
 										this.$session.get("isManager") == 7
 									) {
-										alert("관리자");
+										// alert("관리자");
 										this.loadingTop = false;
 										router.push("/admin");
 										document.location.reload();
 									} else {
-										alert("잠깐만");
+										// alert("잠깐만");
 										this.loadingTop = false;
 										router.push("/newsfeed");
 									}
