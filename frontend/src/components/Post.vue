@@ -8,9 +8,9 @@
 			<div id="contentBox">
 				<div id="cardHash">
 					<button v-for="tag in tags" :key="`${tag}`">
-						<a id="hashTag" @click.stop="goSearch(`${tag}`)">
-							{{ tag }}
-						</a>
+						<a id="hashTag" @click.stop="goSearch(`${tag}`)">{{
+							tag
+						}}</a>
 					</button>
 				</div>
 
@@ -21,7 +21,15 @@
 				</div>
 
 				<div id="cardHead">
-					<img src="../assets/user.png" id="userImg" />
+					<img
+						:src="
+							$session.get('imageUrl') == undefined ||
+							$session.get('imageUrl') == ''
+								? '../img/icons/user.png'
+								: $session.get('imageUrl')
+						"
+						id="userImg"
+					/>
 					<div id="userId" @click.stop="goYourPage(memberId)">
 						{{ postWriter }}
 					</div>
@@ -29,9 +37,7 @@
 				</div>
 
 				<div id="cardBody">
-					<span class="line-clamp-body">
-						{{ code }}
-					</span>
+					<span class="line-clamp-body">{{ code }}</span>
 				</div>
 
 				<div id="cardFooter">
@@ -46,31 +52,27 @@
 						width="35px"
 						@click.stop="likeEmit(idPost, postIdx)"
 					/>
-					<div id="likeCount">
-						{{ likeCount }}
-					</div>
+					<div id="likeCount">{{ likeCount }}</div>
 					<img src="../assets/icon/chat.png" class="comment_img" />
-					<div id="commentCount">
-						{{ commentCount }}
-					</div>
+					<div id="commentCount">{{ commentCount }}</div>
 				</div>
 			</div>
 			<!-- <div id="imgBox" v-if="imagePath">
-				<v-img :src="imagePath" height="220px" width="220px"></v-img>
-				<div id="stackImg">
-					<div v-for="tag in tags" :key="`${tag.idtag}`">
-						{{ tag.imagePath }}
-					</div>
-					<img src="../assets/css.png" alt="" class="stackImgs" />
-					<img src="../assets/JS.png" alt="" class="stackImgs" />
-					<img src="../assets/vue.png" alt="" class="stackImgs" />
-				</div>
-			</div>
-			<div id="noStackImg" v-else>
-				<img src="../assets/css.png" alt="" class="stackImgs" />
-				<img src="../assets/JS.png" alt="" class="stackImgs" />
-				<img src="../assets/vue.png" alt="" class="stackImgs" />
-			</div>-->
+            <v-img :src="imagePath" height="220px" width="220px"></v-img>
+            <div id="stackImg">
+               <div v-for="tag in tags" :key="`${tag.idtag}`">
+                  {{ tag.imagePath }}
+               </div>
+               <img src="../assets/css.png" alt="" class="stackImgs" />
+               <img src="../assets/JS.png" alt="" class="stackImgs" />
+               <img src="../assets/vue.png" alt="" class="stackImgs" />
+            </div>
+         </div>
+         <div id="noStackImg" v-else>
+            <img src="../assets/css.png" alt="" class="stackImgs" />
+            <img src="../assets/JS.png" alt="" class="stackImgs" />
+            <img src="../assets/vue.png" alt="" class="stackImgs" />
+         </div>-->
 		</div>
 	</div>
 </template>
@@ -144,8 +146,8 @@ export default {
 		},
 		likeEmit(postNum, index) {
 			// const form = {
-			// 	postId: postNum,
-			// 	postIdx: index
+			//    postId: postNum,
+			//    postIdx: index
 			// };
 			this.$emit("like", postNum, index);
 		}
@@ -155,10 +157,17 @@ export default {
 
 <style scoped>
 .postBox {
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	/* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
 	height: 95%;
+	position: relative;
 }
+
+.postBox:hover {
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+
 #cardBox {
 	margin: 13px 13px 13px 13px;
 	display: flex;
@@ -227,6 +236,11 @@ export default {
 	background-color: rgba(160, 23, 98, 0.5);
 	white-space: nowrap;
 }
+
+#hashTag:hover {
+	background-color: rgba(160, 23, 98, 1);
+}
+
 #cardBody {
 	min-height: 75px;
 	margin-bottom: 5px;
@@ -241,6 +255,8 @@ export default {
 }
 #cardFooter {
 	display: inline-block;
+	position: absolute;
+	bottom: 10px;
 }
 .like_img {
 	float: left;
@@ -287,7 +303,7 @@ export default {
 	/* text-align: end; */
 	/* transform: translateY(410%); */
 	/* right: 0;
-	margin-right: 11vw; */
+   margin-right: 11vw; */
 }
 @media screen and (max-width: 600px) {
 	.postBox {
@@ -298,6 +314,7 @@ export default {
 		/* border-top: 0.25px solid rgba(0, 0, 0, 0.2); */
 		height: 100%;
 		/* display: block; */
+		padding: 10px;
 	}
 	#cardBox {
 		margin: 10px 10px 5px 10px;
@@ -424,7 +441,7 @@ export default {
 		/* text-align: end; */
 		/* transform: translateY(410%); */
 		/* right: 0;
-		margin-right: 11vw; */
+      margin-right: 11vw; */
 	}
 }
 </style>

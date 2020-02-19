@@ -19,7 +19,8 @@
 							<img
 								class="f_img"
 								:src="
-									f.member.imageUrl == null
+									f.member.imageUrl == null ||
+									f.member.imageUrl == ''
 										? '../img/icons/user.png'
 										: f.member.imageUrl
 								"

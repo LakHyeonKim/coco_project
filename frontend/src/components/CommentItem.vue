@@ -11,7 +11,11 @@
 				<img id="commentWriterImg" :src="commentInfo.postWriterProfileImage" alt="../assets/user.png" />
 				<p id="commentWriterNickname">{{ commentInfo.comment.commentWriter }}</p>
 			</router-link>
-			<v-icon id="commentDelete" @click="commentDelete">mdi-trash-can-outline</v-icon>
+			<v-icon
+				id="commentDelete"
+				v-if="commentInfo.comment.memberId == $session.get('id')"
+				@click="commentDelete"
+			>mdi-trash-can-outline</v-icon>
 			<div id="commentDate" class="ml-auto">{{ commentInfo.comment.updateCreated }}</div>
 		</div>
 
@@ -32,15 +36,15 @@ export default {
 			http.post(
 				"/trc/deleteComment",
 				{
-					postId: commentInfo.comment.postId,
-					caller: commentInfo.comment.memberId,
-					commentId: commentInfo.comment.idcomment,
-					receiver: receiver
+					postId: this.commentInfo.comment.postId,
+					caller: this.commentInfo.comment.memberId,
+					commentId: this.commentInfo.comment.idcomment,
+					receiver: this.receiver
 				},
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
 				.then(res => {
-					console.log(res);
+					this.$emit("commentDelete");
 				})
 				.catch(err => {
 					console.log(err);
