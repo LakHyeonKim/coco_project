@@ -87,41 +87,41 @@ export default {
 		this.findRoom();
 	},
 	mounted() {
-		var standardWidth = window.innerWidth / 2;
-		var standardHeight = window.innerHeight / 2;
-		if (
-			standardWidth > this.toChild.left &&
-			standardHeight > this.toChild.top
-		) {
-			document.getElementsByClassName("openDetail")[0].style.left =
-				this.toChild.left + 510 + "px";
-			document.getElementsByClassName("openDetail")[0].style.top =
-				this.toChild.top - 670 + "px";
-		} else if (
-			standardWidth <= this.toChild.left &&
-			standardHeight <= this.toChild.top
-		) {
-			document.getElementsByClassName("openDetail")[0].style.left =
-				this.toChild.left - 910 + "px";
-			document.getElementsByClassName("openDetail")[0].style.top =
-				this.toChild.top - 1070 + "px";
-		} else if (
-			standardWidth <= this.toChild.left &&
-			standardHeight > this.toChild.top
-		) {
-			document.getElementsByClassName("openDetail")[0].style.left =
-				this.toChild.left - 910 + "px";
-			document.getElementsByClassName("openDetail")[0].style.top =
-				this.toChild.top - 670 + "px";
-		} else if (
-			standardWidth > this.toChild.left &&
-			standardHeight <= this.toChild.top
-		) {
-			document.getElementsByClassName("openDetail")[0].style.left =
-				this.toChild.left + 510 + "px";
-			document.getElementsByClassName("openDetail")[0].style.top =
-				this.toChild.top - 1070 + "px";
-		}
+		// var standardWidth = window.innerWidth / 2;
+		// var standardHeight = window.innerHeight / 2;
+		// if (
+		// 	standardWidth > this.toChild.left &&
+		// 	standardHeight > this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openDetail")[0].style.left =
+		// 		this.toChild.left + 510 + "px";
+		// 	document.getElementsByClassName("openDetail")[0].style.top =
+		// 		this.toChild.top - 670 + "px";
+		// } else if (
+		// 	standardWidth <= this.toChild.left &&
+		// 	standardHeight <= this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openDetail")[0].style.left =
+		// 		this.toChild.left - 910 + "px";
+		// 	document.getElementsByClassName("openDetail")[0].style.top =
+		// 		this.toChild.top - 1070 + "px";
+		// } else if (
+		// 	standardWidth <= this.toChild.left &&
+		// 	standardHeight > this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openDetail")[0].style.left =
+		// 		this.toChild.left - 910 + "px";
+		// 	document.getElementsByClassName("openDetail")[0].style.top =
+		// 		this.toChild.top - 670 + "px";
+		// } else if (
+		// 	standardWidth > this.toChild.left &&
+		// 	standardHeight <= this.toChild.top
+		// ) {
+		// 	document.getElementsByClassName("openDetail")[0].style.left =
+		// 		this.toChild.left + 510 + "px";
+		// 	document.getElementsByClassName("openDetail")[0].style.top =
+		// 		this.toChild.top - 1070 + "px";
+		// }
 	},
 	methods: {
 		outChatRoom: function() {
@@ -212,13 +212,15 @@ export default {
 
 <style>
 .openDetail {
-	float: left;
+	/* float: left; */
 	background-color: white;
-	position: relative;
-	left: 560px;
-	bottom: 410px;
-	width: 400px;
-	height: 930%;
+	/* position: relative; */
+	/* left: 560px; */
+	/* bottom: 410px; */
+	/* width: 400px; */
+	/* height: 930%; */
+	height: 100%;
+	width: 100%;
 	padding: 10px;
 	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
 	border-radius: 15px;
@@ -228,6 +230,7 @@ export default {
 
 #chatWrap {
 	width: 100%;
+	height: 100%;
 	border: 1px solid #ddd;
 }
 
@@ -340,7 +343,10 @@ export default {
 }
 
 #send_div {
-	background-color: rgba(160, 23, 98, 0.1);
+	/* background-color: rgba(160, 23, 98, 0.1); */
+	position: absolute;
+	bottom: 12px;
+	width: calc(100% - 11px);
 }
 
 #chat_send_btn {
@@ -364,7 +370,8 @@ export default {
 
 #chatRoom {
 	overflow: auto;
-	height: 350px;
+	/* height: 350px; */
+	height: 80%;
 	color: #000;
 }
 </style>

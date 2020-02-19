@@ -66,49 +66,40 @@
 					/>
 				</router-link>
 			</li>
-			<li class="nav_menu">
-				<span
-					class="back nav_menu_drag"
-					@mousedown="startDrag($event)"
-					@dblclick="toggleMenu()"
-				>
-					<span
-						><img
-							class="nav_menu_img"
-							src="../assets/icon/sms.png"
-						/>
-					</span>
-				</span>
-				<!-- <button
+		</ul>
+
+		<div
+			class="nav_menu_drag"
+			@mousedown="startDrag($event)"
+			@dblclick="toggleMenu()"
+		>
+			<img src="../assets/icon/sms.png" id="drag_img" />
+		</div>
+		<!-- <button
 					class="nav_menu_drag blinking"
 					@dblclick="toggleMenu()"
 					@mousedown="startDrag($event)"
 				>
 					CHATTING CLICK!!
 				</button> -->
-				<!-- <img
+		<!-- <img
 					class="nav_menu_drag"
 					src="../assets/kakao_logo.png"
 					@dblclick="toggleMenu()"
 					@mousedown="startDrag($event)"
 				/> -->
-				<Room
-					id="openRoom"
-					v-if="!isHidden"
-					v-bind:toChild="toChild"
-					v-on:updateIsHiddenDetail="updateIsHiddenDetail"
-				></Room>
-				<RoomDetail
-					id="openDetail"
-					v-bind:toChild="toChild"
-					v-if="!isHidden && toChild.isHiddenDetail"
-					v-on:updateIsHiddenDetail="updateIsHiddenDetail"
-				></RoomDetail>
-			</li>
-			<!-- <li class="nav_menu">
-				<a @click.prevent="logout" href="#">Logout</a>
-			</li>-->
-		</ul>
+		<Room
+			id="openRoom"
+			v-if="!isHidden"
+			v-bind:toChild="toChild"
+			v-on:updateIsHiddenDetail="updateIsHiddenDetail"
+		></Room>
+		<RoomDetail
+			id="openDetail"
+			v-bind:toChild="toChild"
+			v-if="!isHidden && toChild.isHiddenDetail"
+			v-on:updateIsHiddenDetail="updateIsHiddenDetail"
+		></RoomDetail>
 	</div>
 </template>
 
@@ -132,6 +123,7 @@ export default {
 				left: 0,
 				top: 0
 			},
+			isRoom: false,
 			isHidden: true,
 			preUrl: "",
 			isfirst: true,
@@ -344,17 +336,24 @@ export default {
 
 .back {
 	margin: 1em auto;
-	font-family: "Roboto";
+	/* font-family: "Roboto"; */
 }
-.back span {
-	font-size: 3em;
+#drag_img {
+	width: 35px;
+	height: 35px;
+}
+.nav_menu_drag {
+	height: 50px;
+	width: 50px;
+	position: fixed;
+	left: 100px;
+	top: 100px;
+	cursor: hand;
+	padding: 8px;
+	border-radius: 50%;
 	background: rgba(160, 23, 98, 0.7);
-	display: table-cell;
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-	padding: 0 15px;
-	line-height: 50px;
 	animation: jumb 2s infinite;
-	border-radius: 3ex;
 }
 @keyframes jumb {
 	0% {
@@ -424,6 +423,21 @@ export default {
 	background-color: #7d4879;
 }
 
+.openRoom {
+	position: fixed;
+	top: 10px;
+	right: 0;
+	height: 80%;
+	width: 80%;
+}
+.openDetail {
+	z-index: 200;
+	position: fixed;
+	top: 10px;
+	left: 50px;
+	height: 80%;
+	width: 80%;
+}
 #navbar {
 	position: fixed;
 	top: 0;
@@ -483,15 +497,6 @@ export default {
 
 .nav_menu {
 	height: 50px;
-}
-
-.nav_menu_drag {
-	height: 50px;
-	position: absolute;
-	left: 100px;
-	top: 100px;
-	cursor: pointer;
-	cursor: hand;
 }
 
 .nav_menu_img {
