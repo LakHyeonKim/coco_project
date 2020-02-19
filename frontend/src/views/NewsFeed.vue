@@ -114,6 +114,7 @@ export default {
 	/* align-content: center; */
 	justify-content: center;
 	padding-left: 40px;
+	padding-top: 0;
 }
 @media screen and (max-width: 600px) {
 	#header {
@@ -127,7 +128,7 @@ export default {
 		padding: 20px 10px 20px 10px;
 		/* vertical-align: middle; */
 		/* align-content: center;
-		justify-content: center; */
+      justify-content: center; */
 	}
 	#searchLogo {
 		display: inline-block;
@@ -151,7 +152,7 @@ export default {
 	#mainBox {
 		/* display: block; */
 		/* align-content: center;
-		justify-content: center; */
+      justify-content: center; */
 		/* background-color: blueviolet; */
 	}
 	#subBox {

@@ -3,55 +3,58 @@
 		<div id="blankBox"></div>
 		<div id="detailBox">
 			<div>
-				<p id="post-title">{{ postTitle }}</p>
-				<v-btn id="babyPostCreate" @click="babyPostCreate"
-					>babypost</v-btn
-				>
-				<div id="post-head">
-					<div id="profile-img">
-						<v-avatar size="40">
-							<img
-								:src="postWriterProfileImage"
-								alt="../assets/icon/user.png"
-							/>
-						</v-avatar>
-					</div>
+				<div id="hash-tags">
+					<v-btn
+						class="mr-2"
+						v-for="tag in tags"
+						:key="tag.idtag"
+						@click="searchHashtag(tag)"
+						small
+						outlined
+						style="padding: 5px; color: gray; border-radius: 5px; border: 1px solid rgba(0, 0, 0, 0.1);"
+					>
+						<v-icon left>mdi-music-accidental-sharp</v-icon>
+						{{ tag.tagName }}
+					</v-btn>
+				</div>
+				<div id="post-title">{{ postTitle }}</div>
 
+				<div id="post-head">
 					<div id="profile-info">
-						<p id="user-nickname">
-							{{ postWriter }}
-							<v-btn
-								class="ml-2 follow-btn"
-								color="indigo"
-								height="20px"
-								v-show="!isUser()"
-								@click="follow"
-								outlined
-								small
-							>
-								<span v-show="!isFollow">팔로우</span>
-								<span v-show="isFollow">팔로잉</span>
-								<v-icon v-show="!isFollow" small
-									>mdi-plus-thick</v-icon
+						<img
+							id="profile-img"
+							:src="
+								postWriterProfileImage == null ||
+								postWriterProfileImage == ''
+									? '../img/icons/user.png'
+									: postWriterProfileImage
+							"
+						/>
+						<div style="float: left;">
+							<div id="user-nickname">
+								{{ postWriter }}
+							</div>
+							<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
+							<div id="post-info">
+								<span v-if="dateCreated == updateCreated"
+									>{{ dateCreated }} ·
+									{{ views }} &nbsp;</span
 								>
-								<v-icon v-show="isFollow" small
-									>mdi-check-bold</v-icon
-								>
-							</v-btn>
-						</p>
-						<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
-						<div id="post-info">
-							<span v-if="dateCreated == updateCreated"
-								>{{ dateCreated }} · {{ views }} &nbsp;</span
-							>
-							<span v-else
-								>{{ updateCreated }}(수정됨) ·
-								{{ views }} &nbsp;</span
-							>
-							<span v-if="views > 1">views</span>
-							<span v-else>view</span>
+								<span v-else>
+									{{ updateCreated }}(수정됨) ·
+									{{ views }} &nbsp;
+								</span>
+								<span v-if="views > 1">views</span>
+								<span v-else>view</span>
+							</div>
 						</div>
 					</div>
+					<button id="follow-btn" v-show="!isUser()" @click="follow">
+						<span v-show="!isFollow">팔로우</span>
+						<span v-show="isFollow">팔로잉</span>
+						<v-icon v-show="!isFollow" small>mdi-plus-thick</v-icon>
+						<v-icon v-show="isFollow" small>mdi-check-bold</v-icon>
+					</button>
 				</div>
 			</div>
 			<div id="divide-line"></div>
@@ -59,6 +62,7 @@
 				<v-icon>mdi-file-download-outline</v-icon>
 				<a @click="test">{{ filePath }}</a>
 			</div>
+
 			<div id="postBox">
 				<vue-markdown
 					class="line-numbers match-braces rainbow-braces show-invisibles"
@@ -68,20 +72,6 @@
 			</div>
 
 			<div id="additionBox">
-				<div id="hash-tags">
-					<v-btn
-						class="mr-2"
-						v-for="tag in tags"
-						:key="tag.idtag"
-						@click="searchHashtag(tag)"
-						small
-						outlined
-					>
-						<v-icon left>mdi-music-accidental-sharp</v-icon>
-						{{ tag.tagName }}
-					</v-btn>
-				</div>
-
 				<div id="action-bar">
 					<MediumClap
 						:idPost="idPost"
@@ -97,7 +87,9 @@
 				</div>
 
 				<div id="divide-line"></div>
-
+				<button id="babyPostCreate" @click="babyPostCreate">
+					WRITE BABY POST ( ღ'ᴗ'ღ )
+				</button>
 				<comment-create
 					:idPost="idPost"
 					:memberId="memberId"
@@ -108,7 +100,6 @@
 				<comment-list
 					:commentInfos="commentInfos"
 					:receiver="memberId"
-					@commentDelete="commentDelete"
 				></comment-list>
 			</div>
 		</div>
@@ -172,18 +163,18 @@ export default {
 
 			// this.$store.state.parent = parent;
 			// this.$store.state.parent = {
-			// 	idpost: this.idpost,
-			// 	memberId: this.memberId,
-			// 	postTitle: this.postTitle,
-			// 	postWriter: this.postWriter,
-			// 	code: this.code,
-			// 	likeCount: this.likeCount,
-			// 	views: this.views,
-			// 	imagePath: this.imagePath,
-			// 	filePath: this.filePath,
-			// 	access: this.access,
-			// 	likeCheck: this.likeCheck,
-			// 	order: this.order
+			//    idpost: this.idpost,
+			//    memberId: this.memberId,
+			//    postTitle: this.postTitle,
+			//    postWriter: this.postWriter,
+			//    code: this.code,
+			//    likeCount: this.likeCount,
+			//    views: this.views,
+			//    imagePath: this.imagePath,
+			//    filePath: this.filePath,
+			//    access: this.access,
+			//    likeCheck: this.likeCheck,
+			//    order: this.order
 			// };
 			this.$store.state.parent = {
 				parentIdPost: this.idPost,
@@ -228,9 +219,6 @@ export default {
 		addComment(comment) {
 			this.$emit("addComment", comment);
 		},
-		commentDelete(idx) {
-			this.$emit("commentDelete", idx);
-		},
 		searchHashtag(hashtag) {
 			console.log(hashtag);
 			this.$store.state.searchtag = hashtag.tagName;
@@ -266,26 +254,34 @@ export default {
 
 <style scoped>
 #compo {
-	/* display: grid;
-	justify-content: center; */
 	width: 80%;
 	margin: 0 auto;
 }
+#hash-tags {
+	margin-bottom: 20px;
+}
 #post-title {
-	font-size: 32px;
+	font-size: 22px;
+	font-weight: 500;
 }
 #post-head {
-	display: flex;
+	/* display: flex; */
 	margin-top: 32px;
 	/* style="display: inline-block; line-height: 10px" */
 }
+
+#profile-info {
+	display: inline-block;
+}
+
 #profile-img {
 	width: 40px;
 	height: 40px;
 	margin-left: 10px;
 	margin-right: 10px;
-	border: 1px solid silver;
 	border-radius: 50%;
+	border: 1px solid silver;
+	float: left;
 }
 #user-nickname {
 	font-size: 15px;
@@ -297,19 +293,37 @@ export default {
 	margin-top: 5px;
 	font-size: 12px;
 }
+
+#follow-btn {
+	margin: 5px;
+	margin-right: 10px;
+	height: 20x;
+	border: 1px solid silver;
+	padding: 3px 8px 3px 8px;
+	float: right;
+	transition: all 0.3s ease;
+}
+
+#follow-btn:hover {
+	background-color: rgba(192, 192, 192, 0.363);
+}
+
 #blankBox {
 	height: 50px;
 }
 #detailBox {
-	background-color: aliceblue;
+	/* background-color: aliceblue; */
 	width: 100%;
 	height: 100%;
 }
 #fileBox {
-	display: flex;
-	justify-content: flex-end;
+	/* display: flex; */
+	/* justify-content: flex-end; */
+	text-align: right;
+	font-size: 12px;
 }
 #postBox {
+	padding: 10px;
 	margin-top: 2em;
 }
 #additionBox {
@@ -326,6 +340,19 @@ export default {
 }
 #divide-line {
 	margin: 20px 0;
-	border-top: 2px solid rgba(0, 0, 0, 0.1);
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#babyPostCreate {
+	width: 100%;
+	padding: 10px;
+	background-color: rgba(160, 23, 98, 0.5);
+	color: white;
+	margin-bottom: 10px;
+	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+#babyPostCreate:hover {
+	background-color: rgba(161, 52, 112, 0.8);
 }
 </style>
