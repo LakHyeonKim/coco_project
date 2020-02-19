@@ -115,9 +115,15 @@ public class BaseController {
 		if (list.size() == 0)
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		post = (Post) list.get(0);
+		if(post.getFilePath()==null) 
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		String tempPath = post.getFilePath().substring(post.getFilePath().indexOf(":8888/")+6);
 		System.out.println(tempPath);
+		/*
+		 * if(tempPath==null) { return }
+		 */
 		Path path = Paths.get("src/main/webapp/"+tempPath);
+		
 //		Path path = Paths.get("src/main/webapp/userfile/0_google_logo.png");
 		System.out.println("download 파일네임:"+path.getFileName());
 		String contentType = Files.probeContentType(path);
