@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<div
-			id="commentListCard"
-			v-for="(commentInfo, idx) in commentInfos.slice().reverse()"
-			:key="idx"
-		>
-			<comment-item :commentInfo="commentInfo" :receiver="receiver" :idx="idx" @commentDelete="commentDelete"></comment-item>
+		<div id="commentListCard" v-for="(commentInfo, idx) in commentInfos.slice().reverse()" :key="idx">
+			<comment-item
+				:commentInfo="commentInfo"
+				:receiver="receiver"
+				@commentDelete="commentDelete(idx)"
+			></comment-item>
 		</div>
 	</div>
 </template>
@@ -23,6 +23,7 @@ export default {
 	},
 	methods: {
 		commentDelete(idx) {
+			this.$store.state.commentDelIdx = idx;
 			this.$emit("commentDelete", idx);
 		}
 	}

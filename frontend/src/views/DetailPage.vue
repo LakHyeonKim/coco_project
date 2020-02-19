@@ -4,39 +4,37 @@
 	<div>
 		<div id="detailMain">
 			<detail
-				:isFollow="this.detail.isFollow"
-				:idPost="this.detail.post.idpost"
-				:memberId="this.detail.post.memberId"
-				:postTitle="this.detail.post.postTitle"
-				:postWriter="this.detail.post.postWriter"
-				:dateCreated="this.detail.post.dateCreated"
-				:updateCreated="this.detail.post.updateCreated"
-				:code="this.detail.post.code"
-				:likeCount="this.detail.post.likeCount"
-				:views="this.detail.post.views"
-				:imagePath="this.detail.post.imagePath"
-				:filePath="this.detail.post.filePath"
-				:access="this.detail.post.access"
-				:likeCheck="this.detail.post.likeCheck"
-				:order="this.detail.post.order"
-				:tags="this.detail.tags"
-				:commentInfos="this.detail.commentInfos"
-				:likes="this.detail.likes"
-				:babyPosts="this.detail.babyPosts"
-				:commentCount="this.detail.commentCount"
-				:postWriterProfileImage="this.detail.postWriterProfileImage"
-				@updateLike="updateLike"
-				@addComment="addComment"
-				@updateFollow="updateFollow"
-				@commentDelete="commentDelete"
+				:idPost="detail.post.idpost"
+				:isFollow="detail.isFollow"
+				:memberId="detail.post.memberId"
+				:postTitle="detail.post.postTitle"
+				:postWriter="detail.post.postWriter"
+				:dateCreated="detail.post.dateCreated"
+				:updateCreated="detail.post.updateCreated"
+				:code="detail.post.code"
+				:likeCount="detail.post.likeCount"
+				:views="detail.post.views"
+				:imagePath="detail.post.imagePath"
+				:filePath="detail.post.filePath"
+				:access="detail.post.access"
+				:likeCheck="detail.post.likeCheck"
+				:order="detail.post.order"
+				:tags="detail.tags"
+				:commentInfos="detail.commentInfos"
+				:likes="detail.likes"
+				:babyPosts="detail.babyPosts"
+				:commentCount="detail.commentCount"
+				:postWriterProfileImage="detail.postWriterProfileImage"
+				@updateLike="updateLike(detail)"
+				@addComment="addComment(detail)"
+				@updateFollow="updateFollow(detail)"
+				@commentDelete="commentDelete(detail)"
 			></detail>
 		</div>
-		<!-- <div id="detailBaby">
+		<div id="detailBaby" v-for="babyPost in babyPosts" :key="babyPost.post.idpost">
 			<detail
-				v-for="babyPost in this.detail.babyPosts"
-				:key="babyPost.idPost"
-				:isFollow="babyPost.isFollow"
 				:idPost="babyPost.post.idpost"
+				:isFollow="babyPost.isFollow"
 				:memberId="babyPost.post.memberId"
 				:postTitle="babyPost.post.postTitle"
 				:postWriter="babyPost.post.postWriter"
@@ -51,15 +49,17 @@
 				:likeCheck="babyPost.post.likeCheck"
 				:order="babyPost.post.order"
 				:tags="babyPost.tags"
-				:comments="babyPost.comments"
+				:commentInfos="babyPost.commentInfos"
 				:likes="babyPost.likes"
 				:babyPosts="babyPost.babyPosts"
 				:commentCount="babyPost.commentCount"
-				@updateLike="updateLike"
-				@addComment="addComment"
-				@updateFollow="updateFollow"
+				:postWriterProfileImage="babyPost.postWriterProfileImage"
+				@updateLike="updateLike(babyPost)"
+				@addComment="addComment(babyPost)"
+				@updateFollow="updateFollow(babyPost)"
+				@commentDelete="commentDelete(babyPost)"
 			></detail>
-		</div>-->
+		</div>
 	</div>
 </template>
 
@@ -115,30 +115,35 @@ export default {
 		}
 	},
 	methods: {
-		updateLike(like) {
-			if (like == 1) {
-				this.detail.post.likeCheck = 1;
+		updateLike(post) {
+			if (this.$store.state.likeUpdate == 1) {
+				post.post.likeCheck = 1;
 			} else {
-				this.detail.post.likeCheck = 0;
+				post.post.likeCheck = 0;
 			}
-			this.detail.post.likeCount += like;
+			post.post.likeCount += this.$store.state.likeUpdate;
 		},
-		addComment(comment) {
-			comment.dateCreated = "방금 전";
-			comment.updateCreated = "방금 전";
-			comment.access = 0;
-			this.detail.commentInfos.push({comment: comment, isFollow: 0,postWriterProfileImage: this.$session.get("imageUrl")});
+		addComment(post) {
+			store.state.commentContent.dateCreated = "방금 전";
+			store.state.commentContent.updateCreated = "방금 전";
+			store.state.commentContent.access = 0;
+			post.commentInfos.push({
+				comment: store.state.commentContent,
+				isFollow: 0,
+				postWriterProfileImage: this.$session.get("imageUrl")
+			});
+			store.state.commentContent = {};
 		},
-		updateFollow() {
-			this.isFollow = !this.isFollow;
+		updateFollow(post) {
+			post.isFollow = !post.isFollow;
 		},
-		commentDelete(idx) {
-			console.log("1", this.detail.commentInfos)
-			this.detail.commentInfos.splice(idx, 1);
-			console.log("2", this.detail.commentInfos)
-			// @remove="commentDelete"
-			// this.detail.commentInfos = this.detail.commentInfos.splice(idx, 1);
-
+		commentDelete(post) {
+			console.log("1", post.commentInfos);
+			post.commentInfos.splice(
+				post.commentInfos.length - 1 - this.$store.state.commentDelIdx,
+				1
+			);
+			console.log("2", post.commentInfos);
 		}
 	},
 	created() {
@@ -154,12 +159,14 @@ export default {
 			.then(res => {
 				console.log("detail res ", res);
 				this.detail = res.data;
-				for (let babyPost in this.detail.babyPosts) {
+				this.babyPosts = [];
+				// for (let babyPost in res.data.babyPosts) {
+				for (let idx = 0; idx < res.data.babyPosts.length; idx++) {
 					http.post(
 						"/api/findByBoardDetailPostId",
 						{
 							idMember: this.$session.get("id"),
-							idPost: babyPost.idPost
+							idPost: res.data.babyPosts[idx].idpost
 						},
 						{
 							headers: {
@@ -168,8 +175,8 @@ export default {
 						}
 					)
 						.then(res => {
-							console.log(res);
-							this.babyPosts.push(res);
+							this.babyPosts.push(res.data);
+							console.log(this.babyPosts);
 						})
 						.catch(err => {
 							console.log(err);
@@ -186,7 +193,12 @@ export default {
 
 <style>
 #detailMain {
-	background-color: bisque;
+	height: 100%;
+	width: 100%;
+}
+#detailBaby {
+	position: relative;
+	left: 50px;
 	height: 100%;
 	width: 100%;
 }

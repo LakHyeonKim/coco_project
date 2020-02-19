@@ -11,11 +11,15 @@
 				<img id="commentWriterImg" :src="commentInfo.postWriterProfileImage" alt="../assets/user.png" />
 				<p id="commentWriterNickname">{{ commentInfo.comment.commentWriter }}</p>
 			</router-link>
-			<v-icon id="commentDelete" @click="commentDelete">mdi-trash-can-outline</v-icon>
+			<v-icon
+				id="commentDelete"
+				v-if="commentInfo.comment.memberId == $session.get('id')"
+				@click="commentDelete"
+			>mdi-trash-can-outline</v-icon>
 			<div id="commentDate" class="ml-auto">{{ commentInfo.comment.updateCreated }}</div>
 		</div>
 
-		<pre id="commentContent">{{ commentInfo.comment.contents }}</pre>
+		<div id="commentContent">{{ commentInfo.comment.contents }}</div>
 	</div>
 </template>
 
@@ -25,8 +29,7 @@ export default {
 	name: "CommentItem",
 	props: {
 		commentInfo: {},
-		receiver: {},
-		idx: {}
+		receiver: {}
 	},
 	methods: {
 		commentDelete() {
@@ -41,7 +44,7 @@ export default {
 				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
 				.then(res => {
-					this.$emit("commentDelete", this.idx);
+					this.$emit("commentDelete");
 				})
 				.catch(err => {
 					console.log(err);
@@ -86,7 +89,10 @@ export default {
 	color: rgba(0, 0, 0, 0.68);
 }
 #commentContent {
-	overflow: auto;
-	white-space: pre-wrap;
+	width: 100%;
+	word-break: keep-all;
+	word-wrap: break-word;
+	/* overflow: auto;
+	white-space: pre-wrap; */
 }
 </style>
