@@ -264,7 +264,7 @@ export default {
 		},
 		getCode() {
 			window.location.href =
-				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://192.168.100.94:8080&response_type=code";
+				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://localhost:8080&response_type=code";
 		}
 	},
 	mounted() {
@@ -311,7 +311,6 @@ export default {
 							router.push("/admin");
 							document.location.reload();
 						} else {
-							alert("잠깐만");
 							this.loadingTop = false;
 							router.push("/newsfeed");
 						}

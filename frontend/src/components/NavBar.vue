@@ -4,17 +4,6 @@
 	<div id="navbar">
 		<notifications group="foo" />
 		<ul>
-			<!-- <li>
-				<img
-					@click="getMypage()"
-					id="profile"
-					:src="
-						$session.get('imageUrl') == undefined
-							? '../img/icons/user.png'
-							: $session.get('imageUrl')
-					"
-				/>
-			</li>-->
 			<li id="profile_menu">
 				<img
 					@click="isBlock = !isBlock"
@@ -55,21 +44,25 @@
 						v-if="alarmIcon"
 						class="nav_menu_img"
 						src="../assets/icon/alarm.png"
+						@click="goAlarm()"
 					/>
 					<img
 						v-if="followIcon"
 						class="nav_menu_img image blinking"
 						src="../assets/icon/follow.png"
+						@click="goAlarm()"
 					/>
 					<img
 						v-if="likeIcon"
 						class="nav_menu_img image blinking"
 						src="../assets/icon/like.png"
+						@click="goAlarm()"
 					/>
 					<img
 						v-if="commentIcon"
 						class="nav_menu_img image blinking"
 						src="../assets/icon/comment.png"
+						@click="goAlarm()"
 					/>
 				</router-link>
 			</li>
@@ -158,6 +151,17 @@ export default {
 		};
 	},
 	methods: {
+		goAlarm() {
+			let location = "/alarm";
+
+			if (this.$route.fullPath != location) {
+				router.push(location).catch(err => {
+					console.log(err);
+				});
+			} else {
+				window.location.reload(true);
+			}
+		},
 		alarmIconReset() {
 			this.alarmIcon = true;
 			this.followIcon = false;

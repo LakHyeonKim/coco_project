@@ -12,7 +12,7 @@
 						v-model="room_name"
 						@keyup.enter="createRoom"
 					/>
-					<button id="buttonStyle" @click="createRoom">
+					<button id="room_btn" @click="createRoom">
 						채팅방 개설
 					</button>
 					<input
@@ -21,7 +21,7 @@
 						v-model="search_room_name"
 						@keyup.enter="searchRoom"
 					/>
-					<button id="buttonStyle" @click="searchRoom">
+					<button id="room_btn" @click="searchRoom">
 						채팅방 검색
 					</button>
 				</div>
@@ -215,13 +215,13 @@ export default {
 	margin: 3px;
 }
 
-#buttonStyle {
+#room_btn {
 	border: 1px solid rgba(160, 23, 98, 0.9);
 	color: rgba(160, 23, 98, 0.9);
 	padding: 0 3px 0 3px;
 	border-radius: 5px;
 }
-#buttonStyle:hover {
+#room_btn:hover {
 	background-color: rgba(160, 23, 98, 0.7);
 	color: white;
 }
