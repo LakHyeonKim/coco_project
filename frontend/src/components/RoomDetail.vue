@@ -3,6 +3,7 @@
 		<div id="chatWrap">
 			<div id="chatHeader">
 				<span id="chat_detail_title">{{ room.roomName }}</span>
+				<span id="chat_detail_title">{{ "__" + memberCount + "__명 대화중..."}}</span>
 				<img
 					id="chat_exit_btn"
 					@click="outChatRoom"
@@ -10,12 +11,12 @@
 				/>
 			</div>
 			<div id="chatRoom">
-				<div
-					id="chatLog"
-					v-for="message in messages"
-					:key="message.dateCreated"
-				>
+				<div id="chatLog" v-for="(message, i) in messages" :key="i">
 					<div class="noticMsg" v-if="message.type == 'ENTER'">
+						<!-- {{ message.dateCreated }} -->
+						<span class="msg">{{ message.context }}</span>
+					</div>
+					<div class="noticMsg" v-if="message.type == 'OUT'">
 						<!-- {{ message.dateCreated }} -->
 						<span class="msg">{{ message.context }}</span>
 					</div>
@@ -62,31 +63,32 @@
 </template>
 
 <script>
-import sock from "sockjs-client";
-import ws from "webstomp-client";
-import alarmHttp from "../http-alarm";
+import sock from 'sockjs-client'
+import ws from 'webstomp-client'
+import alarmHttp from '../http-alarm'
 
 export default {
-	name: "RoomDetail",
-	props: ["toChild"],
-	data() {
+	name: 'RoomDetail',
+	props: ['toChild'],
+	data () {
 		return {
 			roomId: 0,
 			memberId: 0,
-			nickName: "",
+			nickName: '',
+			memberCount: 0,
 			room: {},
-			message: "",
+			message: '',
 			messages: [],
 			isHidden: this.toChild.isHiddenDetail
-		};
+		}
 	},
-	created() {
-		this.roomId = localStorage.getItem("wschat.idroom");
-		this.memberId = localStorage.getItem("wschat.member_id");
-		this.nickName = this.$session.get("nickName");
-		this.findRoom();
+	created () {
+		this.roomId = localStorage.getItem('wschat.idroom')
+		this.memberId = localStorage.getItem('wschat.member_id')
+		this.nickName = this.$session.get('nickName')
+		this.findRoom()
 	},
-	mounted() {
+	mounted () {
 		// var standardWidth = window.innerWidth / 2;
 		// var standardHeight = window.innerHeight / 2;
 		// if (
@@ -124,28 +126,60 @@ export default {
 		// }
 	},
 	methods: {
-		outChatRoom: function() {
-			this.messages = [];
-			this.$emit("updateIsHiddenDetail", !this.isHidden);
+		outChatRoom: function () {
+			alarmHttp
+				.post('/chat/out', {
+					roomId: this.roomId,
+					memberId: this.memberId,
+					nickName: this.nickName
+				})
+				.then(response => {
+					this.messages = response.data
+					console.log(this.messages)
+					this.messages = []
+					this.$emit('updateIsHiddenDetail', !this.isHidden)
+					this.outMessage()
+				})
 		},
-		enterList: function() {},
-		findRoom: function() {
-			alarmHttp.get("/chat/room/" + this.roomId).then(response => {
-				this.room = response.data;
-				console.log(this.room);
-			});
-			alarmHttp.get("/chat/messages/" + this.roomId).then(response => {
-				this.messages = response.data;
-				console.log(this.messages);
-			});
-			this.connect();
+		enterList: function () {},
+		findRoom: function () {
+			alarmHttp.get('/chat/room/' + this.roomId).then(response => {
+				this.room = response.data
+				console.log(this.room)
+				alarmHttp
+					.post('/chat/messages', {
+						roomId: this.roomId,
+						memberId: this.memberId,
+						nickName: this.nickName
+					})
+					.then(response => {
+						this.messages = response.data
+						console.log(this.messages)
+						this.connect()
+					})
+			})
 		},
-		sendMessage: function() {
+		outMessage: function () {
 			this.stompClient.send(
-				"/app/chat/message",
+				'/app/chat/message',
 				JSON.stringify(
 					{
-						type: "TALK",
+						type: 'OUT',
+						memberId: this.$data.memberId,
+						roomId: this.$data.roomId,
+						nickName: this.nickName
+					},
+					{}
+				)
+			)
+			this.message = ''
+		},
+		sendMessage: function () {
+			this.stompClient.send(
+				'/app/chat/message',
+				JSON.stringify(
+					{
+						type: 'TALK',
 						roomId: this.roomId,
 						memberId: this.memberId,
 						nickName: this.nickName,
@@ -153,61 +187,62 @@ export default {
 					},
 					{}
 				)
-			);
-			this.message = "";
+			)
+			this.message = ''
 		},
-		recvMessage: function(recv) {
+		recvMessage: function (recv) {
 			this.messages.push({
 				idmessage: recv.idmessage,
 				roomId: recv.roomId,
-				memberId: recv.type == "ENTER" ? "[알림]" : recv.memberId,
+				memberId: recv.type == 'ENTER' ? '[알림]' : recv.memberId,
 				nickName: recv.nickName,
 				dateCreated: recv.dateCreated,
 				context: recv.context,
 				type: recv.type
-			});
+			})
+			this.memberCount = recv.memberCount
 		},
-		connect: function() {
+		connect: function () {
 			this.socket = new sock(
-				"http://192.168.100.57:8081/gs-guide-websocket"
-			);
-			this.stompClient = ws.over(this.socket);
+				'http://119.202.135.55:8081/gs-guide-websocket'
+			)
+			this.stompClient = ws.over(this.socket)
 			this.stompClient.connect(
 				{},
 				frame => {
-					console.log(frame);
+					console.log(frame)
 					this.stompClient.subscribe(
-						"/sub/chat/room/" + this.$data.roomId,
+						'/sub/chat/room/' + this.$data.roomId,
 						message => {
-							var recv = JSON.parse(message.body);
-							this.recvMessage(recv);
-							setTimeout(this.chatOnScroll, 250);
+							var recv = JSON.parse(message.body)
+							this.recvMessage(recv)
+							setTimeout(this.chatOnScroll, 250)
 						}
-					);
+					)
 					this.stompClient.send(
-						"/app/chat/message",
+						'/app/chat/message',
 						JSON.stringify(
 							{
-								type: "ENTER",
+								type: 'ENTER',
 								memberId: this.$data.memberId,
 								roomId: this.$data.roomId,
 								nickName: this.nickName
 							},
 							{}
 						)
-					);
+					)
 				},
 				error => {
-					alert("error " + error);
+					alert('error ' + error)
 				}
-			);
+			)
 		},
-		chatOnScroll: function() {
-			var objDiv = document.getElementById("chatRoom");
-			objDiv.scrollTop = objDiv.scrollHeight;
+		chatOnScroll: function () {
+			var objDiv = document.getElementById('chatRoom')
+			objDiv.scrollTop = objDiv.scrollHeight
 		}
 	}
-};
+}
 </script>
 
 <style>
@@ -360,7 +395,7 @@ export default {
 	background-color: rgba(160, 23, 98, 0.7);
 }
 
-#chatForm > input[type="submit"] {
+#chatForm > input[type='submit'] {
 	outline: none;
 	border: none;
 	background: none;

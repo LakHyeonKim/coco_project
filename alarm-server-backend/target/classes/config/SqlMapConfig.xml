@@ -16,5 +16,6 @@
 		<mapper resource="sql/mybatis-alarm-mapping.xml"/>
 		<mapper resource="sql/mybatis-message-mapping.xml"/>
 		<mapper resource="sql/mybatis-room-mapping.xml"/>
+		<mapper resource="sql/mybatis-participants-mapping.xml"/>
 	</mappers>
 </configuration>

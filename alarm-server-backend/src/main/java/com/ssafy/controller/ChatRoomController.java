@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 //import com.ssafy.dao.ChatRoomRepository;
 import com.ssafy.dao.RoomDAO;
 import com.ssafy.service.MessageService;
+import com.ssafy.service.ParticipantsService;
 import com.ssafy.service.RoomService;
 import com.ssafy.vo.Message;
+import com.ssafy.vo.Participants;
 import com.ssafy.vo.Room;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,8 @@ public class ChatRoomController {
     private RoomService roomService;
 	@Autowired
     private MessageService messageService;
+	@Autowired
+	private ParticipantsService participantsService;
 
     @GetMapping("/room")
     public String rooms(Model model) {
@@ -78,13 +82,18 @@ public class ChatRoomController {
     }
     
     
-    @GetMapping("/messages/{roomId}")
+    @PostMapping("/messages")
     @ResponseBody
-    public List<Message> roomMessage(@PathVariable long roomId) {
-    	Message message = new Message();
-    	message.setRoomId(roomId);
-        return messageService.findMessage(message);
+    public List<Message> roomMessage(@RequestBody Participants participants) {
+        return messageService.findMessage(participants);
     }
+    
+    @PostMapping("/out")
+    public ResponseEntity outMember(@RequestBody Participants participants) {
+    	participantsService.deleteParticipants(participants);
+    	return new ResponseEntity(HttpStatus.OK);
+    }
+    
     
     @DeleteMapping("/room/{roomId}")
     public ResponseEntity deleteRoom(@PathVariable long roomId) {

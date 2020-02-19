@@ -97,7 +97,7 @@
 		<RoomDetail
 			id="openDetail"
 			v-bind:toChild="toChild"
-			v-if="!isHidden && toChild.isHiddenDetail"
+			v-if="toChild.isHiddenDetail"
 			v-on:updateIsHiddenDetail="updateIsHiddenDetail"
 		></RoomDetail>
 	</div>
@@ -138,7 +138,6 @@ export default {
 			followIcon: false,
 			likeIcon: false,
 			commentIcon: false,
-			preUrl: "",
 			isBlock: false
 		};
 	},
@@ -202,7 +201,11 @@ export default {
 			if (e_obj.preventDefault) e_obj.preventDefault();
 		},
 		updateIsHiddenDetail(value) {
-			this.toChild.isHiddenDetail = value;
+			if(value.flag){
+				this.isHidden = value.value;
+			}else{
+				this.toChild.isHiddenDetail = value.value;
+			}
 		},
 		alarm() {
 			setInterval(this.solosend, 5000);
@@ -217,7 +220,7 @@ export default {
 		},
 		soloconnect() {
 			this.socket = new SockJS(
-				"http://192.168.100.57:8081/gs-guide-websocket"
+				"http://119.202.135.55:8081/gs-guide-websocket"
 			);
 			this.stompClient = Stomp.over(this.socket);
 			this.stompClient.connect(
@@ -325,7 +328,7 @@ export default {
 		this.soloconnect();
 		this.alarm();
 	},
-	beforeDestroy() {
+	destroyed() {
 		this.disconnect();
 	}
 };

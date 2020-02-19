@@ -6,8 +6,13 @@
 					<span>CHAT ROOM</span>
 					<img
 						id="room_exit_btn"
-						@click="isHidden = !isHidden"
+						@click="clossChatRoom"
 						src="../assets/icon/close_b.png"
+					/>
+					<img
+						id="room_refresh_btn"
+						@click="findAllRoom"
+						src="../assets/icon/refresh.png"
 					/>
 				</div>
 				<div id="chat_input_div">
@@ -27,7 +32,7 @@
 							id="inputStyle"
 							type="text"
 							v-model="search_room_name"
-							@keyup.enter="searchRoom"
+							@keyup="searchRoom"
 						/>
 						<button id="room_btn" @click="searchRoom">
 							채팅방 검색
@@ -75,25 +80,25 @@
 </template>
 
 <script>
-import alarmHttp from "../http-alarm";
+import alarmHttp from '../http-alarm'
 
 export default {
-	name: "Room",
-	props: ["toChild"],
-	data() {
+	name: 'Room',
+	props: ['toChild'],
+	data () {
 		return {
 			senderStatic: 0,
 			isHidden: this.toChild.isHiddenDetail,
-			room_name: "",
-			search_room_name: "",
+			room_name: '',
+			search_room_name: '',
 			chatrooms: []
-		};
+		}
 	},
-	created() {
-		this.findAllRoom();
-		this.senderStatic = this.$session.get("id");
+	created () {
+		this.findAllRoom()
+		this.senderStatic = this.$session.get('id')
 	},
-	mounted() {
+	mounted () {
 		// var standardWidth = window.innerWidth / 2;
 		// var standardHeight = window.innerHeight / 2;
 		// if (
@@ -131,18 +136,27 @@ export default {
 		// }
 	},
 	methods: {
-		findAllRoom: function() {
-			alarmHttp.get("/chat/rooms").then(response => {
-				console.log("findAllRoom");
-				console.log(response);
-				this.chatrooms = response.data;
-			});
+		clossChatRoom: function () {
+			this.$emit('updateIsHiddenDetail', { flag: true, value: true })
 		},
-		searchRoom: function(){
-			alarmHttp.get('/chat/search/' + encodeURI(this.search_room_name)).then(response => {
+		findAllRoom: function () {
+			alarmHttp.get('/chat/rooms').then(response => {
+				console.log('findAllRoom')
 				console.log(response)
 				this.chatrooms = response.data
 			})
+		},
+		searchRoom: function () {
+			if (this.search_room_name == '') {
+				this.findAllRoom()
+			} else {
+				alarmHttp
+					.get('/chat/search/' + encodeURI(this.search_room_name))
+					.then(response => {
+						console.log(response)
+						this.chatrooms = response.data
+					})
+			}
 		},
 		createRoom: function () {
 			if ('' === this.room_name) {
@@ -150,61 +164,96 @@ export default {
 				return
 			} else {
 				alarmHttp
-					.post("/chat/room", {
+					.post('/chat/room', {
 						roomName: this.room_name,
-						memberId: this.$session.get("id")
+						memberId: this.$session.get('id')
 					})
 					.then(response => {
-						console.log(response);
+						console.log(response)
 						alert(
-							response.data.roomName + "방 개설에 성공하였습니다."
-						);
-						this.room_name = "";
-						this.findAllRoom();
+							response.data.roomName + '방 개설에 성공하였습니다.'
+						)
+						this.room_name = ''
+						this.findAllRoom()
 					})
 					.catch(response => {
-						console.log(response);
-						alert("채팅방 개설에 실패하였습니다.");
-					});
+						console.log(response)
+						alert('채팅방 개설에 실패하였습니다.')
+					})
 			}
 		},
-		deleteRoom: function(idroom) {
+		deleteRoom: function (idroom) {
 			alarmHttp
-				.delete("/chat/room/" + idroom)
+				.delete('/chat/room/' + idroom)
 				.then(response => {
-					console.log(response);
-					alert("방 삭제를 성공하였습니다.");
-					this.findAllRoom();
-					this.$emit("updateIsHiddenDetail", false);
+					console.log(response)
+					alert('방 삭제를 성공하였습니다.')
+					this.findAllRoom()
+					this.$emit('updateIsHiddenDetail', {
+						flag: false,
+						value: false
+					})
 				})
 				.catch(response => {
-					console.log(response);
-					alert("채팅방 삭제를 실패하였습니다.");
-				});
+					console.log(response)
+					alert('채팅방 삭제를 실패하였습니다.')
+				})
 		},
-		enterRoom: function(item) {
-			localStorage.setItem("wschat.member_id", this.senderStatic);
-			localStorage.setItem("wschat.idroom", item.idroom);
+		enterRoom: function (item) {
+			localStorage.setItem('wschat.member_id', this.senderStatic)
+			localStorage.setItem('wschat.idroom', item.idroom)
+			localStorage.setItem('wschat.memberCount', item.memberCount)
 			//console.log(this.isHidden)
-			this.$emit("updateIsHiddenDetail", !this.isHidden);
+			this.$emit('updateIsHiddenDetail', {
+				flag: false,
+				value: !this.isHidden
+			})
 			// console.log(this.isHidden)
-			this.$emit("updateIsHiddenDetail", false);
+			this.$emit('updateIsHiddenDetail', { flag: false, value: false })
 			setTimeout(() => {
-				this.$emit("updateIsHiddenDetail", true);
-			}, 1);
+				this.$emit('updateIsHiddenDetail', { flag: false, value: true })
+			}, 1)
 		}
 	}
-};
+}
 </script>
 
 <style>
 #roomWrap {
 	width: 100%;
 }
+
+#room_refresh_btn{
+	position: absolute;
+	right: 55px;
+	top: 19px;
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+	-webkit-transform: scale(1);
+	-moz-transform: scale(1);
+	-ms-transform: scale(1);
+	-o-transform: scale(1);
+	transform: scale(1);
+	-webkit-transition: 0.2s;
+	-moz-transition: 0.2s;
+	-ms-transition: 0.2s;
+	-o-transition: 0.2s;
+	transition: 0.2s;
+}
+
+#room_refresh_btn:hover {
+	-webkit-transform: scale(1.1);
+	-moz-transform: scale(1.1);
+	-ms-transform: scale(1.1);
+	-o-transform: scale(1.1);
+	transform: scale(1.1);
+}
+
 #room_exit_btn {
-	position: fixed;
-	right: 95px;
-	top: 28px;
+	position: absolute;
+	right: 20px;
+	top: 19px;
 	width: 25px;
 	height: 25px;
 	cursor: pointer;

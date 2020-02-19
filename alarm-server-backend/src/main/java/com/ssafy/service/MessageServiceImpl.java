@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.dao.MessageDAO;
+import com.ssafy.dao.ParticipantsDAO;
 import com.ssafy.vo.Message;
+import com.ssafy.vo.Participants;
 import com.ssafy.vo.Message.MessageType;
 
 @Service
@@ -15,14 +17,21 @@ public class MessageServiceImpl implements MessageService {
 
 	@Autowired
 	private MessageDAO messageDAO;
+	@Autowired
+	private ParticipantsDAO participantsDAO;
 
 	@Override
 	public List<Message> findAllMessage() {
 		return messageDAO.findAllMessage();
 	}
-
+	
+	@Transactional
 	@Override
-	public List<Message> findMessage(Message message) {
+	public List<Message> findMessage(Participants participants) {
+		Message message = new Message();
+    	message.setRoomId(participants.getRoomId());
+    	if(participantsDAO.findParticipants(participants).size() == 0)
+    		participantsDAO.addParticipants(participants);
 		return messageDAO.findMessage(message);
 	}
 

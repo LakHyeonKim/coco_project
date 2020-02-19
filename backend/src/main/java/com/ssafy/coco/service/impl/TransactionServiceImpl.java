@@ -90,7 +90,7 @@ public class TransactionServiceImpl implements TransactionService {
 		alarmDao.deleteAlarm(alarm);
 	}
 
-	private static final String IP = "192.168.100.57";
+	private static final String IP = "119.202.135.55";
 
 
 	/**

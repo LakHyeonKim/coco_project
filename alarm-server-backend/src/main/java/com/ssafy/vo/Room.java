@@ -11,6 +11,22 @@ public class Room {
 	private String roomName;
 	private String dateCreated;
 	
+	private int memberCount;
+	
+	
+	
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public void setMemberCount(int memberCount) {
+		this.memberCount = memberCount;
+	}
+
+	public void setDateCreated(String dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
 	public long getIdroom() {
 		return idroom;
 	}

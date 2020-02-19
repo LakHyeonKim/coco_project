@@ -5,7 +5,7 @@ public class Message{
 
 	// 메시지 타입 : 입장, 채팅
     public enum MessageType {
-        ENTER, TALK
+        ENTER, TALK, OUT
     }
     
     private long idmessage;
@@ -15,7 +15,18 @@ public class Message{
     private String dateCreated;
     private String context; // 메시지
     private MessageType type; // 메시지 타입
+    private int memberCount;
     
+    
+    
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public void setMemberCount(int memberCount) {
+		this.memberCount = memberCount;
+	}
+
 	public Message() {
 		super();
 	}
