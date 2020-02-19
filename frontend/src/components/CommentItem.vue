@@ -19,7 +19,7 @@
 			<div id="commentDate" class="ml-auto">{{ commentInfo.comment.updateCreated }}</div>
 		</div>
 
-		<pre id="commentContent">{{ commentInfo.comment.contents }}</pre>
+		<div id="commentContent">{{ commentInfo.comment.contents }}</div>
 	</div>
 </template>
 
@@ -89,7 +89,10 @@ export default {
 	color: rgba(0, 0, 0, 0.68);
 }
 #commentContent {
-	overflow: auto;
-	white-space: pre-wrap;
+	width: 100%;
+	word-break: keep-all;
+	word-wrap: break-word;
+	/* overflow: auto;
+	white-space: pre-wrap; */
 }
 </style>

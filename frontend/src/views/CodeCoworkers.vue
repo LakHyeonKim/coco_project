@@ -1,124 +1,165 @@
 <template>
 	<div>
 		<div class="about-section">
-			<h1>SEE-SAW</h1>
-			<p>빛이 나는 Solo</p>
+			<h1 style="font-size:60px">SEE-SAW</h1>
+			<p style="font-size:25px">빛이 나는 CoCo</p>
 		</div>
 
 		<div class="row">
 			<div class="column">
 				<div class="card">
 					<img
-						src="../assets/bg_home.jpg"
-						alt="Jane"
-						style="width:100%"
-					/>
-					<div class="container">
-						<h2>이진호</h2>
-						<p class="title">CEO & PM</p>
-						<p>
-							오늘부터 난난난나나 빛이 나는 솔로
-						</p>
-						<p>a13975@naver.com</p>
-						<p><button class="button">Contact</button></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="column">
-				<div class="card">
-					<img
-						src="../assets/bg_post.jpg"
-						alt="Mike"
-						style="width:100%"
-					/>
-					<div class="container">
-						<h2>김락현</h2>
-						<p class="title">CTO & DB</p>
-						<p>
-							만남 설렘 감동 뒤엔 이별 눈물 후회
-						</p>
-						<p>mike@example.com</p>
-						<p><button class="button">Contact</button></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="column">
-				<div class="card">
-					<img
-						src="../assets/bg_portfolio.jpg"
-						alt="John"
-						style="width:100%"
-					/>
-					<div class="container">
-						<h2>백서현</h2>
-						<p class="title">CIO & KILLER FUNCTION</p>
-						<p>
-							넌 뭔데 자꾸 생각나 자존심 다 어쩌고 저쩌고
-						</p>
-						<p>hyunny0463@naver.com</p>
-						<p><button class="button">Contact</button></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="column">
-				<div class="card">
-					<img
-						src="../assets/bg_portfolio.jpg"
-						alt="John"
-						style="width:100%"
-					/>
-					<div class="container">
-						<h2>이지훈</h2>
-						<p class="title">CQO & POST LIST</p>
-						<p>
-							거짓말 처럼 키스해줘 내가 너에게 마지막 사라인것
-							처럼
-						</p>
-						<p>happiest@kakao.com</p>
-						<p><button class="button">Contact</button></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="column">
-				<div class="card">
-					<img
-						src="../assets/bg_portfolio.jpg"
-						alt="John"
-						style="width:100%"
-					/>
-					<div class="container">
-						<h2>황영은</h2>
-						<p class="title">CDO & Header Art Director</p>
-						<p>
-							내가 너에게 마지막 사랑인것 처럼 마지막처럼 마마마
-							마지막처럼
-						</p>
-						<p>ktt7566@naver.com</p>
-						<p><button class="button">Contact</button></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="column">
-				<div class="card">
-					<img
-						src="../assets/bg_portfolio.jpg"
-						alt="John"
-						style="width:100%"
+						src="../assets/logo_square.png"
+						alt="logo"
+						id="ourImg"
 					/>
 					<div class="container">
 						<h2>SEA-SAW</h2>
 						<p class="title">OUR TEAM</p>
-						<p>
-							저와다르게 출장은 안가시기 때문에, 누가 우와야
-							ㅎㅎㅎ, 우와스럽게
+						<p style="font-size: 14px">
+							<br />
 						</p>
-						<p>git URL</p>
-						<p><button class="button">Contact</button></p>
+						<p id="context">
+							목표는 전국 1등, 50만 마일리지
+						</p>
+						<p>
+							<a
+								href="https://lab.ssafy.com/webmobile1-sub3/s02p13d105"
+								target="#"
+								class="button"
+							>
+								Contact
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="column">
+				<div class="card">
+					<img src="../assets/CC/JINHO.jpg" alt="진호" id="ourImg" />
+					<div class="container">
+						<h2>이진호</h2>
+						<p class="title">CEO & PM</p>
+						<p>a13975@naver.com</p>
+						<p id="context1">
+							서울시 강동구 천호동 강동병원 출생. 현재 여자친구와
+							7년째 열애중에 있으며, 슬하에 2살
+							강아지(수호:푸들)를 두고있다.
+						</p>
+						<p>
+							<a
+								href="https://github.com/Ogochim"
+								target="#"
+								class="button"
+							>
+								Contact
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="column">
+				<div class="card">
+					<img
+						src="../assets/CC/LAKHYEON.jpg"
+						alt="락현"
+						id="ourImg"
+					/>
+					<div class="container">
+						<h2>김락현</h2>
+						<p class="title">CTO & DB</p>
+						<p>krh715@hanmail.net</p>
+						<p id="context2">
+							ㄴr는 ㄱr끔 눈물을 흘린ㄷr
+						</p>
+						<p>
+							<a
+								href="https://github.com/LakHyeonKim"
+								target="#"
+								class="button"
+							>
+								Contact
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="column">
+				<div class="card">
+					<img
+						src="../assets/CC/SEOHYUN.jpg"
+						alt="서현"
+						id="ourImg"
+					/>
+					<div class="container">
+						<h2>백서현</h2>
+						<p class="title">CIO & KILLER FUNCTION</p>
+						<p>hyunny0463@naver.com</p>
+						<p id="context3">
+							코로나19 조심하세요
+						</p>
+						<p>
+							<a
+								href="https://github.com/hyunny0463"
+								target="#"
+								class="button"
+							>
+								Contact
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="column">
+				<div class="card">
+					<img src="../assets/CC/JIHUN.jpg" alt="지훈" id="ourImg" />
+					<div class="container">
+						<h2>이지훈</h2>
+						<p class="title">CQO & POST LIST</p>
+						<p>happiest@kakao.com</p>
+						<p id="context4">
+							내 꿈은 언더아머 단속반
+						</p>
+						<p>
+							<a
+								href="https://github.com/hopehappy92"
+								target="#"
+								class="button"
+							>
+								Contact
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="column">
+				<div class="card">
+					<img
+						src="../assets/CC/YOUNGEUN.jpg"
+						alt="영은"
+						id="ourImg"
+					/>
+					<div class="container">
+						<h2>황영은</h2>
+						<p class="title">CDO & Header Art Director</p>
+						<p>ktt7566@naver.com</p>
+						<p id="context5">
+							탈 싸피는 취업뿐
+						</p>
+						<p>
+							<a
+								href="https://github.com/euni95"
+								target="#"
+								class="button"
+							>
+								Contact
+							</a>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -143,7 +184,43 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+@import url("https://fonts.googleapis.com/css?family=Black+And+White+Picture|Black+Han+Sans|Cute+Font|Dokdo|Hi+Melody|Song+Myung&display=swap");
+#ourImg {
+	width: 100%;
+	/* height: 400px; */
+	overflow: hidden;
+}
+#context {
+	height: 100px;
+	font-family: "Black Han Sans", sans-serif;
+	font-size: 28px;
+}
+#context1 {
+	height: 100px;
+	font-family: "Cute Font", cursive;
+	font-size: 30px;
+}
+#context2 {
+	height: 100px;
+	font-family: "Dokdo", cursive;
+	font-size: 40px;
+}
+#context3 {
+	height: 100px;
+	font-family: "Hi Melody", cursive;
+	font-size: 35px;
+}
+#context4 {
+	height: 100px;
+	font-family: "Black And White Picture", sans-serif;
+	font-size: 35px;
+}
+#context5 {
+	height: 100px;
+	font-family: "Song Myung", serif;
+	font-size: 45px;
+}
 body {
 	font-family: Arial, Helvetica, sans-serif;
 	margin: 0;
@@ -174,8 +251,9 @@ html {
 .about-section {
 	padding: 50px;
 	text-align: center;
-	background-color: #474e5d;
+	background-image: url("../assets/back.jpg");
 	color: white;
+	background-size: cover;
 }
 
 .container {
@@ -193,6 +271,7 @@ html {
 	color: grey;
 	padding-left: 0px;
 	padding-right: 0px;
+	margin-bottom: 5px;
 }
 
 .button {
@@ -201,14 +280,15 @@ html {
 	display: inline-block;
 	padding: 8px;
 	color: white;
-	background-color: #000;
+	background-color: rgba(160, 23, 98, 0.4);
 	text-align: center;
 	cursor: pointer;
 	width: 100%;
+	text-decoration: none;
 }
 
 .button:hover {
-	background-color: #555;
+	background-color: rgba(160, 23, 98, 0.7);
 }
 
 @media screen and (max-width: 650px) {

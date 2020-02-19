@@ -64,6 +64,27 @@
 					</div>
 				</div>
 
+				<div id="grade" v-for="(grade, idx) in grades" :key="idx">
+					<div v-if="grade.grade == userInfo.member.grade">
+						<img
+							:src="grade.path"
+							alt="rank"
+							style="width: 25px; height: 25px; border-radius: 50%; margin-right: 5px;"
+						/>
+					</div>
+				</div>
+				<div id="grade" @click="gradeCheck()">
+					<MypageGrade
+						v-if="userInfo.member.grade != null"
+						:grade="gradeforrank"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span> {{ userInfo.member.grade }}</span>
+						</div>
+					</MypageGrade>
+				</div>
+				<span id="grade" class="counting_sub">·</span>
 				<div id="counting">
 					<MemberList
 						:userInfo="userInfo"
@@ -103,6 +124,7 @@ import http from "../http-common";
 import store from "../store";
 import MypagePWCheck from "./MypagePWCheck.vue";
 import MypageFollowCheck from "./MypageFollowCheck.vue";
+import MypageGrade from "./MypageGrade.vue";
 import MemberList from "./MemberList.vue";
 import "../assets/styles/check_btn.css";
 export default {
@@ -110,7 +132,8 @@ export default {
 	components: {
 		MypagePWCheck,
 		MypageFollowCheck,
-		MemberList
+		MemberList,
+		MypageGrade
 	},
 	store,
 	data() {
@@ -126,7 +149,8 @@ export default {
 				},
 				member: {
 					imageUrl: "",
-					nickname: ""
+					nickname: "",
+					grade: null
 				},
 				followingCount: 0,
 				followerCount: 0,
@@ -151,10 +175,24 @@ export default {
 			},
 			followList: null,
 			memberFollower: null,
-			memberFollowing: null
+			memberFollowing: null,
+			grades: [
+				{ grade: "아이언", path: "../img/rank/iron.png" },
+				{ grade: "브론즈", path: "../img/rank/bronze.png" },
+				{ grade: "실버", path: "../img/rank/silver.png" },
+				{ grade: "골드", path: "../img/rank/gold.png" },
+				{ grade: "플래티넘", path: "../img/rank/platinum.png" },
+				{ grade: "다이아", path: "../img/rank/diamond.png" },
+				{ grade: "마스터", path: "../img/rank/master.png" },
+				{ grade: "챌린저", path: "../img/rank/challenger.png" }
+			],
+			gradeforrank: ""
 		};
 	},
 	methods: {
+		gradeCheck() {
+			this.gradeforrank = this.userInfo.member.grade;
+		},
 		test() {
 			this.$session.remove("accessToken");
 		},
@@ -311,7 +349,7 @@ export default {
 				}
 			)
 				.then(response => {
-					console.log(response.status);
+					console.log("정보확인", response);
 					if (response.status == 203) {
 						console.log("refresh token -> server");
 						http.post(
@@ -450,6 +488,13 @@ export default {
 	font-weight: 500;
 	color: black;
 	text-decoration: none;
+}
+#grade {
+	font-size: 15px;
+	/* margin-top: 6px; */
+	float: left;
+	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
+	color: white;
 }
 #nickname {
 	font-size: 20px;
