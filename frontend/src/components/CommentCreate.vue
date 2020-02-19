@@ -91,7 +91,7 @@ export default {
 				}
 			})
 				.then(res => {
-					console.log(res);
+					userComment.comments[0].idcomment = res.data;
 					this.$emit("addComment", userComment.comments[0]);
 					this.commentContent = "";
 					this.show = !this.show;

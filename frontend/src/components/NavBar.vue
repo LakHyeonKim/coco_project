@@ -20,7 +20,8 @@
 					@click="isBlock = !isBlock"
 					id="profile"
 					:src="
-						$session.get('imageUrl') == undefined || $session.get('imageUrl') == ''
+						$session.get('imageUrl') == undefined ||
+						$session.get('imageUrl') == ''
 							? '../img/icons/user.png'
 							: $session.get('imageUrl')
 					"
@@ -39,11 +40,9 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<img
-					class="nav_menu_img"
-					@click="goNewPage()"
-					src="../assets/icon/plus.png"
-				/>
+				<router-link to="/newpage">
+					<img class="nav_menu_img" src="../assets/icon/plus.png" />
+				</router-link>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/search">
@@ -75,8 +74,16 @@
 				</router-link>
 			</li>
 			<li class="nav_menu">
-				<span class="back nav_menu_drag"  @mousedown="startDrag($event)" @dblclick="toggleMenu()">
-					<span><img class="nav_menu_img" src="../assets/icon/sms.png" />
+				<span
+					class="back nav_menu_drag"
+					@mousedown="startDrag($event)"
+					@dblclick="toggleMenu()"
+				>
+					<span
+						><img
+							class="nav_menu_img"
+							src="../assets/icon/sms.png"
+						/>
 					</span>
 				</span>
 				<!-- <button
@@ -113,19 +120,19 @@
 </template>
 
 <script>
-import router from '../router'
-import Room from '@/components/Room'
-import RoomDetail from '@/components/RoomDetail'
-import SockJS from 'sockjs-client'
-import Stomp from 'webstomp-client'
+import router from "../router";
+import Room from "@/components/Room";
+import RoomDetail from "@/components/RoomDetail";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
 
 export default {
-	name: 'NavBar',
+	name: "NavBar",
 	components: {
 		Room,
 		RoomDetail
 	},
-	data () {
+	data() {
 		return {
 			toChild: {
 				isHiddenDetail: false,
@@ -133,12 +140,12 @@ export default {
 				top: 0
 			},
 			isHidden: true,
-			preUrl: '',
+			preUrl: "",
 			isfirst: true,
 			timerID: 0,
 			latest_alarm_id: 0,
 			soloconnected: false,
-			solo_send_message: '',
+			solo_send_message: "",
 			div_L: 0,
 			div_T: 0,
 			targetObj: null,
@@ -151,83 +158,79 @@ export default {
 		};
 	},
 	methods: {
-		alarmIconReset () {
-			this.alarmIcon = true
-			this.followIcon = false
-			this.likeIcon = false
-			this.commentIcon = false
-        },
-		goNewPage() {
-			this.$store.state.parent = null;
-			router.push("/newpage");
+		alarmIconReset() {
+			this.alarmIcon = true;
+			this.followIcon = false;
+			this.likeIcon = false;
+			this.commentIcon = false;
 		},
 		logout() {
 			this.isBlock = false;
 			this.$session.destroy();
 			router.push("/");
 		},
-		getLeft () {
-			return parseInt(this.targetObj[0].style.left.replace('px', ''))
+		getLeft() {
+			return parseInt(this.targetObj[0].style.left.replace("px", ""));
 		},
-		getTop () {
-			return parseInt(this.targetObj[0].style.top.replace('px', ''))
+		getTop() {
+			return parseInt(this.targetObj[0].style.top.replace("px", ""));
 		},
-		moveDrag (e) {
-			var e_obj = window.event ? window.event : e
-			this.div_L = e_obj.clientX
-			this.div_T = e_obj.clientY
+		moveDrag(e) {
+			var e_obj = window.event ? window.event : e;
+			this.div_L = e_obj.clientX;
+			this.div_T = e_obj.clientY;
 			if (window.innerWidth - 50 < e_obj.clientX)
-				e_obj.clientX = window.innerWidth - 50
+				e_obj.clientX = window.innerWidth - 50;
 			if (window.innerHeight - 50 < e_obj.clientY)
-				e_obj.clientY = window.innerHeight - 50
-			if (e_obj.clientY < 0) e_obj.clientY = 0
-			document.getElementsByClassName('nav_menu_drag')[0].style.left =
-				e_obj.clientX + 'px'
-			document.getElementsByClassName('nav_menu_drag')[0].style.top =
-				e_obj.clientY + 'px'
-			return false
+				e_obj.clientY = window.innerHeight - 50;
+			if (e_obj.clientY < 0) e_obj.clientY = 0;
+			document.getElementsByClassName("nav_menu_drag")[0].style.left =
+				e_obj.clientX + "px";
+			document.getElementsByClassName("nav_menu_drag")[0].style.top =
+				e_obj.clientY + "px";
+			return false;
 		},
-		stopDrag () {
-			document.onmousemove = null
-			document.onmouseup = null
+		stopDrag() {
+			document.onmousemove = null;
+			document.onmouseup = null;
 		},
-		startDrag (e) {
-			this.targetObj = document.getElementsByClassName('nav_menu_drag')
-			var e_obj = window.event ? window.event : e
-			this.div_L = e_obj.clientX
-			this.div_T = e_obj.clientY
-			this.toChild.left = e_obj.clientX
-			this.toChild.top = e_obj.clientY
-			document.onmousemove = this.moveDrag
-			document.onmouseup = this.stopDrag
-			if (e_obj.preventDefault) e_obj.preventDefault()
+		startDrag(e) {
+			this.targetObj = document.getElementsByClassName("nav_menu_drag");
+			var e_obj = window.event ? window.event : e;
+			this.div_L = e_obj.clientX;
+			this.div_T = e_obj.clientY;
+			this.toChild.left = e_obj.clientX;
+			this.toChild.top = e_obj.clientY;
+			document.onmousemove = this.moveDrag;
+			document.onmouseup = this.stopDrag;
+			if (e_obj.preventDefault) e_obj.preventDefault();
 		},
-		updateIsHiddenDetail (value) {
-			this.toChild.isHiddenDetail = value
+		updateIsHiddenDetail(value) {
+			this.toChild.isHiddenDetail = value;
 		},
-		alarm () {
-			setInterval(this.solosend, 5000)
+		alarm() {
+			setInterval(this.solosend, 5000);
 		},
-		solosend () {
-			console.log('Send message:' + this.solo_send_message)
+		solosend() {
+			console.log("Send message:" + this.solo_send_message);
 			if (this.stompClient && this.stompClient.connected) {
-				const msg = { memberId: this.solo_send_message }
-				console.log(JSON.stringify(msg))
-				this.stompClient.send('/app/info', JSON.stringify(msg), {})
+				const msg = { memberId: this.solo_send_message };
+				console.log(JSON.stringify(msg));
+				this.stompClient.send("/app/info", JSON.stringify(msg), {});
 			}
 		},
-		soloconnect () {
+		soloconnect() {
 			this.socket = new SockJS(
-				'http://192.168.100.57:8081/gs-guide-websocket'
-			)
-			this.stompClient = Stomp.over(this.socket)
+				"http://192.168.100.57:8081/gs-guide-websocket"
+			);
+			this.stompClient = Stomp.over(this.socket);
 			this.stompClient.connect(
 				{},
 				frame => {
-					this.soloconnected = true
-					console.log(frame)
-					this.stompClient.subscribe('/user/queue/info', tick => {
-						console.log(JSON.parse(tick.body).idalarm)
+					this.soloconnected = true;
+					console.log(frame);
+					this.stompClient.subscribe("/user/queue/info", tick => {
+						console.log(JSON.parse(tick.body).idalarm);
 						if (
 							this.latest_alarm_id < JSON.parse(tick.body).idalarm
 						) {
@@ -238,74 +241,74 @@ export default {
 									JSON.parse(tick.body).followId == 0
 								) {
 									this.$notify({
-										group: 'foo',
-										title: 'Important message',
+										group: "foo",
+										title: "Important message",
 										text:
 											JSON.parse(tick.body).nickname +
-											' 님이 포스트에 좋아요를 눌렀어요~'
-									})
-									this.alarmIcon = false
-									this.likeIcon = true
-									this.followIcon = false
-									this.commentIcon = false
+											" 님이 포스트에 좋아요를 눌렀어요~"
+									});
+									this.alarmIcon = false;
+									this.likeIcon = true;
+									this.followIcon = false;
+									this.commentIcon = false;
 								} else if (
 									JSON.parse(tick.body).postId > 0 &&
 									JSON.parse(tick.body).likeId == 0 &&
 									JSON.parse(tick.body).followId == 0
 								) {
 									this.$notify({
-										group: 'foo',
-										title: 'Important message',
+										group: "foo",
+										title: "Important message",
 										text:
 											JSON.parse(tick.body).nickname +
-											' 님이 포스트에 댓글을 달았어요~'
-									})
-									this.alarmIcon = false
-									this.likeIcon = false
-									this.followIcon = false
-									this.commentIcon = true
+											" 님이 포스트에 댓글을 달았어요~"
+									});
+									this.alarmIcon = false;
+									this.likeIcon = false;
+									this.followIcon = false;
+									this.commentIcon = true;
 								} else if (
 									JSON.parse(tick.body).postId == 0 &&
 									JSON.parse(tick.body).likeId == 0 &&
 									JSON.parse(tick.body).followId > 0
 								) {
 									this.$notify({
-										group: 'foo',
-										title: 'Important message',
+										group: "foo",
+										title: "Important message",
 										text:
 											JSON.parse(tick.body).nickname +
-											' 님이 팔로우를 했어요~'
-									})
-									this.alarmIcon = false
-									this.likeIcon = false
-									this.followIcon = true
-									this.commentIcon = false
+											" 님이 팔로우를 했어요~"
+									});
+									this.alarmIcon = false;
+									this.likeIcon = false;
+									this.followIcon = true;
+									this.commentIcon = false;
 								}
 								//this.solo_received_messages.push(JSON.parse(tick.body));
 							}
-							this.isfirst = false
+							this.isfirst = false;
 						}
-						this.latest_alarm_id = JSON.parse(tick.body).idalarm
-					})
+						this.latest_alarm_id = JSON.parse(tick.body).idalarm;
+					});
 				},
 				error => {
-					console.log(error)
-					this.soloconnected = false
+					console.log(error);
+					this.soloconnected = false;
 				}
-			)
+			);
 		},
-		disconnect () {
+		disconnect() {
 			if (this.stompClient) {
-				this.stompClient.disconnect()
+				this.stompClient.disconnect();
 			}
-			clearInterval(this.timerID)
-			this.soloconnected = false
+			clearInterval(this.timerID);
+			this.soloconnected = false;
 		},
-		tickleConnection () {
-			this.soloconnected ? this.disconnect() : this.connect()
+		tickleConnection() {
+			this.soloconnected ? this.disconnect() : this.connect();
 		},
-		toggleMenu () {
-			this.isHidden = !this.isHidden
+		toggleMenu() {
+			this.isHidden = !this.isHidden;
 		},
 		getMypage() {
 			this.isBlock = false;
@@ -314,22 +317,22 @@ export default {
 
 			if (this.$route.fullPath != location) {
 				router.push(location).catch(err => {
-					console.log(err)
-				})
+					console.log(err);
+				});
 			} else {
-				window.location.reload(true)
+				window.location.reload(true);
 			}
 		}
 	},
-	mounted () {
-		this.solo_send_message = this.$session.get('id')
-		this.soloconnect()
-		this.alarm()
+	mounted() {
+		this.solo_send_message = this.$session.get("id");
+		this.soloconnect();
+		this.alarm();
 	},
-	beforeDestroy () {
-		this.disconnect()
+	beforeDestroy() {
+		this.disconnect();
 	}
-}
+};
 </script>
 
 <style>
@@ -337,14 +340,13 @@ export default {
 
 .back {
 	margin: 1em auto;
-	font-family: 'Roboto';
+	font-family: "Roboto";
 }
 .back span {
 	font-size: 3em;
-	color: #f5f5f5;
-	background: #a77fa3;
+	background: rgba(160, 23, 98, 0.7);
 	display: table-cell;
-	box-shadow: inset 0 0 5px #ffffff, 0 5px 0 #ccc;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 	padding: 0 15px;
 	line-height: 50px;
 	animation: jumb 2s infinite;

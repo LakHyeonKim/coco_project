@@ -80,6 +80,14 @@ public class TransactionController {
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "포스트 수정 (Transaction) ", response = List.class)
+	@PostMapping("/updatePost")
+	public ResponseEntity<Integer> updatePost(@RequestHeader(value="Authorization")String jwt,BoardWrite board) throws Exception {
+		System.out.println("메이크 포스터안 jwt:"+jwt);
+		transactionService.updatePost(board);
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
+	
 	@ApiOperation(value = "하위 포스트 달기 (Transaction) ", response = List.class)
 	@RequestMapping(value = "/makeBabyPost", method = RequestMethod.POST)
 	public ResponseEntity<Integer> makeBabyPost(@RequestHeader(value="Authorization")String jwt, BabyBoardWrite babyBoardWrite) throws Exception {
