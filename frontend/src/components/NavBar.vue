@@ -344,10 +344,9 @@ export default {
 }
 .back span {
 	font-size: 3em;
-	color: #f5f5f5;
-	background: #a77fa3;
+	background: rgba(160, 23, 98, 0.7);
 	display: table-cell;
-	box-shadow: inset 0 0 5px #ffffff, 0 5px 0 #ccc;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 	padding: 0 15px;
 	line-height: 50px;
 	animation: jumb 2s infinite;
