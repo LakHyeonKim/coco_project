@@ -127,18 +127,22 @@ export default {
 			comment.dateCreated = "방금 전";
 			comment.updateCreated = "방금 전";
 			comment.access = 0;
-			this.detail.commentInfos.push({comment: comment, isFollow: 0,postWriterProfileImage: this.$session.get("imageUrl")});
+			this.detail.commentInfos.push({
+				comment: comment,
+				isFollow: 0,
+				postWriterProfileImage: this.$session.get("imageUrl")
+			});
 		},
 		updateFollow() {
-			this.isFollow = !this.isFollow;
+			this.detail.isFollow = !this.detail.isFollow;
 		},
 		commentDelete(idx) {
-			console.log("1", this.detail.commentInfos)
-			this.detail.commentInfos.splice(idx, 1);
-			console.log("2", this.detail.commentInfos)
-			// @remove="commentDelete"
-			// this.detail.commentInfos = this.detail.commentInfos.splice(idx, 1);
-
+			console.log("1", this.detail.commentInfos);
+			this.detail.commentInfos.splice(
+				this.detail.commentInfos.length - 1 - idx,
+				1
+			);
+			console.log("2", this.detail.commentInfos);
 		}
 	},
 	created() {
