@@ -31,31 +31,30 @@ public class JwtInterceptor implements HandlerInterceptor {
 		System.out.println("목적 주소:" + request.getServletPath());
 		System.out.println(request.getMethod());
 		// System.out.println(request.getPathInfo());
-		if(request.getMethod().equals("OPTIONS")) return true;
-		else
-		{
-			if(token.equals(""))
-			{
+		if (request.getMethod().equals("OPTIONS"))
+			return true;
+		else {
+			if (token == null) {
+				System.out.println("토큰값이 null 입니다.");
+				System.out.println(token);
 				response.setStatus(203);
 				return false;
-			}
-		}
-		if (token == null) {
-			System.out.println("토큰값이 null 입니다.");
-			System.out.println(token);
-			response.setStatus(203);
-			return false;
-		} else {
-			HttpStatus status = jwtService.isUsable(token);
-			System.out.println(status);
-			System.out.println(token);
-			if (status == HttpStatus.ACCEPTED) {
-				response.setStatus(200);
-				return true;
-			}
-			else 
+			} else if (token.equals("")) {
+				System.out.println("");
 				response.setStatus(203);
 				return false;
+			} else {
+				HttpStatus status = jwtService.isUsable(token);
+				System.out.println(status);
+				System.out.println(token);
+				if (status == HttpStatus.ACCEPTED) {
+					response.setStatus(200);
+					return true;
+				} else
+					response.setStatus(203);
+				return false;
+			}
+
 		}
 		// return true;
 

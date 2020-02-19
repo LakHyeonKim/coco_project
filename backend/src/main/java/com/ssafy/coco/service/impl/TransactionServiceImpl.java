@@ -89,10 +89,10 @@ public class TransactionServiceImpl implements TransactionService {
 		alarm.setPostId(postId);
 		alarmDao.deleteAlarm(alarm);
 	}
-	
+
 	private static final String IP = "192.168.100.57";
 
-	
+
 	/**
 	 * 
 	 * @param member 회원정보
@@ -110,7 +110,7 @@ public class TransactionServiceImpl implements TransactionService {
 		member.setRankId(1L);
 
 		System.out.println(signUpMember.getFile() + "겟파일 ");
-		if (signUpMember.getFile() != null) {
+		if (!signUpMember.getFile().getOriginalFilename().equals("")) {
 			MultipartFile file = signUpMember.getFile();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
@@ -118,7 +118,10 @@ public class TransactionServiceImpl implements TransactionService {
 			String imageFilePath = "http://"+ IP + ":8888/userprofile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
+		}else {
+			member.setImageUrl("");
 		}
+		member.setIsManager(1);
 		memberDao.addMember(member);
 		Mypage mypage = new Mypage();
 		mypage.setMemberId(member.getIdmember());
@@ -139,12 +142,14 @@ public class TransactionServiceImpl implements TransactionService {
 	 */
 
 	@Transactional
-	public void makeComment(Comment commentData, long receiver) {
+	public long makeComment(Comment commentData, long receiver) {
 		System.out.println(commentData);
 		System.out.println(receiver);
 		commentDao.addComment(commentData);
+		long idComment = commentData.getIdcomment();
 		Alarm alarm = new Alarm(0, commentData.getMemberId(), receiver, commentData.getPostId(), 0, 0, 0, 0);
 		alarmDao.addAlarm(alarm);
+		return idComment;
 	}
 
 	/**
@@ -176,11 +181,13 @@ public class TransactionServiceImpl implements TransactionService {
 			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
+		}else {
+			post.setFilePath("");
 		}
-		
+
 		long idPost = postDao.addPost(post);
 		idPost = post.getIdpost();
-		
+
 		for (String splitedTag : splitTag) {
 			if (splitedTag.equals(""))
 				break;
@@ -195,7 +202,7 @@ public class TransactionServiceImpl implements TransactionService {
 				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
 			}
 		}
-		
+
 		babyPostDao.addBabyPost(new BabyPost(0, babyBoardWrite.getParentIdPost(), idPost));
 		Alarm alarm = new Alarm(0, babyBoardWrite.getMemberId(), babyBoardWrite.getParentIdMember(), babyBoardWrite.getParentIdPost(), 0, 0, 0, 0);
 		alarmDao.addAlarm(alarm);
@@ -288,8 +295,8 @@ public class TransactionServiceImpl implements TransactionService {
 		// 0)).get(0).getIdlike();
 		likeDao.deleteLike(new Like(0, idPost, idMember, 0));
 		postDao.updatePostUnlikeCount(idPost);
-//		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
-//		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
+		//		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
+		//		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
 
 	/**
@@ -312,7 +319,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 		String[] splitTag = board.getTags().split(",");
 
-		if (board.getAttachments() != null) {
+		if (!board.getAttachments().getOriginalFilename().equals("")) {
 			MultipartFile file = board.getAttachments();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
@@ -320,8 +327,57 @@ public class TransactionServiceImpl implements TransactionService {
 			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
 			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
+		}else {
+			post.setFilePath("");
 		}
 		postDao.addPost(post);
+		for (String splitedTag : splitTag) {
+			if (splitedTag.equals(""))
+				break;
+			int size = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).size();
+			if (size == 0) {
+				tagDao.addTag(new Tag(0, splitedTag, 0, 1, null, null, null));
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
+				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
+			} else {
+				tagDao.updateTagIncludedCount(splitedTag);
+				long tagId = tagDao.findTag(new Tag(0, splitedTag, 0, 0, null, null, null)).get(0).getIdtag();
+				postTagDao.addPostTag(new PostTag(0, post.getIdpost(), tagId));
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param board
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
+
+	@Transactional
+	public void updatePost(BoardWrite board) throws IllegalStateException, IOException {
+		Post post = new Post();
+		post.setCode(board.getCode());
+		post.setMemberId(board.getMemberId());
+		post.setPostTitle(board.getPostTitle());
+		post.setPostWriter(board.getPostWriter());
+
+		String[] splitTag = board.getTags().split(",");
+
+		if (!board.getAttachments().getOriginalFilename().equals("")) {
+			MultipartFile file = board.getAttachments();
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String originFileName = file.getOriginalFilename();
+			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
+			String filePath = "http://"+ IP +":8888/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
+			post.setFilePath(filePath);
+		}else {
+			post.setFilePath("");
+		}
+		postDao.updatePost(post);
+		postTagDao.deletePostTag(new PostTag(0, post.getIdpost(), 0));
+		
 		for (String splitedTag : splitTag) {
 			if (splitedTag.equals(""))
 				break;
@@ -348,14 +404,14 @@ public class TransactionServiceImpl implements TransactionService {
 		Member tempMember = new Member();
 		tempMember.setIdmember(memberInfoModify.getIdmember());
 		List<Member> member = memberDao.findMember(tempMember);
-		
+
 		Mypage tempMypage = new Mypage();
 		tempMypage.setMemberId(memberInfoModify.getIdmember());
 		List<Mypage> mypage = myPageDao.findMypage(tempMypage);
-		
+
 		Member modifyMember = member.get(0);
 		Mypage modifyMypage = mypage.get(0);
-		
+
 		if(!memberInfoModify.getBannerImage().getOriginalFilename().equals("")) {
 			MultipartFile file = memberInfoModify.getBannerImage();
 			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
@@ -378,7 +434,7 @@ public class TransactionServiceImpl implements TransactionService {
 			MypageTag myPageTag = new MypageTag();
 			myPageTag.setMypageId(modifyMypage.getIdmypage());
 			myPageTagDao.deleteMypageTag(myPageTag);
-			
+
 			String[] splitedTags = memberInfoModify.getTags().split(",");
 			for(String tag : splitedTags) {
 				int size = tagDao.findTag(new Tag(0, tag, 0, 0, null, null, null)).size();
@@ -405,7 +461,7 @@ public class TransactionServiceImpl implements TransactionService {
 			modifyMember.setPassword(Member.encryptSHA256Iter(memberInfoModify.getPassword(), memberInfoModify.getPassword().length()));
 		if(!memberInfoModify.getBannerText().equals(""))
 			modifyMypage.setBannerText(memberInfoModify.getBannerText());
-		
+
 		memberDao.updateMember(modifyMember);
 		myPageDao.updateMypage(modifyMypage);
 	}

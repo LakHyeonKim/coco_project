@@ -138,6 +138,7 @@ public class AuthorityController {
 		}
 	}
 
+	
 	@ApiOperation(value = "카카오 api를 통한 코드를 이용하여 로그인", response = List.class)
 	@RequestMapping(value = "/kakaologin", produces = "application/json", method = { RequestMethod.GET,
 			RequestMethod.POST })

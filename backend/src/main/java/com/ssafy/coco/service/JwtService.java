@@ -29,4 +29,5 @@ public interface JwtService {
 	public JsonNode getKakaoUserInfo(String autorize_code);
 	public JsonNode getAccessToken(String autorize_code);
 	public int getIdmemberByToken(String jwt) throws Exception;
+	public JsonNode logout(String access_token);
 }

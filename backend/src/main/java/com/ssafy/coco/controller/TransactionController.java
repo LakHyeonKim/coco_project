@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.coco.dao.CommentDao;
 import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
@@ -28,8 +29,10 @@ import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.relationvo.SignUpMember;
+import com.ssafy.coco.service.CommentService;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.TransactionService;
+import com.ssafy.coco.vo.Comment;
 import com.ssafy.coco.vo.Follow;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
@@ -49,7 +52,7 @@ public class TransactionController {
 	@Autowired
 	private JwtService jwtService;
 	
-	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
+	@ApiOperation(value = "코멘트 지우기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
 	public ResponseEntity<Integer> deleteComment(@RequestHeader(value="Authorization")String jwt,@RequestBody JSONObject input) throws Exception {
 		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
@@ -61,13 +64,12 @@ public class TransactionController {
 		transactionService.deleteComment(postId, receiver, caller, commentId);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
-	
 
 	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/makeComment", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeComment(@RequestHeader(value="Authorization")String jwt,@RequestBody BoardDetail board) throws Exception {
-		transactionService.makeComment(board.getComments().get(0),board.getPost().getMemberId());
-		return new ResponseEntity<Integer>(HttpStatus.OK);
+	public ResponseEntity<Long> makeComment(@RequestHeader(value="Authorization")String jwt,@RequestBody BoardDetail board) throws Exception {
+		long idComment = transactionService.makeComment(board.getComments().get(0),board.getPost().getMemberId());
+		return new ResponseEntity<Long>(idComment, HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "포스트 달기 (Transaction) ", response = List.class)
@@ -75,6 +77,14 @@ public class TransactionController {
 	public ResponseEntity<Integer> makePost(@RequestHeader(value="Authorization")String jwt,BoardWrite board) throws Exception {
 		System.out.println("메이크 포스터안 jwt:"+jwt);
 		transactionService.makePost(board);
+		return new ResponseEntity<Integer>(HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "포스트 수정 (Transaction) ", response = List.class)
+	@PostMapping("/updatePost")
+	public ResponseEntity<Integer> updatePost(@RequestHeader(value="Authorization")String jwt,BoardWrite board) throws Exception {
+		System.out.println("메이크 포스터안 jwt:"+jwt);
+		transactionService.updatePost(board);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
 	

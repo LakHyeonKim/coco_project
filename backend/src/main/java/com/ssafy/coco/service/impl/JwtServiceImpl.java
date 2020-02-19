@@ -52,14 +52,45 @@ public class JwtServiceImpl implements JwtService {
 
 	@Autowired
 	MemberDao memberDao;
+	public JsonNode logout(String access_token) {
+		final String RequestUrl = "https://kapi.kakao.com/v1/user/logout";
 
+		final HttpClient client = HttpClientBuilder.create().build();
+		final HttpPost post = new HttpPost(RequestUrl);
+		// add header
+		post.addHeader("Authorization", "Bearer " + access_token);
+		JsonNode returnNode = null;
+
+		try {
+			final HttpResponse response = client.execute(post);
+			final int responseCode = response.getStatusLine().getStatusCode();
+
+			System.out.println("\nSending 'POST' request to URL : " + RequestUrl);
+			System.out.println("Response Code : " + responseCode);
+
+			// JSON 형태 반환값 처리
+			ObjectMapper mapper = new ObjectMapper();
+			returnNode = mapper.readTree(response.getEntity().getContent());
+
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// clear resources
+		}
+		return returnNode;
+	}
+	
 	public JsonNode getAccessToken(String autorize_code) {
 		final String RequestUrl = "https://kauth.kakao.com/oauth/token";
 
 		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
 		postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
 		postParams.add(new BasicNameValuePair("client_id", "716ea071847daf5fdddd8ecac5cd2796")); // REST API KEY
-		postParams.add(new BasicNameValuePair("redirect_uri", "http://192.168.100.94:8080")); // 리다이렉트 URI
+		postParams.add(new BasicNameValuePair("redirect_uri", "http://localhost:8080")); // 리다이렉트 URI
 		postParams.add(new BasicNameValuePair("code", autorize_code)); // 로그인 과정중 얻은 code 값
 		// http://192.168.100.94:8080
 		// http://192.168.100.95:8888/test/kakaologin2
@@ -91,7 +122,6 @@ public class JwtServiceImpl implements JwtService {
 		}
 
 		return returnNode;
-
 	}
 
 	public JsonNode getKakaoUserInfo(String token) {

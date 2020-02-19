@@ -17,6 +17,8 @@ public class Post {
 	String imagePath;
 	String filePath;
 
+	
+
 	public String getFilePath() {
 		return filePath;
 	}
@@ -140,9 +142,7 @@ public class Post {
 	public String getDateCreated() {
 		return dateCreated;
 	}
-	public void setDateCreated(String s){
-		this.dateCreated = s;
-	}
+
 	
 	public void setDateCreated(Timestamp d) {
 
