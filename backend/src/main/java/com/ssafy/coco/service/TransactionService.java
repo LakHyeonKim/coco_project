@@ -12,7 +12,7 @@ import com.ssafy.coco.vo.Post;
 
 public interface TransactionService {
 	public long signUp(SignUpMember signUpMember) throws IllegalStateException, IOException, Exception;
-	public void makeComment(Comment commentData, long receiver);
+	public long makeComment(Comment commentData, long receiver);
 	public void makeBabyPost(BabyBoardWrite babyBoardWrite) throws IllegalStateException, IOException;
 	public void postClick(Post post, long idMember);
 	public void makeFollow(long idMemberFollower, long idMemberFollowing);

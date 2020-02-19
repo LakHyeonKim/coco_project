@@ -49,7 +49,7 @@ public class TransactionController {
 	@Autowired
 	private JwtService jwtService;
 	
-	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
+	@ApiOperation(value = "코멘트 지우기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
 	public ResponseEntity<Integer> deleteComment(@RequestHeader(value="Authorization")String jwt,@RequestBody JSONObject input) throws Exception {
 		Map<String, Object> map = jwtService.getMapFromJsonObject(input);
@@ -65,9 +65,9 @@ public class TransactionController {
 
 	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/makeComment", method = RequestMethod.POST)
-	public ResponseEntity<Integer> makeComment(@RequestHeader(value="Authorization")String jwt,@RequestBody BoardDetail board) throws Exception {
-		transactionService.makeComment(board.getComments().get(0),board.getPost().getMemberId());
-		return new ResponseEntity<Integer>(HttpStatus.OK);
+	public ResponseEntity<Long> makeComment(@RequestHeader(value="Authorization")String jwt,@RequestBody BoardDetail board) throws Exception {
+		long idComment = transactionService.makeComment(board.getComments().get(0),board.getPost().getMemberId());
+		return new ResponseEntity<Long>(idComment, HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "포스트 달기 (Transaction) ", response = List.class)
