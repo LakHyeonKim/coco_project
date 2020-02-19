@@ -198,7 +198,6 @@ export default {
 	},
 	mounted() {
 		this.loadingTop = true;
-		console.log("마운트는 언제 찍힐까");
 		const token = this.$session.get("accessToken");
 		const headers = {
 			Authorization: token
