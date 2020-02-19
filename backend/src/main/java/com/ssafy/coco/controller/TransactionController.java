@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.coco.dao.CommentDao;
 import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
@@ -28,8 +29,10 @@ import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.PostAndMember;
 import com.ssafy.coco.relationvo.SignUpMember;
+import com.ssafy.coco.service.CommentService;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.TransactionService;
+import com.ssafy.coco.vo.Comment;
 import com.ssafy.coco.vo.Follow;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
@@ -61,7 +64,6 @@ public class TransactionController {
 		transactionService.deleteComment(postId, receiver, caller, commentId);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
 	}
-	
 
 	@ApiOperation(value = "코멘트 달기 (Transaction)", response = List.class)
 	@RequestMapping(value = "/makeComment", method = RequestMethod.POST)

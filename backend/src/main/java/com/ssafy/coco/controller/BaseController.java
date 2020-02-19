@@ -340,8 +340,12 @@ public class BaseController {
 	@RequestMapping(value = "/updateComment", method = RequestMethod.PUT)
 	public ResponseEntity<Integer> updateComment(@RequestHeader(value = "Authorization") String jwt,
 			@RequestBody Comment comment) throws Exception {
-		Integer answer = commentService.updateComment(comment);
-		if (answer <= 0) {
+		Comment input = new Comment();
+		input.setIdcomment(comment.getIdcomment());
+		Comment temp = commentService.findComment(input).get(0);
+		temp.setContents(comment.getContents());
+		Integer answer = commentService.updateComment(temp);
+		if (answer <= 0) { 
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<Integer>(answer, HttpStatus.OK);
