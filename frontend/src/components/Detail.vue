@@ -31,15 +31,12 @@
 							"
 						/>
 						<div style="float: left;">
-							<div id="user-nickname">
-								{{ postWriter }}
-							</div>
-							<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
+							<div id="user-nickname">{{ postWriter }}</div>
 							<div id="post-info">
-								<span v-if="dateCreated == updateCreated"
-									>{{ dateCreated }} ·
-									{{ views }} &nbsp;</span
-								>
+								<span v-if="dateCreated == updateCreated">
+									{{ dateCreated }} ·
+									{{ views }} &nbsp;
+								</span>
 								<span v-else>
 									{{ updateCreated }}(수정됨) ·
 									{{ views }} &nbsp;
@@ -58,9 +55,9 @@
 				</div>
 			</div>
 			<div id="divide-line"></div>
-			<div id="fileBox">
+			<div id="fileBox" v-if="filePath">
 				<v-icon>mdi-file-download-outline</v-icon>
-				<a @click="test">{{ filePath }}</a>
+				<a @click="fileDownload">{{ filePath.substring(38) }}</a>
 			</div>
 
 			<div id="postBox">
@@ -81,15 +78,13 @@
 					></MediumClap>
 					<div id="addition-action" class="ma-4">
 						<button>
-							<v-icon @click="test">fa fa-ellipsis-h</v-icon>
+							<v-icon>fa fa-ellipsis-h</v-icon>
 						</button>
 					</div>
 				</div>
 
 				<div id="divide-line"></div>
-				<button id="babyPostCreate" @click="babyPostCreate">
-					WRITE BABY POST ( ღ'ᴗ'ღ )
-				</button>
+				<button id="babyPostCreate" @click="babyPostCreate">WRITE BABY POST ( ღ'ᴗ'ღ )</button>
 				<comment-create
 					:idPost="idPost"
 					:memberId="memberId"
@@ -97,10 +92,7 @@
 					@addComment="addComment"
 				></comment-create>
 
-				<comment-list
-					:commentInfos="commentInfos"
-					:receiver="memberId"
-				></comment-list>
+				<comment-list :commentInfos="commentInfos" :receiver="memberId" @commentDelete="commentDelete"></comment-list>
 			</div>
 		</div>
 		<div id="blankBox"></div>
@@ -147,35 +139,6 @@ export default {
 	},
 	methods: {
 		babyPostCreate() {
-			// let parent = new FormData();
-			// parent.set("idpost", this.idPost);
-			// parent.set("memberId", this.memberId);
-			// parent.set("postTitle", this.postTitle);
-			// parent.set("postWriter", this.postWriter);
-			// parent.set("code", this.code);
-			// parent.set("likeCount", this.likeCount);
-			// parent.set("views", this.views);
-			// parent.set("imagePath", this.imagePath);
-			// parent.set("filePath", this.filePath);
-			// parent.set("access", this.access);
-			// parent.set("likeCheck", this.likeCheck);
-			// parent.set("order", this.order);
-
-			// this.$store.state.parent = parent;
-			// this.$store.state.parent = {
-			//    idpost: this.idpost,
-			//    memberId: this.memberId,
-			//    postTitle: this.postTitle,
-			//    postWriter: this.postWriter,
-			//    code: this.code,
-			//    likeCount: this.likeCount,
-			//    views: this.views,
-			//    imagePath: this.imagePath,
-			//    filePath: this.filePath,
-			//    access: this.access,
-			//    likeCheck: this.likeCheck,
-			//    order: this.order
-			// };
 			this.$store.state.parent = {
 				parentIdPost: this.idPost,
 				parentIdMember: this.memberId
@@ -213,11 +176,15 @@ export default {
 					console.log(error);
 				});
 		},
-		updateLike(data) {
-			this.$emit("updateLike", data);
+		updateLike(like) {
+			this.$emit("updateLike", like);
 		},
 		addComment(comment) {
+			console.log("Detail.vue", comment);
 			this.$emit("addComment", comment);
+		},
+		commentDelete(idx) {
+			this.$emit("commentDelete", idx);
 		},
 		searchHashtag(hashtag) {
 			console.log(hashtag);
@@ -225,19 +192,20 @@ export default {
 			this.$router.push({ name: "search" });
 			console.log(hashtag);
 		},
-		test() {
-			http.get("/test/download", { responseType: "blob" })
+		fileDownload() {
+			http.get(`/test/download/${this.idPost}`, { responseType: "blob" })
 				.then(res => {
 					const url = window.URL.createObjectURL(
-						new Blob([res.data], { type: res.data.type })
+						new Blob([res.data], {
+							type: res.data.type
+						})
 					);
 					const link = document.createElement("a");
 					link.href = url;
-					link.setAttribute("download", "sdsd");
+					link.setAttribute("download", this.filePath.substring(38));
 					document.body.appendChild(link);
 					link.click();
-					console.log(link);
-					console.log(res);
+					document.body.removeChild(link);
 				})
 				.catch(err => {
 					console.log(err);
