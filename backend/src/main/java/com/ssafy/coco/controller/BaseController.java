@@ -1,11 +1,18 @@
 package com.ssafy.coco.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +21,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -103,38 +111,61 @@ public class BaseController {
 		}
 		return map;
 	}
-	
+
 	@ApiOperation(value = "파일 다운로드", response = List.class)
-	@RequestMapping(value = "/download", method = RequestMethod.POST)
-	public ResponseEntity<Resource> download(@RequestHeader(value="Authorization")String jwt,@RequestBody long postId) throws IOException {
-		System.out.println("다운로드"+postId);
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+	public ResponseEntity<Resource> download(@RequestHeader(value = "Authorization") String jwt) throws IOException {
 		Post post = new Post();
-		post.setIdpost(postId);
+		post.setIdpost(94);
 		List list = postService.findPost(post);
-		System.out.println(list);
 		if (list.size() == 0)
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		post = (Post) list.get(0);
-		if(post.getFilePath()==null) 
+
+		if (post.getFilePath() == null)
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		String tempPath = post.getFilePath().substring(post.getFilePath().indexOf(":8888/")+6);
-		System.out.println(tempPath);
-		/*
-		 * if(tempPath==null) { return }
-		 */
-		Path path = Paths.get("src/main/webapp/"+tempPath);
-		
-//		Path path = Paths.get("src/main/webapp/userfile/0_google_logo.png");
-		System.out.println("download 파일네임:"+path.getFileName());
+		System.out.println("원래 패스" + post.getFilePath());
+		String tempPath = post.getFilePath().substring(post.getFilePath().indexOf(":8888/") + 6);
+		System.out.println("path" + tempPath);
+
+		Path path = Paths.get("src/main/webapp/" + tempPath);
 		String contentType = Files.probeContentType(path);
-		
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.CONTENT_TYPE,contentType);
+		headers.add(HttpHeaders.CONTENT_TYPE, contentType);
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=1" + path.getFileName().toString());
 		Resource resource = new InputStreamResource(Files.newInputStream(path));
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
-	
+
+	@ApiOperation(value = "파일 다운로드2", response = List.class)
+	@RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
+	public void downloadFile(@RequestHeader(value = "Authorization") String jwt, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		File file = new File("src/main/webapp/userfile/", "0_ERD_SEESAW.png");
+
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+
+		// User-Agent : 어떤 운영체제로 어떤 브라우저를 서버( 홈페이지 )에 접근하는지 확인함
+		String header = request.getHeader("image/png");
+		String fileName;
+
+		if ((header.contains("MSIE")) || (header.contains("Trident")) || (header.contains("Edge"))) {
+			// 인터넷 익스플로러 10이하 버전, 11버전, 엣지에서 인코딩
+			fileName = URLEncoder.encode("ssd", "UTF-8");
+		} else {
+			// 나머지 브라우저에서 인코딩
+			fileName = new String("ssd".getBytes("UTF-8"), "iso-8859-1");
+		}
+		// 형식을 모르는 파일첨부용 contentType
+		response.setContentType("blob");
+		// 다운로드와 다운로드될 파일이름
+		response.setHeader("Content-Disposition", "attachment; filename=" + "0_vue.png");
+		// 파일복사
+		FileCopyUtils.copy(in, response.getOutputStream());
+		in.close();
+		response.getOutputStream().flush();
+		response.getOutputStream().close();
+	}
 
 	// 알람
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved list"),
@@ -143,7 +174,8 @@ public class BaseController {
 			@ApiResponse(code = 404, message = "URL not found error") })
 	@ApiOperation(value = "모든 알람 반환", response = List.class)
 	@RequestMapping(value = "/findAllAlarm", method = RequestMethod.GET)
-	public ResponseEntity<List<Alarm>> findAllAnswer(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Alarm>> findAllAnswer(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<Alarm> answers = alarmService.findAllAlarm();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -153,7 +185,8 @@ public class BaseController {
 
 	@ApiOperation(value = "비밀 번호 체크", response = List.class)
 	@RequestMapping(value = "/checkPwd", method = RequestMethod.POST)
-	public ResponseEntity<List<Alarm>> checkPwd(@RequestHeader(value="Authorization")String jwt,@RequestBody Member member) throws Exception {
+	public ResponseEntity<List<Alarm>> checkPwd(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Member member) throws Exception {
 		int size = memberService.findMember(member).size();
 		if (size == 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -163,10 +196,11 @@ public class BaseController {
 
 	@ApiOperation(value = "알람 선택 반환", response = List.class)
 	@RequestMapping(value = "/findAlarm", method = RequestMethod.POST)
-	public ResponseEntity<List<Alarm>> findAlarm(@RequestHeader(value="Authorization")String jwt,@RequestBody Alarm alarm) throws Exception {
+	public ResponseEntity<List<Alarm>> findAlarm(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Alarm alarm) throws Exception {
 		alarm.setDateCreated("TT");
 		List<Alarm> answers = alarmService.findAlarm(alarm);
-		
+
 		System.out.println(alarm);
 		System.out.println(answers);
 		if (answers.isEmpty()) {
@@ -177,7 +211,8 @@ public class BaseController {
 
 	@ApiOperation(value = "알람 입력", response = List.class)
 	@RequestMapping(value = "/addAlarm", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addAlarm(@RequestHeader(value="Authorization")String jwt,@RequestBody Alarm alarm) throws Exception {
+	public ResponseEntity<Integer> addAlarm(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Alarm alarm) throws Exception {
 		int answer = alarmService.addAlarm(alarm);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -187,9 +222,10 @@ public class BaseController {
 
 	@ApiOperation(value = "알람 수정", response = List.class)
 	@RequestMapping(value = "/updateAlarm", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateAlarm(@RequestHeader(value="Authorization")String jwt,@RequestBody Alarm alarm) throws Exception {
+	public ResponseEntity<Integer> updateAlarm(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Alarm alarm) throws Exception {
 		System.out.println(jwt);
-		System.out.println("알람수정"+alarm);
+		System.out.println("알람수정" + alarm);
 		int answer = alarmService.updateAlarm(alarm);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -199,7 +235,8 @@ public class BaseController {
 
 	@ApiOperation(value = "알람 삭제", response = List.class)
 	@RequestMapping(value = "/deleteAlarm", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteAlarm(@RequestHeader(value="Authorization")String jwt,@RequestBody Alarm alarm) throws Exception {
+	public ResponseEntity<Integer> deleteAlarm(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Alarm alarm) throws Exception {
 		int answer = alarmService.deleteAlarm(alarm);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -211,7 +248,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 포스트 관계 반환", response = List.class)
 	@RequestMapping(value = "/findAllBabyPost", method = RequestMethod.GET)
-	public ResponseEntity<List<BabyPost>> findAllBabyPost(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<BabyPost>> findAllBabyPost(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<BabyPost> answers = babyPostService.findAllBabyPost();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -221,7 +259,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 포스트 관계 반환", response = List.class)
 	@RequestMapping(value = "/findBabyPost", method = RequestMethod.POST)
-	public ResponseEntity<List<BabyPost>> findBabyPost(@RequestHeader(value="Authorization")String jwt,@RequestBody BabyPost babyPost) throws Exception {
+	public ResponseEntity<List<BabyPost>> findBabyPost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody BabyPost babyPost) throws Exception {
 		List<BabyPost> answers = babyPostService.findBabyPost(babyPost);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -231,7 +270,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 관계 등록", response = List.class)
 	@RequestMapping(value = "/addBabyPost", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addBabyPost(@RequestHeader(value="Authorization")String jwt,@RequestBody BabyPost babyPost) throws Exception {
+	public ResponseEntity<Integer> addBabyPost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody BabyPost babyPost) throws Exception {
 		Integer answer = babyPostService.addBabyPost(babyPost);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -241,7 +281,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 관계 수정", response = List.class)
 	@RequestMapping(value = "/updateBabyPost", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateBabyPost(@RequestHeader(value="Authorization")String jwt,@RequestBody BabyPost babyPost) throws Exception {
+	public ResponseEntity<Integer> updateBabyPost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody BabyPost babyPost) throws Exception {
 		Integer answer = babyPostService.updateBabyPost(babyPost);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -251,7 +292,8 @@ public class BaseController {
 
 	@ApiOperation(value = " 포스트 관계 삭제", response = List.class)
 	@RequestMapping(value = "/deleteBabyPost", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteBabyPost(@RequestHeader(value="Authorization")String jwt,@RequestBody BabyPost babyPost) throws Exception {
+	public ResponseEntity<Integer> deleteBabyPost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody BabyPost babyPost) throws Exception {
 		Integer answer = babyPostService.deleteBabyPost(babyPost);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -263,7 +305,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 댓글 반환", response = List.class)
 	@RequestMapping(value = "/findAllComment", method = RequestMethod.GET)
-	public ResponseEntity<List<Comment>> findAllComment(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Comment>> findAllComment(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<Comment> answers = commentService.findAllComment();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -273,7 +316,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 댓글 반환", response = List.class)
 	@RequestMapping(value = "/findComment", method = RequestMethod.POST)
-	public ResponseEntity<List<Comment>> findComment(@RequestHeader(value="Authorization")String jwt,@RequestBody Comment comment) throws Exception {
+	public ResponseEntity<List<Comment>> findComment(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Comment comment) throws Exception {
 		List<Comment> answers = commentService.findComment(comment);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -283,7 +327,8 @@ public class BaseController {
 
 	@ApiOperation(value = "댓글 등록", response = List.class)
 	@RequestMapping(value = "/addComment", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addComment(@RequestHeader(value="Authorization")String jwt,@RequestBody Comment comment) throws Exception {
+	public ResponseEntity<Integer> addComment(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Comment comment) throws Exception {
 		Integer answer = commentService.addComment(comment);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -293,7 +338,8 @@ public class BaseController {
 
 	@ApiOperation(value = "댓글 수정", response = List.class)
 	@RequestMapping(value = "/updateComment", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateComment(@RequestHeader(value="Authorization")String jwt,@RequestBody Comment comment) throws Exception {
+	public ResponseEntity<Integer> updateComment(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Comment comment) throws Exception {
 		Integer answer = commentService.updateComment(comment);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -303,7 +349,8 @@ public class BaseController {
 
 	@ApiOperation(value = "댓글 삭제", response = List.class)
 	@RequestMapping(value = "/deleteComment", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteComment(@RequestHeader(value="Authorization")String jwt,@RequestBody Comment comment) throws Exception {
+	public ResponseEntity<Integer> deleteComment(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Comment comment) throws Exception {
 		Integer answer = commentService.deleteComment(comment);
 		if (answer <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -315,7 +362,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 팔로우 반환", response = List.class)
 	@RequestMapping(value = "/findAllFollow", method = RequestMethod.GET)
-	public ResponseEntity<List<Follow>> findAllFollow(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Follow>> findAllFollow(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<Follow> answers = followService.findAllFollow();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -325,7 +373,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 팔로우 반환", response = List.class)
 	@RequestMapping(value = "/findFollow", method = RequestMethod.POST)
-	public ResponseEntity<List<Follow>> findFollow(@RequestHeader(value="Authorization")String jwt,@RequestBody Follow follow) throws Exception {
+	public ResponseEntity<List<Follow>> findFollow(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Follow follow) throws Exception {
 		List<Follow> answers = followService.findFollow(follow);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -335,7 +384,8 @@ public class BaseController {
 
 	@ApiOperation(value = "팔로우 등록", response = List.class)
 	@RequestMapping(value = "/addFollow", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addFollow(@RequestHeader(value="Authorization")String jwt,@RequestBody Follow follow) throws Exception {
+	public ResponseEntity<Integer> addFollow(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Follow follow) throws Exception {
 		Integer answers = followService.addFollow(follow);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -345,7 +395,8 @@ public class BaseController {
 
 	@ApiOperation(value = "팔로우 수정", response = List.class)
 	@RequestMapping(value = "/updateFollow", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateFollow(@RequestHeader(value="Authorization")String jwt,@RequestBody Follow follow) throws Exception {
+	public ResponseEntity<Integer> updateFollow(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Follow follow) throws Exception {
 		Integer answers = followService.updateFollow(follow);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -355,7 +406,8 @@ public class BaseController {
 
 	@ApiOperation(value = "팔로우 삭제", response = List.class)
 	@RequestMapping(value = "/deleteFollow", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteFollow(@RequestHeader(value="Authorization")String jwt,@RequestBody Follow follow) throws Exception {
+	public ResponseEntity<Integer> deleteFollow(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Follow follow) throws Exception {
 		Integer answers = followService.deleteFollow(follow);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -365,7 +417,7 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 좋아요 반환", response = List.class)
 	@RequestMapping(value = "/findAllLike", method = RequestMethod.GET)
-	public ResponseEntity<List<Like>> findAllLike(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Like>> findAllLike(@RequestHeader(value = "Authorization") String jwt) throws Exception {
 		List<Like> answers = likeService.findAllLike();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -375,7 +427,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 좋아요 반환", response = List.class)
 	@RequestMapping(value = "/findLike", method = RequestMethod.POST)
-	public ResponseEntity<List<Like>> findLike(@RequestHeader(value="Authorization")String jwt,@RequestBody Like like) throws Exception {
+	public ResponseEntity<List<Like>> findLike(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Like like) throws Exception {
 		List<Like> answers = likeService.findLike(like);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -385,7 +438,8 @@ public class BaseController {
 
 	@ApiOperation(value = "좋아요 등록", response = List.class)
 	@RequestMapping(value = "/addLike", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addLike(@RequestHeader(value="Authorization")String jwt,@RequestBody Like like) throws Exception {
+	public ResponseEntity<Integer> addLike(@RequestHeader(value = "Authorization") String jwt, @RequestBody Like like)
+			throws Exception {
 		Integer answers = likeService.addLike(like);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -395,7 +449,8 @@ public class BaseController {
 
 	@ApiOperation(value = "좋아요 수정", response = List.class)
 	@RequestMapping(value = "/updateLike", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateLike(@RequestHeader(value="Authorization")String jwt,@RequestBody Like like) throws Exception {
+	public ResponseEntity<Integer> updateLike(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Like like) throws Exception {
 		Integer answers = likeService.updateLike(like);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -405,7 +460,8 @@ public class BaseController {
 
 	@ApiOperation(value = "좋아요 삭제", response = List.class)
 	@RequestMapping(value = "/deleteLike", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteLike(@RequestHeader(value="Authorization")String jwt,@RequestBody Like like) throws Exception {
+	public ResponseEntity<Integer> deleteLike(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Like like) throws Exception {
 		Integer answers = likeService.deleteLike(like);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -415,8 +471,9 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 멤버 반환", response = List.class)
 	@RequestMapping(value = "/findAllMember", method = RequestMethod.GET)
-	public ResponseEntity<List<Member>> findAllMember(@RequestHeader(value="Authorization")String jwt) throws Exception {
-		System.out.println("find all member: "+jwt);
+	public ResponseEntity<List<Member>> findAllMember(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
+		System.out.println("find all member: " + jwt);
 		List<Member> answers = memberService.findAllMember();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -426,7 +483,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 멤버 반환", response = List.class)
 	@RequestMapping(value = "/findMember", method = RequestMethod.POST)
-	public ResponseEntity<List<Member>> findMember(@RequestHeader(value="Authorization")String jwt,@RequestBody Member member) throws Exception {
+	public ResponseEntity<List<Member>> findMember(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Member member) throws Exception {
 		List<Member> answers = memberService.findMember(member);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -436,7 +494,8 @@ public class BaseController {
 
 	@ApiOperation(value = "멤버 등록", response = List.class)
 	@RequestMapping(value = "/addMember", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addMember(@RequestHeader(value="Authorization")String jwt,@RequestBody Member member) throws Exception {
+	public ResponseEntity<Integer> addMember(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Member member) throws Exception {
 		System.out.println("before" + member);
 		Integer answers = memberService.addMember(member);
 		System.out.println("after" + member);
@@ -448,7 +507,8 @@ public class BaseController {
 
 	@ApiOperation(value = "멤버 수정", response = List.class)
 	@RequestMapping(value = "/updateMember", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateMember(@RequestHeader(value="Authorization")String jwt,@RequestBody Member member) throws Exception {
+	public ResponseEntity<Integer> updateMember(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Member member) throws Exception {
 		Integer answers = memberService.updateMember(member);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -458,7 +518,8 @@ public class BaseController {
 
 	@ApiOperation(value = "멤버 삭제", response = List.class)
 	@RequestMapping(value = "/deleteMember", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteMember(@RequestHeader(value="Authorization")String jwt,@RequestBody Member member) throws Exception {
+	public ResponseEntity<Integer> deleteMember(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Member member) throws Exception {
 		Integer answers = memberService.deleteMember(member);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -468,7 +529,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 멤버 태그 반환", response = List.class)
 	@RequestMapping(value = "/findAllMemberTag", method = RequestMethod.GET)
-	public ResponseEntity<List<MemberTag>> findAllMemberTag(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<MemberTag>> findAllMemberTag(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<MemberTag> answers = memberTagService.findAllMemberTag();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -478,7 +540,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 멤버 태그 반환", response = List.class)
 	@RequestMapping(value = "/findMemberTag", method = RequestMethod.POST)
-	public ResponseEntity<List<MemberTag>> findMemberTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberTag memberTag) throws Exception {
+	public ResponseEntity<List<MemberTag>> findMemberTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MemberTag memberTag) throws Exception {
 		List<MemberTag> answers = memberTagService.findMemberTag(memberTag);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -488,7 +551,8 @@ public class BaseController {
 
 	@ApiOperation(value = "멤버 태그 등록", response = List.class)
 	@RequestMapping(value = "/addMemberTag", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addMemberTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberTag memberTag) throws Exception {
+	public ResponseEntity<Integer> addMemberTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MemberTag memberTag) throws Exception {
 		Integer answers = memberTagService.addMemberTag(memberTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -498,7 +562,8 @@ public class BaseController {
 
 	@ApiOperation(value = "멤버 태그 수정", response = List.class)
 	@RequestMapping(value = "/updateMemberTag", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateMemberTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberTag memberTag) throws Exception {
+	public ResponseEntity<Integer> updateMemberTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MemberTag memberTag) throws Exception {
 		Integer answers = memberTagService.updateMemberTag(memberTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -508,7 +573,8 @@ public class BaseController {
 
 	@ApiOperation(value = "멤버 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deleteMemberTag", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteMemberTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MemberTag memberTag) throws Exception {
+	public ResponseEntity<Integer> deleteMemberTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MemberTag memberTag) throws Exception {
 		Integer answers = memberTagService.deleteMemberTag(memberTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -518,7 +584,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 마이 페이지 반환", response = List.class)
 	@RequestMapping(value = "/findAllMypage", method = RequestMethod.GET)
-	public ResponseEntity<List<Mypage>> findAllMypage(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Mypage>> findAllMypage(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<Mypage> answers = myPageService.findAllMypage();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -528,7 +595,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 마이 페이지 반환", response = List.class)
 	@RequestMapping(value = "/findMypage", method = RequestMethod.POST)
-	public ResponseEntity<List<Mypage>> findMypage(@RequestHeader(value="Authorization")String jwt,@RequestBody Mypage mypage) throws Exception {
+	public ResponseEntity<List<Mypage>> findMypage(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Mypage mypage) throws Exception {
 		List<Mypage> answers = myPageService.findMypage(mypage);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -538,7 +606,8 @@ public class BaseController {
 
 	@ApiOperation(value = "마이 페이지 등록", response = List.class)
 	@RequestMapping(value = "/addMypage", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addMypage(@RequestHeader(value="Authorization")String jwt,@RequestBody Mypage mypage) throws Exception {
+	public ResponseEntity<Integer> addMypage(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Mypage mypage) throws Exception {
 		Integer answers = myPageService.addMypage(mypage);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -548,7 +617,8 @@ public class BaseController {
 
 	@ApiOperation(value = "마이 페이지 수정", response = List.class)
 	@RequestMapping(value = "/updateMypage", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateMypage(@RequestHeader(value="Authorization")String jwt,@RequestBody Mypage mypage) throws Exception {
+	public ResponseEntity<Integer> updateMypage(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Mypage mypage) throws Exception {
 		Integer answers = myPageService.updateMypage(mypage);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -558,7 +628,8 @@ public class BaseController {
 
 	@ApiOperation(value = "마이 페이지 삭제", response = List.class)
 	@RequestMapping(value = "/deleteMypage", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteMypage(@RequestHeader(value="Authorization")String jwt,@RequestBody Mypage mypage) throws Exception {
+	public ResponseEntity<Integer> deleteMypage(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Mypage mypage) throws Exception {
 		Integer answers = myPageService.deleteMypage(mypage);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -568,7 +639,8 @@ public class BaseController {
 
 	@ApiOperation(value = "마이 페이지 태그 반환", response = List.class)
 	@RequestMapping(value = "/findAllMypageTag", method = RequestMethod.GET)
-	public ResponseEntity<List<MypageTag>> findAllMypageTag(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<MypageTag>> findAllMypageTag(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<MypageTag> answers = myPageTagService.findAllMypageTag();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -578,7 +650,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 마이 페이지 페이지 반환", response = List.class)
 	@RequestMapping(value = "/findMypageTag", method = RequestMethod.POST)
-	public ResponseEntity<List<MypageTag>> findMypageTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MypageTag mypageTag) throws Exception {
+	public ResponseEntity<List<MypageTag>> findMypageTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MypageTag mypageTag) throws Exception {
 		List<MypageTag> answers = myPageTagService.findMypageTag(mypageTag);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -588,7 +661,8 @@ public class BaseController {
 
 	@ApiOperation(value = "마이 페이지 태그 등록", response = List.class)
 	@RequestMapping(value = "/addMypageTag", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addMypageTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MypageTag mypageTag) throws Exception {
+	public ResponseEntity<Integer> addMypageTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MypageTag mypageTag) throws Exception {
 		Integer answers = myPageTagService.addMypageTag(mypageTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -598,7 +672,8 @@ public class BaseController {
 
 	@ApiOperation(value = "마이 페이지 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deleteMypageTag", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteMypageTag(@RequestHeader(value="Authorization")String jwt,@RequestBody MypageTag mypageTag) throws Exception {
+	public ResponseEntity<Integer> deleteMypageTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody MypageTag mypageTag) throws Exception {
 		Integer answers = myPageTagService.deleteMypageTag(mypageTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -608,7 +683,7 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 포스트 반환", response = List.class)
 	@RequestMapping(value = "/findAllPost", method = RequestMethod.GET)
-	public ResponseEntity<List<Post>> findAllPost(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Post>> findAllPost(@RequestHeader(value = "Authorization") String jwt) throws Exception {
 		List<Post> answers = postService.findAllPost();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -618,7 +693,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 포스트 반환", response = List.class)
 	@RequestMapping(value = "/findPost", method = RequestMethod.POST)
-	public ResponseEntity<List<Post>> findPost(@RequestHeader(value="Authorization")String jwt,@RequestBody Post post) throws Exception {
+	public ResponseEntity<List<Post>> findPost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Post post) throws Exception {
 		List<Post> answers = postService.findPost(post);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -628,7 +704,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 등록", response = List.class)
 	@RequestMapping(value = "/addPost", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addPost(@RequestHeader(value="Authorization")String jwt,@RequestBody Post post) throws Exception {
+	public ResponseEntity<Integer> addPost(@RequestHeader(value = "Authorization") String jwt, @RequestBody Post post)
+			throws Exception {
 		Integer answers = postService.addPost(post);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -638,7 +715,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 수정", response = List.class)
 	@RequestMapping(value = "/updatePost", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updatePost(@RequestHeader(value="Authorization")String jwt,@RequestBody Post post) throws Exception {
+	public ResponseEntity<Integer> updatePost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Post post) throws Exception {
 		Post temp = new Post();
 		temp.setIdpost(post.getIdpost());
 		temp = postService.findPost(temp).get(0);
@@ -655,7 +733,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 삭제", response = List.class)
 	@RequestMapping(value = "/deletePost", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deletePost(@RequestHeader(value="Authorization")String jwt,@RequestBody Post post) throws Exception {
+	public ResponseEntity<Integer> deletePost(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Post post) throws Exception {
 		Integer answers = postService.deletePost(post);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -665,7 +744,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 포스트 태그 반환", response = List.class)
 	@RequestMapping(value = "/findAllPostTag", method = RequestMethod.GET)
-	public ResponseEntity<List<PostTag>> findAllPostTag(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<PostTag>> findAllPostTag(@RequestHeader(value = "Authorization") String jwt)
+			throws Exception {
 		List<PostTag> answers = postTagService.findAllPostTag();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -675,7 +755,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 포스트 태그 반환", response = List.class)
 	@RequestMapping(value = "/findPostTag", method = RequestMethod.POST)
-	public ResponseEntity<List<PostTag>> findPostTag(@RequestHeader(value="Authorization")String jwt,@RequestBody PostTag postTag) throws Exception {
+	public ResponseEntity<List<PostTag>> findPostTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody PostTag postTag) throws Exception {
 
 		System.out.println("findposttag");
 		List<PostTag> answers = postTagService.findPostTag(postTag);
@@ -687,7 +768,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 태그 등록", response = List.class)
 	@RequestMapping(value = "/addPostTag", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addPostTag(@RequestHeader(value="Authorization")String jwt,@RequestBody PostTag postTag) throws Exception {
+	public ResponseEntity<Integer> addPostTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody PostTag postTag) throws Exception {
 		Integer answers = postTagService.addPostTag(postTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -697,7 +779,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deletePostTag", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deletePostTag(@RequestHeader(value="Authorization")String jwt,@RequestBody PostTag postTag) throws Exception {
+	public ResponseEntity<Integer> deletePostTag(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody PostTag postTag) throws Exception {
 		Integer answers = postTagService.deletePostTag(postTag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -707,7 +790,7 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 태그 반환", response = List.class)
 	@RequestMapping(value = "/findAllTag", method = RequestMethod.GET)
-	public ResponseEntity<List<Tag>> findAllTag(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<Tag>> findAllTag(@RequestHeader(value = "Authorization") String jwt) throws Exception {
 		List<Tag> answers = tagService.findAllTag();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -717,7 +800,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 태그 반환", response = List.class)
 	@RequestMapping(value = "/findTag", method = RequestMethod.POST)
-	public ResponseEntity<List<Tag>> findTag(@RequestHeader(value="Authorization")String jwt,@RequestBody Tag tag) throws Exception {
+	public ResponseEntity<List<Tag>> findTag(@RequestHeader(value = "Authorization") String jwt, @RequestBody Tag tag)
+			throws Exception {
 		List<Tag> answers = tagService.findTag(tag);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -727,7 +811,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 태그 등록", response = List.class)
 	@RequestMapping(value = "/addTag", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addTag(@RequestHeader(value="Authorization")String jwt,@RequestBody Tag tag) throws Exception {
+	public ResponseEntity<Integer> addTag(@RequestHeader(value = "Authorization") String jwt, @RequestBody Tag tag)
+			throws Exception {
 		Integer answers = tagService.addTag(tag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -737,7 +822,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 태그 수정", response = List.class)
 	@RequestMapping(value = "/updateTag", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateTag(@RequestHeader(value="Authorization")String jwt,@RequestBody Tag tag) throws Exception {
+	public ResponseEntity<Integer> updateTag(@RequestHeader(value = "Authorization") String jwt, @RequestBody Tag tag)
+			throws Exception {
 		Integer answers = tagService.updateTag(tag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -747,7 +833,8 @@ public class BaseController {
 
 	@ApiOperation(value = "포스트 태그 삭제", response = List.class)
 	@RequestMapping(value = "/deleteTag", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteTag(@RequestHeader(value="Authorization")String jwt,@RequestBody Tag tag) throws Exception {
+	public ResponseEntity<Integer> deleteTag(@RequestHeader(value = "Authorization") String jwt, @RequestBody Tag tag)
+			throws Exception {
 		Integer answers = tagService.deleteTag(tag);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -757,7 +844,8 @@ public class BaseController {
 
 	@ApiOperation(value = "모든 워드 사전 반환", response = List.class)
 	@RequestMapping(value = "/findAllWordDictionary", method = RequestMethod.GET)
-	public ResponseEntity<List<WordDictionary>> findAllWordDictionary(@RequestHeader(value="Authorization")String jwt) throws Exception {
+	public ResponseEntity<List<WordDictionary>> findAllWordDictionary(
+			@RequestHeader(value = "Authorization") String jwt) throws Exception {
 		List<WordDictionary> answers = wordDictionaryService.findAllWordDictionary();
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -767,8 +855,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 워드 사전 반환", response = List.class)
 	@RequestMapping(value = "/findWordDictionary", method = RequestMethod.POST)
-	public ResponseEntity<List<WordDictionary>> findWordDictionary(@RequestHeader(value="Authorization")String jwt,@RequestBody WordDictionary wordDictionary)
-			throws Exception {
+	public ResponseEntity<List<WordDictionary>> findWordDictionary(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody WordDictionary wordDictionary) throws Exception {
 		List<WordDictionary> answers = wordDictionaryService.findWordDictionary(wordDictionary);
 		if (answers.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -778,7 +866,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 워드 사전 삭제", response = List.class)
 	@RequestMapping(value = "/addWordDictionary", method = RequestMethod.POST)
-	public ResponseEntity<Integer> addWordDictionary(@RequestHeader(value="Authorization")String jwt,@RequestBody WordDictionary wordDictionary) throws Exception {
+	public ResponseEntity<Integer> addWordDictionary(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody WordDictionary wordDictionary) throws Exception {
 		Integer answers = wordDictionaryService.addWordDictionary(wordDictionary);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -788,7 +877,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 워드 사전 수정", response = List.class)
 	@RequestMapping(value = "/updateWordDictionary", method = RequestMethod.PUT)
-	public ResponseEntity<Integer> updateWordDictionary(@RequestHeader(value="Authorization")String jwt,@RequestBody WordDictionary wordDictionary) throws Exception {
+	public ResponseEntity<Integer> updateWordDictionary(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody WordDictionary wordDictionary) throws Exception {
 		Integer answers = wordDictionaryService.updateWordDictionary(wordDictionary);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -798,7 +888,8 @@ public class BaseController {
 
 	@ApiOperation(value = "선택 워드 사전 삭제", response = List.class)
 	@RequestMapping(value = "/deleteWordDictionary", method = RequestMethod.DELETE)
-	public ResponseEntity<Integer> deleteWordDictionary(@RequestHeader(value="Authorization")String jwt,@RequestBody WordDictionary wordDictionary) throws Exception {
+	public ResponseEntity<Integer> deleteWordDictionary(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody WordDictionary wordDictionary) throws Exception {
 		Integer answers = wordDictionaryService.deleteWordDictionary(wordDictionary);
 		if (answers <= 0) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);

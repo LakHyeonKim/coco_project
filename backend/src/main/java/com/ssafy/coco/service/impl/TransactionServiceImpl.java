@@ -90,7 +90,7 @@ public class TransactionServiceImpl implements TransactionService {
 		alarmDao.deleteAlarm(alarm);
 	}
 	
-	private static final String IP = "192.168.100.57";
+	private static final String IP = "192.168.100.95";
 
 	
 	/**
@@ -119,6 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
 			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}
+		member.setIsManager(1);
 		memberDao.addMember(member);
 		Mypage mypage = new Mypage();
 		mypage.setMemberId(member.getIdmember());

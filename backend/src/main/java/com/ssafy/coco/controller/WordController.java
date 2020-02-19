@@ -43,7 +43,8 @@ public class WordController {
 		wd.setWord(keyword);
 		List<WordDictionary> answers = wordDictionaryService.findWordDictionary(wd);
 		if (answers.isEmpty()) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
+			makeWordByKeyword(keyword);
+			answers = wordDictionaryService.findWordDictionary(wd);
 		}
 		return new ResponseEntity<List<WordDictionary>>(answers, HttpStatus.OK);
 	}

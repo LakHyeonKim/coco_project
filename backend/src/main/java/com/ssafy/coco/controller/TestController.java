@@ -52,8 +52,10 @@ import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.service.JwtService;
 import com.ssafy.coco.service.MailService;
 import com.ssafy.coco.service.MemberService;
+import com.ssafy.coco.service.PostService;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.Member;
+import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.Tokens;
 
 import io.swagger.annotations.Api;
@@ -85,7 +87,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+@RestController
+@RequestMapping("/test")
+@CrossOrigin(origins = { "*" }, maxAge = 6000)
+@Api(tags = { "test Controller" }, description = "SSAFY HRM resource API (Test)")
 public class TestController {
 
 	@Autowired
@@ -96,18 +101,33 @@ public class TestController {
 	MemberService memberService;
 	@Autowired
 	MailService mailService;
-
+	@Autowired
+	PostService postService;
+	
 	@ApiOperation(value = "파일 다운로드(선택)", response = List.class)
-	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public ResponseEntity<Resource> download() throws IOException {
-		Path path = Paths.get("src/main/webapp/userfile/dsad.txt");
-		System.out.println("download 파일네임:"+path.getFileName());
-		String contentType = Files.probeContentType(path);
+	@RequestMapping(value = "/download/{idPost}", method = RequestMethod.GET)
+ 	public ResponseEntity<Resource> download(@PathVariable long idPost) throws IOException {
+		Post post = new Post();
+		post.setIdpost(idPost);
+		List list = postService.findPost(post);
+		if (list.size() == 0)
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		post = (Post) list.get(0);
 		
+		if(post.getFilePath()==null) 
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		System.out.println("원래 패스"+post.getFilePath());
+		String tempPath = post.getFilePath().substring(post.getFilePath().indexOf(":8888/")+6);
+		System.out.println("path"+tempPath);
+		
+		Path path = Paths.get("src/main/webapp/"+tempPath);
+		String contentType = Files.probeContentType(path);
+		System.out.println(contentType);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_TYPE,contentType);
-		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=1" + path.getFileName().toString());
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + path.getFileName().toString());
 		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 	
