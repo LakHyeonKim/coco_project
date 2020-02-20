@@ -341,6 +341,7 @@ export default {
 	},
 	destroyed() {
 		this.$store.state.parent = null;
+		this.$store.state.postData = {};
 	}
 };
 </script>
