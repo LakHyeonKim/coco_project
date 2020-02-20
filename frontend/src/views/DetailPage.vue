@@ -72,6 +72,7 @@ export default {
 	name: "DetailPage",
 	data() {
 		return {
+			likeCheck: 0,
 			detail: {
 				post: {
 					idPost: 0,

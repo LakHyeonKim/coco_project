@@ -43,7 +43,7 @@
 						id="mark"
 						:style="
 							temp_width < 600
-								? 'maxHeight: 75px; width:100vw'
+								? 'maxHeight: 75px; width:100%'
 								: 'maxHeight: 195px'
 						"
 					></vue-markdown>

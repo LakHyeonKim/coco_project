@@ -43,28 +43,91 @@
 			>
 				<div class="loader"></div>
 			</div>
-			<div class="post" v-for="i in posts.length" :key="i">
-				<MypageMyPostCard
-					@like="like"
-					@getSearchData="getSearchData"
-					:index="i - 1"
-					:idpost="posts[i - 1].post.idpost"
-					:memberId="posts[i - 1].post.memberId"
-					:postTitle="posts[i - 1].post.postTitle"
-					:postWriter="posts[i - 1].post.postWriter"
-					:dateCreated="posts[i - 1].post.dateCreated"
-					:updateCreated="posts[i - 1].post.updateCreated"
-					:code="posts[i - 1].post.code"
-					:likeCount="posts[i - 1].post.likeCount"
-					:views="posts[i - 1].post.views"
-					:imagePath="posts[i - 1].post.imagePath"
-					:filePath="posts[i - 1].post.filePath"
-					:access="posts[i - 1].post.access"
-					:likeCheck="posts[i - 1].post.likeCheck"
-					:order="posts[i - 1].post.order"
-					:tags="posts[i - 1].tags"
-					:commentCount="posts[i - 1].commentCount"
-				></MypageMyPostCard>
+			<div
+				class="post"
+				v-for="(item, index) in posts"
+				:key="item.post.idpost"
+			>
+				<div style="margin: 10px;" class="post_click">
+					<div @click.prevent="goDetail(item.post.idpost)">
+						<div
+							v-for="tag in item.tags"
+							:key="tag.idtag"
+							style="display: inline-block;"
+						>
+							<span
+								:class="
+									selTag == tag
+										? { post_tag_deep: true }
+										: { post_tag: true }
+								"
+								@click.stop="getSearchData(2, tag)"
+							>
+								{{ tag }}
+							</span>
+						</div>
+						<div class="post_title">
+							{{ item.post.postTitle }}
+						</div>
+						<div class="post_create">
+							<img
+								class="post_profile"
+								:src="$store.state.targetImgUrl"
+							/>
+							<div class="post_nickname">
+								{{ item.post.postWriter }}
+							</div>
+							<div class="post_date">
+								{{ item.post.dateCreated }}
+							</div>
+						</div>
+						<div class="post_code">
+							<vue-markdown
+								class="line-numbers match-braces rainbow-braces show-invisibles"
+								:source="item.post.code"
+								data-download-link
+								id="mark"
+								:style="
+									temp_width < 600
+										? 'maxHeight: 75px; width:100%'
+										: 'maxHeight: 195px'
+								"
+							></vue-markdown>
+						</div>
+					</div>
+					<div class="like_comment">
+						<img
+							:id="item.post.idpost"
+							class="like_img"
+							:src="
+								item.post.likeCheck == 1
+									? '../img/icons/tack_full.png'
+									: '../img/icons/tack_empty.png'
+							"
+							width="35px"
+							@click.stop="like(item.post.idpost, index)"
+						/>
+						<MemberList
+							class="counting_click"
+							:followList="likeList"
+						>
+							<div slot="click">
+								<div
+									class="like_text"
+									@click="getLike(item.post.idpost)"
+								>
+									{{ item.post.likeCount }}
+								</div>
+							</div>
+						</MemberList>
+						<!-- <div class="like_text">{{ item.post.likeCount }}</div> -->
+						<img
+							src="../assets/icon/chat.png"
+							class="comment_img"
+						/>
+						<div class="comment_text">{{ item.commentCount }}</div>
+					</div>
+				</div>
 				<div class="slash" />
 			</div>
 		</div>
@@ -77,14 +140,15 @@
 import http from "../http-common";
 import store from "../store";
 import MypageMyMenu from "@/components/MypageMyMenu";
-import MypageMyPostCard from "@/components/MypageMyPostCard";
+import MemberList from "@/components/MemberList";
+import Prism from "../prism";
 
 export default {
 	name: "MypageMyPost",
 	store,
 	components: {
 		MypageMyMenu,
-		MypageMyPostCard
+		MemberList
 	},
 	data() {
 		return {
@@ -97,7 +161,8 @@ export default {
 			},
 			dialog: false,
 			noContents: false,
-			posts: [],
+			posts: "",
+			postTags: "",
 			postSels: [
 				{ text: "최신순", value: "4" },
 				{ text: "오래된순", value: "3" },
@@ -111,13 +176,90 @@ export default {
 			],
 			address: "",
 			selTag: "",
+			post_tag_deep: {
+				float: "left",
+				marginRight: "6px",
+				fontSize: "13px",
+				borderRadius: "8px",
+				paddingLeft: "5px",
+				paddingRight: "5px",
+				color: "white",
+				backgroundColor: "#7d4879"
+			},
+			post_tag: {
+				float: "left",
+				marginRight: "6px",
+				fontSize: "13px",
+				borderRadius: "8px",
+				paddingLeft: "5px",
+				paddingRight: "5px",
+				color: "white",
+				backgroundColor: "rgba(160, 23, 98, 0.5)"
+			},
 			menuSel: "",
 			menu_text: "",
 			searchSel: "",
-			orderSel: ""
+			orderSel: "",
+			likeList: {},
+			temp_width: 0,
+			now_width: 0
 		};
 	},
 	methods: {
+		getLike(idx) {
+			http.post(
+				"/api/findWhoPressedTheLikeButton",
+				{
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: idx
+					}
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.getLike(idx);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log("getLike()");
+						console.log(response.data);
+						this.likeList = response.data;
+					}
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
 		search() {
 			if (this.menuSel == "") {
 				alert("검색조건을 선택해주세요!");
@@ -128,7 +270,9 @@ export default {
 				return;
 			}
 			this.getSearchData(this.menuSel, this.menu_text);
-			this.menu_text = "";
+		},
+		goDetail(detail) {
+			this.$router.push({ name: "detail", params: { idPost: detail } });
 		},
 		getSearchData(sel, text) {
 			let address = "";
@@ -332,6 +476,9 @@ export default {
 						this.posts[index].post.likeCount++;
 					}
 				});
+		},
+		onResize() {
+			this.temp_width = window.innerWidth;
 		}
 	},
 	mounted() {
@@ -367,10 +514,26 @@ export default {
 				console.log(error);
 			})
 			.finally(() => (this.loadingTop = false));
+		this.$nextTick(() => {
+			window.addEventListener("resize", this.onResize);
+		});
+	},
+	created() {
+		Prism.highlightAll();
+	},
+	watch: {
+		temp_width(newWidth, oldWidth) {
+			this.now_width = `it changed to ${newWidth} from ${oldWidth}`;
+		}
+	},
+	beforeDestroy() {
+		window.removeEventListener("resize", this.onResize);
 	}
 };
 </script>
 <style>
+@import "../prism.css";
+
 #loading {
 	display: none;
 	width: 100%;
@@ -607,18 +770,11 @@ export default {
 	color: gray;
 }
 .post_code {
-	/* overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical; */
-	margin-bottom: 5px;
-}
-.line-clamp-body {
-	color: rgb(27, 27, 27);
 	overflow: hidden;
 	display: -webkit-box;
-	-webkit-line-clamp: 8;
+	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
+	margin-bottom: 5px;
 }
 .like_comment {
 	display: inline-block;

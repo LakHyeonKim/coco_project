@@ -26,7 +26,6 @@
 					<v-card-text id="commentCreateExpand">
 						<textarea
 							:id="'commentCreateInput-' + idPost"
-							style="resize: none;"
 							@blur="moveoutFocus"
 							v-model="commentContent"
 						/>
@@ -146,5 +145,6 @@ textarea[id^="commentCreateInput"] {
 	min-height: 160px;
 	overflow: visible;
 	outline: none;
+	resize: none;
 }
 </style>

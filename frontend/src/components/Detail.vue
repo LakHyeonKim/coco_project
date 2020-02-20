@@ -78,6 +78,7 @@
 						:idPost="idPost"
 						:likeCheck="likeCheck"
 						:likeCount="likeCount"
+						:likes="likes"
 						@updateLike="updateLike"
 					></MediumClap>
 					<div id="addition-action" class="ma-4">

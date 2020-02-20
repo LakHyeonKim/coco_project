@@ -2,16 +2,23 @@
 	<div id="tagBox">
 		<div id="blankBox"></div>
 		<div id="favTag">
-			<div v-for="(img, idx) in this.tag" :key="idx" id="tag">
+			<div v-for="(img, idx) in tag" :key="idx" id="tag">
 				<button v-on:click.prevent="favtag(img.tag)">
 					<img id="stackImg" :src="img.path" alt="" />
 				</button>
 			</div>
-			<div id="tag" v-for="i in 20" :key="i">
+			<div v-if="showArray.length" style="display: inline-block">
+				<div v-for="(img, idx) in showArray" :key="idx" id="tag">
+					<button v-on:click.prevent="favtag(img[0].tag)">
+						<img id="stackImg" :src="img[0].path" alt="" />
+					</button>
+				</div>
+			</div>
+			<!-- <div id="tag" v-for="i in 20" :key="i">
 				<button>
 					<img id="stackImg" src="../assets/stacks/C.png" alt="" />
 				</button>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -48,7 +55,10 @@ export default {
 				{ tag: "ruby", path: "../img/stacks/ruby.png" },
 				{ tag: "matlab", path: "../img/stacks/matlab.png" },
 				{ tag: "go", path: "../img/stacks/go.png" }
-			]
+			],
+			cnt: 0,
+			tmpMap: new Map(),
+			showArray: []
 		};
 	},
 	methods: {
@@ -56,13 +66,6 @@ export default {
 			// console.log(ta);
 			this.$emit("favtag", ta);
 			// this.tagforsearch = "";
-		},
-		imgPath(tag) {
-			if (tag == "java") {
-				return "../assets/vue.png";
-			} else if (tag == "javascript") {
-				return "../assets/JS.png";
-			}
 		}
 	},
 	mounted() {
@@ -106,10 +109,24 @@ export default {
 					for (let j = 0; j < this.imgs.length; ++j) {
 						if (this.imgs[j].tag == items[i][0]) {
 							this.tag.push(this.imgs[j]);
+							this.cnt += 1;
 						}
 					}
 				}
 				console.log(this.tag);
+				// console.log("akjsdfhkajsdhkasjdfh", this.imgs)
+				if (this.cnt <= 2) {
+					for (let i = 0; i < 5; ++i) {
+						this.tmpMap.set(
+							this.imgs[
+								Math.floor(Math.random() * this.imgs.length)
+							]
+						);
+						// console.log(Math.floor(Math.random() * this.imgs.length) + 1)
+					}
+				}
+				// console.log("asdfasdfasdfasdfasdf", [...this.tmpMap][0][0].tag)
+				this.showArray = [...this.tmpMap];
 			})
 			.catch(err => {
 				console.log("findByAlldefault for tag err ", err);
@@ -150,7 +167,7 @@ export default {
 }
 #favTag {
 	border: 2px solid rgba(160, 23, 98, 0.3);
-	height: 101px;
+	height: 100%;
 	width: 80vw;
 	margin-bottom: 10px;
 	/* overflow: auto; */
@@ -177,7 +194,7 @@ export default {
 }
 #tag {
 	display: inline-block;
-	margin: 12px;
+	margin: 12px 6px;
 }
 #stackImg {
 	width: 60px;
