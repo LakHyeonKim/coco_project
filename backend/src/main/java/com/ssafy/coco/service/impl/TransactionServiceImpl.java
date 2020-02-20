@@ -122,7 +122,7 @@ public class TransactionServiceImpl implements TransactionService {
 		}else {
 			member.setImageUrl("");
 		}
-		member.setIsManager(1);
+//		member.setIsManager(1);
 		memberDao.addMember(member);
 		Mypage mypage = new Mypage();
 		mypage.setMemberId(member.getIdmember());
@@ -358,6 +358,7 @@ public class TransactionServiceImpl implements TransactionService {
 	@Transactional
 	public void updatePost(BoardUpdate board) throws IllegalStateException, IOException {
 		
+		System.out.println(board);
 		Post findPost = new Post();
 		findPost.setIdpost(board.getIdpost());
 		Post post = postDao.findPost(findPost).get(0);

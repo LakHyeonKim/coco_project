@@ -66,6 +66,7 @@ public class BoardDetailSerivceImpl implements BoardDetailSerivce{
 //		List<LikeInfo> likeInfos = new ArrayList<LikeInfo>();
 		List<CommentInfo> commentInfos = new ArrayList<CommentInfo>();
 		
+		if(likeDao.findLike(new Like(0, post.getIdpost(), idMember, 0)).size() > 0) post.setLikeCheck(1);
 		
 		List<Tag> tags = tagDao.findAllTagIncludedPost(post.getIdpost());
 		
