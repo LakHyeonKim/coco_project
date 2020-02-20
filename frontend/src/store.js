@@ -20,12 +20,13 @@ export default new Vuex.Store({
 		idPost: 0,
 		searchtag: false,
 		tags: null,
-		parent: false,
+		parent: null,
 		isCheck: 0,
 		targetImgUrl: "../img/icons/user.png",
 		commentContent: {},
 		commentDelIdx: 0,
-		likeUpdate: 0
+		likeUpdate: 0,
+		postData: null,
 	},
 	getters: {
 		decode: function(state) {

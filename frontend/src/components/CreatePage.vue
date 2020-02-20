@@ -1,7 +1,14 @@
 <template>
 	<div>
 		<div class="templatePage">
-			<form name="board" enctype="multipart/form-data">
+			<div
+				id="loading"
+				:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+				v-if="loadingTop"
+			>
+				<div class="loader"></div>
+			</div>
+			<form v-else name="board" enctype="multipart/form-data">
 				<div id="tagInput_div">
 					<span style="color: gray; font-size: 12px;"
 						>마이페이지 태그 (10개 제한)</span
@@ -16,7 +23,6 @@
 						:max-tags="10"
 						placeholder
 						id="tagInput"
-						:disabled="disabled"
 					/>
 				</div>
 				<div id="write_title">
@@ -24,7 +30,6 @@
 						label="제목"
 						color="gray"
 						v-model="board.postTitle"
-						:disabled="disabled"
 					/>
 				</div>
 				<div class="codeInput">
@@ -42,7 +47,6 @@
 									rounded
 									placeholder="내용"
 									class="code"
-									:disabled="disabled"
 								/>
 							</v-container>
 						</v-tab-item>
@@ -53,7 +57,6 @@
 										class="line-numbers match-braces rainbow-braces show-invisibles"
 										:source="board.code"
 										data-download-link
-										:disabled="disabled"
 									></vue-markdown>
 								</div>
 							</v-container>
@@ -61,21 +64,26 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
+					<v-text-field
+						id="uploaded"
+						v-model="uploaded"
+						v-if="uploaded"
+						prepend-icon="mdi-paperclip"
+						readonly
+						clearable
+					></v-text-field>
 					<v-file-input
+						id="attachments"
 						name="attachments"
+						v-show="!uploaded"
 						v-model="board.attachments"
 						label="첨부파일"
 						color="rgb(0, 0, 0)"
-						:disabled="disabled"
 					></v-file-input>
 				</div>
 
 				<div id="create_top">
-					<button
-						id="write_btn"
-						@click.prevent="posting"
-						:disabled="disabled"
-					>
+					<button id="write_btn" @click.prevent="posting">
 						WRITE
 					</button>
 				</div>
@@ -102,7 +110,6 @@
 				scrollable
 				overflowed
 				@keydown.enter="insertDescription"
-				:disabled="disabled"
 			>
 				<v-card>
 					<v-card-actions class="d-flex justify-end">
@@ -166,13 +173,16 @@ export default {
 	components: { VueTagsInput },
 	data() {
 		return {
-			disabled: false,
 			dialog: false,
 			question: 0,
 			dictWord: "",
 			dictArray: [],
+
 			tag: "",
 			tags: [],
+
+			uploaded: "",
+
 			board: {
 				code: "",
 				memberId: 0,
@@ -180,7 +190,8 @@ export default {
 				postWriter: "",
 				tags: [],
 				attachments: null
-			}
+			},
+			loadingTop: false
 		};
 	},
 	methods: {
@@ -266,7 +277,7 @@ export default {
 		},
 		posting() {
 			if (this.board.postTitle && this.board.code) {
-				this.disabled = true;
+				this.loadingTop = true;
 				this.board.tags = [];
 
 				for (let i = 0; i < this.tags.length; ++i) {
@@ -276,7 +287,8 @@ export default {
 				let formData = new FormData(document.forms.namedItem("board"));
 				formData.append("tags", this.board.tags);
 				let requestAddress = "/trc/makePost/";
-				console.log("asdasda", this.$store.state.parent);
+				console.log("Parent Data: ", this.$store.state.parent);
+				console.log("Edit Data: ", this.$store.state.postData);
 				if (this.$store.state.parent != null) {
 					requestAddress = "/trc/makeBabyPost/";
 					formData.append(
@@ -287,15 +299,43 @@ export default {
 						"parentIdMember",
 						this.$store.state.parent.parentIdMember
 					);
+				} else if (this.$store.state.postData) {
+					requestAddress = "/trc/updatePost/";
+					formData.append(
+						"idpost",
+						this.$store.state.postData.idPost
+					);
+					if (!this.uploaded && !board.attachments) {
+						http.post(
+							"/api/deleteFile",
+							this.$store.state.postData.idPost,
+							{
+								headers: {
+									Authorization: this.$session.get(
+										"accessToken"
+									)
+								}
+							}
+						)
+							.then(res => {
+								console.log("File Delete Request: ", res);
+							})
+							.catch(err => {
+								console.log("File Delete Error: ", err);
+							});
+					}
 				}
 				this.$store.state.parent = null;
+				this.$store.state.postData = null;
 
+				console.log("Before axios: ", this.board);
 				http.post(requestAddress, formData, {
 					headers: { Authorization: this.$session.get("accessToken") }
 				})
 					.then(res => {
 						console.log("makePost res ", res);
 						alert("글이 성공적으로 작성되었습니다.");
+						this.loadingTop = false;
 						// this.$session.set("targetId", this.$session.get("id"));
 						router.push({
 							name: "mypage",
@@ -305,6 +345,7 @@ export default {
 					.catch(err => {
 						console.log("makePost err ", err);
 						alert("글 작성 중 문제가 생겼습니다.");
+						this.loadingTop = false;
 						console.log(err);
 						// router.push("/newpage");
 					});
@@ -320,12 +361,31 @@ export default {
 		this.$store.state.token = this.$session.get("accessToken");
 		this.board.postWriter = this.$session.get("nickName");
 		console.log("nickname : ", this.$session.get("nickName"));
+
+		if (this.$store.state.postData != null) {
+			this.board.code = this.$store.state.postData.code;
+			this.board.memberId = this.$store.state.postData.memberId;
+			this.board.postTitle = this.$store.state.postData.postTitle;
+			this.board.postWriter = this.$store.state.postData.postWriter;
+			this.uploaded = this.$store.state.postData.attachments.substring(
+				38
+			);
+			this.$store.state.postData.tags.forEach(element => {
+				this.tags.push({
+					text: element.tagName,
+					tiClasses: ["ti-valid"],
+					style:
+						"color: rgba(160, 23, 98, 0.5); background-color: transparent; border: 1px solid rgba(160, 23, 98, 0.5)"
+				});
+			});
+		}
 	},
 	updated() {
 		Prism.highlightAll();
 	},
 	destroyed() {
 		this.$store.state.parent = null;
+		this.$store.state.postData = null;
 	}
 };
 </script>
@@ -336,6 +396,23 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap");
 * {
 	font-family: "Noto Sans KR", Courier;
+}
+,
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 20px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
 }
 /* tag input */
 #tagInput_div {
