@@ -84,7 +84,7 @@ class BackendApplicationTests {
 	@Test
 	void relationVoContextLoads() throws Exception {
 //		System.out.println(Member.encryptSHA256Iter("1234", 4));
-		testWD();
+		//testWD();
 	}
 	/*
 	 * public void downloadFile(FileVO fileVO, HttpServletRequest request,
