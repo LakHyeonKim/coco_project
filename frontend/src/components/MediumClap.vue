@@ -8,7 +8,8 @@
 			@mouseover="addSonar"
 			@mouseout="removeSonar"
 		>
-			<span class="clap-icon" :style="this.likeCheck ? { color: '#b4001e' } : { color: 'gray' }">
+			<!-- <span class="clap-icon" :style="this.likeCheck ? { color: '#b4001e' } : { color: 'gray' }"> -->
+			<span class="clap-icon" :style="likeCheck ? { color: '#b4001e' } : { color: 'gray' }">
 				<i class="fa fa-thumb-tack"></i>
 			</span>
 		</div>
@@ -82,7 +83,8 @@ export default {
 	props: {
 		idPost: {},
 		likeCheck: {},
-		likeCount: {}
+		likeCount: {},
+		likes: {}
 	},
 	data() {
 		return {
@@ -236,10 +238,6 @@ export default {
 		this.clap = document.getElementById(`clap-${this.idPost}`);
 		this.sonarClap = document.getElementById(`sonar-clap-${this.idPost}`);
 		this.clickCounter = document.getElementById(`clicker-${this.idPost}`);
-
-		// if (!this.likeCheck) {
-		// 	document.querySelector(".clap-icon").style.color = "gray";
-		// }
 	},
 	watch: {
 		likeCount: function(data) {

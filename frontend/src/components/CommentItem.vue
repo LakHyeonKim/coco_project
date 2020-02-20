@@ -12,6 +12,11 @@
 				<p id="commentWriterNickname">{{ commentInfo.comment.commentWriter }}</p>
 			</router-link>
 			<v-icon
+				id="commentEdit"
+				v-if="commentInfo.comment.memberId == $session.get('id')"
+				@click="commentEditForm"
+			>mdi-pen</v-icon>
+			<v-icon
 				id="commentDelete"
 				v-if="commentInfo.comment.memberId == $session.get('id')"
 				@click="commentDelete"
@@ -19,7 +24,12 @@
 			<div id="commentDate" class="ml-auto">{{ commentInfo.comment.updateCreated }}</div>
 		</div>
 
-		<div id="commentContent">{{ commentInfo.comment.contents }}</div>
+		<div id="commentContent" v-show="!show">{{ commentInfo.comment.contents }}</div>
+		<v-card-text :id="'commentUpdateExpand-' + commentInfo.comment.idcomment" v-show="show">
+			<textarea :id="'commentUpdateInput-' + commentInfo.comment.idcomment" v-model="contents" />
+			<v-btn @click="commentEdit" outlined>댓글 수정</v-btn>
+			<v-btn class="ml-2" @click="show = !show" outlined>취소</v-btn>
+		</v-card-text>
 	</div>
 </template>
 
@@ -31,7 +41,44 @@ export default {
 		commentInfo: {},
 		receiver: {}
 	},
+	data() {
+		return {
+			show: false,
+			contents: ""
+		}
+	},
 	methods: {
+		commentEditForm() {
+			this.show = !this.show;
+			this.contents = this.commentInfo.comment.contents;
+			document.getElementById(`commentUpdateInput-${this.commentInfo.comment.idcomment}`).focus();
+
+		},
+		commentEdit() {
+			if ( !this.contents) {
+				alert("최소 한글자는 적어야 합니다")
+			} else if (this.contents == this.commentInfo.comment.contents) {
+				this.show = !this.show;
+			} else {
+				http.put(
+					"/api/updateComment",
+					{
+						contents: this.contents,
+						idcomment: this.commentInfo.comment.idcomment,
+
+					},
+					{ headers: { Authorization: this.$session.get("accessToken") } }
+				)
+					.then(res => {
+						this.$emit("commentEdit");
+						this.commentInfo.comment.contents = this.contents;
+						this.show = !this.show;
+					})
+					.catch(err => {
+						console.log(err);
+					})
+			}
+		},
 		commentDelete() {
 			http.post(
 				"/trc/deleteComment",
@@ -59,8 +106,7 @@ export default {
 	display: flex;
 	align-items: center;
 	/* justify-content: space-between; */
-	margin: 0 0 15px;
-	padding: 5px 0 0;
+	padding: 16px;
 }
 #commentWriter {
 	display: flex;
@@ -78,8 +124,14 @@ export default {
 #commentWriterNickname {
 	margin-bottom: 0;
 }
+#commentEdit {
+	margin-left:5px;
+}
+#commentEdit:hover {
+	color: black;
+}
 #commentDelete {
-	margin-left: 10px;
+	margin-left:5px;
 }
 #commentDelete:hover {
 	color: black;
@@ -89,10 +141,22 @@ export default {
 	color: rgba(0, 0, 0, 0.68);
 }
 #commentContent {
+	padding: 0 16px 16px;
 	width: 100%;
 	word-break: keep-all;
 	word-wrap: break-word;
 	/* overflow: auto;
 	white-space: pre-wrap; */
+}
+#commentUpdateExpand {
+	padding: 0 16px 16px;
+}
+/* #commentUpdateInput { */
+textarea[id^="commentUpdateInput"] {
+	width: 100%;
+	min-height: 160px;
+	overflow: visible;
+	outline: none;
+	resize: none;
 }
 </style>
