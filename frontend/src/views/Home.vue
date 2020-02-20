@@ -12,10 +12,13 @@
 				</div>
 				<div id="macBackImg">
 					<div class="macCarousel">
-						<img src="../assets/bg_home.jpg" id="macBackImg" />
-						<img src="../assets/bg_drawer.jpg" id="macBackImg" />
-						<img src="../assets/bg_portfolio.jpg" id="macBackImg" />
-						<img src="../assets/bg_post.jpg" id="macBackImg" />
+						<img src="../assets/home/mypage.png" id="macBackImg" />
+						<img
+							src="../assets/home/newsfeed.png"
+							id="macBackImg"
+						/>
+						<img src="../assets/home/newpage.png" id="macBackImg" />
+						<img src="../assets/home/search.png" id="macBackImg" />
 					</div>
 				</div>
 			</div>
@@ -29,11 +32,20 @@
 				</div>
 				<div id="mobileBackImg">
 					<div class="mobileCarousel">
-						<img src="../assets/bg_drawer.jpg" id="mobileBackImg" />
-						<img src="../assets/bg_post.jpg" id="mobileBackImg" />
-						<img src="../assets/bg_home.jpg" id="mobileBackImg" />
 						<img
-							src="../assets/bg_portfolio.jpg"
+							src="../assets/home/mobilemypage.png"
+							id="mobileBackImg"
+						/>
+						<img
+							src="../assets/home/mobilenewsfeed.png"
+							id="mobileBackImg"
+						/>
+						<img
+							src="../assets/home/mobilesearch.png"
+							id="mobileBackImg"
+						/>
+						<img
+							src="../assets/home/mobilealarm.png"
 							id="mobileBackImg"
 						/>
 					</div>
@@ -226,7 +238,7 @@ export default {
 	#mobileImg {
 		width: 270px;
 		position: relative;
-		z-index: 500;
+		z-index: 1;
 	}
 	#mobileBackImg {
 		position: relative;

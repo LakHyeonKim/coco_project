@@ -6,6 +6,9 @@
 				CODE COWORKERS <br />
 				기록, 공유 그리고 성장
 			</p>
+			<div id="regiTopBox">
+				<a @click="goHome()" id="regiText">혹시, 이미 회원이신가요?</a>
+			</div>
 		</div>
 		<hr style="width:100%; display:inline-block;" />
 		<div
@@ -175,6 +178,9 @@ export default {
 	}),
 
 	methods: {
+		goHome() {
+			router.push("/");
+		},
 		isIdModi() {
 			this.idcheck = false;
 		},
@@ -291,7 +297,7 @@ export default {
 				if (!this.idcheck || !this.nicknameCheck)
 					alert("중복확인을 해주세요");
 				console.log("REGISTER ", "검증 실패");
-
+				alert("혹시 사진을 잊으신건 아닌가요?");
 				this.loadingTop = false;
 			}
 		},
@@ -421,12 +427,22 @@ export default {
 }
 #nameBox {
 	text-align: center;
-	margin-top: 25px;
-	margin-bottom: 15px;
+	margin-top: 30px;
+	/* margin-bottom: 15px; */
 }
 #codeCoworkers {
 	font-size: 30px;
 	margin-bottom: 0px;
+}
+#regiTopBox {
+	height: 50px;
+	margin-top: 10px;
+}
+#regiText {
+	display: inline-block;
+	margin: auto 0 0 0;
+	font-size: 18px;
+	color: gray;
 }
 #formData {
 	width: 350px;
@@ -485,5 +501,26 @@ export default {
 }
 #check {
 	color: rgba(160, 23, 98, 0.5);
+}
+@media screen and (max-width: 450px) {
+	#backBox {
+		width: 100vw;
+		/* background-color: aquamarine; */
+	}
+	#codeCoworkers {
+		display: none;
+	}
+	#nameBox {
+		text-align: center;
+		margin-top: 30px;
+		height: 120px;
+	}
+	#regiTopBox {
+		height: 50px;
+		margin-top: 0px;
+	}
+	#submitButton {
+		margin-bottom: 0px;
+	}
 }
 </style>

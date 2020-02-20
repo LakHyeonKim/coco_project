@@ -63,10 +63,6 @@ export default {
 	},
 	methods: {
 		like(postNum, index) {
-			const token = this.$session.get("accessToken");
-			const headers = {
-				Authorization: token
-			};
 			console.log("글번호 : " + postNum + "| index : " + index);
 			console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.posts[index][1].post.likeCheck == 1) {
@@ -89,10 +85,44 @@ export default {
 						idpost: postNum
 					}
 				},
-				{ headers }
+				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
-				.then(res => {
-					console.log(res);
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									if (
+										this.posts[index][1].post.likeCheck == 1
+									) {
+										this.posts[index][1].post.likeCheck = 0;
+										this.posts[index][1].post.likeCount--;
+									} else {
+										this.posts[index][1].post.likeCheck = 1;
+										this.posts[index][1].post.likeCount++;
+									}
+									this.like(postNum, index);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log(response);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -106,7 +136,6 @@ export default {
 				});
 		},
 		scrollEvent: function() {
-			window.scrollY;
 			console.log(window.scrollY);
 			const token = this.$session.get("accessToken");
 			const headers = {
@@ -119,21 +148,52 @@ export default {
 					headers
 				})
 					.then(res => {
-						console.log("getpost then 1", res.data);
-						console.log("getpost then 2", res.data[0].post.idpost);
-						this.mapPosts = new Map();
-						this.posts = [];
-						for (let i = 0; i < res.data.length; ++i) {
-							this.mapPosts.set(
-								res.data[i].post.idpost,
-								res.data[i]
+						if (res.status == 203) {
+							console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.scrollEvent;
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							console.log("getpost then 1", res.data);
+							console.log(
+								"getpost then 2",
+								res.data[0].post.idpost
 							);
+							this.mapPosts = new Map();
+							this.posts = [];
+							for (let i = 0; i < res.data.length; ++i) {
+								this.mapPosts.set(
+									res.data[i].post.idpost,
+									res.data[i]
+								);
+							}
+							console.log("getpost then 3", this.mapPosts);
+							this.posts = [...this.mapPosts];
+							console.log(this.posts);
+							this.loadingTop = false;
+							this.loadingflag = true;
 						}
-						console.log("getpost then 3", this.mapPosts);
-						this.posts = [...this.mapPosts];
-						console.log(this.posts);
-						this.loadingTop = false;
-						this.loadingflag = true;
 					})
 					.catch(err => {
 						console.log("getpost catch ", err);
@@ -170,6 +230,94 @@ export default {
 					headers
 				})
 					.then(res => {
+						if (res.status == 203) {
+							console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.scrollEvent;
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							console.log("getpost then 1", res.data);
+							console.log(
+								"getpost then 2",
+								res.data[0].post.idpost
+							);
+							for (let i = 0; i < res.data.length; ++i) {
+								this.mapPosts.set(
+									res.data[i].post.idpost,
+									res.data[i]
+								);
+							}
+							console.log("getpost then 3", this.mapPosts);
+							this.posts = [...this.mapPosts];
+							console.log(this.posts);
+							this.flag = true;
+							this.loading = false;
+						}
+					})
+					.catch(err => {
+						console.log("getpost catch ", err);
+						this.flag = true;
+						this.loading = false;
+						this.loadingflag = false;
+					});
+			}
+		},
+		mount() {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			console.log("lakjsdfkjasdf", this.$session.get("id"));
+			console.log("lakjsdfkjasdf", headers);
+			http.post("/api/findByAllNewsfeed", this.$session.get("id"), {
+				headers
+			})
+				.then(res => {
+					if (res.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.mount();
+								}
+							})
+							.catch(err => {
+								console.log(err);
+							});
+					} else {
 						console.log("getpost then 1", res.data);
 						console.log("getpost then 2", res.data[0].post.idpost);
 						for (let i = 0; i < res.data.length; ++i) {
@@ -181,53 +329,20 @@ export default {
 						console.log("getpost then 3", this.mapPosts);
 						this.posts = [...this.mapPosts];
 						console.log(this.posts);
-						this.flag = true;
-						this.loading = false;
-					})
-					.catch(err => {
-						console.log("getpost catch ", err);
-						this.flag = true;
-						this.loading = false;
-						this.loadingflag = false;
-						// document
-						// 	.querySelector("#loading")
-						// 	.setAttribute("style", "display:none");
-					});
-			}
+						this.loadingTop = false;
+						window.addEventListener("scroll", this.scrollEvent);
+					}
+				})
+				.catch(err => {
+					console.log("getpost catch ", err);
+					this.loadingTop = false;
+				});
 		}
 	},
 	mounted() {
 		this.loadingTop = true;
-		const token = this.$session.get("accessToken");
-		const headers = {
-			Authorization: token
-		};
-		console.log("lakjsdfkjasdf", this.$session.get("id"));
-		console.log("lakjsdfkjasdf", headers);
-		http.post("/api/findByAllNewsfeed", this.$session.get("id"), {
-			headers
-		})
-			.then(res => {
-				console.log("getpost then 1", res.data);
-				console.log("getpost then 2", res.data[0].post.idpost);
-				for (let i = 0; i < res.data.length; ++i) {
-					this.mapPosts.set(res.data[i].post.idpost, res.data[i]);
-				}
-				console.log("getpost then 3", this.mapPosts);
-				this.posts = [...this.mapPosts];
-				console.log(this.posts);
-				this.loadingTop = false;
-				window.addEventListener("scroll", this.scrollEvent);
-			})
-			.catch(err => {
-				console.log("getpost catch ", err);
-				this.loadingTop = false;
-			});
+		this.mount();
 	},
-	// created: function() {
-	// 	console.log("크리에이트는 언제 찍힐까");
-	// 	// window.addEventListener("scroll", this.scrollEvent);
-	// },
 	beforeDestroy: function() {
 		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
