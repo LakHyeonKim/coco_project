@@ -11,7 +11,12 @@
 						비밀번호 찾기
 					</div>
 					<div class="inner">
-						<input id="findPwdInput" type="text" placeholder="   아이디를 입력해주세요" v-model="id" />
+						<input
+							id="findPwdInput"
+							type="text"
+							placeholder="   아이디를 입력해주세요"
+							v-model="id"
+						/>
 					</div>
 				</div>
 				<div class="fPwdFooter">
@@ -43,19 +48,19 @@ export default {
 			console.log(this.id);
 			console.log(this.nick);
 			const requestForm = {
-				id: this.id,
+				id: this.id
 			};
 			console.log(requestForm);
 			http.post("/jwt/getTemporaryPassword/", requestForm)
 				.then(res => {
 					console.log("findPwd then ", res);
 					if (res.status == "200") {
-						alert("해당 이메일로 임시 비밀번호가 전송되었습니다.")
-						this.dialog = false
-						this.id = ""
+						alert("해당 이메일로 임시 비밀번호가 전송되었습니다.");
+						this.dialog = false;
+						this.id = "";
 					} else {
-						alert("아이디를 확인해 주세요")
-						this.dialog = true
+						alert("아이디를 확인해 주세요");
+						this.dialog = true;
 					}
 				})
 				.catch(err => {
@@ -64,7 +69,7 @@ export default {
 		},
 		cancle() {
 			this.dialog = false;
-			this.id = ""
+			this.id = "";
 		}
 	}
 };
@@ -90,8 +95,5 @@ export default {
 ::placeholder {
 	color: white;
 	font-size: 17px;
-}
-.fPwdFooter {
-
 }
 </style>

@@ -246,7 +246,7 @@ export default {
 	margin-left: 15px;
 	display: inline-block;
 	padding: 0;
-	float: right;
+	/* float: right; */
 }
 #search_text {
 	float: left;

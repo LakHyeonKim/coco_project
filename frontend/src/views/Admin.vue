@@ -305,10 +305,6 @@ td {
 	text-align: left;
 	padding: 16px;
 }
-
-tr:nth-child(even) {
-	/* background-color: #f2f2f2; */
-}
 ::placeholder {
 	font-size: 15px;
 }

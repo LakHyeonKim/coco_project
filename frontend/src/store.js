@@ -18,27 +18,28 @@ export default new Vuex.Store({
 		loading: false,
 		postDetail: [],
 		idPost: 0,
-		searchtag: "",
+		searchtag: false,
 		tags: null,
-		parent: false,
+		parent: null,
 		isCheck: 0,
 		targetImgUrl: "../img/icons/user.png",
 		commentContent: {},
 		commentDelIdx: 0,
-		likeUpdate: 0
+		likeUpdate: 0,
+		postData: null,
 	},
 	getters: {
-		decode: function (state) {
+		decode: function(state) {
 			return jwtDecode(state.token);
 		},
 		// userId: function(state) {
 		// 	console.log(jwtDecode(state.token));
 		// 	return jwtDecode(state.token).idmember;
 		// },
-		isLoggedIn: function (state) {
+		isLoggedIn: function(state) {
 			return state.token ? true : false;
 		},
-		requestHeader: function (state) {
+		requestHeader: function(state) {
 			return {
 				headers: {
 					Authorization: "JWT " + state.token
@@ -60,20 +61,20 @@ export default new Vuex.Store({
 		// }
 	},
 	mutations: {
-		setToken: function (state, token) {
+		setToken: function(state, token) {
 			state.token = token;
 		},
-		setLoading: function (state, status) {
+		setLoading: function(state, status) {
 			state.loading = status;
 		},
-		setPostDetail: function (state, data) {
+		setPostDetail: function(state, data) {
 			state.postDetail = [];
 			state.postDetail = data;
 		},
-		setIdPost: function (state, data) {
+		setIdPost: function(state, data) {
 			state.idPost = data;
 		},
-		setSearchTag: function (state, data) {
+		setSearchTag: function(state, data) {
 			state.searchtag = data;
 		}
 		// // 아래로 카카오 로그인 kakao API에 사용
@@ -95,25 +96,25 @@ export default new Vuex.Store({
 		// }
 	},
 	actions: {
-		login: function (context, token) {
+		login: function(context, token) {
 			context.commit("setToken", token);
 		},
-		logout: function (context) {
+		logout: function(context) {
 			context.commit("setToken", null);
 		},
-		startLoading: function (context) {
+		startLoading: function(context) {
 			context.commit("setLoading", true);
 		},
-		endLoading: function (context) {
+		endLoading: function(context) {
 			context.commit("setLoading", false);
 		},
-		savePostDetail: function (context, data) {
+		savePostDetail: function(context, data) {
 			context.commit("setPostDetail", data);
 		},
-		saveIdPost: function (context, data) {
+		saveIdPost: function(context, data) {
 			context.commit("setIdPost", data);
 		},
-		saveSearchTag: function (context, data) {
+		saveSearchTag: function(context, data) {
 			context.commit("setSearchTag", data);
 		}
 		// saveInit: function(context) {

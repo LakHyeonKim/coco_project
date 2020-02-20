@@ -123,30 +123,61 @@ export default {
 	},
 	methods: {
 		goDetail() {
-			// console.log("alsdkfjlaskdfj", this.idPost);
-			// store.dispatch("saveIdPost", this.idPost);
-			// console.log("idPOst", store.state.idPost);
-			const token = this.$session.get("accessToken");
-			const headers = {
-				Authorization: token
-			};
-			const requestForm = {
-				member: {
-					idmember: this.$session.get("id")
-				},
-				post: {
-					idpost: this.idPost
-				}
-			};
-			console.log("goDetail requestForm ", requestForm);
-			http.post("/trc/postClick/", requestForm, { headers })
-				.then(res => {
-					console.log("postclick then ", res);
-				})
-				.catch(err => {
-					console.log("postclick catch ", err);
-				});
-			router.push("/detail/" + this.idPost);
+			if (this.memberId != this.$session.get("id")) {
+				const token = this.$session.get("accessToken");
+				const headers = {
+					Authorization: token
+				};
+				const requestForm = {
+					member: {
+						idmember: this.$session.get("id")
+					},
+					post: {
+						idpost: this.idPost
+					}
+				};
+				console.log("goDetail requestForm ", requestForm);
+				http.post("/trc/postClick/", requestForm, { headers })
+					.then(res => {
+						if (res.status == 203) {
+							console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.goDetail();
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							console.log("postclick then ", res);
+							router.push("/detail/" + this.idPost);
+						}
+					})
+					.catch(err => {
+						console.log("postclick catch ", err);
+						// router.push("/detail/" + this.idPost);
+					});
+			} else {
+				router.push("/detail/" + this.idPost);
+				console.log("justgo");
+			}
 		},
 		goSearch(tag) {
 			// console.log(word);

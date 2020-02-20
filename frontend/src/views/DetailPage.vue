@@ -31,7 +31,11 @@
 				@commentDelete="commentDelete(detail)"
 			></detail>
 		</div>
-		<div id="detailBaby" v-for="babyPost in babyPosts" :key="babyPost.post.idpost">
+		<div
+			id="detailBaby"
+			v-for="babyPost in babyPosts"
+			:key="babyPost.post.idpost"
+		>
 			<detail
 				:idPost="babyPost.post.idpost"
 				:isFollow="babyPost.isFollow"

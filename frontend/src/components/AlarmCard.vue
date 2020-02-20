@@ -120,8 +120,6 @@ export default {
 #userImg {
 	width: 50px;
 }
-#userImg {
-}
 #content {
 	display: inline-block;
 	margin-top: 10px;

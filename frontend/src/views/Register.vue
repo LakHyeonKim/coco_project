@@ -1,6 +1,5 @@
 <template>
 	<div class="mainBox">
-		<div class="blankBox"></div>
 		<div class="compo">
 			<RegisterForm />
 		</div>
@@ -23,13 +22,15 @@ export default {
 	display: grid;
 	justify-items: center;
 }
-/* .blankBox {
-	height: 50px;
-} */
 .compo {
 	width: 450px;
 	height: 100%;
 	/* background-color: white; */
 	/* border: 1px solid rgba(187, 187, 187, 0.5); */
+}
+@media screen and (max-width: 450px) {
+	.compo {
+		width: 100%;
+	}
 }
 </style>
