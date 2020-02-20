@@ -27,6 +27,7 @@ import com.ssafy.coco.dao.PostTagDao;
 import com.ssafy.coco.dao.TagDao;
 import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.BoardDetail;
+import com.ssafy.coco.relationvo.BoardUpdate;
 import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.MemberInfoModify;
 import com.ssafy.coco.relationvo.SignUpMember;
@@ -90,7 +91,7 @@ public class TransactionServiceImpl implements TransactionService {
 		alarmDao.deleteAlarm(alarm);
 	}
 
-	private static final String IP = "119.202.135.55";
+	private static final String IP = "192.168.100.57";
 
 
 	/**
@@ -355,8 +356,11 @@ public class TransactionServiceImpl implements TransactionService {
 	 */
 
 	@Transactional
-	public void updatePost(BoardWrite board) throws IllegalStateException, IOException {
-		Post post = new Post();
+	public void updatePost(BoardUpdate board) throws IllegalStateException, IOException {
+		
+		Post findPost = new Post();
+		findPost.setIdpost(board.getIdpost());
+		Post post = postDao.findPost(findPost).get(0);
 		post.setCode(board.getCode());
 		post.setMemberId(board.getMemberId());
 		post.setPostTitle(board.getPostTitle());

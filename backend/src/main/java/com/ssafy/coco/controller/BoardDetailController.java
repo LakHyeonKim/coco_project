@@ -38,4 +38,11 @@ public class BoardDetailController {
 		}
 		return new ResponseEntity<BoardDetail>(answer, HttpStatus.OK);
 	}
+	
+	@ApiOperation(value = "포스트에 달려있는 파일 삭제", response = List.class)
+	@RequestMapping(value = "/deleteFile", method = RequestMethod.POST)
+	public ResponseEntity<Integer> deleteFile(@RequestHeader(value="Authorization")String jwt,@RequestBody long idPost) {
+		int answer = boardDetailService.deleteFile(idPost);
+		return new ResponseEntity<Integer>(answer, HttpStatus.OK);
+	}
 }

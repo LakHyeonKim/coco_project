@@ -106,4 +106,12 @@ public class BoardDetailSerivceImpl implements BoardDetailSerivce{
 		return new BoardDetail(post, tags, commentInfos, likedPeople, babyPosts, commentCount, postWriterProfileImage, isFollowPost);
 	}
 
+	@Override
+	public int deleteFile(long idPost) {
+		Post post = new Post();
+		post.setIdpost(idPost);
+		post.setFilePath("");
+		return postDao.updatePost(post);
+	}
+
 }
