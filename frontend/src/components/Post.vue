@@ -43,7 +43,7 @@
 						id="mark"
 						:style="
 							temp_width < 600
-								? 'maxHeight: 75px; width:100vw'
+								? 'maxHeight: 75px; width:100%'
 								: 'maxHeight: 195px'
 						"
 					></vue-markdown>
@@ -206,6 +206,7 @@ export default {
 	border: 1px solid rgba(0, 0, 0, 0.05);
 	/* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
 	height: 100%;
+	width: 100%;
 	/* height: 95%; */
 	position: relative;
 }

@@ -9,19 +9,24 @@
 							? '../img/icons/user.png'
 							: userImg
 					"
-					alt=""
+					alt="userImg"
+					@click.prevent="goYourPage()"
 				/>
 			</div>
 			<div id="content">
 				<p v-if="this.followId" class="line-clamp-content">
-					<b @click.prevent="goYourPage()">{{ userNickname }}</b
+					<a @click.prevent="goYourPage()"
+						><b style="color:black">{{ userNickname }}</b></a
 					>가 나를 팔로우 하였습니다.
 					<br />
 				</p>
 				<p v-else class="line-clamp-content">
-					<b @click.prevent="goYourPage()">{{ userNickname }}</b
+					<a @click.prevent="goYourPage()"
+						><b style="color:black">{{ userNickname }}</b></a
 					>가 내 글을 좋아요 하였습니다:
-					<b @click.prevent="goDetail()">{{ postTitle }}</b>
+					<a @click.prevent="goDetail()"
+						><b style="color:black">{{ postTitle }}</b></a
+					>
 					<br />
 				</p>
 				<div style="font-size:12px">{{ dateCreated }}</div>
