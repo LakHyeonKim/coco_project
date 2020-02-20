@@ -108,9 +108,11 @@
 		date_created, update_created, code, like_count, views, image_path,
 		access
 		from `coco`.`post`
-		where member_id
+		where 
+		access = 0 and
+		member_id
 		in (select member_following from `coco`.`follow` where member_follower =
-		#{value})
+		#{value}) 
 		order by date_created desc limit 5
 	</select>
 
@@ -122,7 +124,7 @@
 		from `coco`.`post`
 		where member_id
 		in (select member_following from `coco`.`follow` where member_follower =
-		#{value})
+		#{value}) and access = 0
 		order by like_count desc, date_created desc
 	</select>
 
@@ -136,7 +138,7 @@
 		where idpost in (select post_id from `coco`.`post_tag` where tag_id in
 		(select idtag from `coco`.`tag` where tag_name like '%${value}%')) or
 		post_title like '%${value}%' or code like '%${value}%' or post_writer
-		like '%${value}%'
+		like '%${value}%' and access = 0
 		order by date_created desc
 	</select>
 
@@ -145,7 +147,7 @@
 		select idpost, member_id, post_title, post_writer, date_created,
 		update_created, code, like_count, views, image_path, file_path, access
 		from `coco`.`post`
-		where member_id = #{youIdMember} and (idpost in (select post_id from
+		where access = 0 and member_id = #{youIdMember} and (idpost in (select post_id from
 		`coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag`
 		where tag_name like '%${keyword}%')) or post_title like '%${keyword}%'
 		or code like '%${keyword}%' or post_writer like '%${keyword}%')
@@ -171,7 +173,7 @@
 		file_path, access
 		from `coco`.`post` where idpost
 		in (select post_id from `coco`.`post_tag` where tag_id in (select idtag
-		from `coco`.`tag` where tag_name like '%${value}%'))
+		from `coco`.`tag` where tag_name like '%${value}%')) and access = 0
 		order by
 		date_created desc
 	</select>
@@ -183,7 +185,7 @@
 		from `coco`.`post`
 		where member_id = #{youIdMember} and (idpost in (select post_id from
 		`coco`.`post_tag` where tag_id in (select idtag from `coco`.`tag`
-		where tag_name like '%${keyword}%')))
+		where tag_name like '%${keyword}%'))) and access = 0
 		<if test="order == 1">
 			order by like_count asc;
 		</if>
@@ -205,7 +207,7 @@
 		date_created, update_created, code, like_count, views, image_path,
 		file_path, access
 		from `coco`.`post`
-		where post_title like '%${value}%'
+		where post_title like '%${value}%' and access = 0
 		order by date_created desc
 	</select>
 
@@ -214,7 +216,7 @@
 		select idpost, member_id, post_title, post_writer, date_created,
 		update_created, code, like_count, views, image_path, file_path, access
 		from `coco`.`post`
-		where member_id = #{youIdMember} and post_title like '%${keyword}%'
+		where member_id = #{youIdMember} and post_title like '%${keyword}%' and access = 0
 		<if test="order == 1">
 			order by like_count asc;
 		</if>
@@ -236,7 +238,7 @@
 		date_created, update_created, code, like_count, views, image_path,
 		file_path, access
 		from `coco`.`post`
-		where code like '%${value}%'
+		where code like '%${value}%' and access = 0
 		order by date_created desc
 	</select>
 
@@ -245,7 +247,7 @@
 		select idpost, member_id, post_title, post_writer, date_created,
 		update_created, code, like_count, views, image_path, file_path, access
 		from `coco`.`post`
-		where member_id = #{youIdMember} and code like '%${keyword}%'
+		where member_id = #{youIdMember} and code like '%${keyword}%' and access = 0
 		<if test="order == 1">
 			order by like_count asc;
 		</if>
@@ -267,7 +269,7 @@
 		date_created, update_created, code, like_count, views, image_path,
 		file_path, access
 		from `coco`.`post`
-		where post_writer like '%${value}%'
+		where post_writer like '%${value}%' and access = 0
 		order by date_created desc
 	</select>
 
@@ -277,7 +279,7 @@
 		select * from post as p ,
 		(select distinct post_id from post_tag as pt, (select tag_id from member_tag
 		where member_id = '${value}' order by frequency DESC limit 5) as temp
-		where pt.tag_id = temp.tag_id) as temp where p.idpost = temp.post_id
+		where pt.tag_id = temp.tag_id) as temp where p.idpost = temp.post_id and p.access = 0
 	</select>
 
 	<!-- <select id="findPostByFrequency" parameterType="long" resultType="Post"> 
@@ -295,7 +297,7 @@
 		date_created, update_created, code, like_count, views, image_path,
 		file_path, access
 		from `coco`.`post` where idpost in (select post_child from baby_post where
-		post_parents = #{value})
+		post_parents = #{value}) and access = 0
 		order by date_created desc;
 	</select>
 
@@ -310,6 +312,7 @@
 		#{idMember})
 		and date_created <![CDATA[<]]>
 		(select date_created from `coco`.`post` where idpost = #{idPost})
+		and access = 0
 		order by date_created desc limit 5
 
 	</select>
