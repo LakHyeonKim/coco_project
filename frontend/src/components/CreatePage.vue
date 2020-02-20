@@ -51,7 +51,22 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
-					<v-file-input name="attachments" v-model="board.attachments" label="첨부파일" color="rgb(0, 0, 0)"></v-file-input>
+					<v-text-field
+						id="uploaded"
+						v-model="uploaded"
+						v-if="uploaded"
+						prepend-icon="mdi-paperclip"
+						readonly
+						clearable
+					></v-text-field>
+					<v-file-input
+						id="attachments"
+						name="attachments"
+						v-show="!uploaded"
+						v-model="board.attachments"
+						label="첨부파일"
+						color="rgb(0, 0, 0)"
+					></v-file-input>
 				</div>
 
 				<div id="create_top">
@@ -122,8 +137,12 @@ export default {
 			question: 0,
 			dictWord: "",
 			dictArray: [],
+
 			tag: "",
 			tags: [],
+
+			uploaded: "asd",
+
 			board: {
 				code: "",
 				memberId: 0,
@@ -226,7 +245,8 @@ export default {
 				let formData = new FormData(document.forms.namedItem("board"));
 				formData.append("tags", this.board.tags);
 				let requestAddress = "/trc/makePost/";
-				console.log("asdasda", this.$store.state.parent);
+				console.log("Parent Data: ", this.$store.state.parent);
+				console.log("Edit Data: ", this.$store.state.postData);
 				if (this.$store.state.parent != null) {
 					requestAddress = "/trc/makeBabyPost/";
 					formData.append(
@@ -237,9 +257,36 @@ export default {
 						"parentIdMember",
 						this.$store.state.parent.parentIdMember
 					);
+				} else if (this.$store.state.postData) {
+					requestAddress = "/trc/updatePost/";
+					formData.append(
+						"idpost",
+						this.$store.state.postData.idPost
+					);
+					if (!this.uploaded && !board.attachments) {
+						http.post(
+							"/api/deleteFile",
+							this.$store.state.postData.idPost,
+							{
+								headers: {
+									Authorization: this.$session.get(
+										"accessToken"
+									)
+								}
+							}
+						)
+							.then(res => {
+								console.log("File Delete Request: ", res);
+							})
+							.catch(err => {
+								console.log("File Delete Error: ", err);
+							});
+					}
 				}
 				this.$store.state.parent = null;
+				this.$store.state.postData = {};
 
+				console.log("Before axios: ", this.board);
 				http.post(requestAddress, formData, {
 					headers: { Authorization: this.$session.get("accessToken") }
 				})
@@ -270,6 +317,24 @@ export default {
 		this.$store.state.token = this.$session.get("accessToken");
 		this.board.postWriter = this.$session.get("nickName");
 		console.log("nickname : ", this.$session.get("nickName"));
+
+		if (this.$store.state.postData) {
+			this.board.code = this.$store.state.postData.code;
+			this.board.memberId = this.$store.state.postData.memberId;
+			this.board.postTitle = this.$store.state.postData.postTitle;
+			this.board.postWriter = this.$store.state.postData.postWriter;
+			this.uploaded = this.$store.state.postData.attachments.substring(
+				38
+			);
+			this.$store.state.postData.tags.forEach(element => {
+				this.tags.push({
+					text: element.tagName,
+					tiClasses: ["ti-valid"],
+					style:
+						"color: rgba(160, 23, 98, 0.5); background-color: transparent; border: 1px solid rgba(160, 23, 98, 0.5)"
+				});
+			});
+		}
 	},
 	updated() {
 		Prism.highlightAll();
