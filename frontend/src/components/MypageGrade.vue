@@ -116,7 +116,6 @@ export default {
 	},
 	mounted() {
 		console.log("나의 등급은?", this.grade);
-		
 	},
 	watch: {
 		grade: function() {

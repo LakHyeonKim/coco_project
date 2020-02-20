@@ -3,7 +3,9 @@
 		<div class="templatePage">
 			<form name="board" enctype="multipart/form-data">
 				<div id="tagInput_div">
-					<span style="color: gray; font-size: 12px;">마이페이지 태그 (10개 제한)</span>
+					<span style="color: gray; font-size: 12px;"
+						>마이페이지 태그 (10개 제한)</span
+					>
 					<VueTagsInput
 						v-model="tag"
 						:tags="tags"
@@ -14,10 +16,16 @@
 						:max-tags="10"
 						placeholder
 						id="tagInput"
+						:disabled="disabled"
 					/>
 				</div>
 				<div id="write_title">
-					<v-text-field label="제목" color="gray" v-model="board.postTitle" />
+					<v-text-field
+						label="제목"
+						color="gray"
+						v-model="board.postTitle"
+						:disabled="disabled"
+					/>
 				</div>
 				<div class="codeInput">
 					<v-tabs right color="rgba(0, 0, 0, 0.5)" hide-slider>
@@ -34,6 +42,7 @@
 									rounded
 									placeholder="내용"
 									class="code"
+									:disabled="disabled"
 								/>
 							</v-container>
 						</v-tab-item>
@@ -44,6 +53,7 @@
 										class="line-numbers match-braces rainbow-braces show-invisibles"
 										:source="board.code"
 										data-download-link
+										:disabled="disabled"
 									></vue-markdown>
 								</div>
 							</v-container>
@@ -51,37 +61,74 @@
 					</v-tabs>
 				</div>
 				<div class="attachInput">
-					<v-file-input name="attachments" v-model="board.attachments" label="첨부파일" color="rgb(0, 0, 0)"></v-file-input>
+					<v-file-input
+						name="attachments"
+						v-model="board.attachments"
+						label="첨부파일"
+						color="rgb(0, 0, 0)"
+						:disabled="disabled"
+					></v-file-input>
 				</div>
 
 				<div id="create_top">
-					<button id="write_btn" @click.prevent="posting">WRITE</button>
+					<button
+						id="write_btn"
+						@click.prevent="posting"
+						:disabled="disabled"
+					>
+						WRITE
+					</button>
 				</div>
 
 				<div class="footerBox"></div>
-				<input type="hidden" name="postTitle" v-model="board.postTitle" />
-				<input type="hidden" name="postWriter" v-model="board.postWriter" />
+				<input
+					type="hidden"
+					name="postTitle"
+					v-model="board.postTitle"
+				/>
+				<input
+					type="hidden"
+					name="postWriter"
+					v-model="board.postWriter"
+				/>
 				<input type="hidden" name="memberId" v-model="board.memberId" />
 				<input type="hidden" name="code" v-model="board.code" />
 				<!-- <input type="hidden" name="tags" v-model="board.tags" /> -->
 			</form>
 		</div>
 		<v-row justify="center">
-			<v-dialog v-model="dialog" scrollable overflowed @keydown.enter="insertDescription">
+			<v-dialog
+				v-model="dialog"
+				scrollable
+				overflowed
+				@keydown.enter="insertDescription"
+				:disabled="disabled"
+			>
 				<v-card>
 					<v-card-actions class="d-flex justify-end">
-						<v-icon @click="dialog = false">mdi-close-circle-outline</v-icon>
+						<v-icon @click="dialog = false"
+							>mdi-close-circle-outline</v-icon
+						>
 					</v-card-actions>
 					<agile ref="carousel" fade :dots="true">
-						<div v-for="dict in dictArray" :key="dict.idwordDictionary">
+						<div
+							v-for="dict in dictArray"
+							:key="dict.idwordDictionary"
+						>
 							<v-card-title>
 								<span class="headline">
-									<v-icon>mdi-file-document-box-search-outline</v-icon>
+									<v-icon
+										>mdi-file-document-box-search-outline</v-icon
+									>
 									{{ dict.word }}
 								</span>
 							</v-card-title>
 							<v-card-text class="d-flex">
-								<v-img :src="dict.thumbnailSrc" v-show="dict.thumbnailSrc" width="100"></v-img>
+								<v-img
+									:src="dict.thumbnailSrc"
+									v-show="dict.thumbnailSrc"
+									width="100"
+								></v-img>
 								<div class="ml-4 space-between">
 									<h3>{{ dict.title }}</h3>
 									<br />
@@ -91,7 +138,8 @@
 											:href="dict.link"
 											target="_blank"
 											style="color: rgba(125, 72, 121, 0.85)"
-										>자세히 보기</a>
+											>자세히 보기</a
+										>
 									</p>
 								</div>
 							</v-card-text>
@@ -118,6 +166,7 @@ export default {
 	components: { VueTagsInput },
 	data() {
 		return {
+			disabled: false,
 			dialog: false,
 			question: 0,
 			dictWord: "",
@@ -217,6 +266,7 @@ export default {
 		},
 		posting() {
 			if (this.board.postTitle && this.board.code) {
+				this.disabled = true;
 				this.board.tags = [];
 
 				for (let i = 0; i < this.tags.length; ++i) {
@@ -256,7 +306,7 @@ export default {
 						console.log("makePost err ", err);
 						alert("글 작성 중 문제가 생겼습니다.");
 						console.log(err);
-						router.push("/newpage");
+						// router.push("/newpage");
 					});
 			} else {
 				alert("글을 작성해 주세요");

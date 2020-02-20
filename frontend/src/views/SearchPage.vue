@@ -56,11 +56,12 @@ export default {
 			loadingTop: false,
 			loadingStyleOn: {
 				display: "grid",
-				height: "100px"
+				height: "100%"
 			},
 			loadingStyleOff: {
 				display: "none"
 			}
+			// adress: ""
 		};
 	},
 	components: {
@@ -69,6 +70,50 @@ export default {
 		SearchCard
 	},
 	methods: {
+		find(adress, searchword, headers, value) {
+			http.post(adress, searchword, {
+				headers
+			})
+				.then(res => {
+					if (res.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.find(
+										adress,
+										searchword,
+										headers,
+										value
+									);
+								}
+							})
+							.catch(err => {
+								console.log(err);
+							});
+					} else {
+						console.log("search words then ", value, res);
+						this.searches = res.data;
+						this.loadingTop = false;
+					}
+				})
+				.catch(err => {
+					console.log("search words catch ", err);
+					this.loadingTop = false;
+				});
+		},
 		searchwords(word, value) {
 			this.loadingTop = true;
 			// alert("넘어왔다");
@@ -83,78 +128,115 @@ export default {
 					idMember: this.idMember,
 					keyWord: word
 				};
+				let adress = "";
 				console.log(searchword);
 				if (value == 1) {
-					http.post("/api/findByPostTitleKeyword/", searchword, {
-						headers
-					})
-						.then(res => {
-							console.log("search TITLE words then ", res);
-							this.searches = res.data;
-							this.loadingTop = false;
-						})
-						.catch(err => {
-							console.log("search TITLE words catch ", err);
-							this.loadingTop = false;
-						});
+					adress = "/api/findByPostTitleKeyword/";
+					// console.log(adress, searchword, headers, value);
+					this.find(adress, searchword, headers, value);
 				} else if (value == 2) {
-					http.post("api/findByPostCodeKeyword/", searchword, {
-						headers
-					})
-						.then(res => {
-							console.log("search CODE words then ", res);
-							this.searches = res.data;
-							this.loadingTop = false;
-						})
-						.catch(err => {
-							console.log("search CODE words catch ", err);
-							this.loadingTop = false;
-						});
+					adress = "api/findByPostCodeKeyword/";
+					// console.log(adress, searchword, headers, value);
+					this.find(adress, searchword, headers, value);
 				} else if (value == 3) {
-					http.post("api/findByPostWriterKeyword/", searchword, {
-						headers
-					})
-						.then(res => {
-							console.log("search WRITER words then ", res);
-							this.searches = res.data;
-							this.loadingTop = false;
-						})
-						.catch(err => {
-							console.log("search WRITER words catch ", err);
-							this.loadingTop = false;
-						});
+					adress = "api/findByPostWriterKeyword/";
+					// console.log(adress, searchword, headers, value);
+					this.find(adress, searchword, headers, value);
 				} else if (value == 4) {
-					http.post("api/findByTagKeyword/", searchword, { headers })
-						.then(res => {
-							console.log("search TAG words then ", res);
-							this.searches = res.data;
-							this.loadingTop = false;
-						})
-						.catch(err => {
-							console.log("search TAG words catch ", err);
-							this.loadingTop = false;
-						});
+					adress = "api/findByTagKeyword/";
+					// console.log(adress, searchword, headers, value);
+					this.find(adress, searchword, headers, value);
 				} else {
-					http.post("/api/findByAllKeyword/", searchword, { headers })
-						.then(res => {
-							console.log("searchwords then ", res);
-							this.searches = res.data;
-							this.loadingTop = false;
-						})
-						.catch(err => {
-							console.log("searchwords catch ", err);
-							this.loadingTop = false;
-						});
+					adress = "/api/findByAllKeyword/";
+					// console.log(adress, searchword, headers, value);
+					this.find(adress, searchword, headers, value);
 				}
 			} else {
 				alert("검색어를 입력해 주십시오");
 			}
 		},
+		// searchwords(word, value) {
+		// 	this.loadingTop = true;
+		// 	// alert("넘어왔다");
+		// 	console.log("word $ value ", word, value);
+		// 	const token = this.$session.get("accessToken");
+		// 	const headers = {
+		// 		Authorization: token
+		// 	};
+		// 	console.log("search words headers ", headers);
+		// 	if (word) {
+		// 		const searchword = {
+		// 			idMember: this.idMember,
+		// 			keyWord: word
+		// 		};
+		// 		console.log(searchword);
+		// 		if (value == 1) {
+		// 			http.post("/api/findByPostTitleKeyword/", searchword, {
+		// 				headers
+		// 			})
+		// 				.then(res => {
+		// 					console.log("search TITLE words then ", res);
+		// 					this.searches = res.data;
+		// 					this.loadingTop = false;
+		// 				})
+		// 				.catch(err => {
+		// 					console.log("search TITLE words catch ", err);
+		// 					this.loadingTop = false;
+		// 				});
+		// 		} else if (value == 2) {
+		// 			http.post("api/findByPostCodeKeyword/", searchword, {
+		// 				headers
+		// 			})
+		// 				.then(res => {
+		// 					console.log("search CODE words then ", res);
+		// 					this.searches = res.data;
+		// 					this.loadingTop = false;
+		// 				})
+		// 				.catch(err => {
+		// 					console.log("search CODE words catch ", err);
+		// 					this.loadingTop = false;
+		// 				});
+		// 		} else if (value == 3) {
+		// 			http.post("api/findByPostWriterKeyword/", searchword, {
+		// 				headers
+		// 			})
+		// 				.then(res => {
+		// 					console.log("search WRITER words then ", res);
+		// 					this.searches = res.data;
+		// 					this.loadingTop = false;
+		// 				})
+		// 				.catch(err => {
+		// 					console.log("search WRITER words catch ", err);
+		// 					this.loadingTop = false;
+		// 				});
+		// 		} else if (value == 4) {
+		// 			http.post("api/findByTagKeyword/", searchword, { headers })
+		// 				.then(res => {
+		// 					console.log("search TAG words then ", res);
+		// 					this.searches = res.data;
+		// 					this.loadingTop = false;
+		// 				})
+		// 				.catch(err => {
+		// 					console.log("search TAG words catch ", err);
+		// 					this.loadingTop = false;
+		// 				});
+		// 		} else {
+		// 			http.post("/api/findByAllKeyword/", searchword, { headers })
+		// 				.then(res => {
+		// 					console.log("searchwords then ", res);
+		// 					this.searches = res.data;
+		// 					this.loadingTop = false;
+		// 				})
+		// 				.catch(err => {
+		// 					console.log("searchwords catch ", err);
+		// 					this.loadingTop = false;
+		// 				});
+		// 		}
+		// 	} else {
+		// 		alert("검색어를 입력해 주십시오");
+		// 	}
+		// },
 		like(postNum, index) {
-			const token = this.$session.get("accessToken");
-			const headers = {
-				Authorization: token
-			};
 			console.log("글번호 : " + postNum + "| index : " + index);
 			console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.searches[index].post.likeCheck == 1) {
@@ -177,10 +259,44 @@ export default {
 						idpost: postNum
 					}
 				},
-				{ headers }
+				{ headers: { Authorization: this.$session.get("accessToken") } }
 			)
-				.then(res => {
-					console.log(res);
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									if (
+										this.searches[index].post.likeCheck == 1
+									) {
+										this.searches[index].post.likeCheck = 0;
+										this.searches[index].post.likeCount--;
+									} else {
+										this.searches[index].post.likeCheck = 1;
+										this.searches[index].post.likeCount++;
+									}
+									this.like(postNum, index);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log(response);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -192,6 +308,105 @@ export default {
 						this.searches[index].post.likeCount++;
 					}
 				});
+		},
+		mount(tagforsearch) {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			console.log(headers);
+			if (tagforsearch) {
+				const requestForm = {
+					idMember: this.idMember,
+					keyWord: tagforsearch
+				};
+				console.log(requestForm);
+				http.post("/api/findByAllKeyword/", requestForm, { headers })
+					.then(res => {
+						if (res.status == 203) {
+							console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.mount(tagforsearch);
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							console.log("searchtags then ", res);
+							this.searches = res.data;
+							this.$store.state.searchtag = "";
+							console.log(
+								"tagforsearch then res change",
+								tagforsearch
+							);
+							this.loadingTop = false;
+							return;
+						}
+					})
+					.catch(err => {
+						console.log("searchtags catch ", err);
+						this.loadingTop = false;
+					});
+			} else {
+				http.post("/api/findByAllDefaultSearch/", this.idMember, {
+					headers
+				})
+					.then(res => {
+						if (res.status == 203) {
+							console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.mount(tagforsearch);
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							console.log("search default mounted then", res);
+							this.searches = res.data;
+							this.loadingTop = false;
+						}
+					})
+					.catch(err => {
+						console.log("search default mounted catch", err);
+						this.loadingTop = false;
+					});
+			}
 		}
 	},
 	mounted() {
@@ -199,45 +414,52 @@ export default {
 		this.idMember = this.$session.get("id");
 		console.log("mounted", this.idMember);
 		const tagforsearch = this.$store.state.searchtag;
-		const token = this.$session.get("accessToken");
-		const headers = {
-			Authorization: token
-		};
-		console.log(headers);
-		if (tagforsearch) {
-			const requestForm = {
-				idMember: this.idMember,
-				keyWord: tagforsearch
-			};
-			console.log(requestForm);
-			http.post("/api/findByAllKeyword/", requestForm, { headers })
-				.then(res => {
-					console.log("searchtags then ", res);
-					this.searches = res.data;
-					this.$store.state.searchtag = "";
-					console.log("tagforsearch then res change", tagforsearch);
-					this.loadingTop = false;
-					return;
-				})
-				.catch(err => {
-					console.log("searchtags catch ", err);
-					this.loadingTop = false;
-				});
-		} else {
-			http.post("/api/findByAllDefaultSearch/", this.idMember, {
-				headers
-			})
-				.then(res => {
-					console.log("search default mounted then", res);
-					this.searches = res.data;
-					this.loadingTop = false;
-				})
-				.catch(err => {
-					console.log("search default mounted catch", err);
-					this.loadingTop = false;
-				});
-		}
+		this.mount(tagforsearch);
 	}
+	// mounted() {
+	// 	this.loadingTop = true;
+	// 	this.idMember = this.$session.get("id");
+	// 	console.log("mounted", this.idMember);
+	// 	const tagforsearch = this.$store.state.searchtag;
+	// 	const token = this.$session.get("accessToken");
+	// 	const headers = {
+	// 		Authorization: token
+	// 	};
+	// 	console.log(headers);
+	// 	if (tagforsearch) {
+	// 		const requestForm = {
+	// 			idMember: this.idMember,
+	// 			keyWord: tagforsearch
+	// 		};
+	// 		console.log(requestForm);
+	// 		http.post("/api/findByAllKeyword/", requestForm, { headers })
+	// 			.then(res => {
+	// 				console.log("searchtags then ", res);
+	// 				this.searches = res.data;
+	// 				this.$store.state.searchtag = "";
+	// 				console.log("tagforsearch then res change", tagforsearch);
+	// 				this.loadingTop = false;
+	// 				return;
+	// 			})
+	// 			.catch(err => {
+	// 				console.log("searchtags catch ", err);
+	// 				this.loadingTop = false;
+	// 			});
+	// 	} else {
+	// 		http.post("/api/findByAllDefaultSearch/", this.idMember, {
+	// 			headers
+	// 		})
+	// 			.then(res => {
+	// 				console.log("search default mounted then", res);
+	// 				this.searches = res.data;
+	// 				this.loadingTop = false;
+	// 			})
+	// 			.catch(err => {
+	// 				console.log("search default mounted catch", err);
+	// 				this.loadingTop = false;
+	// 			});
+	// 	}
+	// }
 };
 </script>
 

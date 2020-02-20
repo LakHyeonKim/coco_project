@@ -138,7 +138,7 @@ export default {
 			followIcon: false,
 			likeIcon: false,
 			commentIcon: false,
-			preUrl: "",
+			// preUrl: "",
 			isBlock: false
 		};
 	},
