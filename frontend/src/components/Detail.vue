@@ -17,7 +17,10 @@
 						{{ tag.tagName }}
 					</v-btn>
 				</div>
-				<div id="post-title">{{ postTitle }}</div>
+				<div id="post-title">
+					{{ postTitle }}
+					<v-icon id="postEdit" v-if="memberId == $session.get('id')" @click="postEdit">mdi-pen</v-icon>
+				</div>
 
 				<div id="post-head">
 					<div id="profile-info">
@@ -32,9 +35,7 @@
 							@click="goMypage()"
 						/>
 						<div style="float: left;">
-							<div id="user-nickname" @click="goMypage()">
-								{{ postWriter }}
-							</div>
+							<div id="user-nickname" @click="goMypage()">{{ postWriter }}</div>
 							<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
 							<div id="post-info">
 								<span v-if="dateCreated == updateCreated">
@@ -143,6 +144,18 @@ export default {
 		return {};
 	},
 	methods: {
+		postEdit() {
+			this.$store.state.postData = {
+				code: this.code,
+				memberId: this.memberId,
+				idPost: this.idPost,
+				postTitle: this.postTitle,
+				postWriter: this.postWriter,
+				tags: this.tags,
+				attachments: this.filePath
+			};
+			this.$router.push({ name: "newpage" });
+		},
 		goMypage() {
 			this.$router.push("/mypage/" + this.memberId);
 		},

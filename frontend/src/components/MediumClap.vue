@@ -1,6 +1,8 @@
 <template>
 	<div id="el" class="canvas">
-		<div :id="'totalCounter-' + idPost" class="total-counter">{{ likeCount }}</div>
+		<div :id="'totalCounter-' + idPost" class="total-counter">
+			{{ likeCount }}
+		</div>
 		<div
 			:id="'clap-' + idPost"
 			class="clap-container"
@@ -9,7 +11,10 @@
 			@mouseout="removeSonar"
 		>
 			<!-- <span class="clap-icon" :style="this.likeCheck ? { color: '#b4001e' } : { color: 'gray' }"> -->
-			<span class="clap-icon" :style="likeCheck ? { color: '#b4001e' } : { color: 'gray' }">
+			<span
+				class="clap-icon"
+				:style="likeCheck ? { color: '#b4001e' } : { color: 'gray' }"
+			>
 				<i class="fa fa-thumb-tack"></i>
 			</span>
 		</div>

@@ -497,13 +497,13 @@ export default {
 		}
 	},
 	mounted() {
-		// this.localize("ko", this.dictionary)
-		// if (this.$store.state.isCheck == 0) {
-		//    alert("잘못된 접근입니다!");
-		//    this.$router.push("/mypage/" + this.$session.get("id"));
-		// } else {
-		//    this.$store.state.isCheck = 0;
-		// }
+		// this.localize("ko", this.dictionary);
+		if (this.$store.state.isCheck == 0) {
+			alert("잘못된 접근입니다!");
+			this.$router.push("/mypage/" + this.$session.get("id"));
+		} else {
+			this.$store.state.isCheck = 0;
+		}
 
 		http.post("/api/findByMemberHomePageModify", this.$session.get("id"), {
 			headers: {

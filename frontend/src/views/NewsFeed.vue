@@ -145,12 +145,6 @@ export default {
 		display: block;
 		height: 75px;
 	}
-	#mainBox {
-		/* display: block; */
-		/* align-content: center;
-      justify-content: center; */
-		/* background-color: blueviolet; */
-	}
 	#subBox {
 		width: 100%;
 		padding-left: 0;

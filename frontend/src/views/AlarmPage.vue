@@ -58,26 +58,54 @@ export default {
 					"20px 10px 20px 10px";
 				document.getElementById("CC").style.display = "none";
 			}
+		},
+		mount() {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			console.log(headers);
+			http.post(
+				"/api/findAlarm",
+				{ memberReceiver: this.$session.get("id") },
+				{ headers }
+			)
+				.then(res => {
+					if (res.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.mount();
+								}
+							})
+							.catch(err => {
+								console.log(err);
+							});
+					} else {
+						console.log("findalarm res ", res);
+						this.alarms = res.data;
+					}
+				})
+				.catch(err => {
+					console.log("findalarm err ", err);
+				});
 		}
 	},
 	mounted() {
-		const token = this.$session.get("accessToken");
-		const headers = {
-			Authorization: token
-		};
-		console.log(headers);
-		http.post(
-			"/api/findAlarm",
-			{ memberReceiver: this.$session.get("id") },
-			{ headers }
-		)
-			.then(res => {
-				console.log("findalarm res ", res);
-				this.alarms = res.data;
-			})
-			.catch(err => {
-				console.log("findalarm err ", err);
-			});
+		this.mount();
 	},
 	created: function() {
 		console.log("크리에이트는 언제 찍힐까");
