@@ -116,22 +116,27 @@ export default {
 	},
 	mounted() {
 		console.log("나의 등급은?", this.grade);
-		if (this.grade == "아이언") {
-			this.iron = true;
-		} else if (this.grade == "브론즈") {
-			this.bronze = true;
-		} else if (this.grade == "실버") {
-			this.silver = true;
-		} else if (this.grade == "골드") {
-			this.gold = true;
-		} else if (this.grade == "플래티넘") {
-			this.platinum = true;
-		} else if (this.grade == "다이아") {
-			this.dia = true;
-		} else if (this.grade == "마스터") {
-			this.master = true;
-		} else if (this.grade == "챌린저") {
-			this.challenger = true;
+		
+	},
+	watch: {
+		grade: function() {
+			if (this.grade == "아이언") {
+				this.iron = true;
+			} else if (this.grade == "브론즈") {
+				this.bronze = true;
+			} else if (this.grade == "실버") {
+				this.silver = true;
+			} else if (this.grade == "골드") {
+				this.gold = true;
+			} else if (this.grade == "플래티넘") {
+				this.platinum = true;
+			} else if (this.grade == "다이아") {
+				this.dia = true;
+			} else if (this.grade == "마스터") {
+				this.master = true;
+			} else if (this.grade == "챌린저") {
+				this.challenger = true;
+			}
 		}
 	}
 };

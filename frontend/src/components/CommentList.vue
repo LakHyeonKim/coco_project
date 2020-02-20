@@ -34,7 +34,6 @@ export default {
 #commentListCard {
 	background: white;
 	margin: 20px 0 0;
-	padding: 10px 20px 15px;
 	border: 1px solid rgba(0, 0, 0, 0.09);
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
