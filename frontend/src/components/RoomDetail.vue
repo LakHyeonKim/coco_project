@@ -204,7 +204,7 @@ export default {
 		},
 		connect: function () {
 			this.socket = new sock(
-				'http://192.168.100.57:8081/gs-guide-websocket'
+				'http://52.79.118.55:8081/gs-guide-websocket'
 			)
 			this.stompClient = ws.over(this.socket)
 			this.stompClient.connect(
