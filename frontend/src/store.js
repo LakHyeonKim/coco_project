@@ -26,7 +26,7 @@ export default new Vuex.Store({
 		commentContent: {},
 		commentDelIdx: 0,
 		likeUpdate: 0,
-		postData: {},
+		postData: null,
 	},
 	getters: {
 		decode: function (state) {

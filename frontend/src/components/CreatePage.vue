@@ -141,7 +141,7 @@ export default {
 			tag: "",
 			tags: [],
 
-			uploaded: "asd",
+			uploaded: "",
 
 			board: {
 				code: "",
@@ -284,7 +284,7 @@ export default {
 					}
 				}
 				this.$store.state.parent = null;
-				this.$store.state.postData = {};
+				this.$store.state.postData = null;
 
 				console.log("Before axios: ", this.board);
 				http.post(requestAddress, formData, {
@@ -318,7 +318,7 @@ export default {
 		this.board.postWriter = this.$session.get("nickName");
 		console.log("nickname : ", this.$session.get("nickName"));
 
-		if (this.$store.state.postData) {
+		if (this.$store.state.postData != null) {
 			this.board.code = this.$store.state.postData.code;
 			this.board.memberId = this.$store.state.postData.memberId;
 			this.board.postTitle = this.$store.state.postData.postTitle;
@@ -341,7 +341,7 @@ export default {
 	},
 	destroyed() {
 		this.$store.state.parent = null;
-		this.$store.state.postData = {};
+		this.$store.state.postData = null;
 	}
 };
 </script>
