@@ -415,10 +415,10 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public Tokens login(String id, String password) throws Exception {
 		Member m = new Member();
-
 		m.setId(id);
 		if (!password.equals("superkey")) {
 			m.setPassword(Member.encryptSHA256Iter(password, password.length()));
+			System.out.println("로그인 안 password"+m.getPassword());
 		}
 		List<Member> list = memberDao.findMember(m);
 		if (list.size() > 0) {

@@ -83,137 +83,115 @@ class BackendApplicationTests {
 
 	@Test
 	void relationVoContextLoads() throws Exception {
-//		System.out.println(Member.encryptSHA256Iter("1234", 4));
-		testWD();
-	}
-	/*
-	 * public void downloadFile(FileVO fileVO, HttpServletRequest request,
-	 * HttpServletResponse response) throws Exception {
-	 * 
-	 * File file = new File("src/main/webapp/userfile/", "0_git.png");
-	 * 
-	 * BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-	 * 
-	 * //User-Agent : 어떤 운영체제로 어떤 브라우저를 서버( 홈페이지 )에 접근하는지 확인함 String header =
-	 * request.getHeader("User-Agent"); String fileName;
-	 * 
-	 * if ((header.contains("MSIE")) || (header.contains("Trident")) ||
-	 * (header.contains("Edge"))) { //인터넷 익스플로러 10이하 버전, 11버전, 엣지에서 인코딩 fileName =
-	 * URLEncoder.encode(boardfile.getFileOrgName(), "UTF-8"); } else { //나머지 브라우저에서
-	 * 인코딩 fileName = new String(boardfile.getFileOrgName().getBytes("UTF-8"),
-	 * "iso-8859-1"); } //형식을 모르는 파일첨부용 contentType
-	 * response.setContentType("application/octet-stream"); //다운로드와 다운로드될 파일이름
-	 * response.setHeader("Content-Disposition", "attachment; filename=\""+ fileName
-	 * + "\""); //파일복사 FileCopyUtils.copy(in, response.getOutputStream());
-	 * in.close(); response.getOutputStream().flush();
-	 * response.getOutputStream().close(); }
-	 */
-
-	public void testWD() throws ParseException {
-		String inputString = "8";
-		List<Tag> list = tagService.findAllTag();
-		WordDictionary inputTestWD = new WordDictionary();
-		for (Tag tag : list) {
-//			inputString = tag.getTagName();
-			inputString = "8";
-			inputTestWD.setWord(inputString);
-			int size = wordDictionaryService.findWordDictionary(inputTestWD).size();
-			/*
-			 * if (size != 0) continue;
-			 */
-			HttpHeaders headers = new HttpHeaders();
-			RestTemplate restTemplate = new RestTemplate();
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-			JSONParser p = new JSONParser();
-
-			String uri = "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q="
-					+ inputString + "&start=1";
-			ResponseEntity<String> rest_reponse;
-			rest_reponse = restTemplate.getForEntity(uri, String.class);
-
-			String bodys = rest_reponse.getBody();
-//		System.out.println(bodys);
-			JSONObject data = (JSONObject) p.parse(bodys);
-
-			JSONArray items = (JSONArray) data.get("items");
-			if (items == null)
-				continue;
-			JSONObject item;
-
-			for (int i = 0; i < items.size(); i++) {
-				item = (JSONObject) items.get(i);
-
-				String title = item.get("title").toString();
-				String link = item.get("link").toString();
-				String snippet = item.get("snippet").toString();
-				JSONObject pagemap = (JSONObject) item.get("pagemap");
-				if (pagemap == null)
-					continue;
-				JSONArray cse_thumbnail = (JSONArray) pagemap.get("cse_thumbnail");
-				String src = null;
-				if (cse_thumbnail != null) {
-					src = ((JSONObject) (cse_thumbnail.get(0))).get("src").toString();
-				}
-				System.out.println(title);
-				System.out.println(link);
-				System.out.println(snippet);
-				System.out.println(src);
-				WordDictionary wd = new WordDictionary();
-				wd.setWord(inputString);
-				wd.setLink(link);
-				wd.setDescription(title + "\n" + snippet);
-				wd.setThumbnailSrc(src);
-				wordDictionaryService.addWordDictionary(wd);
-			}
-		}
-		System.out.println("Ss");
-	}
-	
-	
-	public void setUp() throws IOException {
-		HttpTransport httpTransport = new NetHttpTransport();
-		JacksonFactory jsonFactory = new JacksonFactory();
-
-		// Go to the Google API Console, open your application's
-		// credentials page, and copy the client ID and client secret.
-		// Then paste them into the following code.
-		String clientId = "942056096181-qb0ht69ht9qqiolcfhaluk23hl0t428i.apps.googleusercontent.com";
-		String clientSecret = "kaqz1mBd2kgPLDku9nLAf4Wj";
-
-		// Or your redirect URL for web based applications.
-		String redirectUrl = "http://localhost:8888/test/jsonTest";
-		String scope = "https://www.googleapis.com/auth/contacts.readonly";
-
-		// Step 1: Authorize -->
-		String authorizationUrl = new GoogleBrowserClientRequestUrl(clientId, redirectUrl, Arrays.asList(scope))
-				.build();
-
-		// Point or redirect your user to the authorizationUrl.
-		System.out.println("Go to the following link in your browser:");
-		System.out.println(authorizationUrl);
-     
-		// Read the authorization code from the standard input stream.
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("What is the authorization code?");
-		String code = in.readLine();
+		System.out.println(Member.encryptSHA256Iter("TESTtest1!", 10));
 		
-//		String code = "4/wgFGim5DMubUa2rD-jjyiGDAf46-ria-sVphINBvHV99N_To9TP6g4S_AwsQfeNEpBwIXHnoxfTEFBO7vy_44jE";
-		// End of Step 1 <--
-
-		// Step 2: Exchange -->
-		GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(httpTransport, jsonFactory,
-				clientId, clientSecret, code, redirectUrl).execute();
-		// End of Step 2 <--
-
-		GoogleCredential credential = new GoogleCredential.Builder().setTransport(httpTransport)
-				.setJsonFactory(jsonFactory).setClientSecrets(clientId, clientSecret).build()
-				.setFromTokenResponse(tokenResponse);
-		PeopleService peopleService = new PeopleService.Builder(httpTransport, jsonFactory, credential).build();
-		ListConnectionsResponse response = peopleService.people().connections().list("people/me")
-			    .setPersonFields("names,emailAddresses")
-			    .execute();
-			List<Person> connections = response.getConnections();
-	}
+	}/*
+		 * 
+		 * public void downloadFile(FileVO fileVO, HttpServletRequest request,
+		 * HttpServletResponse response) throws Exception {
+		 * 
+		 * File file = new File("src/main/webapp/userfile/", "0_git.png");
+		 * 
+		 * BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+		 * 
+		 * //User-Agent : 어떤 운영체제로 어떤 브라우저를 서버( 홈페이지 )에 접근하는지 확인함 String header =
+		 * request.getHeader("User-Agent"); String fileName;
+		 * 
+		 * if ((header.contains("MSIE")) || (header.contains("Trident")) ||
+		 * (header.contains("Edge"))) { //인터넷 익스플로러 10이하 버전, 11버전, 엣지에서 인코딩 fileName =
+		 * URLEncoder.encode(boardfile.getFileOrgName(), "UTF-8"); } else { //나머지 브라우저에서
+		 * 인코딩 fileName = new String(boardfile.getFileOrgName().getBytes("UTF-8"),
+		 * "iso-8859-1"); } //형식을 모르는 파일첨부용 contentType
+		 * response.setContentType("application/octet-stream"); //다운로드와 다운로드될 파일이름
+		 * response.setHeader("Content-Disposition", "attachment; filename=\""+ fileName
+		 * + "\""); //파일복사 FileCopyUtils.copy(in, response.getOutputStream());
+		 * in.close(); response.getOutputStream().flush();
+		 * response.getOutputStream().close(); }
+		 * 
+		 * 
+		 * public void testWD() throws ParseException { String inputString = "8";
+		 * List<Tag> list = tagService.findAllTag(); WordDictionary inputTestWD = new
+		 * WordDictionary(); for (Tag tag : list) { // inputString = tag.getTagName();
+		 * inputString = "8"; inputTestWD.setWord(inputString); int size =
+		 * wordDictionaryService.findWordDictionary(inputTestWD).size();
+		 * 
+		 * if (size != 0) continue;
+		 * 
+		 * HttpHeaders headers = new HttpHeaders(); RestTemplate restTemplate = new
+		 * RestTemplate();
+		 * headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED); JSONParser p =
+		 * new JSONParser();
+		 * 
+		 * String uri =
+		 * "https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDwijj_hIBLqxw5__S3dkghvPZbt-_djvk&cx=011639170629408361658:ycrrovtrshs&q="
+		 * + inputString + "&start=1"; ResponseEntity<String> rest_reponse; rest_reponse
+		 * = restTemplate.getForEntity(uri, String.class);
+		 * 
+		 * String bodys = rest_reponse.getBody(); // System.out.println(bodys);
+		 * JSONObject data = (JSONObject) p.parse(bodys);
+		 * 
+		 * JSONArray items = (JSONArray) data.get("items"); if (items == null) continue;
+		 * JSONObject item;
+		 * 
+		 * for (int i = 0; i < items.size(); i++) { item = (JSONObject) items.get(i);
+		 * 
+		 * String title = item.get("title").toString(); String link =
+		 * item.get("link").toString(); String snippet = item.get("snippet").toString();
+		 * JSONObject pagemap = (JSONObject) item.get("pagemap"); if (pagemap == null)
+		 * continue; JSONArray cse_thumbnail = (JSONArray) pagemap.get("cse_thumbnail");
+		 * String src = null; if (cse_thumbnail != null) { src = ((JSONObject)
+		 * (cse_thumbnail.get(0))).get("src").toString(); } System.out.println(title);
+		 * System.out.println(link); System.out.println(snippet);
+		 * System.out.println(src); WordDictionary wd = new WordDictionary();
+		 * wd.setWord(inputString); wd.setLink(link); wd.setDescription(title + "\n" +
+		 * snippet); wd.setThumbnailSrc(src);
+		 * wordDictionaryService.addWordDictionary(wd); } } System.out.println("Ss"); }
+		 * 
+		 * 
+		 * public void setUp() throws IOException { HttpTransport httpTransport = new
+		 * NetHttpTransport(); JacksonFactory jsonFactory = new JacksonFactory();
+		 * 
+		 * // Go to the Google API Console, open your application's // credentials page,
+		 * and copy the client ID and client secret. // Then paste them into the
+		 * following code. String clientId =
+		 * "942056096181-qb0ht69ht9qqiolcfhaluk23hl0t428i.apps.googleusercontent.com";
+		 * String clientSecret = "kaqz1mBd2kgPLDku9nLAf4Wj";
+		 * 
+		 * // Or your redirect URL for web based applications. String redirectUrl =
+		 * "http://localhost:8888/test/jsonTest"; String scope =
+		 * "https://www.googleapis.com/auth/contacts.readonly";
+		 * 
+		 * // Step 1: Authorize --> String authorizationUrl = new
+		 * GoogleBrowserClientRequestUrl(clientId, redirectUrl, Arrays.asList(scope))
+		 * .build();
+		 * 
+		 * // Point or redirect your user to the authorizationUrl.
+		 * System.out.println("Go to the following link in your browser:");
+		 * System.out.println(authorizationUrl);
+		 * 
+		 * // Read the authorization code from the standard input stream. BufferedReader
+		 * in = new BufferedReader(new InputStreamReader(System.in));
+		 * System.out.println("What is the authorization code?"); String code =
+		 * in.readLine();
+		 * 
+		 * // String code =
+		 * "4/wgFGim5DMubUa2rD-jjyiGDAf46-ria-sVphINBvHV99N_To9TP6g4S_AwsQfeNEpBwIXHnoxfTEFBO7vy_44jE";
+		 * // End of Step 1 <--
+		 * 
+		 * // Step 2: Exchange --> GoogleTokenResponse tokenResponse = new
+		 * GoogleAuthorizationCodeTokenRequest(httpTransport, jsonFactory, clientId,
+		 * clientSecret, code, redirectUrl).execute(); // End of Step 2 <--
+		 * 
+		 * GoogleCredential credential = new
+		 * GoogleCredential.Builder().setTransport(httpTransport)
+		 * .setJsonFactory(jsonFactory).setClientSecrets(clientId, clientSecret).build()
+		 * .setFromTokenResponse(tokenResponse); PeopleService peopleService = new
+		 * PeopleService.Builder(httpTransport, jsonFactory, credential).build();
+		 * ListConnectionsResponse response =
+		 * peopleService.people().connections().list("people/me")
+		 * .setPersonFields("names,emailAddresses") .execute(); List<Person> connections
+		 * = response.getConnections(); }
+		 */
 
 	/*
 	 * // mailService.test(); }

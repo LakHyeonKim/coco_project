@@ -17,5 +17,5 @@ public interface MemberService {
 	public boolean check(String id);
 	public List<Member>  findIdByRefreshToken(String refToken);
 	public int updateRefreshToken(Member member);
-	
+	public int updateMember2(Member member);
 }

@@ -54,6 +54,11 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public int updateMember2(Member member) {
+		return memberDao.updateMember(member);
+	}
+	
+	@Override
 	public int updateMember(Member member) {
 		if (member.getPassword() != null) {
 			String hashedPwd = Member.encryptSHA256Iter(member.getPassword(), member.getPassword().length());

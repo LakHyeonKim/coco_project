@@ -111,11 +111,14 @@ public class AuthorityController {
 	@RequestMapping(value = "/certificationByEmail/{key}", method = { RequestMethod.GET })
 	public ResponseEntity certificationByEmail(@PathVariable String key) throws Exception {
 		int idmember = jwtService.getIdmemberByToken(key);
+		System.out.println("우옹옹");
 		if (idmember > 0) {
 			Member m = new Member();
 			m = memberService.findMember(new Member(idmember)).get(0);
 			m.setIsManager(2);
-			memberService.updateMember(m);
+			m.setPassword(null);
+			memberService.updateMember2(m);
+			System.out.println(m.getPassword());
 			return new ResponseEntity(HttpStatus.OK);
 		} else// 존재 x
 		{

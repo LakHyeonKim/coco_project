@@ -519,6 +519,16 @@ public class BaseController {
 		}
 		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
 	}
+	@ApiOperation(value = "멤버 수정2", response = List.class)
+	@RequestMapping(value = "/updateMember2", method = RequestMethod.PUT)
+	public ResponseEntity<Integer> updateMember2(@RequestHeader(value = "Authorization") String jwt,
+			@RequestBody Member member) throws Exception {
+		Integer answers = memberService.updateMember2(member);
+		if (answers <= 0) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<Integer>(answers, HttpStatus.OK);
+	}
 
 	@ApiOperation(value = "멤버 삭제", response = List.class)
 	@RequestMapping(value = "/deleteMember", method = RequestMethod.DELETE)
