@@ -118,7 +118,9 @@ export default {
 	height: 50px;
 }
 #userImg {
+	height: 50px;
 	width: 50px;
+	border-radius: 50%;
 }
 #content {
 	display: inline-block;

@@ -55,7 +55,6 @@
 							:error-messages="errors[0] ? errors[0] : []"
 							color="gray"
 							@keypress="isIdModi()"
-							:disabled="disabled"
 						></v-text-field>
 					</validation-provider>
 				</div>
@@ -174,7 +173,6 @@ export default {
 		loadingStyleOff: {
 			display: "none"
 		},
-		disabled: false
 	}),
 
 	methods: {
@@ -255,8 +253,9 @@ export default {
 									if (this.$session.get("isManager") == 0) {
 										this.$session.clear();
 										alert("이메일 인증을 해주세요");
+										router.push("/")
 										this.loadingTop = false;
-										document.location.reload();
+										// document.location.reload();
 									} else if (
 										this.$session.get("isManager") == 7
 									) {
@@ -389,7 +388,6 @@ export default {
 		// this.localize("ko", this.dictionary)
 		if (this.$session.has("useremail")) {
 			this.signUpMember.id = this.$session.get("useremail");
-			this.disabled = true;
 			this.idcheck = true;
 			this.idCheck();
 			this.$session.destroy();

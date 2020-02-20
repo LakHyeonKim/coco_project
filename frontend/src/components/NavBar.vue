@@ -221,7 +221,7 @@ export default {
 		},
 		soloconnect() {
 			this.socket = new SockJS(
-				"http://52.79.118.55:8081/gs-guide-websocket"
+				"http://192.168.100.57:8081/gs-guide-websocket"
 			);
 			this.stompClient = Stomp.over(this.socket);
 			this.stompClient.connect(
@@ -232,7 +232,8 @@ export default {
 					this.stompClient.subscribe("/user/queue/info", tick => {
 						console.log(JSON.parse(tick.body).idalarm);
 						if (
-							this.latest_alarm_id < JSON.parse(tick.body).idalarm
+							this.latest_alarm_id < JSON.parse(tick.body).idalarm && 
+							JSON.parse(tick.body).memberReceiver != JSON.parse(tick.body).memberCaller
 						) {
 							if (!this.isfirst) {
 								if (

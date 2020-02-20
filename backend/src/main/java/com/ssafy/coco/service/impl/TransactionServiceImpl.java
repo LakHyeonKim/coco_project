@@ -91,7 +91,7 @@ public class TransactionServiceImpl implements TransactionService {
 		alarmDao.deleteAlarm(alarm);
 	}
 
-	private static final String IP = "192.168.100.57";
+	private static final String IP = "192.168.100.57:8888";
 	
 	private static final String USER_FROFILE_PATH = "/home/ubuntu/img/userprofile/";
 	private static final String USER_FILE_PATH = "/home/ubuntu/img/userfile/";
@@ -116,11 +116,11 @@ public class TransactionServiceImpl implements TransactionService {
 		System.out.println(signUpMember.getFile() + "겟파일 ");
 		if (!signUpMember.getFile().getOriginalFilename().equals("")) {
 			MultipartFile file = signUpMember.getFile();
-			//String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", member.getId(), originFileName);
-			String imageFilePath = USER_FILE_PATH + saveFileName + "";
-			file.transferTo(new File(USER_FILE_PATH, saveFileName));
+			String imageFilePath = "http://" + IP + "/userprofile/"+ saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}else {
 			member.setImageUrl("");
@@ -133,7 +133,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 		String key = jwtService.makeJwt("" + member.getIdmember(), "!@323213214214324", 1);
 		mailService.sendMail(member.getId(), "[SEE-SAW] 인증 메일입니다.",
-				"<a href=http://192.168.100.95:8888/jwt/certificationByEmail/" + key + ">인증하기</a>");
+				"<a href=http://192.168.100.57:8888/jwt/certificationByEmail/" + key + ">인증하기</a>");
 		return member.getIdmember();
 	}
 
@@ -179,11 +179,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (!babyBoardWrite.getAttachments().getOriginalFilename().equals("")) {
 			MultipartFile file = babyBoardWrite.getAttachments();
-			//String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String filePath = USER_FILE_PATH + saveFileName + "";
-			file.transferTo(new File(USER_FILE_PATH, saveFileName));
+			String filePath = "http://" + IP + "/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}else {
 			post.setFilePath("");
@@ -283,7 +283,8 @@ public class TransactionServiceImpl implements TransactionService {
 		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0)
 				.getMemberId();
 		long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
-		alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
+		if(memberId != idMember)
+			alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
 
 	/**
@@ -325,11 +326,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (!board.getAttachments().getOriginalFilename().equals("")) {
 			MultipartFile file = board.getAttachments();
-			//String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String filePath = USER_FILE_PATH + saveFileName + "";
-			file.transferTo(new File(USER_FILE_PATH, saveFileName));
+			String filePath = "http://" + IP + "/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}else {
 			post.setFilePath("");
@@ -374,11 +375,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (!board.getAttachments().getOriginalFilename().equals("")) {
 			MultipartFile file = board.getAttachments();
-			//String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userfile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", post.getIdpost()+"", originFileName);
-			String filePath = USER_FILE_PATH + saveFileName + "";
-			file.transferTo(new File(USER_FILE_PATH, saveFileName));
+			String filePath = "http://" + IP + "/userfile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
 			post.setFilePath(filePath);
 		}else {
 			post.setFilePath("");
@@ -422,20 +423,20 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if(!memberInfoModify.getBannerImage().getOriginalFilename().equals("")) {
 			MultipartFile file = memberInfoModify.getBannerImage();
-			//String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userbanner/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String filePath = USER_BANNER_PATH + saveFileName + "";
-			file.transferTo(new File(USER_BANNER_PATH, saveFileName));
+			String filePath = "http://" + IP + "/userbanner/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
 			modifyMypage.setBannerImagePath(filePath);
 		}
 		if(!memberInfoModify.getProfileImage().getOriginalFilename().equals("")) {
 			MultipartFile file = memberInfoModify.getProfileImage();
-			//String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
+			String path = System.getProperty("user.dir") + "/src/main/webapp/userprofile/";
 			String originFileName = file.getOriginalFilename();
 			String saveFileName = String.format("%s_%s", memberInfoModify.getIdmember()+"", originFileName);
-			String filePath = USER_FROFILE_PATH + saveFileName + "";
-			file.transferTo(new File(USER_FROFILE_PATH, saveFileName));
+			String filePath = "http://" + IP + "/userprofile/" + saveFileName + "";
+			file.transferTo(new File(path, saveFileName));
 			modifyMember.setImageUrl(filePath);
 		}
 		if(!memberInfoModify.getTags().equals("")) {
