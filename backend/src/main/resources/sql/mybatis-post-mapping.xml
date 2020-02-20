@@ -31,6 +31,9 @@
 		<if test="likeCount !=0">
 			like_count = #{likeCount},
 		</if>
+		<if test="code !=null">
+			code = #{code},
+		</if>
 		<if test="views !=0">
 			views = #{views},
 		</if>
@@ -43,7 +46,7 @@
 		<if test="access != 0">
 			access = #{access},
 		</if>
-		update_created=curdate()
+		update_created=DATE_ADD(NOW(), INTERVAL 9 HOUR)
 		where
 		idpost=#{idpost}
 	</sql>

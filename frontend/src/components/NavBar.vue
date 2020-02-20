@@ -220,7 +220,7 @@ export default {
 		},
 		soloconnect() {
 			this.socket = new SockJS(
-				"http://119.202.135.55:8081/gs-guide-websocket"
+				"http://192.168.100.57:8081/gs-guide-websocket"
 			);
 			this.stompClient = Stomp.over(this.socket);
 			this.stompClient.connect(

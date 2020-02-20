@@ -24,6 +24,7 @@ import com.ssafy.coco.dao.CommentDao;
 import com.ssafy.coco.relationvo.BabyBoardWrite;
 import com.ssafy.coco.relationvo.Board;
 import com.ssafy.coco.relationvo.BoardDetail;
+import com.ssafy.coco.relationvo.BoardUpdate;
 import com.ssafy.coco.relationvo.BoardWrite;
 import com.ssafy.coco.relationvo.DoublePost;
 import com.ssafy.coco.relationvo.MemberInfoModify;
@@ -82,7 +83,7 @@ public class TransactionController {
 	
 	@ApiOperation(value = "포스트 수정 (Transaction) ", response = List.class)
 	@PostMapping("/updatePost")
-	public ResponseEntity<Integer> updatePost(@RequestHeader(value="Authorization")String jwt,BoardWrite board) throws Exception {
+	public ResponseEntity<Integer> updatePost(@RequestHeader(value="Authorization")String jwt,BoardUpdate board) throws Exception {
 		System.out.println("메이크 포스터안 jwt:"+jwt);
 		transactionService.updatePost(board);
 		return new ResponseEntity<Integer>(HttpStatus.OK);
