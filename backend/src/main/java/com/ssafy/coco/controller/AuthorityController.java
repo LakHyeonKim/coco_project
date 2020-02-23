@@ -133,7 +133,7 @@ public class AuthorityController {
 		if (list.size() > 0) {
 			Member m = list.get(0);
 			String key = jwtService.makeJwt("" + m.getIdmember(), "!@323213214214324", 1);
-			mailService.sendMail(m.getId(), "[SEE-SAW] 인증 메일입니다.", "<a href=http://192.168.100.95:8888/jwt/certificationByEmail/"+key+">인증하기</a>");
+			mailService.sendMail(m.getId(), "[SEE-SAW] 인증 메일입니다.", "<a href=http://52.79.118.55:8888/jwt/certificationByEmail/"+key+">인증하기</a>");
 			return new ResponseEntity(HttpStatus.OK);
 		} else// 존재 x
 		{

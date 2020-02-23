@@ -12,7 +12,7 @@
 	<groupId>com.ssafy</groupId>
 	<artifactId>backend</artifactId>
 	<version>1.2.0-SNAPSHOT</version>
-	<!-- <packaging>war</packaging> -->
+	<packaging>war</packaging>
 	<name>backend</name>
 	<description>Demo project for Spring Boot</description>
 

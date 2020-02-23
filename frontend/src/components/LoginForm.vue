@@ -264,7 +264,7 @@ export default {
 		},
 		getCode() {
 			window.location.href =
-				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://192.168.100.57:8080&response_type=code";
+				"https://kauth.kakao.com/oauth/authorize?client_id=716ea071847daf5fdddd8ecac5cd2796&redirect_uri=http://52.79.118.55:8888&response_type=code";
 		}
 	},
 	mounted() {
