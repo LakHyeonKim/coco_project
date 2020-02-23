@@ -13,7 +13,7 @@
 	<artifactId>spring-boot-chatting</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>spring-boot-chatting</name>
-	<!-- <packaging>war</packaging> -->
+	<packaging>war</packaging>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
