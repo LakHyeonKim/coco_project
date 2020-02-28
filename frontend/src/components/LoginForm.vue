@@ -271,7 +271,7 @@ export default {
 		const code = document.location.href.split("code");
 		if (code[1]) {
 			const sendCode = code[1].slice(1);
-			// alert(sendCode);
+			alert(sendCode);
 			http.get("/jwt/kakaologin", { params: { code: sendCode } })
 				.then(res => {
 					this.loadingTop = true;

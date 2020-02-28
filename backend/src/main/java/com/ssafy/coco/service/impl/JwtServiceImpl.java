@@ -90,7 +90,7 @@ public class JwtServiceImpl implements JwtService {
 		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
 		postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
 		postParams.add(new BasicNameValuePair("client_id", "716ea071847daf5fdddd8ecac5cd2796")); // REST API KEY
-		postParams.add(new BasicNameValuePair("redirect_uri", "http://192.168.100.57:8080")); // 리다이렉트 URI
+		postParams.add(new BasicNameValuePair("redirect_uri", "http://52.79.118.55:8888")); // 리다이렉트 URI
 		postParams.add(new BasicNameValuePair("code", autorize_code)); // 로그인 과정중 얻은 code 값
 		// http://192.168.100.94:8080
 		// http://192.168.100.95:8888/test/kakaologin2
