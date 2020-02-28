@@ -378,9 +378,7 @@ export default {
 	}
 	#searches {
 		width: 100vw;
-		margin-bottom: 15px;
-		margin-top: 15px;
-		padding: 0 5px;
+		padding: 5px 5px;
 	}
 	.footerBlank {
 		display: block;

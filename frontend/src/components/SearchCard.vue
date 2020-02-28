@@ -245,7 +245,6 @@ export default {
 	cursor: pointer;
 }
 #cardBox {
-	margin: 13px 13px 13px 13px;
 	display: flex;
 }
 #contentBox {
