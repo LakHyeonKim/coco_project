@@ -9,7 +9,7 @@
 						id="searchLogo"
 					/>
 				</label>
-				<div id="CC">Code Coworker</div>
+				<div id="CC">&nbsp;Code Coworker</div>
 			</div>
 		</div>
 		<div id="blankBox"></div>
