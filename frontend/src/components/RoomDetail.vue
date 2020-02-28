@@ -2,8 +2,10 @@
 	<div class="openDetail">
 		<div id="chatWrap">
 			<div id="chatHeader">
-				<span id="chat_detail_title">{{ room.roomName }}</span>
-				<span id="chat_detail_title">{{ "__" + memberCount + "__명 대화중..."}}</span>
+				<span id="chat_detail_title">
+					{{ room.roomName }}
+					<span id="chat_detail_cnt">({{ memberCount }})</span>
+				</span>
 				<img
 					id="chat_exit_btn"
 					@click="outChatRoom"
@@ -11,36 +13,49 @@
 				/>
 			</div>
 			<div id="chatRoom">
-				<div id="chatLog" v-for="(message, i) in messages" :key="i">
-					<div class="noticMsg" v-if="message.type == 'ENTER'">
-						<!-- {{ message.dateCreated }} -->
-						<span class="msg">{{ message.context }}</span>
-					</div>
-					<div class="noticMsg" v-if="message.type == 'OUT'">
-						<!-- {{ message.dateCreated }} -->
-						<span class="msg">{{ message.context }}</span>
-					</div>
-					<div
-						class="anotherMsg"
-						v-if="
-							message.memberId != memberId &&
-								message.type == 'TALK'
-						"
-					>
-						<span class="anotherName">{{ message.nickName }}</span>
-						<span class="msg">{{ message.context }}</span>
-						{{ message.dateCreated }}
-					</div>
-					<div
-						class="myMsg"
-						v-if="
-							message.memberId == memberId &&
-								message.type == 'TALK'
-						"
-					>
-						<span class="anotherName">{{ message.nickName }}</span>
-						{{ message.dateCreated }}
-						<span class="msg">{{ message.context }}</span>
+				<div
+					id="loading"
+					:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+					v-if="loadingTop"
+				>
+					<div class="loader"></div>
+				</div>
+				<div v-if="!loadingTop">
+					<div id="chatLog" v-for="(message, i) in messages" :key="i">
+						<div class="noticMsg" v-if="message.type == 'ENTER'">
+							<!-- {{ message.dateCreated }} -->
+							<span class="msg">{{ message.context }}</span>
+						</div>
+						<div class="noticMsg" v-if="message.type == 'OUT'">
+							<!-- {{ message.dateCreated }} -->
+							<span class="msg">{{ message.context }}</span>
+						</div>
+						<div
+							class="anotherMsg"
+							v-if="
+								message.memberId != memberId &&
+									message.type == 'TALK'
+							"
+						>
+							<span class="anotherName">{{
+								message.nickName
+							}}</span>
+							<span class="msg">{{ message.context }}</span>
+							{{ message.dateCreated }}
+						</div>
+						<div
+							class="myMsg"
+							v-if="
+								message.memberId == memberId &&
+									message.type == 'TALK'
+							"
+						>
+							<span class="anotherName">{{
+								message.nickName
+							}}</span>
+							{{ message.dateCreated }}
+							<span class="msg">{{ message.context }}</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -48,7 +63,6 @@
 				<input
 					type="text"
 					autocomplete="off"
-					size="30"
 					id="message"
 					v-model="message"
 					@keyup.enter="sendMessage"
@@ -63,32 +77,40 @@
 </template>
 
 <script>
-import sock from 'sockjs-client'
-import ws from 'webstomp-client'
-import alarmHttp from '../http-alarm'
+import sock from "sockjs-client";
+import ws from "webstomp-client";
+import alarmHttp from "../http-alarm";
 
 export default {
-	name: 'RoomDetail',
-	props: ['toChild'],
-	data () {
+	name: "RoomDetail",
+	props: ["toChild"],
+	data() {
 		return {
 			roomId: 0,
 			memberId: 0,
-			nickName: '',
+			nickName: "",
 			memberCount: 0,
 			room: {},
-			message: '',
+			message: "",
 			messages: [],
-			isHidden: this.toChild.isHiddenDetail
-		}
+			isHidden: this.toChild.isHiddenDetail,
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			}
+		};
 	},
-	created () {
-		this.roomId = localStorage.getItem('wschat.idroom')
-		this.memberId = localStorage.getItem('wschat.member_id')
-		this.nickName = this.$session.get('nickName')
-		this.findRoom()
+	created() {
+		this.roomId = localStorage.getItem("wschat.idroom");
+		this.memberId = localStorage.getItem("wschat.member_id");
+		this.nickName = this.$session.get("nickName");
+		this.findRoom();
 	},
-	mounted () {
+	mounted() {
+		this.loadingTop = true;
 		// var standardWidth = window.innerWidth / 2;
 		// var standardHeight = window.innerHeight / 2;
 		// if (
@@ -126,60 +148,60 @@ export default {
 		// }
 	},
 	methods: {
-		outChatRoom: function () {
+		outChatRoom: function() {
 			alarmHttp
-				.post('/chat/out', {
+				.post("/chat/out", {
 					roomId: this.roomId,
 					memberId: this.memberId,
 					nickName: this.nickName
 				})
 				.then(response => {
-					this.messages = response.data
-					console.log(this.messages)
-					this.messages = []
-					this.$emit('updateIsHiddenDetail', !this.isHidden)
-					this.outMessage()
-				})
+					this.messages = response.data;
+					console.log(this.messages);
+					this.messages = [];
+					this.$emit("updateIsHiddenDetail", !this.isHidden);
+					this.outMessage();
+				});
 		},
-		enterList: function () {},
-		findRoom: function () {
-			alarmHttp.get('/chat/room/' + this.roomId).then(response => {
-				this.room = response.data
-				console.log(this.room)
+		enterList: function() {},
+		findRoom: function() {
+			alarmHttp.get("/chat/room/" + this.roomId).then(response => {
+				this.room = response.data;
+				console.log(this.room);
 				alarmHttp
-					.post('/chat/messages', {
+					.post("/chat/messages", {
 						roomId: this.roomId,
 						memberId: this.memberId,
 						nickName: this.nickName
 					})
 					.then(response => {
-						this.messages = response.data
-						console.log(this.messages)
-						this.connect()
-					})
-			})
+						this.messages = response.data;
+						console.log(this.messages);
+						this.connect();
+					});
+			});
 		},
-		outMessage: function () {
+		outMessage: function() {
 			this.stompClient.send(
-				'/app/chat/message',
+				"/app/chat/message",
 				JSON.stringify(
 					{
-						type: 'OUT',
+						type: "OUT",
 						memberId: this.$data.memberId,
 						roomId: this.$data.roomId,
 						nickName: this.nickName
 					},
 					{}
 				)
-			)
-			this.message = ''
+			);
+			this.message = "";
 		},
-		sendMessage: function () {
+		sendMessage: function() {
 			this.stompClient.send(
-				'/app/chat/message',
+				"/app/chat/message",
 				JSON.stringify(
 					{
-						type: 'TALK',
+						type: "TALK",
 						roomId: this.roomId,
 						memberId: this.memberId,
 						nickName: this.nickName,
@@ -187,65 +209,84 @@ export default {
 					},
 					{}
 				)
-			)
-			this.message = ''
+			);
+			this.message = "";
 		},
-		recvMessage: function (recv) {
+		recvMessage: function(recv) {
 			this.messages.push({
 				idmessage: recv.idmessage,
 				roomId: recv.roomId,
-				memberId: recv.type == 'ENTER' ? '[알림]' : recv.memberId,
+				memberId: recv.type == "ENTER" ? "[알림]" : recv.memberId,
 				nickName: recv.nickName,
 				dateCreated: recv.dateCreated,
 				context: recv.context,
 				type: recv.type
-			})
-			this.memberCount = recv.memberCount
+			});
+			this.memberCount = recv.memberCount;
 		},
-		connect: function () {
+		connect: function() {
 			this.socket = new sock(
-				'http://52.79.118.55:8081/gs-guide-websocket'
-			)
-			this.stompClient = ws.over(this.socket)
+				"http://52.79.118.55:8081/gs-guide-websocket"
+			);
+			this.stompClient = ws.over(this.socket);
 			this.stompClient.connect(
 				{},
 				frame => {
-					console.log(frame)
+					console.log(frame);
 					this.stompClient.subscribe(
-						'/sub/chat/room/' + this.$data.roomId,
+						"/sub/chat/room/" + this.$data.roomId,
 						message => {
-							var recv = JSON.parse(message.body)
-							this.recvMessage(recv)
-							setTimeout(this.chatOnScroll, 250)
+							var recv = JSON.parse(message.body);
+							this.recvMessage(recv);
+							setTimeout(this.chatOnScroll, 250);
+							this.loadingTop = false;
 						}
-					)
+					);
 					this.stompClient.send(
-						'/app/chat/message',
+						"/app/chat/message",
 						JSON.stringify(
 							{
-								type: 'ENTER',
+								type: "ENTER",
 								memberId: this.$data.memberId,
 								roomId: this.$data.roomId,
 								nickName: this.nickName
 							},
 							{}
 						)
-					)
+					);
 				},
 				error => {
-					alert('error ' + error)
+					alert("error " + error);
 				}
-			)
+			);
 		},
-		chatOnScroll: function () {
-			var objDiv = document.getElementById('chatRoom')
-			objDiv.scrollTop = objDiv.scrollHeight
+		chatOnScroll: function() {
+			var objDiv = document.getElementById("chatRoom");
+			objDiv.scrollTop = objDiv.scrollHeight;
+			this.loadingTop = false;
 		}
 	}
-}
+};
 </script>
 
 <style>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 100px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid gray; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+}
+
 .openDetail {
 	/* float: left; */
 	background-color: white;
@@ -281,16 +322,22 @@ export default {
 
 #chat_detail_title {
 	float: left;
-	font-size: 25px;
-	font-weight: 700;
+	font-size: 20px;
+	font-weight: 400;
+	text-align: left;
+	width: 90%;
+}
+
+#chat_detail_cnt {
+	font-size: 15px;
 }
 
 #chat_exit_btn {
 	float: right;
-	width: 30px;
-	height: 30px;
-	margin: 5px;
+	width: 25px;
+	margin: 7px 0 7px 0;
 	cursor: pointer;
+
 	-webkit-transform: scale(1);
 	-moz-transform: scale(1);
 	-ms-transform: scale(1);
@@ -364,15 +411,13 @@ export default {
 }
 
 #message {
-	width: 86%;
-	height: calc(100% - 1px);
-	border: none;
 	margin: 3px;
-	margin-right: none;
 	color: #000;
 	font-size: 13px;
 	font-weight: 400;
 	background-color: white;
+	width: calc(100% - 100px);
+	height: 25px;
 }
 
 #message:focus {
@@ -380,24 +425,28 @@ export default {
 }
 
 #send_div {
-	/* background-color: rgba(160, 23, 98, 0.1); */
 	position: absolute;
 	bottom: 8px;
-	width: calc(100% - 11px);
+	width: calc(100% - 20px);
+	display: inline-block;
+	padding: 3px;
 }
 
 #chat_send_btn {
+	float: right;
 	background-color: rgb(173, 95, 138);
 	color: white;
 	padding: 2px 7px 2px 7px;
-	/* border-radius: 20px; */
+	border-radius: 3px;
+	font-size: 15px;
+	margin-right: 3px;
 }
 
 #chat_send_btn:hover {
 	background-color: rgba(160, 23, 98, 0.7);
 }
 
-#chatForm > input[type='submit'] {
+#chatForm > input[type="submit"] {
 	outline: none;
 	border: none;
 	background: none;
@@ -414,7 +463,11 @@ export default {
 
 @media screen and (max-width: 600px) {
 	#message {
-		width: 75%;
+		width: calc(100% - 60px);
+		height: 20px;
+	}
+	#chat_send_btn {
+		font-size: 12px;
 	}
 }
 </style>

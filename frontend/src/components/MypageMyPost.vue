@@ -1,7 +1,7 @@
 <template>
 	<div id="posts">
 		<MypageMyMenu :search="getSearchData" />
-		<div style="text-align: center;">
+		<div id="post_list">
 			<div id="post_top">
 				<v-select
 					:items="postSels"
@@ -36,8 +36,6 @@
 					/>
 				</div>
 			</div>
-		</div>
-		<div id="post_list">
 			<div
 				id="loading"
 				:style="loadingTop ? loadingStyleOn : loadingStyleOff"
@@ -66,6 +64,7 @@
 					:order="posts[i - 1].post.order"
 					:tags="posts[i - 1].tags"
 					:commentCount="posts[i - 1].commentCount"
+					:selTag="selTag"
 				></MypageMyPostCard>
 				<div class="slash" />
 			</div>
@@ -383,7 +382,7 @@ export default {
 .loader {
 	/* margin: 20px auto 20px auto; */
 	border: 6px solid #f3f3f3; /* Light grey */
-	border-top: 6px solid #3498db; /* Blue */
+	border-top: 6px solid gray; /* Blue */
 	border-radius: 50%;
 	width: 60px;
 	height: 60px;
@@ -540,12 +539,15 @@ export default {
 .post {
 	margin-top: 20px;
 	font-weight: 300;
+	text-align: left;
 }
 
 #post_list {
 	width: 80%;
 	margin: 0 auto;
+	text-align: center;
 }
+
 .post_title {
 	font-size: 20px;
 	font-weight: 400;
