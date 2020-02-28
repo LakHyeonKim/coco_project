@@ -123,7 +123,7 @@ public class TransactionServiceImpl implements TransactionService {
 			file.transferTo(new File(USER_PROFILE_PATH, saveFileName));
 			member.setImageUrl(imageFilePath);
 		}else {
-			member.setImageUrl("");
+			member.setImageUrl(signUpMember.getImageUrl());
 		}
 //		member.setIsManager(1);
 		memberDao.addMember(member);

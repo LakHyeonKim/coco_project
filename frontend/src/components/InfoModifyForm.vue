@@ -424,14 +424,14 @@ export default {
 
 							if (this.$refs.profileImage.file) {
 								console.log(
-									"http://192.168.100.57:8888/userprofile/" +
+									"http://52.79.118.55:8888/userprofile/" +
 										this.$session.get("id") +
 										"_" +
 										this.profileImage.name
 								);
 								this.$session.set(
 									"imageUrl",
-									"http://192.168.100.57:8888/userprofile/" +
+									"http://52.79.118.55:8888/userprofile/" +
 										this.$session.get("id") +
 										"_" +
 										this.profileImage.name

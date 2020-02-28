@@ -320,6 +320,8 @@ export default {
 					} else {
 						console.log("kakao res else", res);
 						this.$session.set("useremail", res.data.id);
+						this.$session.set("usernickname", res.data.nickname);
+						this.$session.set("userimageurl", res.data.imageUrl);
 						router.push("/register");
 					}
 				})

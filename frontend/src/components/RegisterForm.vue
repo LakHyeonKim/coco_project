@@ -34,6 +34,7 @@
 							bottomText="Drop file here or click"
 							exceedSizeText="사진의 크기가 초과하였습니다"
 							:maxSize="10240"
+							:img-src="signUpMember.imageUrl"
 							ref="profile"
 							@onExceed="exceedHandler"
 						/>
@@ -157,7 +158,8 @@ export default {
 			email: "",
 			gitUrl: "",
 			kakaoUrl: "",
-			instagramUrl: ""
+			instagramUrl: "",
+			imageUrl: ""
 		},
 		pwd1: false,
 		pwd2: false,
@@ -187,7 +189,10 @@ export default {
 		},
 		register() {
 			let formData = new FormData(document.getElementById("formData"));
-			formData.set("file", this.$refs.profile.file);
+			if(this.$refs.profile.file){
+				formData.set("file", this.$refs.profile.file);
+			}
+			formData.set("imageUrl", this.signUpMember.imageUrl);
 
 			if (this.onSubmit() && this.idcheck && this.nicknamecheck) {
 				this.loadingTop = true;
@@ -390,7 +395,17 @@ export default {
 			this.signUpMember.id = this.$session.get("useremail");
 			this.idcheck = true;
 			this.idCheck();
-			this.$session.destroy();
+			//this.$session.remove("useremail");
+		}
+		if(this.$session.has("usernickname")){
+			this.signUpMember.nickname = this.$session.get("usernickname");
+			this.nicknamecheck = true;
+			this.nicknameCheck();
+			//this.$session.remove("usernickname");
+		}
+		if(this.$session.has("userimageurl")){
+			this.signUpMember.imageUrl = this.$session.get("userimageurl");
+			//this.$session.remove("userimageurl");
 		}
 	}
 };
