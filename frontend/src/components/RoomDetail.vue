@@ -13,36 +13,49 @@
 				/>
 			</div>
 			<div id="chatRoom">
-				<div id="chatLog" v-for="(message, i) in messages" :key="i">
-					<div class="noticMsg" v-if="message.type == 'ENTER'">
-						<!-- {{ message.dateCreated }} -->
-						<span class="msg">{{ message.context }}</span>
-					</div>
-					<div class="noticMsg" v-if="message.type == 'OUT'">
-						<!-- {{ message.dateCreated }} -->
-						<span class="msg">{{ message.context }}</span>
-					</div>
-					<div
-						class="anotherMsg"
-						v-if="
-							message.memberId != memberId &&
-								message.type == 'TALK'
-						"
-					>
-						<span class="anotherName">{{ message.nickName }}</span>
-						<span class="msg">{{ message.context }}</span>
-						{{ message.dateCreated }}
-					</div>
-					<div
-						class="myMsg"
-						v-if="
-							message.memberId == memberId &&
-								message.type == 'TALK'
-						"
-					>
-						<span class="anotherName">{{ message.nickName }}</span>
-						{{ message.dateCreated }}
-						<span class="msg">{{ message.context }}</span>
+				<div
+					id="loading"
+					:style="loadingTop ? loadingStyleOn : loadingStyleOff"
+					v-if="loadingTop"
+				>
+					<div class="loader"></div>
+				</div>
+				<div v-if="!loadingTop">
+					<div id="chatLog" v-for="(message, i) in messages" :key="i">
+						<div class="noticMsg" v-if="message.type == 'ENTER'">
+							<!-- {{ message.dateCreated }} -->
+							<span class="msg">{{ message.context }}</span>
+						</div>
+						<div class="noticMsg" v-if="message.type == 'OUT'">
+							<!-- {{ message.dateCreated }} -->
+							<span class="msg">{{ message.context }}</span>
+						</div>
+						<div
+							class="anotherMsg"
+							v-if="
+								message.memberId != memberId &&
+									message.type == 'TALK'
+							"
+						>
+							<span class="anotherName">{{
+								message.nickName
+							}}</span>
+							<span class="msg">{{ message.context }}</span>
+							{{ message.dateCreated }}
+						</div>
+						<div
+							class="myMsg"
+							v-if="
+								message.memberId == memberId &&
+									message.type == 'TALK'
+							"
+						>
+							<span class="anotherName">{{
+								message.nickName
+							}}</span>
+							{{ message.dateCreated }}
+							<span class="msg">{{ message.context }}</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -80,7 +93,14 @@ export default {
 			room: {},
 			message: "",
 			messages: [],
-			isHidden: this.toChild.isHiddenDetail
+			isHidden: this.toChild.isHiddenDetail,
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			}
 		};
 	},
 	created() {
@@ -90,6 +110,7 @@ export default {
 		this.findRoom();
 	},
 	mounted() {
+		this.loadingTop = true;
 		// var standardWidth = window.innerWidth / 2;
 		// var standardHeight = window.innerHeight / 2;
 		// if (
@@ -218,6 +239,7 @@ export default {
 							var recv = JSON.parse(message.body);
 							this.recvMessage(recv);
 							setTimeout(this.chatOnScroll, 250);
+							this.loadingTop = false;
 						}
 					);
 					this.stompClient.send(
@@ -241,12 +263,30 @@ export default {
 		chatOnScroll: function() {
 			var objDiv = document.getElementById("chatRoom");
 			objDiv.scrollTop = objDiv.scrollHeight;
+			this.loadingTop = false;
 		}
 	}
 };
 </script>
 
 <style>
+#loading {
+	display: none;
+	width: 100%;
+	margin: 20px auto 100px auto;
+	/* display: grid; */
+	justify-content: center;
+}
+.loader {
+	/* margin: 20px auto 20px auto; */
+	border: 6px solid #f3f3f3; /* Light grey */
+	border-top: 6px solid gray; /* Blue */
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 2s linear infinite;
+}
+
 .openDetail {
 	/* float: left; */
 	background-color: white;
