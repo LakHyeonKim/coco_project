@@ -217,7 +217,7 @@ export default {
 			window.addEventListener("resize", this.onResize);
 		});
 	},
-	created() {
+	updated() {
 		Prism.highlightAll();
 	},
 	watch: {

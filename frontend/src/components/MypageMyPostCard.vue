@@ -204,6 +204,9 @@ export default {
 	created() {
 		Prism.highlightAll();
 	},
+	updated() {
+		Prism.highlightAll();
+	},
 	watch: {
 		temp_width(newWidth, oldWidth) {
 			this.now_width = `it changed to ${newWidth} from ${oldWidth}`;

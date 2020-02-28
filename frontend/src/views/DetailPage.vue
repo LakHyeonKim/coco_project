@@ -2,6 +2,19 @@
 	<!-- store를 통해 받아온 post number로 // post에 대한 모든 정보가 다 필요함 -->
 	<!-- 로딩된 정보를 넘겨 받아서 바로 띄워주면? -->
 	<div>
+		<div id="header">
+			<div id="headInnerBox">
+				<label for="searchBox">
+					<img
+						src="../assets/CC_Logo.png"
+						alt="logo_image"
+						id="searchLogo"
+					/>
+				</label>
+				<div id="CC">Code Coworker</div>
+			</div>
+		</div>
+		<div id="blankForDetail"></div>
 		<div id="detailMain">
 			<detail
 				:idPost="detail.post.idpost"
@@ -120,6 +133,21 @@ export default {
 		}
 	},
 	methods: {
+		scrollEvent() {
+			if (
+				document.body.scrollTop > 50 ||
+				document.documentElement.scrollTop > 50
+			) {
+				document.getElementById("header").style.height = "50px";
+				document.getElementById("headInnerBox").style.padding = "10px";
+				document.getElementById("CC").style.display = "inline-block";
+			} else {
+				document.getElementById("header").style.height = "75px";
+				document.getElementById("headInnerBox").style.padding =
+					"20px 10px 20px 10px";
+				document.getElementById("CC").style.display = "none";
+			}
+		},
 		updateLike(post) {
 			if (this.$store.state.likeUpdate == 1) {
 				post.post.likeCheck = 1;
@@ -152,6 +180,7 @@ export default {
 		}
 	},
 	created() {
+		window.addEventListener("scroll", this.scrollEvent);
 		const requestForm = {
 			idMember: this.$session.get("id"),
 			idPost: this.$route.params.idPost
@@ -192,7 +221,10 @@ export default {
 				console.log("detail err ", err);
 			});
 	},
-	mounted() {}
+	beforeDestroy: function() {
+		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		window.removeEventListener("scroll", this.scrollEvent);
+	}
 };
 </script>
 
@@ -206,5 +238,16 @@ export default {
 	left: 50px;
 	height: 100%;
 	width: 100%;
+}
+#blankForDetail {
+	height: 75px;
+}
+@media screen and (max-width: 600px) {
+	#detailBaby {
+		left: 0px;
+	}
+	#blankForDetail {
+		height: 50px;
+	}
 }
 </style>

@@ -20,6 +20,18 @@
 				<div id="post-title">
 					{{ postTitle }}
 					<v-icon id="postEdit" v-if="memberId == $session.get('id')" @click="postEdit">mdi-pen</v-icon>
+					<div id="post-info">
+						<span v-if="dateCreated == updateCreated">
+							{{ dateCreated }} ·
+							{{ views }} &nbsp;
+						</span>
+						<span v-else>
+							{{ updateCreated }}(수정됨) ·
+							{{ views }} &nbsp;
+						</span>
+						<span v-if="views > 1">views</span>
+						<span v-else>view</span>
+					</div>
 				</div>
 
 				<div id="post-head">
@@ -37,7 +49,7 @@
 						<div style="float: left;">
 							<div id="user-nickname" @click="goMypage()">{{ postWriter }}</div>
 							<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
-							<div id="post-info">
+							<!-- <div id="post-info">
 								<span v-if="dateCreated == updateCreated">
 									{{ dateCreated }} ·
 									{{ views }} &nbsp;
@@ -48,7 +60,7 @@
 								</span>
 								<span v-if="views > 1">views</span>
 								<span v-else>view</span>
-							</div>
+							</div> -->
 						</div>
 					</div>
 					<button id="follow-btn" v-show="!isUser()" @click="follow">
@@ -69,6 +81,7 @@
 				<vue-markdown
 					class="line-numbers match-braces rainbow-braces show-invisibles"
 					:source="code"
+					id="mark"
 					data-download-link
 				></vue-markdown>
 			</div>
@@ -275,7 +288,7 @@ export default {
 }
 #user-nickname {
 	font-size: 15px;
-	margin-bottom: 5px;
+	margin-top: 10px;
 	height: 17px;
 	cursor: pointer;
 }
@@ -283,6 +296,7 @@ export default {
 	color: gray;
 	margin-top: 5px;
 	font-size: 12px;
+	/* margin-left: 5px; */
 }
 
 #follow-btn {
@@ -345,5 +359,20 @@ export default {
 
 #babyPostCreate:hover {
 	background-color: rgba(161, 52, 112, 0.8);
+}
+
+@media screen and (max-width: 600px) {
+	#compo {
+		width: 90%;
+	}
+	#profile-img {
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	#follow-btn {
+		margin: 5px;
+		/* margin-right: 10px; */
+		padding: 3px 5px 3px 5px;
+	}
 }
 </style>
