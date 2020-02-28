@@ -143,4 +143,9 @@ public class PostDaoImpl implements PostDao {
 		return sqlSession.selectList(ns + "findByPostCodeKeywordMyPosts", orderSearchKeyword);
 	}
 
+	@Override
+	public List<Post> findPostByFrequencyScrollDown(Map<String, Long> hashMap) {
+		return sqlSession.selectList(ns + "findPostByFrequencyScrollDown", hashMap);
+	}
+
 }

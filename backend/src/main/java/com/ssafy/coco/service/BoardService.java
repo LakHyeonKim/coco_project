@@ -10,6 +10,7 @@ public interface BoardService {
 	public List<Board> findByAllNewsfeed(long idMember);
 	public List<Board> findByAllNewsfeedScrollDown(long idMember, long lastIdPost);
  	public List<Board> findByAllDefaultSearch(long idMember);
+ 	public List<Board> findByAllDefaultSearchScrollDown(long idMember, long lastIdPost);
 	public List<Board> findByMyPosts(long myIdMember, long youIdMember, int order);
 	public List<Board> findByAllKeywordMyPosts(OrderSearchKeyword orderSearchKeyword);
  	public List<Board> findByAllKeyword(long idMember, String keyWord);

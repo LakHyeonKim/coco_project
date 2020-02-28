@@ -56,6 +56,7 @@
 	<!-- 전체 검색 -->
 	<select id="findAllPost" resultType="Post">
 		<include refid="select-Post"></include>
+		limit 100
 	</select>
 	<select id="findPost" resultType="Post">
 		<include refid="select-Post"></include>
@@ -113,7 +114,7 @@
 		member_id
 		in (select member_following from `coco`.`follow` where member_follower =
 		#{value}) 
-		order by date_created desc limit 5
+		order by date_created desc limit 8
 	</select>
 
 	<select id="findPostByNewsfeedOrderByLike" parameterType="long"
@@ -278,8 +279,22 @@
 		resultType="Post">
 		select * from post as p ,
 		(select distinct post_id from post_tag as pt, (select tag_id from member_tag
-		where member_id = '${value}' order by frequency DESC limit 5) as temp
+		where member_id = ${value} order by frequency DESC limit 5) as temp
 		where pt.tag_id = temp.tag_id) as temp where p.idpost = temp.post_id and p.access = 0
+		order by date_created desc 
+        limit 8
+	</select>
+	
+	<select id="findPostByFrequencyScrollDown" parameterType="hashmap"
+		resultType="Post">
+		select * from post as p ,
+		(select distinct post_id from post_tag as pt, (select tag_id from member_tag
+		where member_id = ${idMember} order by frequency DESC limit 5) as temp
+		where pt.tag_id = temp.tag_id) as temp where p.idpost = temp.post_id and p.access = 0
+		and date_created <![CDATA[<]]>
+		(select date_created from `coco`.`post` where idpost = #{idPost})
+		order by date_created desc 
+		limit 5
 	</select>
 
 	<!-- <select id="findPostByFrequency" parameterType="long" resultType="Post"> 

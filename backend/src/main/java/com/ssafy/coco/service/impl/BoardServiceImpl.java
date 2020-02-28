@@ -79,6 +79,15 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
+	public List<Board> findByAllDefaultSearchScrollDown(long idMember, long lastIdPost) {
+		Map<String,Long> hashMap = new HashMap<>();
+		hashMap.put("idMember", idMember);
+		hashMap.put("idPost", lastIdPost);
+		List<Post> defaultPosts = postDao.findPostByFrequencyScrollDown(hashMap);
+		return makeBoardList(idMember, defaultPosts);
+	}
+	
+	@Override
 	public List<Board> findByMyPosts(long myIdMember, long youIdMember, int order) {
 		List<Post> myPosts = postDao.findPost(new Post(0, youIdMember, null, null, null, null, null, 0, 0, null, 0, 0, order));
 		return makeBoardList(myIdMember, myPosts);
@@ -169,6 +178,7 @@ public class BoardServiceImpl implements BoardService{
 		List<Post> list = postDao.findByPostCodeKeywordMyPosts(orderSearchKeyword);
 		return makeBoardList(orderSearchKeyword.getMyIdMember(),list);
 	}
+
 
 	
 
