@@ -28,11 +28,5 @@ export default {
 	updated() {
 		this.isAuthenticated = this.$session.get("accessToken");
 	}
-	// computed: {
-	// 	isLoggedIn: function() {
-	// 		console.log("isLoggedIn ", this.$store.getters.isLoggedIn);
-	// 		return this.$store.getters.isLoggedIn;
-	// 	}
-	// }
 };
 </script>

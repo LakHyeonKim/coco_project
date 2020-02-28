@@ -27,8 +27,17 @@ pre[class*="language-"] {
 	-moz-hyphens: none;
 	-ms-hyphens: none;
 	hyphens: none;
-	/* max-height: 200px; */
 	box-shadow: none;
+}
+@media screen and (max-width: 600px) {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		max-height: 100%;
+		max-width: 70vw;
+	}
+	#mark img {
+		width: 70vw;
+	}
 }
 
 /* Code blocks */

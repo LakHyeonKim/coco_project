@@ -22,6 +22,27 @@
 				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
+						
+						<div id="grade_sub" v-for="(grade, idx) in grades" :key="idx">
+							<div v-if="grade.grade == userInfo.member.grade">
+								<div @click="gradeCheck()">
+									<MypageGrade
+										v-if="userInfo.member.grade != null"
+										:grade="gradeforrank"
+										class="counting_click"
+									>
+										<div slot="click" style="height: 25px;">
+											<img
+												:src="grade.path"
+												alt="rank"
+												style="width: 25px; height: 25px; border-radius: 50%; margin-right: 5px; margin-top: 3px;"
+											/>
+										</div>
+									</MypageGrade>
+								</div>
+							</div>
+						</div>
+
 						<div id="nickname">{{ userInfo.member.nickname }}</div>
 
 						<MypagePWCheck v-if="isUser" style="float: left;">
@@ -64,7 +85,7 @@
 					</div>
 				</div>
 
-				<div id="grade" v-for="(grade, idx) in grades" :key="idx">
+				<!-- <div id="grade" v-for="(grade, idx) in grades" :key="idx">
 					<div v-if="grade.grade == userInfo.member.grade">
 						<img
 							:src="grade.path"
@@ -84,8 +105,29 @@
 						</div>
 					</MypageGrade>
 				</div>
-				<span id="grade" class="counting_sub">·</span>
+				<span id="grade" class="counting_sub">·</span> -->
 				<div id="counting">
+					<div id="grade" v-for="(grade, idx) in grades" :key="idx">
+						<div v-if="grade.grade == userInfo.member.grade">
+							<img
+								:src="grade.path"
+								alt="rank"
+								style="width: 25px; height: 25px; border-radius: 50%; margin-right: 5px;"
+							/>
+						</div>
+					</div>
+					<div id="grade" @click="gradeCheck()">
+						<MypageGrade
+							v-if="userInfo.member.grade != null"
+							:grade="gradeforrank"
+							class="counting_click"
+						>
+							<div slot="click">
+								<span> {{ userInfo.member.grade }}</span>
+							</div>
+						</MypageGrade>
+					</div>
+					<span id="grade" class="counting_sub">·</span>
 					<MemberList
 						:userInfo="userInfo"
 						:followList="followList"
@@ -496,6 +538,9 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
+#grade_sub {
+	display: none;
+}
 #nickname {
 	font-size: 20px;
 	float: left;
@@ -526,6 +571,13 @@ export default {
 	}
 	#banner {
 		height: 50vw;
+	}
+	#grade {
+		display: none;
+	}
+	#grade_sub {
+		display: inline-block;
+		float: left;
 	}
 }
 @media screen and (max-width: 320px) {

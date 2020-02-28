@@ -216,7 +216,10 @@ export default {
 			window.addEventListener("resize", this.onResize);
 		});
 	},
-	created() {
+	// created() {
+	// 	Prism.highlightAll();
+	// },
+	updated() {
 		Prism.highlightAll();
 	},
 	watch: {

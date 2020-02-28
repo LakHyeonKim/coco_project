@@ -92,9 +92,6 @@ export default {
 	color: black;
 	font-size: 20px;
 }
-#codeCoworker {
-	display: none;
-}
 #blankBox {
 	height: 100px;
 }

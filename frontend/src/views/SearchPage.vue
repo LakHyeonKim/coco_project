@@ -155,87 +155,6 @@ export default {
 				alert("검색어를 입력해 주십시오");
 			}
 		},
-		// searchwords(word, value) {
-		// 	this.loadingTop = true;
-		// 	// alert("넘어왔다");
-		// 	console.log("word $ value ", word, value);
-		// 	const token = this.$session.get("accessToken");
-		// 	const headers = {
-		// 		Authorization: token
-		// 	};
-		// 	console.log("search words headers ", headers);
-		// 	if (word) {
-		// 		const searchword = {
-		// 			idMember: this.idMember,
-		// 			keyWord: word
-		// 		};
-		// 		console.log(searchword);
-		// 		if (value == 1) {
-		// 			http.post("/api/findByPostTitleKeyword/", searchword, {
-		// 				headers
-		// 			})
-		// 				.then(res => {
-		// 					console.log("search TITLE words then ", res);
-		// 					this.searches = res.data;
-		// 					this.loadingTop = false;
-		// 				})
-		// 				.catch(err => {
-		// 					console.log("search TITLE words catch ", err);
-		// 					this.loadingTop = false;
-		// 				});
-		// 		} else if (value == 2) {
-		// 			http.post("api/findByPostCodeKeyword/", searchword, {
-		// 				headers
-		// 			})
-		// 				.then(res => {
-		// 					console.log("search CODE words then ", res);
-		// 					this.searches = res.data;
-		// 					this.loadingTop = false;
-		// 				})
-		// 				.catch(err => {
-		// 					console.log("search CODE words catch ", err);
-		// 					this.loadingTop = false;
-		// 				});
-		// 		} else if (value == 3) {
-		// 			http.post("api/findByPostWriterKeyword/", searchword, {
-		// 				headers
-		// 			})
-		// 				.then(res => {
-		// 					console.log("search WRITER words then ", res);
-		// 					this.searches = res.data;
-		// 					this.loadingTop = false;
-		// 				})
-		// 				.catch(err => {
-		// 					console.log("search WRITER words catch ", err);
-		// 					this.loadingTop = false;
-		// 				});
-		// 		} else if (value == 4) {
-		// 			http.post("api/findByTagKeyword/", searchword, { headers })
-		// 				.then(res => {
-		// 					console.log("search TAG words then ", res);
-		// 					this.searches = res.data;
-		// 					this.loadingTop = false;
-		// 				})
-		// 				.catch(err => {
-		// 					console.log("search TAG words catch ", err);
-		// 					this.loadingTop = false;
-		// 				});
-		// 		} else {
-		// 			http.post("/api/findByAllKeyword/", searchword, { headers })
-		// 				.then(res => {
-		// 					console.log("searchwords then ", res);
-		// 					this.searches = res.data;
-		// 					this.loadingTop = false;
-		// 				})
-		// 				.catch(err => {
-		// 					console.log("searchwords catch ", err);
-		// 					this.loadingTop = false;
-		// 				});
-		// 		}
-		// 	} else {
-		// 		alert("검색어를 입력해 주십시오");
-		// 	}
-		// },
 		like(postNum, index) {
 			console.log("글번호 : " + postNum + "| index : " + index);
 			console.log("멤버 ID : " + this.$session.get("id"));
@@ -416,50 +335,6 @@ export default {
 		const tagforsearch = this.$store.state.searchtag;
 		this.mount(tagforsearch);
 	}
-	// mounted() {
-	// 	this.loadingTop = true;
-	// 	this.idMember = this.$session.get("id");
-	// 	console.log("mounted", this.idMember);
-	// 	const tagforsearch = this.$store.state.searchtag;
-	// 	const token = this.$session.get("accessToken");
-	// 	const headers = {
-	// 		Authorization: token
-	// 	};
-	// 	console.log(headers);
-	// 	if (tagforsearch) {
-	// 		const requestForm = {
-	// 			idMember: this.idMember,
-	// 			keyWord: tagforsearch
-	// 		};
-	// 		console.log(requestForm);
-	// 		http.post("/api/findByAllKeyword/", requestForm, { headers })
-	// 			.then(res => {
-	// 				console.log("searchtags then ", res);
-	// 				this.searches = res.data;
-	// 				this.$store.state.searchtag = "";
-	// 				console.log("tagforsearch then res change", tagforsearch);
-	// 				this.loadingTop = false;
-	// 				return;
-	// 			})
-	// 			.catch(err => {
-	// 				console.log("searchtags catch ", err);
-	// 				this.loadingTop = false;
-	// 			});
-	// 	} else {
-	// 		http.post("/api/findByAllDefaultSearch/", this.idMember, {
-	// 			headers
-	// 		})
-	// 			.then(res => {
-	// 				console.log("search default mounted then", res);
-	// 				this.searches = res.data;
-	// 				this.loadingTop = false;
-	// 			})
-	// 			.catch(err => {
-	// 				console.log("search default mounted catch", err);
-	// 				this.loadingTop = false;
-	// 			});
-	// 	}
-	// }
 };
 </script>
 
@@ -503,6 +378,9 @@ export default {
 	}
 	#searches {
 		width: 100vw;
+		margin-bottom: 15px;
+		margin-top: 15px;
+		padding: 0 5px;
 	}
 	.footerBlank {
 		display: block;

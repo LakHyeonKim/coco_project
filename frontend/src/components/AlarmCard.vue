@@ -166,6 +166,7 @@ export default {
 	}
 	#userImg {
 		width: 40px;
+		height: 40px;
 	}
 	#content {
 		display: inline-block;

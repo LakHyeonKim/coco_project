@@ -1,7 +1,7 @@
 <template>
 	<div id="posts">
 		<MypageMyMenu :search="getSearchData" />
-		<div id="post_list">
+		<div style="text-align: center;">
 			<div id="post_top">
 				<v-select
 					:items="postSels"
@@ -36,6 +36,8 @@
 					/>
 				</div>
 			</div>
+		</div>
+		<div id="post_list">
 			<div
 				id="loading"
 				:style="loadingTop ? loadingStyleOn : loadingStyleOff"
@@ -653,5 +655,15 @@ export default {
 	font-weight: 400;
 	margin-top: 10px;
 	font-size: 15px;
+}
+
+@media screen and (max-width: 600px) {
+	#post_list {
+		width: 100%;
+	}
+	#post_top {
+		width: 80%;
+		justify-content: center;
+	}
 }
 </style>

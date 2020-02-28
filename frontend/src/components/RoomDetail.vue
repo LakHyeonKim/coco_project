@@ -267,6 +267,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	border: 1px solid #ddd;
+	overflow: hidden;
 }
 
 #chatHeader {
@@ -371,6 +372,7 @@ export default {
 	color: #000;
 	font-size: 13px;
 	font-weight: 400;
+	background-color: white;
 }
 
 #message:focus {
@@ -380,12 +382,12 @@ export default {
 #send_div {
 	/* background-color: rgba(160, 23, 98, 0.1); */
 	position: absolute;
-	bottom: 12px;
+	bottom: 8px;
 	width: calc(100% - 11px);
 }
 
 #chat_send_btn {
-	background-color: rgba(160, 23, 98, 0.5);
+	background-color: rgb(173, 95, 138);
 	color: white;
 	padding: 2px 7px 2px 7px;
 	/* border-radius: 20px; */
@@ -408,5 +410,11 @@ export default {
 	/* height: 350px; */
 	height: 80%;
 	color: #000;
+}
+
+@media screen and (max-width: 600px) {
+	#message {
+		width: 75%;
+	}
 }
 </style>
