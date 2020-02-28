@@ -20,6 +20,7 @@ public interface PostDao {
 	public List<Post> findByPostCodeKeywordMyPosts(OrderSearchKeyword orderSearchKeyword);
 	public List<Post> findPostByPostWriter(String keyWord);
 	public List<Post> findPostByFrequency(long idMember);
+	public List<Post> findPostByFrequencyScrollDown(Map<String,Long> hashMap);
 	public List<Post> findPostByPostComment(long idPostParents);
 	public List<Post> findPostByNewsfeedOrderByLike(long idMemberFollower);
 	public List<Post> findByAllNewsfeedScrollDown(Map<String,Long> hashMap);

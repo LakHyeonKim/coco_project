@@ -86,6 +86,19 @@ public class BoardController {
 		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
 	}
 	
+	
+	@ApiOperation(value = "사용자의 선호 태그 기반으로 모두 찾아줌 다운 스크롤 (검색 페이지용)", response = List.class)
+	@RequestMapping(value = "/findByAllDefaultSearchScrollDown", method = RequestMethod.POST)
+	public ResponseEntity<List<Board>> findByAllDefaultSearchScrollDown(@RequestHeader(value="Authorization")String jwt,@RequestBody PostAndMember postAndMember) throws Exception {
+		System.out.println("디폴트"+jwt);
+		List<Board> answers = boardService.findByAllDefaultSearchScrollDown(postAndMember.getMember().getIdmember(),postAndMember.getPost().getIdpost());
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+	}
+	
+	
 
 	@ApiOperation(value = "사용자가 작성한 포스트를 가져옴([order param] 1: 좋아요 오름차순, 2: 좋아요 내림차순, 3: 날짜 오래된 순서, 4: 날짜 최신 순서)", response = List.class)
 	@RequestMapping(value = "/findByMyPosts", method = RequestMethod.POST)
