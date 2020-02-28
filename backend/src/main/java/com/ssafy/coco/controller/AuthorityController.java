@@ -152,6 +152,7 @@ public class AuthorityController {
 		System.out.println(token);
 		JsonNode profile = jwtService.getKakaoUserInfo(token.path("access_token").toString());
 		Member vo = jwtService.changeData(profile);
+		vo.setIsManager(2);
 		System.out.println("카카오 브이오"+vo);
 		Member searchMember = new Member();
 		searchMember.setId(vo.getId());
