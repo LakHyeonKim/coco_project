@@ -97,12 +97,12 @@ export default {
 		likeCheck: {},
 		order: {},
 		tags: {},
-		commentCount: {}
+		commentCount: {},
+		selTag: {}
 	},
 	data() {
 		return {
 			dialog: false,
-			selTag: "",
 			post_tag_deep: {
 				float: "left",
 				marginRight: "6px",

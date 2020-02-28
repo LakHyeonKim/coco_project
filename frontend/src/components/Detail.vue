@@ -19,15 +19,18 @@
 				</div>
 				<div id="post-title">
 					{{ postTitle }}
-					<v-icon id="postEdit" v-if="memberId == $session.get('id')" @click="postEdit">mdi-pen</v-icon>
+					<v-icon
+						id="postEdit"
+						v-if="memberId == $session.get('id')"
+						@click="postEdit"
+						>mdi-pen</v-icon
+					>
 					<div id="post-info">
 						<span v-if="dateCreated == updateCreated">
-							{{ dateCreated }} ·
-							{{ views }} &nbsp;
+							{{ dateCreated }} · {{ views }} &nbsp;
 						</span>
 						<span v-else>
-							{{ updateCreated }}(수정됨) ·
-							{{ views }} &nbsp;
+							{{ updateCreated }}(수정됨) · {{ views }} &nbsp;
 						</span>
 						<span v-if="views > 1">views</span>
 						<span v-else>view</span>
@@ -47,7 +50,9 @@
 							@click="goMypage()"
 						/>
 						<div style="float: left;">
-							<div id="user-nickname" @click="goMypage()">{{ postWriter }}</div>
+							<div id="user-nickname" @click="goMypage()">
+								{{ postWriter }}
+							</div>
 							<!-- <span id="post-info">{{ dateCreated }} | {{ updateCreated }} · {{ views }} &nbsp;</span> -->
 							<!-- <div id="post-info">
 								<span v-if="dateCreated == updateCreated">
@@ -103,7 +108,9 @@
 				</div>
 
 				<div id="divide-line"></div>
-				<button id="babyPostCreate" @click="babyPostCreate">WRITE BABY POST ( ღ'ᴗ'ღ )</button>
+				<button id="babyPostCreate" @click="babyPostCreate">
+					WRITE BABY POST ( ღ'ᴗ'ღ )
+				</button>
 				<comment-create
 					:idPost="idPost"
 					:memberId="memberId"
@@ -111,7 +118,11 @@
 					@addComment="addComment"
 				></comment-create>
 
-				<comment-list :commentInfos="commentInfos" :receiver="memberId" @commentDelete="commentDelete"></comment-list>
+				<comment-list
+					:commentInfos="commentInfos"
+					:receiver="memberId"
+					@commentDelete="commentDelete"
+				></comment-list>
 			</div>
 		</div>
 		<div id="blankBox"></div>
@@ -314,7 +325,7 @@ export default {
 }
 
 #blankBox {
-	height: 50px;
+	height: 100px;
 }
 #detailBox {
 	/* background-color: aliceblue; */

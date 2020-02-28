@@ -68,26 +68,7 @@
 			</li>
 		</ul>
 
-		<div
-			class="nav_menu_drag"
-			@mousedown="startDrag($event)"
-			@dblclick="toggleMenu()"
-		>
-			<img src="../assets/icon/sms.png" id="drag_img" />
-		</div>
-		<!-- <button
-					class="nav_menu_drag blinking"
-					@dblclick="toggleMenu()"
-					@mousedown="startDrag($event)"
-				>
-					CHATTING CLICK!!
-				</button> -->
-		<!-- <img
-					class="nav_menu_drag"
-					src="../assets/kakao_logo.png"
-					@dblclick="toggleMenu()"
-					@mousedown="startDrag($event)"
-				/> -->
+		<div id="chat_btn"><span @click="toggleMenu">Go to Chat !</span></div>
 		<Room
 			id="openRoom"
 			v-if="!isHidden"
@@ -171,40 +152,40 @@ export default {
 		getTop() {
 			return parseInt(this.targetObj[0].style.top.replace("px", ""));
 		},
-		moveDrag(e) {
-			var e_obj = window.event ? window.event : e;
-			this.div_L = e_obj.clientX;
-			this.div_T = e_obj.clientY;
-			if (window.innerWidth - 50 < e_obj.clientX)
-				e_obj.clientX = window.innerWidth - 50;
-			if (window.innerHeight - 50 < e_obj.clientY)
-				e_obj.clientY = window.innerHeight - 50;
-			if (e_obj.clientY < 0) e_obj.clientY = 0;
-			document.getElementsByClassName("nav_menu_drag")[0].style.left =
-				e_obj.clientX + "px";
-			document.getElementsByClassName("nav_menu_drag")[0].style.top =
-				e_obj.clientY + "px";
-			return false;
-		},
-		stopDrag() {
-			document.onmousemove = null;
-			document.onmouseup = null;
-		},
-		startDrag(e) {
-			this.targetObj = document.getElementsByClassName("nav_menu_drag");
-			var e_obj = window.event ? window.event : e;
-			this.div_L = e_obj.clientX;
-			this.div_T = e_obj.clientY;
-			this.toChild.left = e_obj.clientX;
-			this.toChild.top = e_obj.clientY;
-			document.onmousemove = this.moveDrag;
-			document.onmouseup = this.stopDrag;
-			if (e_obj.preventDefault) e_obj.preventDefault();
-		},
+		// moveDrag(e) {
+		// 	var e_obj = window.event ? window.event : e;
+		// 	this.div_L = e_obj.clientX;
+		// 	this.div_T = e_obj.clientY;
+		// 	if (window.innerWidth - 50 < e_obj.clientX)
+		// 		e_obj.clientX = window.innerWidth - 50;
+		// 	if (window.innerHeight - 50 < e_obj.clientY)
+		// 		e_obj.clientY = window.innerHeight - 50;
+		// 	if (e_obj.clientY < 0) e_obj.clientY = 0;
+		// 	document.getElementsByClassName("nav_menu_drag")[0].style.left =
+		// 		e_obj.clientX + "px";
+		// 	document.getElementsByClassName("nav_menu_drag")[0].style.top =
+		// 		e_obj.clientY + "px";
+		// 	return false;
+		// },
+		// stopDrag() {
+		// 	document.onmousemove = null;
+		// 	document.onmouseup = null;
+		// },
+		// startDrag(e) {
+		// 	this.targetObj = document.getElementsByClassName("nav_menu_drag");
+		// 	var e_obj = window.event ? window.event : e;
+		// 	this.div_L = e_obj.clientX;
+		// 	this.div_T = e_obj.clientY;
+		// 	this.toChild.left = e_obj.clientX;
+		// 	this.toChild.top = e_obj.clientY;
+		// 	document.onmousemove = this.moveDrag;
+		// 	document.onmouseup = this.stopDrag;
+		// 	if (e_obj.preventDefault) e_obj.preventDefault();
+		// },
 		updateIsHiddenDetail(value) {
-			if(value.flag){
+			if (value.flag) {
 				this.isHidden = value.value;
-			}else{
+			} else {
 				this.toChild.isHiddenDetail = value.value;
 			}
 		},
@@ -232,8 +213,10 @@ export default {
 					this.stompClient.subscribe("/user/queue/info", tick => {
 						console.log(JSON.parse(tick.body).idalarm);
 						if (
-							this.latest_alarm_id < JSON.parse(tick.body).idalarm && 
-							JSON.parse(tick.body).memberReceiver != JSON.parse(tick.body).memberCaller
+							this.latest_alarm_id <
+								JSON.parse(tick.body).idalarm &&
+							JSON.parse(tick.body).memberReceiver !=
+								JSON.parse(tick.body).memberCaller
 						) {
 							if (!this.isfirst) {
 								if (
@@ -338,15 +321,35 @@ export default {
 
 <style>
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+@import url("https://fonts.googleapis.com/css?family=Fugaz+One&display=swap");
 
 .back {
 	margin: 1em auto;
 	/* font-family: "Roboto"; */
 }
-#drag_img {
-	width: 35px;
-	height: 35px;
+#chat_btn {
+	cursor: pointer;
+	font-family: "Fugaz One";
+	position: fixed;
+	top: 100px;
+	right: -125px;
+	padding: 0 10px 0 10px;
+	line-height: 50px;
+	font-size: 20px;
+	text-align: center;
+	border-radius: 10px 0 0 10px;
+	background-color: rgba(160, 23, 98, 0.7);
+	transition: all 0.25s;
 }
+
+#chat_btn > span {
+	font-family: "Fugaz One";
+}
+
+#chat_btn:hover {
+	right: 0;
+}
+
 .nav_menu_drag {
 	height: 50px;
 	width: 50px;
@@ -360,69 +363,6 @@ export default {
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 	animation: jumb 2s infinite;
 }
-@keyframes jumb {
-	0% {
-		transform: translateY(0px);
-	}
-	50% {
-		transform: translateY(-30px);
-		/* box-shadow: 0 15px 0 rgb(255, 190, 241); */
-	}
-	100% {
-		transform: translateY(0px);
-	}
-}
-.back span:nth-child(1) {
-	animation-delay: 0s;
-}
-.back span:nth-child(2) {
-	animation-delay: 0.1s;
-}
-.back span:nth-child(3) {
-	animation-delay: 0.2s;
-}
-.back span:nth-child(4) {
-	animation-delay: 0.3s;
-}
-.back span:nth-child(5) {
-	animation-delay: 0.4s;
-}
-.back span:nth-child(6) {
-	animation-delay: 0.5s;
-}
-.back span:nth-child(7) {
-	animation-delay: 0.6s;
-}
-
-.blinking {
-	-webkit-animation: blink 0.5s ease-in-out infinite alternate;
-	-moz-animation: blink 0.5s ease-in-out infinite alternate;
-	animation: blink 0.5s ease-in-out infinite alternate;
-}
-@-webkit-keyframes blink {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@-moz-keyframes blink {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@keyframes blink {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
 
 .vue-notification {
 	background-color: #7d4879;
@@ -430,18 +370,21 @@ export default {
 
 .openRoom {
 	position: fixed;
-	top: 10px;
+	margin: 0 auto;
+	/* left: 0; */
 	right: 0;
-	height: 80%;
-	width: 80%;
+	/* top: 100px; */
+	height: 100%;
+	width: calc(100% - 60px);
+	margin: 10px;
 }
 .openDetail {
 	z-index: 200;
 	position: fixed;
-	top: 10px;
-	left: 50px;
-	height: 80%;
-	width: 80%;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: calc(100% - 60px);
 }
 #navbar {
 	position: fixed;
@@ -546,6 +489,17 @@ export default {
 		top: auto;
 		bottom: 17vw;
 		left: 10vw;
+	}
+
+	.openRoom {
+		width: 100%;
+		left: -10px;
+		height: calc(100% - 17vw);
+	}
+
+	.openDetail {
+		width: 100%;
+		height: calc(100% - 17vw);
 	}
 }
 @media screen and (max-width: 330px) {
