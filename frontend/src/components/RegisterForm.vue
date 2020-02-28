@@ -159,7 +159,8 @@ export default {
 			gitUrl: "",
 			kakaoUrl: "",
 			instagramUrl: "",
-			imageUrl: ""
+			imageUrl: "",
+			isManager: 0
 		},
 		pwd1: false,
 		pwd2: false,
@@ -193,6 +194,7 @@ export default {
 				formData.set("file", this.$refs.profile.file);
 			}
 			formData.set("imageUrl", this.signUpMember.imageUrl);
+			formData.set("isManager", this.signUpMember.isManager);
 
 			if (this.onSubmit() && this.idcheck && this.nicknamecheck) {
 				this.loadingTop = true;
@@ -406,6 +408,9 @@ export default {
 		if(this.$session.has("userimageurl")){
 			this.signUpMember.imageUrl = this.$session.get("userimageurl");
 			//this.$session.remove("userimageurl");
+		}
+		if(this.$session.has("userismanager")){
+			this.signUpMember.isManager = this.$session.get("userismanager");
 		}
 	}
 };

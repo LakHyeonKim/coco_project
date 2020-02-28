@@ -322,6 +322,7 @@ export default {
 						this.$session.set("useremail", res.data.id);
 						this.$session.set("usernickname", res.data.nickname);
 						this.$session.set("userimageurl", res.data.imageUrl);
+						this.$session.set("userismanager", res.data.isManager);
 						router.push("/register");
 					}
 				})
