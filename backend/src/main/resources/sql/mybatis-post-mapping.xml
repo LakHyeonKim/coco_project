@@ -113,7 +113,7 @@
 		member_id
 		in (select member_following from `coco`.`follow` where member_follower =
 		#{value}) 
-		order by date_created desc limit 5
+		order by date_created desc limit 8
 	</select>
 
 	<select id="findPostByNewsfeedOrderByLike" parameterType="long"
