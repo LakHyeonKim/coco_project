@@ -2,7 +2,7 @@
 	<div id="footer">
 		<div id="footer_top">
 			<div id="info">
-				<table style="height:120px">
+				<table id="info_table" style="height:120px">
 					<tr>
 						<td class="info_img">
 							<img src="../assets/logo/team.png" width="20px" />
@@ -132,6 +132,11 @@ export default {
 	right: 0;
 	bottom: 0;
 }
+
+#info_table {
+	margin-left: 100px;
+}
+
 @media screen and (max-width: 900px) {
 	#tech,
 	#info {
@@ -142,6 +147,12 @@ export default {
 
 	#tech {
 		margin-top: 30px;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	#info_table {
+		margin-left: 0;
 	}
 }
 </style>

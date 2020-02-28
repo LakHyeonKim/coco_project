@@ -136,6 +136,7 @@ export default {
 	width: 130px;
 	-webkit-transition: width 0.4s ease-in-out;
 	transition: width 0.4s ease-in-out;
+	outline: none;
 }
 #searchInput:focus {
 	width: 25vw;
