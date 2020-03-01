@@ -1,6 +1,8 @@
 package com.ssafy.coco.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,8 @@ import com.ssafy.coco.vo.Like;
 import com.ssafy.coco.vo.Member;
 import com.ssafy.coco.vo.Post;
 import com.ssafy.coco.vo.Tag;
+
+
 
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -90,7 +94,7 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public List<Board> findByMyPosts(long myIdMember, long youIdMember, int order) {
 		List<Post> myPosts = postDao.findPost(new Post(0, youIdMember, null, null, null, null, null, 0, 0, null, 0, 0, order));
-		return makeBoardList(myIdMember, myPosts);
+		return makeBoardList(myIdMember, myPosts, order);
 	}
 
 	@Override
@@ -154,6 +158,45 @@ public class BoardServiceImpl implements BoardService{
 		}
 		return boards;
 	}
+	
+	private List<Board> makeBoardList(long idMember, List<Post> posts, int order){
+		List<Board> boards = new ArrayList<>();
+		Map<String,String> overlapCheck = new HashMap<>();
+		for(Post post : posts) {
+			if(overlapCheck.containsKey(post.getIdpost()+"")) continue;
+			else {
+				overlapCheck.put(post.getIdpost()+"", "check");
+				List<Like> isPostLike = likeDao.findLike(new Like(0, post.getIdpost(), idMember, 0));
+				if(isPostLike.size() != 0) {
+					post.setLikeCheck(1);
+				}
+				List<Tag> tagList = tagDao.findAllTagIncludedPost(post.getIdpost());
+				List<String> tags = new ArrayList<>();
+				for(Tag tag : tagList) {
+					tags.add(tag.getTagName());
+				}
+				//List<Member> likes = memberDao.findWhoPressedTheLikeButton(post.getIdpost());
+				post.setLikeCount(likeDao.findLike(new Like(0, post.getIdpost(), 0, 0)).size());
+				int commentCount = commentDao.findComment(new Comment(0, 0, post.getIdpost(), null, null, null, null, 0)).size();
+				boards.add(new Board(post, tags, commentCount));
+			}
+		}
+		if(order == 1) {
+			Collections.sort(boards, new Comparator<Board>() {
+				public int compare(Board o1, Board o2) {
+					return o1.getPost().getLikeCount() > o2.getPost().getLikeCount() ? 1 : -1;
+				}
+			});
+		}else if(order == 2) {
+			Collections.sort(boards, new Comparator<Board>() {
+				@Override
+				public int compare(Board o1, Board o2) {
+					return o1.getPost().getLikeCount() > o2.getPost().getLikeCount() ? -1 : 1;
+				}
+			});
+		}
+		return boards;
+	}
 
 	@Override
 	public List<Board> findByAllKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
@@ -178,8 +221,5 @@ public class BoardServiceImpl implements BoardService{
 		List<Post> list = postDao.findByPostCodeKeywordMyPosts(orderSearchKeyword);
 		return makeBoardList(orderSearchKeyword.getMyIdMember(),list);
 	}
-
-
-	
 
 }
