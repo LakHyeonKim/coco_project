@@ -8,12 +8,7 @@
 				<img
 					@click="isBlock = !isBlock"
 					id="profile"
-					:src="
-						$session.get('imageUrl') == undefined ||
-						$session.get('imageUrl') == ''
-							? '../img/icons/user.png'
-							: $session.get('imageUrl')
-					"
+					:src="userProfile"
 				/>
 				<ul
 					id="profile_sub"
@@ -97,6 +92,9 @@ export default {
 		Room,
 		RoomDetail
 	},
+	props: {
+		userProfile: {}
+	},
 	data() {
 		return {
 			toChild: {
@@ -119,10 +117,10 @@ export default {
 			followIcon: false,
 			likeIcon: false,
 			commentIcon: false,
-			// preUrl: "",
 			isBlock: false
 		};
 	},
+
 	methods: {
 		goAlarm() {
 			let location = "/alarm";
@@ -308,11 +306,25 @@ export default {
 			}
 		}
 	},
+	watch: {
+		userProfile: function() {
+			console.log("힝구" + this.userProfile);
+		}
+	},
 	mounted() {
 		this.solo_send_message = this.$session.get("id");
 		this.soloconnect();
 		this.alarm();
+
+		// let sessionProfile = this.$session.get("imageUrl");
+
+		// sessionProfile == undefined || sessionProfile == ""
+		// 	? (this.userProfile = "../img/icons/user.png")
+		// 	: (this.userProfile = sessionProfile);
+
+		// console.log("프으로필" + sessionProfile);
 	},
+
 	destroyed() {
 		this.disconnect();
 	}
