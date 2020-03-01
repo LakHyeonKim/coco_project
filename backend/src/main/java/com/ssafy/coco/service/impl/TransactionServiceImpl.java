@@ -278,15 +278,15 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Transactional
 	public void pushLike(long idPost, long idMember) {
-		if(likeDao.findLike(new Like(0, idPost, idMember,0)).size() == 0) {
+		//if(likeDao.findLike(new Like(0, idPost, idMember,0)).size() == 0) {
 			likeDao.addLike(new Like(0, idPost, idMember, 0));
-			postDao.updatePostlikeCount(idPost);
+			//postDao.updatePostlikeCount(idPost);
 			long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0)
 					.getMemberId();
 			long likeId = likeDao.findLike(new Like(0, idPost, idMember, 0)).get(0).getIdlike();
 			if(memberId != idMember)
 			alarmDao.addAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
-		}
+		//}
 	}
 
 	/**
@@ -298,10 +298,10 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Transactional
 	public void unLike(long idPost, long idMember) {
-		if(likeDao.findLike(new Like(0, idPost, idMember,0)).size() != 0) {
+		//if(likeDao.findLike(new Like(0, idPost, idMember,0)).size() != 0) {
 			likeDao.deleteLike(new Like(0, idPost, idMember, 0));
-			postDao.updatePostUnlikeCount(idPost);			
-		}
+			//postDao.updatePostUnlikeCount(idPost);			
+		//}
 		//		long memberId = postDao.findPost(new Post(idPost, 0, null, null, null, null, null, 0, 0, null, 0)).get(0).getMemberId();
 		//		alarmDao.deleteAlarm(new Alarm(0, idMember, memberId, idPost, likeId, 0, 0, 0));
 	}
