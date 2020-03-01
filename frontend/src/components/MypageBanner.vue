@@ -22,8 +22,11 @@
 				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
 					<div id style="display: inline-block;">
-						
-						<div id="grade_sub" v-for="(grade, idx) in grades" :key="idx">
+						<div
+							id="grade_sub"
+							v-for="(grade, idx) in grades"
+							:key="idx"
+						>
 							<div v-if="grade.grade == userInfo.member.grade">
 								<div @click="gradeCheck()">
 									<MypageGrade
@@ -235,16 +238,12 @@ export default {
 		gradeCheck() {
 			this.gradeforrank = this.userInfo.member.grade;
 		},
-		test() {
-			this.$session.remove("accessToken");
-		},
 		pwCheck() {
-			alert(this.input_pw);
 			this.$router.push("/infoModify");
 		},
 		follow() {
 			this.dialog = false;
-			console.log(this.$route.params.no);
+			// console.log(this.$route.params.no);
 
 			let address = "";
 			if (this.userInfo.isFollew == 1) {

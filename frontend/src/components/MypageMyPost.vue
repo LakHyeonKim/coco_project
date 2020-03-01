@@ -164,7 +164,6 @@ export default {
 			)
 				.then(response => {
 					if (response.status == 203) {
-						console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -172,8 +171,6 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
-
 								if (ref.status == 203) {
 									this.$session.destroy();
 									alert("로그인 정보가 만료되었습니다.");
@@ -190,8 +187,6 @@ export default {
 						if (sel == 2) this.selTag = text;
 						else this.selTag = "";
 						this.posts = response.data;
-						console.log("여기다!");
-						console.log(this.posts.length);
 						if (response.data == "" || this.posts.length == 0)
 							this.noContents = true;
 						else this.noContents = false;
@@ -203,8 +198,6 @@ export default {
 				.finally(() => (this.loadingTop = false));
 		},
 		chnagePostSel(idx) {
-			console.log(idx);
-
 			http.post(
 				"/api/findByMyPosts/",
 				{
@@ -223,7 +216,6 @@ export default {
 			)
 				.then(response => {
 					if (response.status == 203) {
-						console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -231,8 +223,6 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
-
 								if (ref.status == 203) {
 									this.$session.destroy();
 									alert("로그인 정보가 만료되었습니다.");
@@ -264,8 +254,8 @@ export default {
 			this.menuSel = idx;
 		},
 		like(postNum, index) {
-			console.log("글번호 : " + postNum + "| index : " + index);
-			console.log("멤버 ID : " + this.$session.get("id"));
+			// console.log("글번호 : " + postNum + "| index : " + index);
+			// console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.posts[index].post.likeCheck == 1) {
 				this.address = "/trc/unLike/";
 				this.posts[index].post.likeCheck = 0;
@@ -275,7 +265,7 @@ export default {
 				this.posts[index].post.likeCheck = 1;
 				this.posts[index].post.likeCount++;
 			}
-			console.log(this.address);
+			// console.log(this.address);
 			http.post(
 				this.address,
 				{
@@ -290,7 +280,6 @@ export default {
 			)
 				.then(response => {
 					if (response.status == 203) {
-						console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -298,8 +287,6 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
-
 								if (ref.status == 203) {
 									this.$session.destroy();
 									alert("로그인 정보가 만료되었습니다.");
@@ -337,7 +324,7 @@ export default {
 	},
 	mounted() {
 		this.loadingTop = true;
-		console.log("MypageMyPost : " + this.$route.params.no);
+		// console.log("MypageMyPost : " + this.$route.params.no);
 		http.post(
 			"/api/findByMyPosts/",
 			{
@@ -356,10 +343,8 @@ export default {
 		)
 			.then(response => {
 				this.posts = response.data;
-				console.log(response);
-
-				console.log("여기다!");
-				console.log(this.posts.length);
+				// console.log(response);
+				// console.log(this.posts.length);
 				if (response.data == "" || this.posts.length == 0)
 					this.noContents = true;
 				else this.noContents = false;
@@ -376,11 +361,9 @@ export default {
 	display: none;
 	width: 100%;
 	margin: 20px auto 20px auto;
-	/* display: grid; */
 	justify-content: center;
 }
 .loader {
-	/* margin: 20px auto 20px auto; */
 	border: 6px solid #f3f3f3; /* Light grey */
 	border-top: 6px solid gray; /* Blue */
 	border-radius: 50%;

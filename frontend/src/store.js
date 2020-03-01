@@ -26,16 +26,12 @@ export default new Vuex.Store({
 		commentContent: {},
 		commentDelIdx: 0,
 		likeUpdate: 0,
-		postData: null,
+		postData: null
 	},
 	getters: {
 		decode: function(state) {
 			return jwtDecode(state.token);
 		},
-		// userId: function(state) {
-		// 	console.log(jwtDecode(state.token));
-		// 	return jwtDecode(state.token).idmember;
-		// },
 		isLoggedIn: function(state) {
 			return state.token ? true : false;
 		},
@@ -46,19 +42,6 @@ export default new Vuex.Store({
 				}
 			};
 		}
-		// userNickname: function(state) {
-		// 	if (!state.nickname) {
-		// 		console.log(jwtDecode(state.token));
-		// 		return jwtDecode(state.token).nickname;
-		// 	} else {
-		// 		return state.nickname;
-		// 	}
-		// },
-
-		// userAccess: function(state) {
-		// 	console.log(jwtDecode(state.token));
-		// 	return jwtDecode(state.token).access;
-		// }
 	},
 	mutations: {
 		setToken: function(state, token) {
@@ -117,14 +100,5 @@ export default new Vuex.Store({
 		saveSearchTag: function(context, data) {
 			context.commit("setSearchTag", data);
 		}
-		// saveInit: function(context) {
-		// 	context.commit("setInit", false);
-		// },
-		// saveMemberEmail: function(context, data) {
-		// 	context.commit("setMemberEmail", data);
-		// },
-		// saveTokens: function(context, data) {
-		// 	context.commit("setTokens", data);
-		// },
 	}
 });
