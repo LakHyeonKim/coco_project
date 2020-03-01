@@ -165,120 +165,120 @@
 </template>
 
 <script>
-import router from "../router";
-import Prism from "../prism";
-import http from "../http-common";
-import VueTagsInput from "@johmun/vue-tags-input";
+import router from '../router'
+import Prism from '../prism'
+import http from '../http-common'
+import VueTagsInput from '@johmun/vue-tags-input'
 
 export default {
-	name: "NewPage",
+	name: 'NewPage',
 	components: { VueTagsInput },
-	data() {
+	data () {
 		return {
 			dialog: false,
 			question: 0,
-			dictWord: "",
+			dictWord: '',
 			dictArray: [],
-			tag: "",
+			tag: '',
 			tags: [],
-			uploaded: "",
+			uploaded: '',
 			board: {
-				code: "",
+				code: '',
 				memberId: 0,
-				postTitle: "",
-				postWriter: "",
+				postTitle: '',
+				postWriter: '',
 				tags: [],
 				attachments: null
 			},
 			loadingTop: false,
-			test: ""
-		};
+			test: ''
+		}
 	},
 	methods: {
-		insertTab: function(event) {
+		insertTab: function (event) {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
 				? event.charCode
-				: event.which;
+				: event.which
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
-				var oS = event.target.scrollTop;
+				var oS = event.target.scrollTop
 				if (event.target.setSelectionRange) {
-					var sS = event.target.selectionStart;
-					var sE = event.target.selectionEnd;
+					var sS = event.target.selectionStart
+					var sE = event.target.selectionEnd
 					event.target.value =
 						event.target.value.substring(0, sS) +
-						"\t" +
-						event.target.value.substr(sE);
-					event.target.setSelectionRange(sS + 1, sS + 1);
-					event.target.focus();
+						'\t' +
+						event.target.value.substr(sE)
+					event.target.setSelectionRange(sS + 1, sS + 1)
+					event.target.focus()
 				} else if (event.target.createTextRange) {
-					document.selection.createRange().text = "\t";
-					event.returnValue = false;
+					document.selection.createRange().text = '\t'
+					event.returnValue = false
 				}
-				event.target.scrollTop = oS;
+				event.target.scrollTop = oS
 				if (event.preventDefault) {
-					event.preventDefault();
+					event.preventDefault()
 				}
-				return false;
+				return false
 			}
-			return true;
+			return true
 		},
-		findWordDict() {
+		findWordDict () {
 			http.post(
-				"/api/findWordDictionary/",
+				'/api/findWordDictionary/',
 				{ word: this.dictWord },
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{ headers: { Authorization: this.$session.get('accessToken') } }
 			)
 				.then(res => {
-					console.log(res);
-					this.dictArray = [];
-					this.dictArray = res.data;
-					this.question = 0;
-					this.dictWord = "";
-					this.dialog = true;
+					console.log(res)
+					this.dictArray = []
+					this.dictArray = res.data
+					this.question = 0
+					this.dictWord = ''
+					this.dialog = true
 				})
 				.catch(err => {
-					console.log(err);
-				});
+					console.log(err)
+				})
 		},
-		questionCount: function(event) {
+		questionCount: function (event) {
 			//keyCode _ 모바일: 229, ? : 191, shift: 16, capslock: 20, backspace: 8, space: 32
 
-			let kCode = event.keyCode;
-			var str = String(event.target.value).split(" ");
+			let kCode = event.keyCode
+			var str = String(event.target.value).split(' ')
 
 			if (kCode == 229) {
 				this.test =
 					kCode +
-					" :: " +
+					' :: ' +
 					event.target.value
 						.charAt(event.target.selectionStart - 1)
-						.charCodeAt();
+						.charCodeAt()
 				let temp = event.target.value
 					.charAt(event.target.selectionStart - 1)
-					.charCodeAt();
+					.charCodeAt()
 
-				if (temp == 63) kCode = 191;
-				if (temp == 32) kCode = 32;
+				if (temp == 63) kCode = 191
+				if (temp == 32) kCode = 32
 
-				this.test = kCode;
+				this.test = kCode
 			}
 
 			if (kCode == 191) {
-				this.question++;
+				this.question++
 			} else if (this.question == 2) {
 				if (kCode == 32) {
-					this.question = 0;
-					this.dictWord = str[str.length - 2];
+					this.question = 0
+					this.dictWord = str[str.length - 2]
 					this.dictWord = String(this.dictWord).substring(
 						2,
 						this.dictWord.length
-					);
-					this.findWordDict();
+					)
+					this.findWordDict()
 				}
 			} else if (kCode == 32) {
-				this.question = 0;
+				this.question = 0
 			}
 
 			// if (kCode == 191) {
@@ -306,135 +306,130 @@ export default {
 			// 	this.dictWord = "";
 			// }
 		},
-		insertDescription() {
-			let index = this.$refs.carousel.getCurrentSlide();
-			this.board.code += this.dictArray[index].description;
-			this.dialog = false;
+		insertDescription () {
+			let index = this.$refs.carousel.getCurrentSlide()
+			this.board.code += this.dictArray[index].description
+			this.dialog = false
 		},
-		highlighting() {
-			Prism.highlightAll();
+		highlighting () {
+			Prism.highlightAll()
 		},
-		posting() {
+		posting () {
 			if (this.board.postTitle && this.board.code) {
-				this.loadingTop = true;
-				this.board.tags = [];
+				this.loadingTop = true
+				this.board.tags = []
 
 				for (let i = 0; i < this.tags.length; ++i) {
-					this.board.tags.push(this.tags[i].text);
+					this.board.tags.push(this.tags[i].text)
 				}
 
-				let formData = new FormData(document.forms.namedItem("board"));
-				formData.append("tags", this.board.tags);
-				let requestAddress = "/trc/makePost/";
-				console.log("Parent Data: ", this.$store.state.parent);
-				console.log("Edit Data: ", this.$store.state.postData);
+				let formData = new FormData(document.forms.namedItem('board'))
+				formData.append('tags', this.board.tags)
+				let requestAddress = '/trc/makePost/'
+				console.log('Parent Data: ', this.$store.state.parent)
+				console.log('Edit Data: ', this.$store.state.postData)
 				if (this.$store.state.parent != null) {
-					requestAddress = "/trc/makeBabyPost/";
+					requestAddress = '/trc/makeBabyPost/'
 					formData.append(
-						"parentIdPost",
+						'parentIdPost',
 						this.$store.state.parent.parentIdPost
-					);
+					)
 					formData.append(
-						"parentIdMember",
+						'parentIdMember',
 						this.$store.state.parent.parentIdMember
-					);
+					)
 				} else if (this.$store.state.postData) {
-					requestAddress = "/trc/updatePost/";
-					formData.append(
-						"idpost",
-						this.$store.state.postData.idPost
-					);
-					if (!this.uploaded && !board.attachments) {
+					requestAddress = '/trc/updatePost/'
+					formData.append('idpost', this.$store.state.postData.idPost)
+					if (!this.uploaded && !this.board.attachments) {
 						http.post(
-							"/api/deleteFile",
+							'/api/deleteFile',
 							this.$store.state.postData.idPost,
 							{
 								headers: {
 									Authorization: this.$session.get(
-										"accessToken"
+										'accessToken'
 									)
 								}
 							}
 						)
 							.then(res => {
-								console.log("File Delete Request: ", res);
+								console.log('File Delete Request: ', res)
 							})
 							.catch(err => {
-								console.log("File Delete Error: ", err);
-							});
+								console.log('File Delete Error: ', err)
+							})
 					}
 				}
-				this.$store.state.parent = null;
-				this.$store.state.postData = null;
+				this.$store.state.parent = null
+				this.$store.state.postData = null
 
-				console.log("Before axios: ", this.board);
+				console.log('Before axios: ', this.board)
 				http.post(requestAddress, formData, {
-					headers: { Authorization: this.$session.get("accessToken") }
+					headers: { Authorization: this.$session.get('accessToken') }
 				})
 					.then(res => {
-						console.log("makePost res ", res);
-						alert("글이 성공적으로 작성되었습니다.");
-						this.loadingTop = false;
+						console.log('makePost res ', res)
+						alert('글이 성공적으로 작성되었습니다.')
+						this.loadingTop = false
 						// this.$session.set("targetId", this.$session.get("id"));
 						router.push({
-							name: "mypage",
-							params: { no: this.$session.get("id") }
-						});
+							name: 'mypage',
+							params: { no: this.$session.get('id') }
+						})
 					})
 					.catch(err => {
-						console.log("makePost err ", err);
-						alert("글 작성 중 문제가 생겼습니다.");
-						this.loadingTop = false;
-						console.log(err);
+						console.log('makePost err ', err)
+						alert('글 작성 중 문제가 생겼습니다.')
+						this.loadingTop = false
+						console.log(err)
 						// router.push("/newpage");
-					});
+					})
 			} else {
-				alert("글을 작성해 주세요");
+				alert('글을 작성해 주세요')
 			}
 		}
 	},
-	mounted() {
-		Prism.plugins.autoloader.use_minified = false;
-		this.board.memberId = this.$session.get("id");
-		console.log("memberId newpage mounted ", this.board.memberId);
-		this.$store.state.token = this.$session.get("accessToken");
-		this.board.postWriter = this.$session.get("nickName");
-		console.log("nickname : ", this.$session.get("nickName"));
+	mounted () {
+		Prism.plugins.autoloader.use_minified = false
+		this.board.memberId = this.$session.get('id')
+		console.log('memberId newpage mounted ', this.board.memberId)
+		this.$store.state.token = this.$session.get('accessToken')
+		this.board.postWriter = this.$session.get('nickName')
+		console.log('nickname : ', this.$session.get('nickName'))
 
 		if (this.$store.state.postData != null) {
-			this.board.code = this.$store.state.postData.code;
-			this.board.memberId = this.$store.state.postData.memberId;
-			this.board.postTitle = this.$store.state.postData.postTitle;
-			this.board.postWriter = this.$store.state.postData.postWriter;
-			this.uploaded = this.$store.state.postData.attachments.substring(
-				38
-			);
+			this.board.code = this.$store.state.postData.code
+			this.board.memberId = this.$store.state.postData.memberId
+			this.board.postTitle = this.$store.state.postData.postTitle
+			this.board.postWriter = this.$store.state.postData.postWriter
+			this.uploaded = this.$store.state.postData.attachments.substring(38)
 			this.$store.state.postData.tags.forEach(element => {
 				this.tags.push({
 					text: element.tagName,
-					tiClasses: ["ti-valid"],
+					tiClasses: ['ti-valid'],
 					style:
-						"color: rgba(160, 23, 98, 0.5); background-color: transparent; border: 1px solid rgba(160, 23, 98, 0.5)"
-				});
-			});
+						'color: rgba(160, 23, 98, 0.5); background-color: transparent; border: 1px solid rgba(160, 23, 98, 0.5)'
+				})
+			})
 		}
 	},
-	updated() {
-		Prism.highlightAll();
+	updated () {
+		Prism.highlightAll()
 	},
-	destroyed() {
-		this.$store.state.parent = null;
-		this.$store.state.postData = null;
+	destroyed () {
+		this.$store.state.parent = null
+		this.$store.state.postData = null
 	}
-};
+}
 </script>
 
 <style>
-@import "~@voerro/vue-tagsinput/dist/style.css";
-@import "../prism.css";
-@import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap");
+@import '~@voerro/vue-tagsinput/dist/style.css';
+@import '../prism.css';
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap');
 * {
-	font-family: "Noto Sans KR", Courier;
+	font-family: 'Noto Sans KR', Courier;
 }
 ,
 #loading {
