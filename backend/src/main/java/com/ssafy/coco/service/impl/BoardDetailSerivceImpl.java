@@ -92,7 +92,7 @@ public class BoardDetailSerivceImpl implements BoardDetailSerivce{
 //			}
 //			likeInfos.add(new LikeInfo(member, isFollow));
 //		}
-		
+		post.setLikeCount(likeDao.findLike(new Like(0, post.getIdpost(), 0, 0)).size());
 		List<Post> babyPosts = postDao.findPostByPostComment(post.getIdpost());
 		int commentCount = comments.size();
 		Member tempMember = new Member();
