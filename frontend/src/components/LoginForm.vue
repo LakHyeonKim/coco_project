@@ -33,6 +33,7 @@
 							placeholder="  비밀번호"
 							style="margin-bottom:10px;"
 							v-model="credentials.password"
+							autocomplete="off"
 						/>
 					</div>
 					<button type="submit" class="loginbutton">
@@ -113,10 +114,10 @@ export default {
 		login() {
 			if (this.checkForm()) {
 				this.loadingTop = true;
-				console.log("login form ", this.credentials);
+				// console.log("login form ", this.credentials);
 				http.post("/jwt/login/", this.credentials)
 					.then(res => {
-						console.log("login res", res);
+						// console.log("login res", res);
 						if (res.status != "204") {
 							this.$session.start();
 							this.$session.set(
@@ -131,8 +132,8 @@ export default {
 
 							// decode
 							let decode = this.$store.getters.decode;
-							console.log("decode :: ");
-							console.log(decode);
+							// console.log("decode :: ");
+							// console.log(decode);
 							this.$session.set("id", Number(decode.idmember));
 							this.$session.set("nickName", decode.nickname);
 							this.$session.set("rankId", decode.rankId);
@@ -141,10 +142,10 @@ export default {
 							this.$session.set("grade", decode.grade);
 							this.$session.set("email", decode.id);
 							this.$session.set("isManager", decode.isManager);
-							console.log(
-								"asdfasdf",
-								typeof this.$session.get("isManager")
-							);
+							// console.log(
+							// 	"asdfasdf",
+							// 	typeof this.$session.get("isManager")
+							// );
 							if (this.$session.get("isManager") == 0) {
 								this.$session.clear();
 								alert("이메일 인증을 해주세요");
@@ -162,7 +163,7 @@ export default {
 							}
 							this.loadingTop = false;
 							// router.push("/newsfeed");
-							console.log("LOGIN then ", res);
+							// console.log("LOGIN then ", res);
 						} else {
 							router.push("/").catch(err => {
 								err;
@@ -177,7 +178,7 @@ export default {
 						console.log("LOGIN err ", err);
 					});
 			} else {
-				console.log("LOGIN ", "fail");
+				// console.log("LOGIN ", "fail");
 				this.loadingTop = false;
 			}
 		},
@@ -201,15 +202,15 @@ export default {
 		},
 		async loginWithGoogle() {
 			const result = await FirebaseService.loginWithGoogle();
-			console.log(result);
+			// console.log(result);
 			const useremail = result.user.email;
-			console.log(useremail);
+			// console.log(useremail);
 			http.post("/jwt/snsLogin/", useremail)
 				.then(res => {
 					this.loadingTop = true;
-					console.log("google login res ", res);
+					// console.log("google login res ", res);
 					if (res.data.accessToken) {
-						console.log("google login if ", res);
+						// console.log("google login if ", res);
 						this.$session.set("accessToken", res.data.accessToken);
 						this.$session.set(
 							"refreshToken",
@@ -217,8 +218,8 @@ export default {
 						);
 						this.$store.state.token = res.data.accessToken;
 						let decode = this.$store.getters.decode;
-						console.log("decode :: ");
-						console.log(decode);
+						// console.log("decode :: ");
+						// console.log(decode);
 						this.$session.set("id", Number(decode.idmember));
 						this.$session.set("nickName", decode.nickname);
 						this.$session.set("rankId", decode.rankId);
@@ -227,10 +228,10 @@ export default {
 						this.$session.set("grade", decode.grade);
 						this.$session.set("email", decode.id);
 						this.$session.set("isManager", decode.isManager);
-						console.log(
-							"asdfasdf",
-							typeof this.$session.get("isManager")
-						);
+						// console.log(
+						// 	"asdfasdf",
+						// 	typeof this.$session.get("isManager")
+						// );
 						if (this.$session.get("isManager") == 0) {
 							this.$session.clear();
 							alert("이메일 인증을 해주세요");
@@ -248,9 +249,9 @@ export default {
 						}
 						this.loadingTop = false;
 						// router.push("/newsfeed");
-						console.log("LOGIN then ", res);
+						// console.log("LOGIN then ", res);
 					} else {
-						console.log("google res else", res);
+						// console.log("google res else", res);
 						this.$session.set("useremail", useremail);
 						router.push("/register");
 					}
@@ -275,8 +276,8 @@ export default {
 			http.get("/jwt/kakaologin", { params: { code: sendCode } })
 				.then(res => {
 					this.loadingTop = true;
-					console.log("kakao res", res.data);
-					console.log("kakao res", res.data.accessToken);
+					// console.log("kakao res", res.data);
+					// console.log("kakao res", res.data.accessToken);
 					if (res.data.accessToken) {
 						this.$session.start();
 						this.$session.set("accessToken", res.data.accessToken);
@@ -286,8 +287,8 @@ export default {
 						);
 						this.$store.state.token = res.data.accessToken;
 						let decode = this.$store.getters.decode;
-						console.log("decode :: ");
-						console.log(decode);
+						// console.log("decode :: ");
+						// console.log(decode);
 						this.$session.set("id", Number(decode.idmember));
 						this.$session.set("nickName", decode.nickname);
 						this.$session.set("rankId", decode.rankId);
@@ -296,10 +297,10 @@ export default {
 						this.$session.set("grade", decode.grade);
 						this.$session.set("email", decode.id);
 						this.$session.set("isManager", decode.isManager);
-						console.log(
-							"asdfasdf",
-							typeof this.$session.get("isManager")
-						);
+						// console.log(
+						// 	"asdfasdf",
+						// 	typeof this.$session.get("isManager")
+						// );
 						if (this.$session.get("isManager") == 0) {
 							this.$session.clear();
 							alert("이메일 인증을 해주세요");
@@ -316,9 +317,9 @@ export default {
 						}
 						this.loadingTop = false;
 						// router.push("/newsfeed");
-						console.log("LOGIN then ", res);
+						// console.log("LOGIN then ", res);
 					} else {
-						console.log("kakao res else", res);
+						// console.log("kakao res else", res);
 						this.$session.set("useremail", res.data.id);
 						this.$session.set("usernickname", res.data.nickname);
 						this.$session.set("userimageurl", res.data.imageUrl);

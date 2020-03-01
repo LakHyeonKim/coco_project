@@ -109,7 +109,7 @@ export default {
 		// console.log(tagInfo);
 		http.post("/api/findTag", tagInfo, this.requestForm)
 			.then(res => {
-				console.log("get tag res ", res);
+				// console.log("get tag res ", res);
 				this.tagUpdate.idtag = res.data[0].idtag;
 				this.tagUpdate.tagName = res.data[0].tagName;
 				this.tagUpdate.searchedNumber = res.data[0].searchedNumber;

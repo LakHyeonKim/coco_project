@@ -138,7 +138,7 @@ export default {
 						idpost: this.idPost
 					}
 				};
-				console.log("goDetail requestForm ", requestForm);
+				// console.log("goDetail requestForm ", requestForm);
 				http.post("/trc/postClick/", requestForm, { headers })
 					.then(res => {
 						if (res.status == 203) {
@@ -150,7 +150,7 @@ export default {
 									: this.$session.get("refreshToken")
 							)
 								.then(ref => {
-									console.log(ref);
+									// console.log(ref);
 
 									if (ref.status == 203) {
 										this.$session.destroy();
@@ -168,7 +168,7 @@ export default {
 									console.log(err);
 								});
 						} else {
-							console.log("postclick then ", res);
+							// console.log("postclick then ", res);
 							router.push("/detail/" + this.idPost);
 						}
 					})
@@ -178,14 +178,14 @@ export default {
 					});
 			} else {
 				router.push("/detail/" + this.idPost);
-				console.log("justgo");
+				// console.log("justgo");
 			}
 		},
 		goSearchTag(tag) {
 			// console.log(word);
 			// store.dispatch("saveSearchTag", tag);
 			// router.push("/search");
-			console.log(tag);
+			// console.log(tag);
 			this.$emit("searchtag", tag);
 		},
 		goYourPage(memberId) {
@@ -207,7 +207,7 @@ export default {
 		};
 		http.post("/api/findMember", { idmember: this.memberId }, { headers })
 			.then(res => {
-				console.log("findMember res ", res);
+				// console.log("findMember res ", res);
 				this.userImg = res.data[0].imageUrl;
 			})
 			.catch(err => {
@@ -219,6 +219,18 @@ export default {
 	},
 	updated() {
 		Prism.highlightAll();
+		const token = this.$session.get("accessToken");
+		const headers = {
+			Authorization: token
+		};
+		http.post("/api/findMember", { idmember: this.memberId }, { headers })
+			.then(res => {
+				// console.log("findMember res ", res);
+				this.userImg = res.data[0].imageUrl;
+			})
+			.catch(err => {
+				console.log("findMember err ", err);
+			});
 	},
 	watch: {
 		temp_width(newWidth, oldWidth) {
@@ -246,6 +258,7 @@ export default {
 }
 #cardBox {
 	display: flex;
+	margin: 10px 0px;
 }
 #contentBox {
 	flex: 1;

@@ -121,7 +121,7 @@ export default {
 		// console.log(postInfo);
 		http.post("/api/findComment", commentInfo, this.requestForm)
 			.then(res => {
-				console.log("get comment res ", res);
+				// console.log("get comment res ", res);
 				this.commentUpdate.idcomment = res.data[0].idcomment;
 				this.commentUpdate.memberId = res.data[0].memberId;
 				this.commentUpdate.postId = res.data[0].postId;

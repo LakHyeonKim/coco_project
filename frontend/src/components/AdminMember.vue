@@ -125,7 +125,7 @@ export default {
 	},
 	methods: {
 		Update() {
-			console.log(this.requestForm);
+			// console.log(this.requestForm);
 			const requestForm = {
 				// idmember: this.memberUpdate.idmember,
 				// id: this.memberUpdate.id,
@@ -168,7 +168,7 @@ export default {
 		// console.log(postInfo);
 		http.post("/api/findMember", memberInfo, this.requestForm)
 			.then(res => {
-				console.log("get member res ", res);
+				// console.log("get member res ", res);
 				this.memberUpdate.email = res.data[0].email;
 				this.memberUpdate.gitUrl = res.data[0].gitUrl;
 				this.memberUpdate.grade = res.data[0].grade;

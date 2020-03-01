@@ -34,6 +34,9 @@
 						></SearchCard>
 					</div>
 				</div>
+				<div id="loading" :style="loading ? loadingStyleOn : loadingStyleOff">
+					<div v-if="loading" class="loader"></div>
+				</div>
 			</div>
 		</div>
 		<div class="footerBlank"></div>
@@ -53,6 +56,7 @@ export default {
 			searches: [],
 			keyword: "",
 			idMember: 0,
+			loading: false,
 			loadingTop: false,
 			loadingStyleOn: {
 				display: "grid",
@@ -60,7 +64,10 @@ export default {
 			},
 			loadingStyleOff: {
 				display: "none"
-			}
+			},
+			flag: true,
+			loadingflag: true,
+			searchcheck: true
 			// adress: ""
 		};
 	},
@@ -76,7 +83,7 @@ export default {
 			})
 				.then(res => {
 					if (res.status == 203) {
-						console.log("refresh token -> server");
+						// console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -84,7 +91,7 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
+								// console.log(ref);
 
 								if (ref.status == 203) {
 									this.$session.destroy();
@@ -101,35 +108,36 @@ export default {
 								}
 							})
 							.catch(err => {
-								console.log(err);
+								// console.log(err);
 							});
 					} else {
-						console.log("search words then ", value, res);
+						// console.log("search words then ", value, res);
 						this.searches = res.data;
 						this.loadingTop = false;
 					}
 				})
 				.catch(err => {
-					console.log("search words catch ", err);
+					// console.log("search words catch ", err);
 					this.loadingTop = false;
 				});
 		},
 		searchwords(word, value) {
+			this.searchcheck = false
 			this.loadingTop = true;
 			// alert("넘어왔다");
-			console.log("word $ value ", word, value);
+			// console.log("word $ value ", word, value);
 			const token = this.$session.get("accessToken");
 			const headers = {
 				Authorization: token
 			};
-			console.log("search words headers ", headers);
+			// console.log("search words headers ", headers);
 			if (word) {
 				const searchword = {
 					idMember: this.idMember,
 					keyWord: word
 				};
 				let adress = "";
-				console.log(searchword);
+				// console.log(searchword);
 				if (value == 1) {
 					adress = "/api/findByPostTitleKeyword/";
 					// console.log(adress, searchword, headers, value);
@@ -156,8 +164,8 @@ export default {
 			}
 		},
 		like(postNum, index) {
-			console.log("글번호 : " + postNum + "| index : " + index);
-			console.log("멤버 ID : " + this.$session.get("id"));
+			// console.log("글번호 : " + postNum + "| index : " + index);
+			// console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.searches[index].post.likeCheck == 1) {
 				this.address = "/trc/unLike/";
 				this.searches[index].post.likeCheck = 0;
@@ -167,7 +175,7 @@ export default {
 				this.searches[index].post.likeCheck = 1;
 				this.searches[index].post.likeCount++;
 			}
-			console.log(this.address);
+			// console.log(this.address);
 			http.post(
 				this.address,
 				{
@@ -182,7 +190,7 @@ export default {
 			)
 				.then(response => {
 					if (response.status == 203) {
-						console.log("refresh token -> server");
+						// console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -190,7 +198,7 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
+								// console.log(ref);
 
 								if (ref.status == 203) {
 									this.$session.destroy();
@@ -211,10 +219,10 @@ export default {
 								}
 							})
 							.catch(error => {
-								console.log(error);
+								// console.log(error);
 							});
 					} else {
-						console.log(response);
+						// console.log(response);
 					}
 				})
 				.catch(error => {
@@ -228,22 +236,21 @@ export default {
 					}
 				});
 		},
-		mount(tagforsearch) {
+		scrollEvent: function() {
+			// console.log(window.scrollY);
 			const token = this.$session.get("accessToken");
 			const headers = {
 				Authorization: token
 			};
-			console.log(headers);
-			if (tagforsearch) {
-				const requestForm = {
-					idMember: this.idMember,
-					keyWord: tagforsearch
-				};
-				console.log(requestForm);
-				http.post("/api/findByAllKeyword/", requestForm, { headers })
+			// console.log("scroll headers event ", headers);
+			if (window.scrollY == 0 && this.searchcheck == true) {
+				this.loadingTop = true;
+				http.post("/api/findByAllDefaultSearch/", this.idMember, {
+					headers
+				})
 					.then(res => {
 						if (res.status == 203) {
-							console.log("refresh token -> server");
+							// console.log("refresh token -> server");
 							http.post(
 								"/jwt/getAccessTokenByRefreshToken/",
 								this.$session.get("refreshToken") == undefined
@@ -251,7 +258,137 @@ export default {
 									: this.$session.get("refreshToken")
 							)
 								.then(ref => {
-									console.log(ref);
+									// console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.scrollEvent;
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							// console.log("getpost then ", res.data);
+							this.searches = res.data;
+							this.loadingTop = false;
+							this.loadingflag = true;
+						}
+					})
+					.catch(err => {
+						console.log("getpost catch ", err);
+						// this.loadingTop = false;
+					});
+			}
+
+			// console.log(
+			// 	window.scrollY >=
+			// 		document.body.offsetHeight - window.innerHeight - 150
+			// );
+			if (
+				window.scrollY >=
+					document.body.offsetHeight - window.innerHeight - 150 &&
+				this.flag == true &&
+				this.loadingflag == true &&
+				this.searchcheck == true
+			) {
+				// console.log(
+				// 	"flagflagflagflag asdjflkasjdlfkajsdlfkajsldfkjalsdkfjalskdfj"
+				// );
+				// console.log(this.searches)
+				this.flag = false;
+				this.loading = true;
+				const requestForm = {
+					member: {
+						idmember: this.idMember
+					},
+					post: {
+						idpost: this.searches[this.searches.length - 1].post.idpost
+					}
+				};
+				// console.log("down scroll reqeustForm ", requestForm);
+				// console.log("scroll headers event ", headers);
+				http.post("/api/findByAllDefaultSearchScrollDown/", requestForm, {
+					headers
+				})
+					.then(res => {
+						if (res.status == 203) {
+							// console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									// console.log(ref);
+
+									if (ref.status == 203) {
+										this.$session.destroy();
+										alert("로그인 정보가 만료되었습니다.");
+										this.$router.push("/");
+									} else {
+										this.$session.set(
+											"accessToken",
+											ref.data
+										);
+										this.scrollEvent;
+									}
+								})
+								.catch(err => {
+									console.log(err);
+								});
+						} else {
+							// console.log("getpost then ", res.data);
+							console.log("getpost then 2 ", res.data[0].post.idpost)
+							for (let i = 0; i < res.data.length; ++i) {
+								this.searches.push(res.data[i])
+							}
+							// console.log(this.searches)
+							this.flag = true;
+							this.loading = false;
+						}
+					})
+					.catch(err => {
+						console.log("getpost catch ", err);
+						this.flag = true;
+						this.loading = false;
+						this.loadingflag = false;
+					});
+			}
+		},
+		mount(tagforsearch) {
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			// console.log(headers);
+			if (tagforsearch) {
+				this.searchcheck = false;
+				const requestForm = {
+					idMember: this.idMember,
+					keyWord: tagforsearch
+				};
+				// console.log(requestForm);
+				http.post("/api/findByAllKeyword/", requestForm, { headers })
+					.then(res => {
+						if (res.status == 203) {
+							// console.log("refresh token -> server");
+							http.post(
+								"/jwt/getAccessTokenByRefreshToken/",
+								this.$session.get("refreshToken") == undefined
+									? null
+									: this.$session.get("refreshToken")
+							)
+								.then(ref => {
+									// console.log(ref);
 
 									if (ref.status == 203) {
 										this.$session.destroy();
@@ -269,13 +406,13 @@ export default {
 									console.log(err);
 								});
 						} else {
-							console.log("searchtags then ", res);
+							// console.log("searchtags then ", res);
 							this.searches = res.data;
 							this.$store.state.searchtag = "";
-							console.log(
-								"tagforsearch then res change",
-								tagforsearch
-							);
+							// console.log(
+							// 	"tagforsearch then res change",
+							// 	tagforsearch
+							// );
 							this.loadingTop = false;
 							return;
 						}
@@ -290,7 +427,7 @@ export default {
 				})
 					.then(res => {
 						if (res.status == 203) {
-							console.log("refresh token -> server");
+							// console.log("refresh token -> server");
 							http.post(
 								"/jwt/getAccessTokenByRefreshToken/",
 								this.$session.get("refreshToken") == undefined
@@ -298,7 +435,7 @@ export default {
 									: this.$session.get("refreshToken")
 							)
 								.then(ref => {
-									console.log(ref);
+									// console.log(ref);
 
 									if (ref.status == 203) {
 										this.$session.destroy();
@@ -316,9 +453,10 @@ export default {
 									console.log(err);
 								});
 						} else {
-							console.log("search default mounted then", res);
+							// console.log("search default mounted then", res);
 							this.searches = res.data;
 							this.loadingTop = false;
+							window.addEventListener("scroll", this.scrollEvent);
 						}
 					})
 					.catch(err => {
@@ -331,9 +469,13 @@ export default {
 	mounted() {
 		this.loadingTop = true;
 		this.idMember = this.$session.get("id");
-		console.log("mounted", this.idMember);
+		// console.log("mounted", this.idMember);
 		const tagforsearch = this.$store.state.searchtag;
 		this.mount(tagforsearch);
+	},
+	beforeDestroy: function() {
+		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };
 </script>

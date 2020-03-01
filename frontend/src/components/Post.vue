@@ -136,11 +136,11 @@ export default {
 						idpost: this.idPost
 					}
 				};
-				console.log("goDetail requestForm ", requestForm);
+				// console.log("goDetail requestForm ", requestForm);
 				http.post("/trc/postClick/", requestForm, { headers })
 					.then(res => {
 						if (res.status == 203) {
-							console.log("refresh token -> server");
+							// console.log("refresh token -> server");
 							http.post(
 								"/jwt/getAccessTokenByRefreshToken/",
 								this.$session.get("refreshToken") == undefined
@@ -148,7 +148,7 @@ export default {
 									: this.$session.get("refreshToken")
 							)
 								.then(ref => {
-									console.log(ref);
+									// console.log(ref);
 
 									if (ref.status == 203) {
 										this.$session.destroy();
@@ -166,7 +166,7 @@ export default {
 									console.log(err);
 								});
 						} else {
-							console.log("postclick then ", res);
+							// console.log("postclick then ", res);
 							router.push("/detail/" + this.idPost);
 						}
 					})
@@ -176,7 +176,7 @@ export default {
 					});
 			} else {
 				router.push("/detail/" + this.idPost);
-				console.log("justgo");
+				// console.log("justgo");
 			}
 		},
 		goSearch(tag) {
@@ -206,7 +206,7 @@ export default {
 		};
 		http.post("/api/findMember", { idmember: this.memberId }, { headers })
 			.then(res => {
-				console.log("findMember res ", res);
+				// console.log("findMember res ", res);
 				this.userImg = res.data[0].imageUrl;
 			})
 			.catch(err => {

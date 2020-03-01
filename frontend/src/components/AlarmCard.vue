@@ -78,7 +78,7 @@ export default {
 			{ headers }
 		)
 			.then(res => {
-				console.log("findMember res ", res);
+				// console.log("findMember res ", res);
 				this.userNickname = res.data[0].nickname;
 				this.userImg = res.data[0].imageUrl;
 			})
@@ -88,7 +88,7 @@ export default {
 		if (this.postId) {
 			http.post("/api/findPost", { idpost: this.postId }, { headers })
 				.then(res => {
-					console.log("findPost res ", res);
+					// console.log("findPost res ", res);
 					this.postTitle = res.data[0].postTitle;
 				})
 				.catch(err => {

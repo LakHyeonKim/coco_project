@@ -49,11 +49,11 @@ export default {
 		}
 	},
 	created: function() {
-		console.log("크리에이트는 언제 찍힐까");
+		// console.log("크리에이트는 언제 찍힐까");
 		window.addEventListener("scroll", this.scrollEvent);
 	},
 	beforeDestroy: function() {
-		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };
