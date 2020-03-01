@@ -49,6 +49,10 @@ export default {
 	beforeDestroy: function() {
 		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
+	},
+	mounted() {
+		this.$session.set("current", 1);
+		this.$emit("updateCurrent", 1);
 	}
 };
 </script>

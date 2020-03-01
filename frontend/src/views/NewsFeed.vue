@@ -55,6 +55,10 @@ export default {
 	beforeDestroy: function() {
 		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
+	},
+	mounted() {
+		this.$session.set("current", 0);
+		this.$emit("updateCurrent", 0);
 	}
 };
 </script>

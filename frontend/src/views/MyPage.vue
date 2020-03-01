@@ -22,6 +22,10 @@ export default {
 	},
 	data() {
 		return {};
+	},
+	mounted() {
+		this.$session.set("current", 5);
+		this.$emit("updateCurrent", 5);
 	}
 };
 </script>

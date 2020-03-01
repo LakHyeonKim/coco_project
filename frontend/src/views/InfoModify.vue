@@ -1,237 +1,241 @@
 <template>
-	<div id="modify">
+	<div>
 		<div id="title">
 			<div id="title_text">회원정보수정</div>
 		</div>
-		<validation-observer ref="form">
-			<form
-				@submit.prevent="updateForm"
-				name="updateForm"
-				id="updateForm"
-				enctype="multipart/form-data"
-			>
-				<div class="info_div">
-					<v-text-field
-						label="아이디"
-						v-model="member.id"
-						readonly
-						color="gray"
-						filled
-					></v-text-field>
-				</div>
-
-				<div id="img_div">
-					<div id="back_img">
-						<img-inputer
-							name="bannerImage"
-							v-model="bannerImage"
-							placeholder="Drop file here or click"
-							bottomText="Drop file here or click"
-							exceedSizeText="사진의 크기가 초과하였습니다"
-							:maxSize="10240"
-							ref="bannerImage"
-							@onExceed="exceedHandler"
-							:img-src="member.bannerImageUrl"
-							size="small"
-							class="img"
-							:disabled="disabled"
-						/>
-						<br />배너 이미지
-						<span
-							class="deleteImg"
-							@click="disabled ? '' : deleteImg(true)"
-						>
-							삭제
-						</span>
+		<div id="modify">
+			<validation-observer ref="form">
+				<form
+					@submit.prevent="updateForm"
+					name="updateForm"
+					id="updateForm"
+					enctype="multipart/form-data"
+				>
+					<div class="info_div">
+						<v-text-field
+							label="아이디"
+							v-model="member.id"
+							readonly
+							color="gray"
+							filled
+						></v-text-field>
 					</div>
 
-					<div id="profile_img">
-						<img-inputer
-							name="profileImage"
-							v-model="profileImage"
-							placeholder="Drop file here or click"
-							bottomText="Drop file here or click"
-							exceedSizeText="사진의 크기가 초과하였습니다"
-							:maxSize="10240"
-							ref="profileImage"
-							@onExceed="exceedHandler"
-							:img-src="member.profileImageUrl"
-							size="small"
-							class="img"
+					<div id="img_div">
+						<div id="back_img">
+							<img-inputer
+								name="bannerImage"
+								v-model="bannerImage"
+								placeholder="Drop file here or click"
+								bottomText="Drop file here or click"
+								exceedSizeText="사진의 크기가 초과하였습니다"
+								:maxSize="10240"
+								ref="bannerImage"
+								@onExceed="exceedHandler"
+								:img-src="member.bannerImageUrl"
+								size="small"
+								class="img"
+								:disabled="disabled"
+							/>
+							<br />배너 이미지
+							<span
+								class="deleteImg"
+								@click="disabled ? '' : deleteImg(true)"
+							>
+								삭제
+							</span>
+						</div>
+
+						<div id="profile_img">
+							<img-inputer
+								name="profileImage"
+								v-model="profileImage"
+								placeholder="Drop file here or click"
+								bottomText="Drop file here or click"
+								exceedSizeText="사진의 크기가 초과하였습니다"
+								:maxSize="10240"
+								ref="profileImage"
+								@onExceed="exceedHandler"
+								:img-src="member.profileImageUrl"
+								size="small"
+								class="img"
+								:disabled="disabled"
+							/>
+							<br />프로필 이미지
+							<span
+								class="deleteImg"
+								@click="disabled ? '' : deleteImg(false)"
+							>
+								삭제
+							</span>
+						</div>
+					</div>
+
+					<div id="nick_div" class="info_div">
+						<div id="nick_text">
+							<validation-provider
+								name="닉네임 "
+								rules="required|max:10"
+								v-slot="{ errors }"
+							>
+								<v-text-field
+									name="nickName"
+									v-model="member.nickName"
+									:counter="10"
+									label="닉네임"
+									:error-messages="errors[0] ? errors[0] : []"
+									color="gray"
+									:disabled="disabled"
+								></v-text-field>
+							</validation-provider>
+						</div>
+						<div id="duplicate_btn" @click="nickCheck">
+							중복확인
+						</div>
+					</div>
+
+					<div class="info_div">
+						<v-text-field
+							name="bannerText"
+							label="마이페이지 타이틀"
+							color="gray"
+							v-model="member.bannerText"
+							:disabled="disabled"
+						></v-text-field>
+					</div>
+
+					<div style="margin-bottom: 20px;">
+						<span style="color: gray; font-size: 12px;">
+							마이페이지 태그 (10개 제한)
+						</span>
+						<VueTagsInput
+							v-model="tag"
+							:tags="tags"
+							@tags-changed="newTags => (tags = newTags)"
+							:add-on-key="[13, 32, 9, ':', ';', ' ']"
+							add-on-blur
+							allow-edit-tags
+							:max-tags="10"
+							id="tagsInput"
+							placeholder
 							:disabled="disabled"
 						/>
-						<br />프로필 이미지
-						<span
-							class="deleteImg"
-							@click="disabled ? '' : deleteImg(false)"
-						>
-							삭제
-						</span>
 					</div>
-				</div>
 
-				<div id="nick_div" class="info_div">
-					<div id="nick_text">
+					<div class="info_div">
 						<validation-provider
-							name="닉네임 "
-							rules="required|max:10"
+							name="비밀번호 "
+							vid="confirmation"
+							rules="min:8|max:16|password"
 							v-slot="{ errors }"
 						>
 							<v-text-field
-								name="nickName"
-								v-model="member.nickName"
-								:counter="10"
-								label="닉네임"
+								name="password"
+								v-model="pwd"
+								label="비밀번호"
+								:counter="16"
+								:type="pwd1 ? 'text' : 'password'"
 								:error-messages="errors[0] ? errors[0] : []"
+								:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
+								@click:append="pwd1 = !pwd1"
 								color="gray"
 								:disabled="disabled"
 							></v-text-field>
 						</validation-provider>
 					</div>
-					<div id="duplicate_btn" @click="nickCheck">중복확인</div>
-				</div>
 
-				<div class="info_div">
-					<v-text-field
-						name="bannerText"
-						label="마이페이지 타이틀"
-						color="gray"
-						v-model="member.bannerText"
-						:disabled="disabled"
-					></v-text-field>
-				</div>
-
-				<div style="margin-bottom: 20px;">
-					<span style="color: gray; font-size: 12px;">
-						마이페이지 태그 (10개 제한)
-					</span>
-					<VueTagsInput
-						v-model="tag"
-						:tags="tags"
-						@tags-changed="newTags => (tags = newTags)"
-						:add-on-key="[13, 32, 9, ':', ';']"
-						add-on-blur
-						allow-edit-tags
-						:max-tags="10"
-						id="tagsInput"
-						placeholder
-						:disabled="disabled"
-					/>
-				</div>
-
-				<div class="info_div">
-					<validation-provider
-						name="비밀번호 "
-						vid="confirmation"
-						rules="min:8|max:16|password"
-						v-slot="{ errors }"
-					>
-						<v-text-field
-							name="password"
-							v-model="pwd"
-							label="비밀번호"
-							:counter="16"
-							:type="pwd1 ? 'text' : 'password'"
-							:error-messages="errors[0] ? errors[0] : []"
-							:append-icon="pwd1 ? 'mdi-eye' : 'mdi-eye-off'"
-							@click:append="pwd1 = !pwd1"
-							color="gray"
-							:disabled="disabled"
-						></v-text-field>
-					</validation-provider>
-				</div>
-
-				<div class="info_div">
-					<validation-provider
-						name="비밀번호 확인 "
-						rules="confirmed:confirmation"
-						v-slot="{ errors }"
-					>
-						<v-text-field
-							v-model="passwordConfirm"
-							label="비밀번호 확인"
-							:type="pwd2 ? 'text' : 'password'"
-							:error-messages="errors[0] ? errors[0] : []"
-							:append-icon="pwd2 ? 'mdi-eye' : 'mdi-eye-off'"
-							@click:append="pwd2 = !pwd2"
-							color="gray"
-							:disabled="disabled"
-						></v-text-field>
-					</validation-provider>
-				</div>
-
-				<div class="info_div">
-					<v-text-field
-						v-model="member.gitUrl"
-						label="Git url(선택)"
-						color="gray"
-						name="gitUrl"
-						:disabled="disabled"
-					></v-text-field>
-				</div>
-
-				<div class="info_div">
-					<v-text-field
-						v-model="member.kakaoUrl"
-						label="Kakao url(선택)"
-						color="gray"
-						name="kakaoUrl"
-						:disabled="disabled"
-					></v-text-field>
-				</div>
-
-				<div class="info_div">
-					<v-text-field
-						v-model="member.instagramUrl"
-						label="Instagram url(선택)"
-						color="gray"
-						name="instagramUrl"
-						:disabled="disabled"
-					></v-text-field>
-				</div>
-
-				<v-btn
-					class="my-2"
-					@click="updateForm"
-					id="modify_btn"
-					:disabled="disabled"
-				>
-					수정하기
-				</v-btn>
-				<v-dialog v-model="dialog" width="350" :disabled="disabled">
-					<template v-slot:activator="{ on }">
-						<v-btn v-on="on" class="my-2" :disabled="disabled">
-							탈퇴하기
-						</v-btn>
-					</template>
-
-					<v-card class="d_container">
-						<div
-							style="font-family: '궁서체'; font-size: 25px; font-weight: bold; color: red; margin-bottom: 3px"
+					<div class="info_div">
+						<validation-provider
+							name="비밀번호 확인 "
+							rules="confirmed:confirmation"
+							v-slot="{ errors }"
 						>
-							정말 탈퇴하시겠습니까?
-						</div>
-						<div style="display: inline-block;">
-							<img
-								src="../assets/icon/error.png"
-								width="30px"
-								style="margin-bottom: 5px; float: left;"
-							/>
-							<div style="float: left; margin-top: 3px;">
-								삭제한 정보는 복구가 불가능합니다!!!
+							<v-text-field
+								v-model="passwordConfirm"
+								label="비밀번호 확인"
+								:type="pwd2 ? 'text' : 'password'"
+								:error-messages="errors[0] ? errors[0] : []"
+								:append-icon="pwd2 ? 'mdi-eye' : 'mdi-eye-off'"
+								@click:append="pwd2 = !pwd2"
+								color="gray"
+								:disabled="disabled"
+							></v-text-field>
+						</validation-provider>
+					</div>
+
+					<div class="info_div">
+						<v-text-field
+							v-model="member.gitUrl"
+							label="Git url(선택)"
+							color="gray"
+							name="gitUrl"
+							:disabled="disabled"
+						></v-text-field>
+					</div>
+
+					<div class="info_div">
+						<v-text-field
+							v-model="member.kakaoUrl"
+							label="Kakao url(선택)"
+							color="gray"
+							name="kakaoUrl"
+							:disabled="disabled"
+						></v-text-field>
+					</div>
+
+					<div class="info_div">
+						<v-text-field
+							v-model="member.instagramUrl"
+							label="Instagram url(선택)"
+							color="gray"
+							name="instagramUrl"
+							:disabled="disabled"
+						></v-text-field>
+					</div>
+
+					<v-btn
+						class="my-2"
+						@click="updateForm"
+						id="modify_btn"
+						:disabled="disabled"
+					>
+						수정하기
+					</v-btn>
+					<v-dialog v-model="dialog" width="350" :disabled="disabled">
+						<template v-slot:activator="{ on }">
+							<v-btn v-on="on" class="my-2" :disabled="disabled">
+								탈퇴하기
+							</v-btn>
+						</template>
+
+						<v-card class="d_container">
+							<div
+								style="font-family: '궁서체'; font-size: 25px; font-weight: bold; color: red; margin-bottom: 3px"
+							>
+								정말 탈퇴하시겠습니까?
 							</div>
-						</div>
-						<button class="d_btn" @click="deleteMember()">
-							네
-						</button>
-						<button class="d_btn" @click="dialog = false">
-							아니오
-						</button>
-					</v-card>
-				</v-dialog>
-			</form>
-		</validation-observer>
-		<div id="blank"></div>
+							<div style="display: inline-block;">
+								<img
+									src="../assets/icon/error.png"
+									width="30px"
+									style="margin-bottom: 5px; float: left;"
+								/>
+								<div style="float: left; margin-top: 3px;">
+									삭제한 정보는 복구가 불가능합니다!!!
+								</div>
+							</div>
+							<button class="d_btn" @click="deleteMember()">
+								네
+							</button>
+							<button class="d_btn" @click="dialog = false">
+								아니오
+							</button>
+						</v-card>
+					</v-dialog>
+				</form>
+			</validation-observer>
+			<div id="blank"></div>
+		</div>
 	</div>
 </template>
 <script>

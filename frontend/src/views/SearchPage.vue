@@ -476,6 +476,8 @@ export default {
 	beforeDestroy: function() {
 		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
+		this.$session.set("current", 2);
+		this.$emit("updateCurrent", 2);
 	}
 };
 </script>
