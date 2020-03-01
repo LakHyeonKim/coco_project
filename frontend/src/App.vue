@@ -36,7 +36,6 @@ export default {
 	methods: {
 		updateUserProfile(temp) {
 			this.userProfile = temp;
-			console.log("업데이트할고야ㅑㅑㅑ" + temp);
 		},
 		updateCurrent(num) {
 			this.current = num;
@@ -47,7 +46,6 @@ export default {
 	},
 	mounted() {
 		this.userProfile = this.$session.get("imageUrl");
-		console.log("??????????????????" + this.$session.get("imageUrl"));
 		this.current = this.$session.get("current");
 	}
 };

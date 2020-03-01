@@ -33,6 +33,7 @@
 						v-model="board.postTitle"
 					/>
 				</div>
+				<v-text-field label="여긔" color="gray" v-model="test" />
 				<div class="codeInput">
 					<v-tabs right color="rgba(0, 0, 0, 0.5)" hide-slider>
 						<v-tab>글쓰기</v-tab>
@@ -43,7 +44,7 @@
 									name="post.code"
 									v-model="board.code"
 									@keydown.tab="insertTab"
-									@keydown="questionCount"
+									@keyup="questionCount"
 									auto-grow
 									rounded
 									placeholder="내용"
@@ -189,7 +190,8 @@ export default {
 				tags: [],
 				attachments: null
 			},
-			loadingTop: false
+			loadingTop: false,
+			test: ""
 		};
 	},
 	methods: {
@@ -197,8 +199,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -241,29 +243,68 @@ export default {
 				});
 		},
 		questionCount: function(event) {
-			if (event.key == "?") {
+			//keyCode _ 모바일: 229, ? : 191, shift: 16, capslock: 20, backspace: 8, space: 32
+
+			let kCode = event.keyCode;
+			var str = String(event.target.value).split(" ");
+
+			if (kCode == 229) {
+				this.test =
+					kCode +
+					" :: " +
+					event.target.value
+						.charAt(event.target.selectionStart - 1)
+						.charCodeAt();
+				let temp = event.target.value
+					.charAt(event.target.selectionStart - 1)
+					.charCodeAt();
+
+				if (temp == 63) kCode = 191;
+				if (temp == 32) kCode = 32;
+
+				this.test = kCode;
+			}
+
+			if (kCode == 191) {
 				this.question++;
 			} else if (this.question == 2) {
-				if (
-					(event.keyCode >= 48 && event.keyCode <= 57) ||
-					(event.keyCode >= 65 && event.keyCode <= 90) ||
-					(event.keyCode >= 96 && event.keyCode <= 111)
-				) {
-					this.dictWord += event.key;
-				} else if (event.code == "Backspace") {
-					this.dictWord = this.dictWord.slice(0, -1);
-				} else if (event.code == "Space") {
-					this.findWordDict();
-				} else {
+				if (kCode == 32) {
 					this.question = 0;
-					this.dictWord = "";
+					this.dictWord = str[str.length - 2];
+					this.dictWord = String(this.dictWord).substring(
+						2,
+						this.dictWord.length
+					);
+					this.findWordDict();
 				}
-			} else if (event.key == "Shift" || event.key == "CapsLock") {
-				return;
-			} else {
+			} else if (kCode == 32) {
 				this.question = 0;
-				this.dictWord = "";
 			}
+
+			// if (kCode == 191) {
+			// 	this.question++;
+			// } else if (this.question == 2) {
+			// 	if (
+			// 		(kCode >= 48 && kCode <= 57) ||
+			// 		(kCode >= 65 && kCode <= 90) ||
+			// 		(kCode >= 96 && kCode <= 111)
+			// 	) {
+			// 		this.dictWord += event.key;
+			// 	} else if (kCode == 8) {
+			// 		this.dictWord = this.dictWord.slice(0, -1);
+			// 	} else if (kCode == 32) {
+			// 		this.findWordDict();
+			// 	} else {
+			// 		this.question = 0;
+			// 		this.dictWord = "";
+			// 	}
+			// } else if (kCode == 16 || kCode == 20) {
+			// 	return;
+			// } else {
+			// 	// ex) 112
+			// 	this.question = 0;
+			// 	this.dictWord = "";
+			// }
 		},
 		insertDescription() {
 			let index = this.$refs.carousel.getCurrentSlide();
