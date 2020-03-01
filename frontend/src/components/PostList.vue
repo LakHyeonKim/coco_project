@@ -45,7 +45,7 @@ export default {
 			posts: [],
 			mapPosts: new Map(),
 			scrollY: 0,
-			timer: null,
+			// timer: null,
 			flag: true,
 			loading: false,
 			loadingTop: false,
@@ -63,8 +63,8 @@ export default {
 	},
 	methods: {
 		like(postNum, index) {
-			console.log("글번호 : " + postNum + "| index : " + index);
-			console.log("멤버 ID : " + this.$session.get("id"));
+			// console.log("글번호 : " + postNum + "| index : " + index);
+			// console.log("멤버 ID : " + this.$session.get("id"));
 			if (this.posts[index][1].post.likeCheck == 1) {
 				this.address = "/trc/unLike/";
 				this.posts[index][1].post.likeCheck = 0;
@@ -74,7 +74,7 @@ export default {
 				this.posts[index][1].post.likeCheck = 1;
 				this.posts[index][1].post.likeCount++;
 			}
-			console.log(this.address);
+			// console.log(this.address);
 			http.post(
 				this.address,
 				{
@@ -89,7 +89,7 @@ export default {
 			)
 				.then(response => {
 					if (response.status == 203) {
-						console.log("refresh token -> server");
+						// console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -97,7 +97,7 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
+								// console.log(ref);
 
 								if (ref.status == 203) {
 									this.$session.destroy();
@@ -118,10 +118,10 @@ export default {
 								}
 							})
 							.catch(error => {
-								console.log(error);
+								// console.log(error);
 							});
 					} else {
-						console.log(response);
+						// console.log(response);
 					}
 				})
 				.catch(error => {
@@ -136,7 +136,7 @@ export default {
 				});
 		},
 		scrollEvent: function() {
-			console.log(window.scrollY);
+			// console.log(window.scrollY);
 			const token = this.$session.get("accessToken");
 			const headers = {
 				Authorization: token
@@ -149,7 +149,7 @@ export default {
 				})
 					.then(res => {
 						if (res.status == 203) {
-							console.log("refresh token -> server");
+							// console.log("refresh token -> server");
 							http.post(
 								"/jwt/getAccessTokenByRefreshToken/",
 								this.$session.get("refreshToken") == undefined
@@ -157,7 +157,7 @@ export default {
 									: this.$session.get("refreshToken")
 							)
 								.then(ref => {
-									console.log(ref);
+									// console.log(ref);
 
 									if (ref.status == 203) {
 										this.$session.destroy();
@@ -175,11 +175,11 @@ export default {
 									console.log(err);
 								});
 						} else {
-							console.log("getpost then 1", res.data);
-							console.log(
-								"getpost then 2",
-								res.data[0].post.idpost
-							);
+							// console.log("getpost then 1", res.data);
+							// console.log(
+							// 	"getpost then 2",
+							// 	res.data[0].post.idpost
+							// );
 							this.mapPosts = new Map();
 							this.posts = [];
 							for (let i = 0; i < res.data.length; ++i) {
@@ -188,9 +188,9 @@ export default {
 									res.data[i]
 								);
 							}
-							console.log("getpost then 3", this.mapPosts);
+							// console.log("getpost then 3", this.mapPosts);
 							this.posts = [...this.mapPosts];
-							console.log(this.posts);
+							// console.log(this.posts);
 							this.loadingTop = false;
 							this.loadingflag = true;
 						}
@@ -201,19 +201,19 @@ export default {
 					});
 			}
 
-			console.log(
-				window.scrollY >=
-					document.body.offsetHeight - window.innerHeight - 150
-			);
+			// console.log(
+			// 	window.scrollY >=
+			// 		document.body.offsetHeight - window.innerHeight - 150
+			// );
 			if (
 				window.scrollY >=
 					document.body.offsetHeight - window.innerHeight - 150 &&
 				this.flag == true &&
 				this.loadingflag == true
 			) {
-				console.log(
-					"flagflagflagflag asdjflkasjdlfkajsdlfkajsldfkjalsdkfjalskdfj"
-				);
+				// console.log(
+				// 	"flagflagflagflag asdjflkasjdlfkajsdlfkajsldfkjalsdkfjalskdfj"
+				// );
 				this.flag = false;
 				this.loading = true;
 				const requestForm = {
@@ -224,14 +224,14 @@ export default {
 						idpost: this.posts[this.posts.length - 1][1].post.idpost
 					}
 				};
-				console.log("down scroll reqeustForm ", requestForm);
+				// console.log("down scroll reqeustForm ", requestForm);
 				// console.log("scroll headers event ", headers);
 				http.post("/api/findByAllNewsfeedScrollDown/", requestForm, {
 					headers
 				})
 					.then(res => {
 						if (res.status == 203) {
-							console.log("refresh token -> server");
+							// console.log("refresh token -> server");
 							http.post(
 								"/jwt/getAccessTokenByRefreshToken/",
 								this.$session.get("refreshToken") == undefined
@@ -239,7 +239,7 @@ export default {
 									: this.$session.get("refreshToken")
 							)
 								.then(ref => {
-									console.log(ref);
+									// console.log(ref);
 
 									if (ref.status == 203) {
 										this.$session.destroy();
@@ -257,7 +257,7 @@ export default {
 									console.log(err);
 								});
 						} else {
-							console.log("getpost then 1", res.data);
+							// console.log("getpost then 1", res.data);
 							console.log(
 								"getpost then 2",
 								res.data[0].post.idpost
@@ -268,9 +268,9 @@ export default {
 									res.data[i]
 								);
 							}
-							console.log("getpost then 3", this.mapPosts);
+							// console.log("getpost then 3", this.mapPosts);
 							this.posts = [...this.mapPosts];
-							console.log(this.posts);
+							// console.log(this.posts);
 							this.flag = true;
 							this.loading = false;
 						}
@@ -288,14 +288,14 @@ export default {
 			const headers = {
 				Authorization: token
 			};
-			console.log("lakjsdfkjasdf", this.$session.get("id"));
-			console.log("lakjsdfkjasdf", headers);
+			// console.log("lakjsdfkjasdf", this.$session.get("id"));
+			// console.log("lakjsdfkjasdf", headers);
 			http.post("/api/findByAllNewsfeed", this.$session.get("id"), {
 				headers
 			})
 				.then(res => {
 					if (res.status == 203) {
-						console.log("refresh token -> server");
+						// console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -303,7 +303,7 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
+								// console.log(ref);
 
 								if (ref.status == 203) {
 									this.$session.destroy();
@@ -318,23 +318,23 @@ export default {
 								console.log(err);
 							});
 					} else {
-						console.log("getpost then 1", res.data);
-						console.log("getpost then 2", res.data[0].post.idpost);
+						// console.log("getpost then 1", res.data);
+						// console.log("getpost then 2", res.data[0].post.idpost);
 						for (let i = 0; i < res.data.length; ++i) {
 							this.mapPosts.set(
 								res.data[i].post.idpost,
 								res.data[i]
 							);
 						}
-						console.log("getpost then 3", this.mapPosts);
+						// console.log("getpost then 3", this.mapPosts);
 						this.posts = [...this.mapPosts];
-						console.log(this.posts);
+						// console.log(this.posts);
 						this.loadingTop = false;
 						window.addEventListener("scroll", this.scrollEvent);
 					}
 				})
 				.catch(err => {
-					console.log("getpost catch ", err);
+					// console.log("getpost catch ", err);
 					this.loadingTop = false;
 				});
 		}
@@ -344,7 +344,7 @@ export default {
 		this.mount();
 	},
 	beforeDestroy: function() {
-		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };

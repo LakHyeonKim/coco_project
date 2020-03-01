@@ -64,7 +64,7 @@ export default {
 			const headers = {
 				Authorization: token
 			};
-			console.log(headers);
+			// console.log(headers);
 			http.post(
 				"/api/findAlarm",
 				{ memberReceiver: this.$session.get("id") },
@@ -72,7 +72,7 @@ export default {
 			)
 				.then(res => {
 					if (res.status == 203) {
-						console.log("refresh token -> server");
+						// console.log("refresh token -> server");
 						http.post(
 							"/jwt/getAccessTokenByRefreshToken/",
 							this.$session.get("refreshToken") == undefined
@@ -80,7 +80,7 @@ export default {
 								: this.$session.get("refreshToken")
 						)
 							.then(ref => {
-								console.log(ref);
+								// console.log(ref);
 
 								if (ref.status == 203) {
 									this.$session.destroy();
@@ -95,7 +95,7 @@ export default {
 								console.log(err);
 							});
 					} else {
-						console.log("findalarm res ", res);
+						// console.log("findalarm res ", res);
 						this.alarms = res.data;
 					}
 				})
@@ -108,11 +108,11 @@ export default {
 		this.mount();
 	},
 	created: function() {
-		console.log("크리에이트는 언제 찍힐까");
+		// console.log("크리에이트는 언제 찍힐까");
 		window.addEventListener("scroll", this.scrollEvent);
 	},
 	beforeDestroy: function() {
-		console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
 		window.removeEventListener("scroll", this.scrollEvent);
 	}
 };

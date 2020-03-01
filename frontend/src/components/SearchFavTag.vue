@@ -73,12 +73,12 @@ export default {
 		const headers = {
 			Authorization: token
 		};
-		console.log("favHeaders", headers);
+		// console.log("favHeaders", headers);
 		http.post("/api/findByAllDefaultSearch/", this.$session.get("id"), {
 			headers
 		})
 			.then(res => {
-				console.log("findByAlldefault for tag res ", res);
+				// console.log("findByAlldefault for tag res ", res);
 				// console.log(res.data);
 				for (let i = 0; i < res.data.length; ++i) {
 					// console.log(res.data[i].tags);
@@ -113,7 +113,7 @@ export default {
 						}
 					}
 				}
-				console.log(this.tag);
+				// console.log(this.tag);
 				// console.log("akjsdfhkajsdhkasjdfh", this.imgs)
 				if (this.cnt <= 2) {
 					for (let i = 0; i < 5; ++i) {

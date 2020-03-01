@@ -45,15 +45,15 @@ export default {
 	},
 	methods: {
 		check() {
-			console.log(this.id);
-			console.log(this.nick);
+			// console.log(this.id);
+			// console.log(this.nick);
 			const requestForm = {
 				id: this.id
 			};
-			console.log(requestForm);
+			// console.log(requestForm);
 			http.post("/jwt/getTemporaryPassword/", requestForm)
 				.then(res => {
-					console.log("findPwd then ", res);
+					// console.log("findPwd then ", res);
 					if (res.status == "200") {
 						alert("해당 이메일로 임시 비밀번호가 전송되었습니다.");
 						this.dialog = false;

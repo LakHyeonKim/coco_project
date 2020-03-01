@@ -132,7 +132,7 @@ export default {
 				// views: this.postUpdate.views,
 				// order: this.postUpdate.order
 			};
-			console.log(requestForm);
+			// console.log(requestForm);
 			http.put("/api/updatePost", requestForm, this.requestForm)
 				.then(res => {
 					console.log(res);
@@ -159,7 +159,7 @@ export default {
 		// console.log(postInfo);
 		http.post("/api/findPost", postInfo, this.requestForm)
 			.then(res => {
-				console.log("get post res ", res);
+				// console.log("get post res ", res);
 				this.postUpdate.access = res.data[0].access;
 				this.postUpdate.code = res.data[0].code;
 				this.postUpdate.filePath = res.data[0].filePath;

@@ -169,12 +169,12 @@ export default {
 		// link.click();
 		// link.parentNode.removeChild(link);
 		allMembers() {
-			console.log(this.requestForm);
+			// console.log(this.requestForm);
 			if (!this.membercheck) {
 				this.membercheck = 1;
 				http.get("/api/findAllMember", this.requestForm)
 					.then(res => {
-						console.log("all member res ", res);
+						// console.log("all member res ", res);
 						this.members = res.data;
 					})
 					.catch(err => {
@@ -188,15 +188,15 @@ export default {
 			router.push("/admin/member/" + memberpk);
 		},
 		allPosts() {
-			console.log(this.requestForm);
-			console.log("asdfasdf", this.requestForm2);
+			// console.log(this.requestForm);
+			// console.log("asdfasdf", this.requestForm2);
 			if (!this.postcheck) {
 				this.postcheck = 1;
 				http.get("/api/findAllPost", this.requestForm2, {
 					crossDomain: true
 				})
 					.then(res => {
-						console.log("all post res ", res);
+						// console.log("all post res ", res);
 						this.posts = res.data;
 					})
 					.catch(err => {
@@ -210,12 +210,12 @@ export default {
 			router.push("/admin/post/" + postpk);
 		},
 		allTags() {
-			console.log(this.requestForm);
+			// console.log(this.requestForm);
 			if (!this.tagcheck) {
 				this.tagcheck = 1;
 				http.get("/api/findAllTag", this.requestForm)
 					.then(res => {
-						console.log("all tag res ", res);
+						// console.log("all tag res ", res);
 						this.tags = res.data;
 					})
 					.catch(err => {
@@ -229,12 +229,12 @@ export default {
 			router.push("/admin/tag/" + tagpk);
 		},
 		allComments() {
-			console.log(this.requestForm);
+			// console.log(this.requestForm);
 			if (!this.commentcheck) {
 				this.commentcheck = 1;
 				http.get("/api/findAllComment", this.requestForm)
 					.then(res => {
-						console.log("all comment res ", res);
+						// console.log("all comment res ", res);
 						this.comments = res.data;
 					})
 					.catch(err => {
@@ -248,12 +248,12 @@ export default {
 			router.push("/admin/comment/" + commentpk);
 		},
 		allFollows() {
-			console.log(this.requestForm);
+			// console.log(this.requestForm);
 			if (!this.followcheck) {
 				this.followcheck = 1;
 				http.get("/api/findAllFollow", this.requestForm)
 					.then(res => {
-						console.log("all follow res ", res);
+						// console.log("all follow res ", res);
 						this.follows = res.data;
 					})
 					.catch(err => {

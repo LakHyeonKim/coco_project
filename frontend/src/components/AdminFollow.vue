@@ -87,7 +87,7 @@ export default {
 		// console.log(tagInfo);
 		http.post("/api/findFollow", followInfo, this.requestForm)
 			.then(res => {
-				console.log("get follow res ", res);
+				// console.log("get follow res ", res);
 				this.followUpdate.idfollow = res.data[0].idfollow;
 				this.followUpdate.memberFollower = res.data[0].memberFollower;
 				this.followUpdate.memberFollowing = res.data[0].memberFollowing;
