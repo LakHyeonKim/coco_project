@@ -10,9 +10,9 @@
 			</div>
 			<form v-else name="board" enctype="multipart/form-data">
 				<div id="tagInput_div">
-					<span style="color: gray; font-size: 12px;"
-						>마이페이지 태그 (10개 제한)</span
-					>
+					<span style="color: gray; font-size: 12px;">
+						마이페이지 태그 (10개 제한)
+					</span>
 					<VueTagsInput
 						v-model="tag"
 						:tags="tags"
@@ -23,6 +23,7 @@
 						:max-tags="10"
 						placeholder
 						id="tagInput"
+						:separators="[' ', ',']"
 					/>
 				</div>
 				<div id="write_title">
@@ -177,12 +178,9 @@ export default {
 			question: 0,
 			dictWord: "",
 			dictArray: [],
-
 			tag: "",
 			tags: [],
-
 			uploaded: "",
-
 			board: {
 				code: "",
 				memberId: 0,
@@ -199,8 +197,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-				? event.charCode
-				: event.which;
+					? event.charCode
+					: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {

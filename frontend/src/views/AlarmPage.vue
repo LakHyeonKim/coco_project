@@ -106,6 +106,8 @@ export default {
 	},
 	mounted() {
 		this.mount();
+		this.$session.set("current", 3);
+		this.$emit("updateCurrent", 3);
 	},
 	created: function() {
 		console.log("크리에이트는 언제 찍힐까");

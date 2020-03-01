@@ -20,17 +20,29 @@
 			</li>
 			<li class="nav_menu">
 				<router-link to="/newsfeed">
-					<img class="nav_menu_img" src="../assets/icon/news.png" />
+					<img
+						class="nav_menu_img"
+						src="../assets/icon/news.png"
+						:style="current == 0 ? 'opacity: 1' : 'opacity: 0.5'"
+					/>
 				</router-link>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/newpage">
-					<img class="nav_menu_img" src="../assets/icon/plus.png" />
+					<img
+						class="nav_menu_img"
+						src="../assets/icon/plus.png"
+						:style="current == 1 ? 'opacity: 1' : 'opacity: 0.5'"
+					/>
 				</router-link>
 			</li>
 			<li class="nav_menu">
 				<router-link to="/search">
-					<img class="nav_menu_img" src="../assets/icon/search.png" />
+					<img
+						class="nav_menu_img"
+						src="../assets/icon/search.png"
+						:style="current == 2 ? 'opacity: 1' : 'opacity: 0.5'"
+					/>
 				</router-link>
 			</li>
 			<li class="nav_menu" @click="alarmIconReset">
@@ -40,6 +52,7 @@
 						class="nav_menu_img"
 						src="../assets/icon/alarm.png"
 						@click="goAlarm()"
+						:style="current == 3 ? 'opacity: 1' : 'opacity: 0.5'"
 					/>
 					<img
 						v-if="followIcon"
@@ -93,7 +106,8 @@ export default {
 		RoomDetail
 	},
 	props: {
-		userProfile: {}
+		userProfile: {},
+		current: {}
 	},
 	data() {
 		return {
@@ -316,13 +330,10 @@ export default {
 		this.soloconnect();
 		this.alarm();
 
-		// let sessionProfile = this.$session.get("imageUrl");
+		let sessionProfile = this.$session.get("imageUrl");
 
-		// sessionProfile == undefined || sessionProfile == ""
-		// 	? (this.userProfile = "../img/icons/user.png")
-		// 	: (this.userProfile = sessionProfile);
-
-		// console.log("프으로필" + sessionProfile);
+		if (sessionProfile != undefined && sessionProfile != "")
+			this.$emit("updateUserProfile", sessionProfile);
 	},
 
 	destroyed() {
@@ -461,7 +472,6 @@ export default {
 
 .nav_menu_img {
 	width: 25px;
-	opacity: 0.5;
 	transition: 0.4s;
 }
 

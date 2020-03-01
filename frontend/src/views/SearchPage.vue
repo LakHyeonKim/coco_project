@@ -334,6 +334,8 @@ export default {
 		console.log("mounted", this.idMember);
 		const tagforsearch = this.$store.state.searchtag;
 		this.mount(tagforsearch);
+		this.$session.set("current", 2);
+		this.$emit("updateCurrent", 2);
 	}
 };
 </script>
