@@ -16,7 +16,7 @@ public class TodayReset {
 	@Autowired
 	private MyPageDao myPageDao;
 	
-	@Scheduled(cron="0 0 0 1/1 * ? *") // "* * * 1 * *"
+	@Scheduled(cron="0 0 0 1/1 * ?") // "* * * 1 * *"
 	public void todayCountReset() {
 		logger.info("all member page reset");
 		try {
