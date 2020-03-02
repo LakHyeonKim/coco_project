@@ -123,14 +123,19 @@
 						</v-icon>
 					</div>
 
-					<div v-if="dictArray.length != 0">
+					<div v-if="dictArray != null">
 						<div id="dic_title">
 							<v-icon>
 								mdi-file-document-box-search-outline
 							</v-icon>
 							{{ dictArray[0].word }}
 						</div>
-						<agile ref="carousel" fade :dots="true">
+						<agile
+							ref="carousel"
+							fade
+							:dots="true"
+							v-if="dictArray != null"
+						>
 							<div
 								v-for="dict in dictArray"
 								:key="dict.idwordDictionary"
@@ -248,7 +253,7 @@ export default {
 			dialog: false,
 			question: 0,
 			dictWord: "",
-			dictArray: [],
+			dictArray: null,
 			tag: "",
 			tags: [],
 			uploaded: "",
@@ -269,8 +274,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -301,7 +306,6 @@ export default {
 				.then(res => {
 					console.log("findWordDict");
 					console.log(res);
-					this.dictArray = [];
 					this.dictArray = res.data;
 					this.question = 0;
 					this.dictWord = "";
@@ -312,7 +316,7 @@ export default {
 				});
 		},
 		closeDict() {
-			this.dictArray = [];
+			this.dictArray = null;
 			this.dialog = false;
 		},
 		questionCount: function(event) {
@@ -346,6 +350,7 @@ export default {
 						2,
 						this.dictWord.length
 					);
+					this.dictArray = null;
 					this.findWordDict();
 				}
 			} else if (kCode == 32) {
@@ -588,6 +593,18 @@ export default {
 }
 .agile__dot:hover button {
 	background-color: #888;
+}
+
+#app
+	> div.v-dialog__content.v-dialog__content--active
+	> div
+	> div
+	> div:nth-child(2)
+	> div.agile.agile--fade
+	> div.agile__list
+	> div
+	> div {
+	width: 100%;
 }
 
 .dic_container {
