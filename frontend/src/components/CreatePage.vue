@@ -263,7 +263,13 @@ export default {
 				tags: [],
 				attachments: null
 			},
-			loadingTop: false
+			loadingTop: false,
+			loadingStyleOn: {
+				display: "grid"
+			},
+			loadingStyleOff: {
+				display: "none"
+			}
 		};
 	},
 	methods: {
