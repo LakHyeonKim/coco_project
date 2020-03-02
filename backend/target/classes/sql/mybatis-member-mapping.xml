@@ -162,11 +162,6 @@
 	<delete id="deleteMember" parameterType="Member">
 		<include refid="delete-Member"></include>
 		<where>
-			m.rank_id = r.idrank
-			AND
-			is_manager = ${isManager}
-			AND
-			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
 				idmember = ${idmember}
