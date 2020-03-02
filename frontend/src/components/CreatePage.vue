@@ -133,7 +133,8 @@
 						<agile
 							ref="carousel"
 							fade
-							:dots="true"
+							:dots="false"
+							:arrows="false"
 							v-if="dictArray != null"
 						>
 							<div
@@ -274,8 +275,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-				? event.charCode
-				: event.which;
+					? event.charCode
+					: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
