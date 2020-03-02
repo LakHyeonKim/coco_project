@@ -77,6 +77,7 @@
 				@commentDelete="commentDelete(babyPost)"
 			></detail>
 		</div>
+		<div id="blankBox"></div>
 	</div>
 </template>
 
@@ -229,6 +230,9 @@ export default {
 </script>
 
 <style>
+#blankBox {
+	margin-bottom: 50px;
+}
 #detailMain {
 	height: 100%;
 	width: 100%;
