@@ -8,7 +8,7 @@
 				<img
 					@click="isBlock = !isBlock"
 					id="profile"
-					:src="userProfile"
+					:src="userProfile == '' || userProfile == undefined ? '../img/icons/user.png' : userProfile"
 				/>
 				<ul
 					id="profile_sub"
@@ -323,6 +323,7 @@ export default {
 		this.solo_send_message = this.$session.get("id");
 		this.soloconnect();
 		this.alarm();
+		console.log(this.userProfile);
 
 		let sessionProfile = this.$session.get("imageUrl");
 

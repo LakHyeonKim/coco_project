@@ -23,6 +23,7 @@ import AdminMember from "./components/AdminMember";
 import AdminTag from "./components/AdminTag";
 import AdminComment from "./components/AdminComment";
 import AdminFollow from "./components/AdminFollow";
+import EmailMessage from "./views/EmailMessage";
 
 Vue.use(VueRouter);
 
@@ -32,72 +33,44 @@ const routes = [
 		name: "home",
 		component: Home
 	},
-	// {
-	// 	path: "/post",
-	// 	name: "post",
-	// 	component: PostPage
-	// },
-	// {
-	// 	path: "/portfolio",
-	// 	name: "portfolio",
-	// 	component: PortfolioPage
-	// },
-	// {
-	// 	path: "/login",
-	// 	name: "login",
-	// 	component: Login
-	// },
+
 	{
 		path: "/register",
 		name: "register",
 		component: Register
 	},
-	// {
-	// 	path: "/start",
-	// 	name: "start",
-	// 	component: Start
-	// },
+
 	{
 		path: "/newsfeed",
 		name: "newsfeed",
 		component: NewsFeed
-		// meta: {
-		// 	authRequired: true
-		// }
+
 	},
 	{
 		path: "/mypage/:no",
 		name: "mypage",
 		component: MyPage,
 		props: true
-		// meta: {
-		// 	authRequired: true
-		// }
+	
 	},
 	{
 		path: "/newpage",
 		name: "newpage",
 		component: NewPage
-		// meta: {
-		// 	authRequired: true
-		// }
+		
 	},
 	{
 		path: "/search",
 		name: "search",
 		component: SearchPage
-		// meta: {
-		// 	authRequired: true
-		// }
+		
 	},
 	{
 		path: "/detail/:idPost",
 		name: "detail",
 		component: DetailPage,
 		props: true
-		// meta: {
-		// 	authRequired: true
-		// }
+		
 	},
 	{
 		path: "/findpwd",
@@ -158,6 +131,12 @@ const routes = [
 		path: "*",
 		name: "notfound",
 		component: NewsFeed
+	},
+	{
+		path: "/email/:key",
+		name: "emailMessage",
+		component: EmailMessage,
+		props: true
 	}
 ];
 

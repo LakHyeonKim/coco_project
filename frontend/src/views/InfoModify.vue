@@ -417,7 +417,7 @@ export default {
 									console.log(error);
 								});
 						} else {
-							this.$session.set("nickName", this.member.nickname);
+							this.$session.set("nickName", this.member.nickName);
 
 							if (this.$refs.profileImage.file) {
 								console.log(

@@ -176,6 +176,7 @@ export default {
 		loadingStyleOff: {
 			display: "none"
 		},
+		signCheck: ""
 	}),
 
 	methods: {
@@ -195,8 +196,16 @@ export default {
 			}
 			formData.set("imageUrl", this.signUpMember.imageUrl);
 			formData.set("isManager", this.signUpMember.isManager);
-
-			if (this.onSubmit() && this.idcheck && this.nicknamecheck) {
+			this.$refs.form.validate().then(success => {
+				console.log("onSubmit");
+				console.log(success);
+				if (!success) {
+					alert("제출양식에 맞지 않습니다.");
+				}
+				this.signCheck = success;
+			});
+			console.log("dsdfsdfs" + this.signCheck);
+			if (this.signCheck && this.idcheck && this.nicknamecheck) {
 				this.loadingTop = true;
 				// this.$store.dispatch("startLoading");
 				console.log("REGISTER beforeaxios ", formData);
@@ -303,7 +312,6 @@ export default {
 				if (!this.idcheck || !this.nicknameCheck)
 					alert("중복확인을 해주세요");
 				console.log("REGISTER ", "검증 실패");
-				alert("혹시 사진을 잊으신건 아닌가요?");
 				this.loadingTop = false;
 			}
 		},
@@ -323,10 +331,9 @@ export default {
 				console.log(success);
 				if (!success) {
 					alert("제출양식에 맞지 않습니다.");
-					return false;
 				}
+				this.signCheck = success;
 			});
-			return true;
 		},
 		valid() {
 			this.$refs.form.validate();

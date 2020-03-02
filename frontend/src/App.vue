@@ -29,7 +29,7 @@ export default {
 	data() {
 		return {
 			isAuthenticated: this.$session.get("accessToken"),
-			userProfile: "../img/icons/user.png",
+			userProfile: "",
 			current: 0
 		};
 	},

@@ -6,6 +6,7 @@
 		>
 			<div v-if="loadingTop" class="loader"></div>
 		</div>
+		<div v-if="!loadingTop && posts.length == 0"><br>뉴스피드를 보려면 검색을 통한 팔로우가 필요해요 ~ ᕕ( ᐛ )ᕗ</div>
 		<v-flex v-for="i in posts.length" :key="i" class="postList">
 			<post
 				@like="like"
