@@ -531,7 +531,7 @@ public class BaseController {
 	}
 
 	@ApiOperation(value = "멤버 삭제", response = List.class)
-	@RequestMapping(value = "/deleteMember", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/deleteMember", method = RequestMethod.POST)
 	public ResponseEntity<Integer> deleteMember(@RequestHeader(value = "Authorization") String jwt,
 			@RequestBody Member member) throws Exception {
 		Integer answers = memberService.deleteMember(member);
@@ -746,7 +746,7 @@ public class BaseController {
 	}
 
 	@ApiOperation(value = "포스트 삭제", response = List.class)
-	@RequestMapping(value = "/deletePost", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/deletePost", method = RequestMethod.POST)
 	public ResponseEntity<Integer> deletePost(@RequestHeader(value = "Authorization") String jwt,
 			@RequestBody Post post) throws Exception {
 		Integer answers = postService.deletePost(post);
