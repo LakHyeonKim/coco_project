@@ -10,7 +10,8 @@
 	<sql id="insert-message">
 		insert into `coco`.`message`
 		(room_id, member_id, nick_name, date_created, context, type)
-		values(#{roomId}, #{memberId}, #{nickName}, now(), #{context}, #{type})
+		values(#{roomId}, #{memberId}, #{nickName}, DATE_ADD(NOW(), INTERVAL
+		9 HOUR), #{context}, #{type})
 	</sql>
 
 	<!-- 전체 검색 -->

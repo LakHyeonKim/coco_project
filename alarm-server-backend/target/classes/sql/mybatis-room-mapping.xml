@@ -10,7 +10,8 @@
 	<sql id="insert-room">
 		insert into `coco`.`room`
 		(member_id, room_name, date_created)
-		values(#{memberId}, #{roomName}, now())
+		values(#{memberId}, #{roomName}, DATE_ADD(NOW(), INTERVAL
+		9 HOUR))
 	</sql>
 	<sql id="update-room">
 		update `coco`.`room` set

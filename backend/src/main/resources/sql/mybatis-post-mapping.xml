@@ -361,6 +361,10 @@
 		SET `like_count` = `like_count` + 1
 		WHERE idpost = #{value};
 	</update>
+	
+	<update id="updatePostWriter" parameterType="post">
+		update `coco`.`post` set post_writer = #{postWriter} where member_id = #{memberId} and access = 0;
+	</update>
 
 	<delete id="deletePost" parameterType="Post">
 		<include refid="delete-Post"></include>
