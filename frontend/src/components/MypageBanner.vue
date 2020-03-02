@@ -137,11 +137,12 @@
 						class="counting_click"
 					>
 						<div slot="click">
-							<span @click="getFollow(false)"
-								>팔로잉 {{ userInfo.followingCount }}</span
+							<span @click="getFollow(true)"
+								>팔로워 {{ userInfo.followerCount }}</span
 							>
 						</div>
 					</MemberList>
+
 					<span class="counting_sub">·</span>
 					<MemberList
 						:userInfo="userInfo"
@@ -149,11 +150,12 @@
 						class="counting_click"
 					>
 						<div slot="click">
-							<span @click="getFollow(true)"
-								>팔로워 {{ userInfo.followerCount }}</span
+							<span @click="getFollow(false)"
+								>팔로잉 {{ userInfo.followingCount }}</span
 							>
 						</div>
 					</MemberList>
+
 					<span class="counting_sub">·</span>
 					<span class="counting_sub"
 						>게시글 {{ userInfo.totalPostCount }}</span
@@ -250,10 +252,12 @@ export default {
 				address = "/trc/makeUnFollow/";
 				this.userInfo.isFollew = 0;
 				this.f_current = "팔로우";
+				this.userInfo.followerCount--;
 			} else {
 				address = "/trc/makeFollow/";
 				this.userInfo.isFollew = 1;
 				this.f_current = "팔로잉";
+				this.userInfo.followerCount++;
 			}
 			this.showModal_f = false;
 
@@ -302,9 +306,11 @@ export default {
 					if (this.userInfo.isFollew == 1) {
 						this.userInfo.isFollew = 0;
 						this.f_current = "팔로우";
+						this.userInfo.followerCount--;
 					} else {
 						this.userInfo.isFollew = 1;
 						this.f_current = "팔로잉";
+						this.userInfo.followerCount++;
 					}
 				});
 		},
