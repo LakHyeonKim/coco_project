@@ -1,6 +1,5 @@
 <template>
 	<div id="compo">
-		<div id="blankBox"></div>
 		<div id="detailBox">
 			<div>
 				<div id="hash-tags">
@@ -125,7 +124,6 @@
 				></comment-list>
 			</div>
 		</div>
-		<div id="blankBox"></div>
 	</div>
 </template>
 <script>
@@ -325,12 +323,13 @@ export default {
 }
 
 #blankBox {
-	height: 100px;
+	height: 50px;
 }
 #detailBox {
 	/* background-color: aliceblue; */
 	width: 100%;
 	height: 100%;
+	margin-top: 50px;
 }
 #fileBox {
 	/* display: flex; */

@@ -343,8 +343,6 @@ export default {
 		)
 			.then(response => {
 				this.posts = response.data;
-				// console.log(response);
-				// console.log(this.posts.length);
 				if (response.data == "" || this.posts.length == 0)
 					this.noContents = true;
 				else this.noContents = false;

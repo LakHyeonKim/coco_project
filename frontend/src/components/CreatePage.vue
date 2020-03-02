@@ -269,7 +269,8 @@ export default {
 			},
 			loadingStyleOff: {
 				display: "none"
-			}
+			},
+			isBaby: false
 		};
 	},
 	methods: {
@@ -277,8 +278,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-				? event.charCode
-				: event.which;
+					? event.charCode
+					: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -402,6 +403,7 @@ export default {
 				// console.log("Parent Data: ", this.$store.state.parent);
 				// console.log("Edit Data: ", this.$store.state.postData);
 				if (this.$store.state.parent != null) {
+					this.isBaby = true;
 					requestAddress = "/trc/makeBabyPost/";
 					formData.append(
 						"parentIdPost",
@@ -449,10 +451,13 @@ export default {
 						alert("글이 성공적으로 작성되었습니다.");
 						this.loadingTop = false;
 						// this.$session.set("targetId", this.$session.get("id"));
-						router.push({
-							name: "mypage",
-							params: { no: this.$session.get("id") }
-						});
+						if (this.isBaby) this.$router.go(-1);
+						else {
+							router.push({
+								name: "mypage",
+								params: { no: this.$session.get("id") }
+							});
+						}
 					})
 					.catch(err => {
 						// console.log("makePost err ", err);

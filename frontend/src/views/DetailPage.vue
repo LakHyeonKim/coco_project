@@ -235,9 +235,14 @@ export default {
 }
 #detailBaby {
 	position: relative;
-	left: 50px;
-	height: 100%;
-	width: 100%;
+	left: 0;
+	right: 0;
+	margin: 15px auto;
+	height: 90%;
+	width: 80%;
+	padding-bottom: 20px;
+	border: 1px solid rgba(0, 0, 0, 0.09);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 #blankForDetail {
 	height: 75px;
