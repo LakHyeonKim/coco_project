@@ -56,7 +56,7 @@
 	<!-- 전체 검색 -->
 	<select id="findAllPost" resultType="Post">
 		<include refid="select-Post"></include>
-		limit 100
+		where idpost != 0 limit 100 
 	</select>
 	<select id="findPost" resultType="Post">
 		<include refid="select-Post"></include>
@@ -114,7 +114,7 @@
 		member_id
 		in (select member_following from `coco`.`follow` where member_follower =
 		#{value}) 
-		order by date_created desc limit 8
+		order by date_created desc limit 15
 	</select>
 
 	<select id="findPostByNewsfeedOrderByLike" parameterType="long"
@@ -282,7 +282,7 @@
 		where member_id = ${value} order by frequency DESC limit 5) as temp
 		where pt.tag_id = temp.tag_id) as temp where p.idpost = temp.post_id and p.access = 0
 		order by date_created desc 
-        limit 8
+        limit 15
 	</select>
 	
 	<select id="findPostByFrequencyScrollDown" parameterType="hashmap"
