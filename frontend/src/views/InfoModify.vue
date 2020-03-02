@@ -239,73 +239,90 @@
 	</div>
 </template>
 <script>
-import http from "../http-common";
-import { ValidationProvider, ValidationObserver } from "vee-validate";
-import { VueTagsInput, createTags } from "@johmun/vue-tags-input";
+import http from '../http-common'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { VueTagsInput, createTags } from '@johmun/vue-tags-input'
 
 export default {
-	name: "InfoModify",
+	name: 'InfoModify',
 	components: {
 		ValidationProvider,
 		ValidationObserver,
 		VueTagsInput
 	},
-	data() {
+	data () {
 		return {
 			disabled: false,
 			dialog: false,
 			member: {
-				id: "",
-				profileImageUrl: "",
-				bannerImageUrl: "",
-				nickName: "",
-				gitUrl: "",
-				kakaoUrl: "",
-				instagramUrl: "",
-				password: "",
-				bannerText: ""
+				id: '',
+				profileImageUrl: '',
+				bannerImageUrl: '',
+				nickName: '',
+				gitUrl: '',
+				kakaoUrl: '',
+				instagramUrl: '',
+				password: '',
+				bannerText: ''
 			},
-			pwd: "",
-			profileImage: "",
-			bannerImage: "",
+			pwd: '',
+			profileImage: '',
+			bannerImage: '',
 			pwd1: false,
 			pwd2: false,
-			passwordConfirm: "",
+			passwordConfirm: '',
 			duplicate: true,
-			nickName_duplication: "",
-			tag: "",
+			nickName_duplication: '',
+			tag: '',
 			tags: []
-		};
+		}
 	},
 
 	methods: {
-		deleteMember() {},
-		deleteImg(flag) {
-			if (!window.confirm("정말 삭제하시겠습니까?")) return;
+		deleteMember () {
+			http.post(
+				'/api/deleteMember',
+				{
+					idmember: this.$session.get('id')
+				},
+				{ headers: { Authorization: this.$session.get('accessToken') } }
+			)
+				.then(response => {
+					console.log(response)
+					alert('탈퇴가 완료 되었습니다. 흙흙 잘가요~~ ㅠㅠ')
+					this.$session.destroy()
+					this.$router.push({ name: 'home' })
+				})
+				.catch(error => {
+					console.log(error)
+				})
+		},
+		deleteImg (flag) {
+			if (!window.confirm('정말 삭제하시겠습니까?')) return
 
-			let address = "";
+			let address = ''
 			if (flag) {
-				address = "/trc/deleteMemberBannerImage";
+				address = '/trc/deleteMemberBannerImage'
 			} else {
-				address = "/trc/deleteMemberProfile";
+				address = '/trc/deleteMemberProfile'
 			}
 
-			http.post(address, Number(this.$session.get("id")), {
+			http.post(address, Number(this.$session.get('id')), {
 				headers: {
 					Authorization:
-						this.$session.get("accessToken") == undefined
+						this.$session.get('accessToken') == undefined
 							? null
-							: this.$session.get("accessToken")
+							: this.$session.get('accessToken')
 				}
 			})
 				.then(response => {
 					if (response.status == 203) {
 						// console.log("refresh token -> server");
 						http.post(
-							"/jwt/getAccessTokenByRefreshToken/",
-							this.$session.get("refreshToken") == undefined
+							'/jwt/getAccessTokenByRefreshToken/',
+							this.$session.get('refreshToken') == undefined
 								? null
-								: this.$session.get("refreshToken")
+								: this.$session.get('refreshToken')
 						)
 							.then(ref => {
 								// console.log("ref");
@@ -317,238 +334,238 @@ export default {
 								// 		: this.$session.get("refreshToken")
 								// );
 								if (ref.status == 203) {
-									this.$session.destroy();
-									alert("로그인 정보가 만료되었습니다.");
-									this.$router.push("/");
+									this.$session.destroy()
+									alert('로그인 정보가 만료되었습니다.')
+									this.$router.push('/')
 								} else {
-									this.$session.set("accessToken", ref.data);
-									window.location.reload(true);
+									this.$session.set('accessToken', ref.data)
+									window.location.reload(true)
 								}
 							})
 							.catch(error => {
-								console.log(error);
-							});
+								console.log(error)
+							})
 					} else {
 						// console.log("DELETE then ", response);
 						if (flag) {
-							this.member.bannerImageUrl = "";
-							this.bannerImage = null;
+							this.member.bannerImageUrl = ''
+							this.bannerImage = null
 						} else {
-							this.member.profileImageUrl = "";
-							this.profileImage = null;
-							this.$session.remove("imageUrl");
+							this.member.profileImageUrl = ''
+							this.profileImage = null
+							this.$session.remove('imageUrl')
 						}
-						alert("삭제되었습니다 ~");
+						alert('삭제되었습니다 ~')
 					}
 				})
 				.catch(err => {
-					this.$store.dispatch("endLoading");
+					this.$store.dispatch('endLoading')
 					// console.log("DELETE catch ", err);
-				});
+				})
 		},
-		updateForm() {
+		updateForm () {
 			if (!this.duplicate) {
-				alert("닉네임 중복확인이 필요합니다!");
-				return;
+				alert('닉네임 중복확인이 필요합니다!')
+				return
 			}
 
-			if (this.onSubmit() && window.confirm("정말 수정하시겠습니까?")) {
-				this.disabled = true;
+			if (this.onSubmit() && window.confirm('정말 수정하시겠습니까?')) {
+				this.disabled = true
 				// this.$store.dispatch("startLoading");
 
-				this.t_tags = [];
+				this.t_tags = []
 
 				// console.log(this.tags);
 				for (let i = 0; i < this.tags.length; ++i) {
-					this.t_tags.push(this.tags[i].text);
+					this.t_tags.push(this.tags[i].text)
 				}
 
 				let formData = new FormData(
-					document.getElementById("updateForm")
-				);
-				formData.append("tags", this.t_tags);
-				formData.append("idmember", this.$session.get("id"));
+					document.getElementById('updateForm')
+				)
+				formData.append('tags', this.t_tags)
+				formData.append('idmember', this.$session.get('id'))
 
 				if (this.$refs.bannerImage.file) {
 					// console.log("bannerImg file exist");
-					formData.set("bannerImage", this.$refs.bannerImage.file);
+					formData.set('bannerImage', this.$refs.bannerImage.file)
 				}
 
-				console.log(this.$refs.profileImage.file);
+				console.log(this.$refs.profileImage.file)
 				if (this.$refs.profileImage.file) {
 					// console.log("profile file exist");
-					formData.set("profileImage", this.$refs.profileImage.file);
+					formData.set('profileImage', this.$refs.profileImage.file)
 				}
 
 				// console.log("UPDATE beforeaxios");
 				// for (var pair of formData.entries()) {
 				// 	console.log(pair[0] + ", " + pair[1]);
 				// }
-				http.post("/trc/updateMemeberInfo/", formData, {
+				http.post('/trc/updateMemeberInfo/', formData, {
 					headers: {
 						Authorization:
-							this.$session.get("accessToken") == undefined
+							this.$session.get('accessToken') == undefined
 								? null
-								: this.$session.get("accessToken")
+								: this.$session.get('accessToken')
 					}
 				})
 					.then(response => {
 						if (response.status == 203) {
 							http.post(
-								"/jwt/getAccessTokenByRefreshToken/",
-								this.$session.get("refreshToken") == undefined
+								'/jwt/getAccessTokenByRefreshToken/',
+								this.$session.get('refreshToken') == undefined
 									? null
-									: this.$session.get("refreshToken")
+									: this.$session.get('refreshToken')
 							)
 								.then(ref => {
 									if (ref.status == 203) {
-										this.$session.destroy();
-										alert("로그인 정보가 만료되었습니다.");
-										this.$router.push("/");
+										this.$session.destroy()
+										alert('로그인 정보가 만료되었습니다.')
+										this.$router.push('/')
 									} else {
 										this.$session.set(
-											"accessToken",
+											'accessToken',
 											ref.data
-										);
-										window.location.reload(true);
+										)
+										window.location.reload(true)
 									}
 								})
 								.catch(error => {
-									console.log(error);
-								});
+									console.log(error)
+								})
 						} else {
-							this.$session.set("nickName", this.member.nickName);
+							this.$session.set('nickName', this.member.nickName)
 
 							if (this.$refs.profileImage.file) {
 								console.log(
-									"http://52.79.118.55:8888/userprofile/" +
-										this.$session.get("id") +
-										"_" +
+									'http://52.79.118.55:8888/userprofile/' +
+										this.$session.get('id') +
+										'_' +
 										this.profileImage.name
-								);
+								)
 								this.$session.set(
-									"imageUrl",
-									"http://52.79.118.55:8888/userprofile/" +
-										this.$session.get("id") +
-										"_" +
+									'imageUrl',
+									'http://52.79.118.55:8888/userprofile/' +
+										this.$session.get('id') +
+										'_' +
 										this.profileImage.name
-								);
+								)
 								this.$emit(
-									"updateUserProfile",
-									"http://52.79.118.55:8888/userprofile/" +
-										this.$session.get("id") +
-										"_" +
+									'updateUserProfile',
+									'http://52.79.118.55:8888/userprofile/' +
+										this.$session.get('id') +
+										'_' +
 										this.profileImage.name
-								);
+								)
 							}
-							alert("회원정보가 수정되었습니다.");
+							alert('회원정보가 수정되었습니다.')
 							this.$router.push(
-								"/mypage/" + this.$session.get("id")
-							);
+								'/mypage/' + this.$session.get('id')
+							)
 						}
 					})
 					.catch(err => {
-						this.$store.dispatch("endLoading");
-					});
+						this.$store.dispatch('endLoading')
+					})
 			} else {
-				console.log("UPDATE ", "검증 실패");
+				console.log('UPDATE ', '검증 실패')
 			}
 		},
-		onSubmit() {
+		onSubmit () {
 			this.$refs.form.validate().then(success => {
 				if (!success) {
-					alert("제출양식에 맞지 않습니다.");
-					return false;
+					alert('제출양식에 맞지 않습니다.')
+					return false
 				}
-			});
-			return true;
+			})
+			return true
 		},
-		clear() {
-			this.$refs.form.reset();
+		clear () {
+			this.$refs.form.reset()
 		},
-		valid() {
-			this.$refs.form.validate();
+		valid () {
+			this.$refs.form.validate()
 		},
-		nickCheck() {
-			if (this.nickName_duplication == this.member.nickName) return;
+		nickCheck () {
+			if (this.nickName_duplication == this.member.nickName) return
 			if (this.member.nickName) {
-				http.post("/jwt/checkNickName", {
+				http.post('/jwt/checkNickName', {
 					nickname: this.member.nickName
 				})
 					.then(res => {
-						if (res.status == "204") {
-							alert("사용하실수 있는 닉네임입니다.");
-							this.duplicate = true;
+						if (res.status == '204') {
+							alert('사용하실수 있는 닉네임입니다.')
+							this.duplicate = true
 						} else {
-							alert("닉네임이 중복되었습니다.");
-							this.duplicate = false;
+							alert('닉네임이 중복되었습니다.')
+							this.duplicate = false
 						}
 					})
-					.catch(err => {});
+					.catch(err => {})
 			} else {
-				alert("닉네임을 입력해 주십시오.");
+				alert('닉네임을 입력해 주십시오.')
 			}
 		},
-		exceedHandler(file) {
+		exceedHandler (file) {
 			// console.log(this.$refs.profile);
 			// console.warn("onExceed -> file", file);
 			// this.$refs.profile.reset();
 		}
 	},
-	mounted() {
+	mounted () {
 		// this.localize("ko", this.dictionary);
 		if (this.$store.state.isCheck == 0) {
-			alert("잘못된 접근입니다!");
-			this.$router.push("/mypage/" + this.$session.get("id"));
+			alert('잘못된 접근입니다!')
+			this.$router.push('/mypage/' + this.$session.get('id'))
 		} else {
-			this.$store.state.isCheck = 0;
+			this.$store.state.isCheck = 0
 		}
 
-		http.post("/api/findByMemberHomePageModify", this.$session.get("id"), {
+		http.post('/api/findByMemberHomePageModify', this.$session.get('id'), {
 			headers: {
 				Authorization:
-					this.$session.get("accessToken") == undefined
+					this.$session.get('accessToken') == undefined
 						? null
-						: this.$session.get("accessToken")
+						: this.$session.get('accessToken')
 			}
 		})
 			.then(response => {
 				if (response.status == 203) {
 					http.post(
-						"/jwt/getAccessTokenByRefreshToken/",
-						this.$session.get("refreshToken") == undefined
+						'/jwt/getAccessTokenByRefreshToken/',
+						this.$session.get('refreshToken') == undefined
 							? null
-							: this.$session.get("refreshToken")
+							: this.$session.get('refreshToken')
 					)
 						.then(ref => {
 							if (ref.status == 203) {
-								this.$session.destroy();
-								alert("로그인 정보가 만료되었습니다.");
-								this.$router.push("/");
+								this.$session.destroy()
+								alert('로그인 정보가 만료되었습니다.')
+								this.$router.push('/')
 							} else {
-								this.$session.set("accessToken", ref.data);
-								window.location.reload(true);
+								this.$session.set('accessToken', ref.data)
+								window.location.reload(true)
 							}
 						})
 						.catch(error => {
-							console.log(error);
-						});
+							console.log(error)
+						})
 				} else {
-					this.member = response.data;
-					this.nickName_duplication = this.member.nickName;
-					this.tags = createTags(this.member.tags, []);
+					this.member = response.data
+					this.nickName_duplication = this.member.nickName
+					this.tags = createTags(this.member.tags, [])
 				}
 			})
 			.catch(error => {
-				console.log(error);
-			});
+				console.log(error)
+			})
 	},
 	computed: {
-		loading: function() {
-			return this.$store.state.loading;
+		loading: function () {
+			return this.$store.state.loading
 		}
 	}
-};
+}
 </script>
 
 <style>
