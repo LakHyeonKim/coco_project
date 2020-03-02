@@ -24,6 +24,12 @@
 						@click="postEdit"
 						>mdi-pen</v-icon
 					>
+					<v-icon
+						id="postDelete"
+						v-if="memberId == $session.get('id')"
+						@click="postDelete"
+						>mdi-trash-can-outline</v-icon
+					>
 					<div id="post-info">
 						<span v-if="dateCreated == updateCreated">
 							{{ dateCreated }} · {{ views }} &nbsp;
@@ -127,13 +133,13 @@
 	</div>
 </template>
 <script>
-import http from "../http-common";
-import Prism from "../prism";
-import MediumClap from "./MediumClap";
-import CommentCreate from "./CommentCreate";
-import CommentList from "./CommentList";
+import http from '../http-common'
+import Prism from '../prism'
+import MediumClap from './MediumClap'
+import CommentCreate from './CommentCreate'
+import CommentList from './CommentList'
 export default {
-	name: "Detail",
+	name: 'Detail',
 	components: {
 		MediumClap,
 		CommentCreate,
@@ -162,11 +168,30 @@ export default {
 		commentCount: {},
 		postWriterProfileImage: {}
 	},
-	data() {
-		return {};
+	data () {
+		return {}
 	},
 	methods: {
-		postEdit() {
+		postDelete () {
+			alert("정말 삭제 하시겠습니까?")
+			http.post(
+				'/api/deletePost',
+				{
+					access: 0,
+					idpost: this.idPost
+				},
+				{ headers: { Authorization: this.$session.get('accessToken') } }
+			)
+				.then(response => {
+					console.log(response)
+					alert("삭제가 완료 되었습니다.")
+					this.$router.go(-1) 
+				})
+				.catch(error => {
+					console.log(error)
+				})
+		},
+		postEdit () {
 			this.$store.state.postData = {
 				code: this.code,
 				memberId: this.memberId,
@@ -175,92 +200,92 @@ export default {
 				postWriter: this.postWriter,
 				tags: this.tags,
 				attachments: this.filePath
-			};
-			this.$router.push({ name: "newpage" });
+			}
+			this.$router.push({ name: 'newpage' })
 		},
-		goMypage() {
-			this.$router.push("/mypage/" + this.memberId);
+		goMypage () {
+			this.$router.push('/mypage/' + this.memberId)
 		},
-		babyPostCreate() {
+		babyPostCreate () {
 			this.$store.state.parent = {
 				parentIdPost: this.idPost,
 				parentIdMember: this.memberId
-			};
-			this.$router.push({ name: "newpage" });
+			}
+			this.$router.push({ name: 'newpage' })
 		},
-		isUser() {
-			if (this.$session.get("id") != this.memberId) {
-				return false;
+		isUser () {
+			if (this.$session.get('id') != this.memberId) {
+				return false
 			} else {
-				return true;
+				return true
 			}
 		},
-		follow() {
-			let requestAddress = "";
+		follow () {
+			let requestAddress = ''
 			if (this.isFollow) {
-				requestAddress = "/trc/makeUnFollow/";
+				requestAddress = '/trc/makeUnFollow/'
 			} else {
-				requestAddress = "/trc/makeFollow/";
+				requestAddress = '/trc/makeFollow/'
 			}
 
 			http.post(
 				requestAddress,
 				{
-					memberFollower: this.$session.get("id"),
+					memberFollower: this.$session.get('id'),
 					memberFollowing: this.memberId
 				},
-				{ headers: { Authorization: this.$session.get("accessToken") } }
+				{ headers: { Authorization: this.$session.get('accessToken') } }
 			)
 				.then(response => {
-					console.log(response);
-					this.$emit("updateFollow");
+					console.log(response)
+					this.$emit('updateFollow')
 				})
 				.catch(error => {
-					console.log(error);
-				});
+					console.log(error)
+				})
 		},
-		updateLike(like) {
-			this.$emit("updateLike", like);
+		updateLike (like) {
+			this.$emit('updateLike', like)
 		},
-		addComment(comment) {
-			console.log("Detail.vue", comment);
-			this.$emit("addComment", comment);
+		addComment (comment) {
+			console.log('Detail.vue', comment)
+			this.$emit('addComment', comment)
 		},
-		commentDelete(idx) {
-			this.$emit("commentDelete", idx);
+		commentDelete (idx) {
+			this.$emit('commentDelete', idx)
 		},
-		searchHashtag(hashtag) {
-			console.log(hashtag);
-			this.$store.state.searchtag = hashtag.tagName;
-			this.$router.push({ name: "search" });
-			console.log(hashtag);
+		searchHashtag (hashtag) {
+			console.log(hashtag)
+			this.$store.state.searchtag = hashtag.tagName
+			this.$router.push({ name: 'search' })
+			console.log(hashtag)
 		},
-		fileDownload() {
-			http.get(`/test/download/${this.idPost}`, { responseType: "blob" })
+		fileDownload () {
+			http.get(`/test/download/${this.idPost}`, { responseType: 'blob' })
 				.then(res => {
 					const url = window.URL.createObjectURL(
 						new Blob([res.data], {
 							type: res.data.type
 						})
-					);
-					const link = document.createElement("a");
-					link.href = url;
-					link.setAttribute("download", this.filePath.substring(38));
-					document.body.appendChild(link);
-					link.click();
-					document.body.removeChild(link);
+					)
+					const link = document.createElement('a')
+					link.href = url
+					link.setAttribute('download', this.filePath.substring(38))
+					document.body.appendChild(link)
+					link.click()
+					document.body.removeChild(link)
 				})
 				.catch(err => {
-					console.log(err);
-				});
+					console.log(err)
+				})
 		}
 	},
-	updated() {
-		Prism.highlightAll();
+	updated () {
+		Prism.highlightAll()
 	},
-	mounted() {},
-	created() {}
-};
+	mounted () {},
+	created () {}
+}
 </script>
 
 <style scoped>
@@ -357,7 +382,12 @@ export default {
 	margin: 20px 0;
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
-
+#postDelete {
+	margin-left:5px;
+}
+#postDelete:hover {
+	color: black;
+}
 #babyPostCreate {
 	width: 100%;
 	padding: 10px;
