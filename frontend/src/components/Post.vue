@@ -253,11 +253,13 @@ export default {
 #cardBox {
 	margin: 13px 13px 13px 13px;
 	display: flex;
+	width: 95%;
 }
 #contentBox {
 	width: 100%;
 	flex: 1;
 	display: grid;
+	overflow: hidden;
 }
 #cardHead {
 	display: inline-block;
@@ -294,6 +296,7 @@ export default {
 #cardTitle {
 	padding-top: 5px;
 	padding-bottom: 5px;
+	width: 100%;
 	/* margin-left: 10px; */
 	/* display: inline-block; */
 }
@@ -305,6 +308,7 @@ export default {
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 }
+
 #cardHash {
 	/* display: flex; */
 	margin-bottom: 7px;

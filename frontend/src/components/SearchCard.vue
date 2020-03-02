@@ -251,6 +251,7 @@ export default {
 	/* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
 	/* height: 400px; */
 	height: 100%;
+	width: 100%;
 }
 .postBox:hover {
 	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
@@ -259,6 +260,8 @@ export default {
 #cardBox {
 	display: flex;
 	margin: 10px 0px;
+	width: 100%;
+	overflow: hidden;
 }
 #contentBox {
 	flex: 1;
