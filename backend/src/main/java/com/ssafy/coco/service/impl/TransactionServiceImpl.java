@@ -133,7 +133,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 		String key = jwtService.makeJwt("" + member.getIdmember(), "!@323213214214324", 1);
 		mailService.sendMail(member.getId(), "[SEE-SAW] 인증 메일입니다.",
-				"<a href=http://172.30.1.30:8080/email/"+ key +">인증하기</a>");
+				"<a href=http://"+ IP +"/email/"+ key +">인증하기</a>");
 		return member.getIdmember();
 	}
 
