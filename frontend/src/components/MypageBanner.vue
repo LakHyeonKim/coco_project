@@ -88,27 +88,6 @@
 					</div>
 				</div>
 
-				<!-- <div id="grade" v-for="(grade, idx) in grades" :key="idx">
-					<div v-if="grade.grade == userInfo.member.grade">
-						<img
-							:src="grade.path"
-							alt="rank"
-							style="width: 25px; height: 25px; border-radius: 50%; margin-right: 5px;"
-						/>
-					</div>
-				</div>
-				<div id="grade" @click="gradeCheck()">
-					<MypageGrade
-						v-if="userInfo.member.grade != null"
-						:grade="gradeforrank"
-						class="counting_click"
-					>
-						<div slot="click">
-							<span> {{ userInfo.member.grade }}</span>
-						</div>
-					</MypageGrade>
-				</div>
-				<span id="grade" class="counting_sub">·</span> -->
 				<div id="counting">
 					<div id="grade" v-for="(grade, idx) in grades" :key="idx">
 						<div v-if="grade.grade == userInfo.member.grade">
