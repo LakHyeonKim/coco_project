@@ -3,7 +3,10 @@
 		<v-card class="mx-auto">
 			<v-card-text id="commentCreateInfo">
 				<v-avatar size="40">
-					<img :src="$session.get('imageUrl')" alt="../assets/user.png" />
+					<img
+						:src="$session.get('imageUrl')"
+						alt="../assets/user.png"
+					/>
 				</v-avatar>
 				<!-- <img id="commentCreaterImg" :src="$session.get('imgUrl')" alt="../assets/user.png" /> -->
 				<v-card-title
@@ -11,14 +14,18 @@
 					v-show="!show"
 					v-if="commentCount"
 					@click="moveinFocus"
-				>댓글을 작성해주세요</v-card-title>
+					>댓글을 작성해주세요</v-card-title
+				>
 				<v-card-title
 					id="commentCreatePlaceholder"
 					v-show="!show"
 					v-else
 					@click="moveinFocus"
-				>첫번째 댓글을 작성하세요</v-card-title>
-				<v-card-subtitle id="commentCreateNickname" v-show="show">{{ $session.get("nickName") }}</v-card-subtitle>
+					>첫번째 댓글을 작성하세요</v-card-title
+				>
+				<v-card-subtitle id="commentCreateNickname" v-show="show">{{
+					$session.get("nickName")
+				}}</v-card-subtitle>
 			</v-card-text>
 
 			<v-expand-transition>

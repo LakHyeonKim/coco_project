@@ -31,10 +31,14 @@
 							:tags="searches[i - 1].tags"
 							:commentCount="searches[i - 1].commentCount"
 							id="searches"
+							style="padding: 10px"
 						></SearchCard>
 					</div>
 				</div>
-				<div id="loading" :style="loading ? loadingStyleOn : loadingStyleOff">
+				<div
+					id="loading"
+					:style="loading ? loadingStyleOn : loadingStyleOff"
+				>
 					<div v-if="loading" class="loader"></div>
 				</div>
 			</div>
@@ -122,7 +126,7 @@ export default {
 				});
 		},
 		searchwords(word, value) {
-			this.searchcheck = false
+			this.searchcheck = false;
 			this.loadingTop = true;
 			// alert("넘어왔다");
 			// console.log("word $ value ", word, value);
@@ -310,14 +314,19 @@ export default {
 						idmember: this.idMember
 					},
 					post: {
-						idpost: this.searches[this.searches.length - 1].post.idpost
+						idpost: this.searches[this.searches.length - 1].post
+							.idpost
 					}
 				};
 				// console.log("down scroll reqeustForm ", requestForm);
 				// console.log("scroll headers event ", headers);
-				http.post("/api/findByAllDefaultSearchScrollDown/", requestForm, {
-					headers
-				})
+				http.post(
+					"/api/findByAllDefaultSearchScrollDown/",
+					requestForm,
+					{
+						headers
+					}
+				)
 					.then(res => {
 						if (res.status == 203) {
 							// console.log("refresh token -> server");
@@ -347,9 +356,12 @@ export default {
 								});
 						} else {
 							// console.log("getpost then ", res.data);
-							console.log("getpost then 2 ", res.data[0].post.idpost)
+							console.log(
+								"getpost then 2 ",
+								res.data[0].post.idpost
+							);
 							for (let i = 0; i < res.data.length; ++i) {
-								this.searches.push(res.data[i])
+								this.searches.push(res.data[i]);
 							}
 							// console.log(this.searches)
 							this.flag = true;

@@ -1,6 +1,10 @@
 <template>
 	<div>
-		<div id="commentListCard" v-for="(commentInfo, idx) in commentInfos.slice().reverse()" :key="idx">
+		<div
+			id="commentListCard"
+			v-for="(commentInfo, idx) in commentInfos.slice().reverse()"
+			:key="idx"
+		>
 			<comment-item
 				:commentInfo="commentInfo"
 				:receiver="receiver"
