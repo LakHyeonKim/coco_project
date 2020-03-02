@@ -114,51 +114,65 @@
 				scrollable
 				overflowed
 				@keydown.enter="insertDescription"
+				width="500"
 			>
 				<v-card class="dic_container">
 					<div id="dic_close_btn">
-						<v-icon @click="dialog = false">
+						<v-icon @click="closeDict">
 							mdi-close-circle-outline
 						</v-icon>
 					</div>
-					<agile ref="carousel" fade :dots="true">
-						<div
-							v-for="dict in dictArray"
-							:key="dict.idwordDictionary"
-						>
-							<div id="dic_title">
-								<v-icon>
-									mdi-file-document-box-search-outline
-								</v-icon>
-								{{ dict.word }}
-							</div>
-							<v-card-text class="d-flex">
-								<v-img
-									v-if="dict.thumbnailSrc != null"
-									:src="dict.thumbnailSrc"
-									v-show="dict.thumbnailSrc"
-									width="100"
-								></v-img>
-								<div class="ml-4 space-between">
-									<h3>{{ dict.title }}</h3>
-									<br />
-									<p>
+
+					<div v-if="dictArray.length != 0">
+						<div id="dic_title">
+							<v-icon>
+								mdi-file-document-box-search-outline
+							</v-icon>
+							{{ dictArray[0].word }}
+						</div>
+						<agile ref="carousel" fade :dots="true">
+							<div
+								v-for="dict in dictArray"
+								:key="dict.idwordDictionary"
+								id="dic_body"
+							>
+								<div id="dic_img_div">
+									<img
+										v-if="dict.thumbnailSrc != null"
+										:src="dict.thumbnailSrc"
+										v-show="dict.thumbnailSrc"
+										id="dic_img"
+									/>
+								</div>
+								<div
+									id="dic_detail"
+									:class="
+										dict.thumbnailSrc != null
+											? 'dic_detail_ximg'
+											: 'dic_detail_img'
+									"
+								>
+									<div id="dic_subTitle">
+										{{ dict.title }}
+									</div>
+									<div id="dic_desc">
 										{{ dict.description }}
+										<br />
 										<a
 											:href="dict.link"
 											target="_blank"
-											style="color: rgba(125, 72, 121, 0.85)"
-											>자세히 보기</a
-										>
-									</p>
+											style="font-size: 13px; float: right; color: rgba(125, 72, 121, 0.85)"
+											>자세히 보기
+										</a>
+									</div>
 								</div>
-							</v-card-text>
-						</div>
-						<v-icon slot="prevButton">mdi-chevron-left</v-icon>
-						<template slot="prevButton">prev</template>
-						<template slot="nextButton">next</template>
-						<v-icon slot="nextButton">mdi-chevron-right</v-icon>
-					</agile>
+							</div>
+							<v-icon slot="prevButton">mdi-chevron-left</v-icon>
+							<template slot="prevButton">prev</template>
+							<template slot="nextButton">next</template>
+							<v-icon slot="nextButton">mdi-chevron-right</v-icon>
+						</agile>
+					</div>
 				</v-card>
 			</v-dialog>
 		</div>
@@ -296,6 +310,10 @@ export default {
 				.catch(err => {
 					console.log(err);
 				});
+		},
+		closeDict() {
+			this.dictArray = [];
+			this.dialog = false;
 		},
 		questionCount: function(event) {
 			//keyCode _ 모바일: 229, ? : 191, shift: 16, capslock: 20, backspace: 8, space: 32
@@ -573,6 +591,7 @@ export default {
 }
 
 .dic_container {
+	width: 500px;
 	padding: 20px;
 }
 
@@ -584,6 +603,32 @@ export default {
 #dic_title {
 	font-size: 20px;
 	margin-left: 5px;
+}
+
+#dic_body {
+	display: inline-block;
+	padding: 5px;
+}
+
+#dic_img_div {
+	float: left;
+	width: 15%;
+	margin-right: 10px;
+}
+#dic_img {
+	width: 100%;
+}
+
+#dic_detail_img {
+	float: right;
+	width: 80%;
+	padding: 10px;
+}
+
+#dic_detail_ximg {
+	float: right;
+	width: 80%;
+	padding: 10px;
 }
 
 /* etc */
