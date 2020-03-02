@@ -474,7 +474,7 @@ export default {
 			this.board.postTitle = this.$store.state.postData.postTitle;
 			this.board.postWriter = this.$store.state.postData.postWriter;
 			this.uploaded = this.$store.state.postData.attachments.substring(
-				38
+				36
 			);
 			this.$store.state.postData.tags.forEach(element => {
 				this.tags.push({
