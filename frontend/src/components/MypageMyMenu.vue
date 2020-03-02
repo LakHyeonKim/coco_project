@@ -12,8 +12,16 @@
 		/>
 		<!-- blur 생각해보기 -->
 		<div id="open" v-if="!isHidden">
-			<ul id="list" v-for="item in tags" :key="item">
-				<li class="menu_tags" @click="searchTag(item)">#{{ item }}</li>
+			<ul id="list">
+				<li
+					v-for="item in tags"
+					:key="item"
+					class="menu_tags"
+					@click="searchTag(item)"
+					style="float: left;"
+				>
+					#{{ item }}
+				</li>
 			</ul>
 		</div>
 		<div></div>
@@ -98,8 +106,8 @@ export default {
 	position: relative;
 	right: 20px;
 	top: -10px;
-	width: 300px;
-	height: 300px;
+	width: 200px;
+	height: 200px;
 	padding: 10px;
 	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
 	border-radius: 15px;
@@ -118,6 +126,7 @@ export default {
 	background-color: rgba(160, 23, 98, 0.5);
 	border-radius: 10px;
 	color: white;
+	height: 100%;
 }
 
 #list::-webkit-scrollbar {

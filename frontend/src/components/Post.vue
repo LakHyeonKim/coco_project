@@ -16,7 +16,7 @@
 
 				<div id="cardTitle">
 					<div class="line-clamp-title">
-						<b>{{ postTitle }}</b>
+						{{ postTitle }}
 					</div>
 				</div>
 
@@ -302,7 +302,7 @@ export default {
 }
 .line-clamp-title {
 	font-size: 20px;
-	font-weight: 400;
+	font-weight: 500;
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;

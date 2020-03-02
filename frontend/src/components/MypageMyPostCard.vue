@@ -395,7 +395,7 @@ export default {
 }
 .post_title {
 	font-size: 20px;
-	font-weight: 400;
+	font-weight: 500;
 	padding-top: 5px;
 	padding-bottom: 5px;
 	text-overflow: ellipsis;
