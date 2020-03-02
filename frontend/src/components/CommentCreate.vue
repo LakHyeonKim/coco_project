@@ -4,7 +4,12 @@
 			<v-card-text id="commentCreateInfo">
 				<v-avatar size="40">
 					<img
-						:src="$session.get('imageUrl')"
+						:src="
+							$session.get('imageUrl') == null ||
+							$session.get('imageUrl') == ''
+								? '../img/icons/user.png'
+								: $session.get('imageUrl')
+						"
 						alt="../assets/user.png"
 					/>
 				</v-avatar>
