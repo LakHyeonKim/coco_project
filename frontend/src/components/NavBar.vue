@@ -205,10 +205,10 @@ export default {
 			setInterval(this.solosend, 5000);
 		},
 		solosend() {
-			console.log("Send message:" + this.solo_send_message);
+			// console.log("Send message:" + this.solo_send_message);
 			if (this.stompClient && this.stompClient.connected) {
 				const msg = { memberId: this.solo_send_message };
-				console.log(JSON.stringify(msg));
+				// console.log(JSON.stringify(msg));
 				this.stompClient.send("/app/info", JSON.stringify(msg), {});
 			}
 		},
@@ -221,9 +221,9 @@ export default {
 				{},
 				frame => {
 					this.soloconnected = true;
-					console.log(frame);
+					// console.log(frame);
 					this.stompClient.subscribe("/user/queue/info", tick => {
-						console.log(JSON.parse(tick.body).idalarm);
+						// console.log(JSON.parse(tick.body).idalarm);
 						if (
 							this.latest_alarm_id <
 								JSON.parse(tick.body).idalarm &&
@@ -308,7 +308,6 @@ export default {
 		},
 		getMypage() {
 			this.isBlock = false;
-			console.log(this.$route.fullPath);
 			let location = "/mypage/" + this.$session.get("id");
 
 			if (this.$route.fullPath != location) {
@@ -318,11 +317,6 @@ export default {
 			} else {
 				window.location.reload(true);
 			}
-		}
-	},
-	watch: {
-		userProfile: function() {
-			console.log("힝구" + this.userProfile);
 		}
 	},
 	mounted() {
