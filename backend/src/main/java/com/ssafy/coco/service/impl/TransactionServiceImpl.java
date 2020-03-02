@@ -460,8 +460,13 @@ public class TransactionServiceImpl implements TransactionService {
 				}
 			}
 		}
-		if(!memberInfoModify.getNickName().equals(""))
+		if(!memberInfoModify.getNickName().equals("")) {
 			modifyMember.setNickname(memberInfoModify.getNickName());
+			Post updatePost = new Post();
+			updatePost.setPostWriter(memberInfoModify.getNickName());
+			updatePost.setMemberId(memberInfoModify.getIdmember());
+			postDao.updatePostWriter(updatePost);
+		}
 		if(!memberInfoModify.getGitUrl().equals(""))
 			modifyMember.setGitUrl(memberInfoModify.getGitUrl());
 		if(!memberInfoModify.getInstagramUrl().equals(""))
