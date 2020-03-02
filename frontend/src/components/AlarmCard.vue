@@ -14,16 +14,25 @@
 				/>
 			</div>
 			<div id="content">
-				<p v-if="this.followId" class="line-clamp-content">
+				<p v-if="this.followId > 0 && this.postId == 0 && this.likeId == 0" class="line-clamp-content">
 					<a @click.prevent="goYourPage()"
 						><b style="color:black">{{ userNickname }}</b></a
 					>가 나를 팔로우 하였습니다.
 					<br />
 				</p>
-				<p v-else class="line-clamp-content">
+				<p v-if="this.followId == 0 && this.postId > 0 && this.likeId > 0" class="line-clamp-content">
 					<a @click.prevent="goYourPage()"
 						><b style="color:black">{{ userNickname }}</b></a
 					>가 내 글을 좋아요 하였습니다:
+					<a @click.prevent="goDetail()"
+						><b style="color:black">{{ postTitle }}</b></a
+					>
+					<br />
+				</p>
+				<p v-if="this.followId == 0 && this.postId > 0 && this.likeId == 0" class="line-clamp-content">
+					<a @click.prevent="goYourPage()"
+						><b style="color:black">{{ userNickname }}</b></a
+					>가 내 글에 댓글을 달았습니다:
 					<a @click.prevent="goDetail()"
 						><b style="color:black">{{ postTitle }}</b></a
 					>
