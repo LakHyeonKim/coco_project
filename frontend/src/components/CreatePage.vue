@@ -88,9 +88,6 @@
 						WRITE
 					</button>
 				</div>
-				<div class="my-2">
-					<v-btn small @click="dialog = true">TEST</v-btn>
-				</div>
 				<div class="footerBox"></div>
 				<input
 					type="hidden"
@@ -266,8 +263,7 @@ export default {
 				tags: [],
 				attachments: null
 			},
-			loadingTop: false,
-			test: ""
+			loadingTop: false
 		};
 	},
 	methods: {
@@ -275,8 +271,8 @@ export default {
 			var kC = event.keyCode
 				? event.keyCode
 				: event.charCode
-					? event.charCode
-					: event.which;
+				? event.charCode
+				: event.which;
 			if (kC == 9 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
 				var oS = event.target.scrollTop;
 				if (event.target.setSelectionRange) {
@@ -327,12 +323,6 @@ export default {
 			var str = String(event.target.value).split(" ");
 
 			if (kCode == 229) {
-				this.test =
-					kCode +
-					" :: " +
-					event.target.value
-						.charAt(event.target.selectionStart - 1)
-						.charCodeAt();
 				let temp = event.target.value
 					.charAt(event.target.selectionStart - 1)
 					.charCodeAt();
