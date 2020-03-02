@@ -148,4 +148,9 @@ public class PostDaoImpl implements PostDao {
 		return sqlSession.selectList(ns + "findPostByFrequencyScrollDown", hashMap);
 	}
 
+	@Override
+	public int updatePostWriter(Post post) {
+		return sqlSession.update(ns + "updatePostWriter", post);
+	}
+
 }

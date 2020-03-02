@@ -29,5 +29,6 @@ public interface PostDao {
 	public int updatePostViewCount(long idPost);
 	public int updatePostUnlikeCount(long idPost);
 	public int updatePostlikeCount(long idPost);
+	public int updatePostWriter(Post post);
 	public int deletePost(Post post);
 }
