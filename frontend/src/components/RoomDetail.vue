@@ -197,6 +197,7 @@ export default {
 			this.message = "";
 		},
 		sendMessage: function() {
+			if(this.message == "") return;
 			this.stompClient.send(
 				"/app/chat/message",
 				JSON.stringify(
