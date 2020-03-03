@@ -1,0 +1,28 @@
+.d_btn {
+	margin-left: 15px;
+	padding: 5px 10px 5px 10px;
+	border-radius: 3px;
+	background-color: rgba(160, 23, 98, 0.5);
+	color: white;
+}
+.d_btn:hover {
+	background-color: rgba(160, 23, 98, 0.8);
+}
+.d_container {
+	margin: 0px auto;
+	padding: 20px 20px 20px 20px;
+	background-color: #fff;
+	border-radius: 2px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+	text-align: center;
+}
+
+.d_header {
+	margin-top: 0;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.d_body {
+	margin: 20px 0;
+}

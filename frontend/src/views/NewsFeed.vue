@@ -1,30 +1,22 @@
 <template>
-	<!-- 웹 화면에서 사이즈가 줄어들 경우 좋아요, 댓글 튀어나감 (해쉬태그가 2줄이 되는 경우에) -->
-	<!-- header 구성요소 -->
-	<!-- 스택 로고 위치, 공간차지 -->
 	<div id="backBox">
 		<div id="header">
 			<div id="headInnerBox">
 				<label for="searchBox">
 					<img
-						src="../assets/logoo.png"
+						src="../assets/CC_Logo.png"
 						alt="logo_image"
 						id="searchLogo"
 					/>
 				</label>
-				<input
-					type="text"
-					v-on:change="onInput"
-					id="searchBox"
-					placeholder="Search"
-				/>
-				<p id="codeCoworker">Code Coworker</p>
+				<div id="CC">&nbsp;Code Coworker</div>
 			</div>
 		</div>
 		<div id="blankBox"></div>
 		<div id="mainBox">
 			<PostList id="subBox"></PostList>
 		</div>
+		<div class="footerBlank"></div>
 	</div>
 </template>
 
@@ -33,18 +25,48 @@ import PostList from "../components/PostList";
 
 export default {
 	name: "NewsFeed",
+	data() {
+		return {};
+	},
 	components: {
 		PostList
 	},
 	methods: {
-		onInput(e) {
-			console.log(e.target.value);
+		scrollEvent() {
+			if (
+				document.body.scrollTop > 50 ||
+				document.documentElement.scrollTop > 50
+			) {
+				document.getElementById("header").style.height = "50px";
+				document.getElementById("headInnerBox").style.padding = "10px";
+				document.getElementById("CC").style.display = "inline-block";
+			} else {
+				document.getElementById("header").style.height = "75px";
+				document.getElementById("headInnerBox").style.padding =
+					"20px 10px 20px 10px";
+				document.getElementById("CC").style.display = "none";
+			}
 		}
+	},
+	created: function() {
+		// console.log("크리에이트는 언제 찍힐까");
+		window.addEventListener("scroll", this.scrollEvent);
+	},
+	beforeDestroy: function() {
+		// console.log("destroy kasjdfhkasjdfhlkajsdfhlkajsdfhlkajsdfhakl");
+		window.removeEventListener("scroll", this.scrollEvent);
+	},
+	mounted() {
+		this.$session.set("current", 0);
+		this.$emit("updateCurrent", 0);
 	}
 };
 </script>
 
 <style scoped>
+#backBox {
+	height: 100%;
+}
 #header {
 	position: fixed;
 	width: 100%;
@@ -52,6 +74,7 @@ export default {
 	z-index: 1;
 	background-color: white;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	transition: 0.2s;
 }
 #headInnerBox {
 	text-align: center;
@@ -71,10 +94,7 @@ export default {
 }
 ::placeholder {
 	color: black;
-	font-size: 50px;
-}
-#codeCoworker {
-	display: none;
+	font-size: 20px;
 }
 #blankBox {
 	height: 100px;
@@ -86,24 +106,27 @@ export default {
 	/* background-color: blueviolet; */
 }
 #subBox {
-	height: 50px;
+	height: 100%;
 	width: 80vw;
 	/* background-color: red; */
 	/* align-content: center; */
 	justify-content: center;
 	padding-left: 40px;
+	padding-top: 0;
 }
 @media screen and (max-width: 600px) {
 	#header {
 		position: fixed;
 		width: 100%;
-		height: 50px;
 		z-index: 1;
 		/* background-color: white; */
 		border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 	}
 	#headInnerBox {
-		padding: 10px;
+		padding: 20px 10px 20px 10px;
+		/* vertical-align: middle; */
+		/* align-content: center;
+      justify-content: center; */
 	}
 	#searchLogo {
 		display: inline-block;
@@ -111,23 +134,30 @@ export default {
 		height: 30px;
 		margin-right: 10px;
 	}
-	#codeCoworker {
+	#CC {
 		display: inline-block;
+		margin: 0px;
+		/* padding-top: 10px; */
 	}
 	#searchBox {
 		display: none;
 	}
 	#blankBox {
-		height: 30px;
-	}
-	#mainBox {
-		align-content: center;
-		justify-content: center;
-		/* background-color: blueviolet; */
+		display: block;
+		height: 75px;
 	}
 	#subBox {
 		width: 100%;
 		padding-left: 0;
+		padding-right: 0;
+	}
+	.footerBlank {
+		display: block;
+		top: auto;
+		bottom: 0;
+		height: 17vw;
+		width: 100%;
+		padding: 0;
 	}
 }
 </style>

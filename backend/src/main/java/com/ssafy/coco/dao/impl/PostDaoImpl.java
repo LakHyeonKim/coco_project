@@ -1,6 +1,7 @@
 package com.ssafy.coco.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.ssafy.coco.dao.MemberDao;
 import com.ssafy.coco.dao.MemberTagDao;
 import com.ssafy.coco.dao.MyPageDao;
 import com.ssafy.coco.dao.PostDao;
+import com.ssafy.coco.relationvo.OrderSearchKeyword;
 import com.ssafy.coco.vo.Alarm;
 import com.ssafy.coco.vo.BabyPost;
 import com.ssafy.coco.vo.Follow;
@@ -109,6 +111,46 @@ public class PostDaoImpl implements PostDao {
 	@Override
 	public int updatePostUnlikeCount(long idPost) {
 		return sqlSession.update(ns + "updatePostUnlikeCount",idPost);
+	}
+
+	@Override
+	public int updatePostlikeCount(long idPost) {
+		return sqlSession.update(ns + "updatePostlikeCount",idPost);
+	}
+
+	@Override
+	public List<Post> findByAllNewsfeedScrollDown(Map<String, Long> hashMap) {
+		return sqlSession.selectList(ns + "findByAllNewsfeedScrollDown", hashMap);
+	}
+
+	@Override
+	public List<Post> findByAllKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		return sqlSession.selectList(ns + "findByAllKeywordMyPosts", orderSearchKeyword);
+	}
+
+	@Override
+	public List<Post> findByTagKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		return sqlSession.selectList(ns + "findByTagKeywordMyPosts", orderSearchKeyword);
+	}
+
+	@Override
+	public List<Post> findByPostTitleKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		return sqlSession.selectList(ns + "findByPostTitleKeywordMyPosts", orderSearchKeyword);
+	}
+
+	@Override
+	public List<Post> findByPostCodeKeywordMyPosts(OrderSearchKeyword orderSearchKeyword) {
+		return sqlSession.selectList(ns + "findByPostCodeKeywordMyPosts", orderSearchKeyword);
+	}
+
+	@Override
+	public List<Post> findPostByFrequencyScrollDown(Map<String, Long> hashMap) {
+		return sqlSession.selectList(ns + "findPostByFrequencyScrollDown", hashMap);
+	}
+
+	@Override
+	public int updatePostWriter(Post post) {
+		return sqlSession.update(ns + "updatePostWriter", post);
 	}
 
 }

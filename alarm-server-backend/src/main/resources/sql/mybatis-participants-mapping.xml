@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ParticipantsMapper">
+	<sql id="select-participants">
+		select idparticipants, room_id, member_id, nick_name
+		from `coco`.`participants`
+	</sql>
+	<sql id="insert-participants">
+		insert into `coco`.`participants`
+		(room_id, member_id, nick_name)
+		values(#{roomId}, #{memberId}, #{nickName})
+	</sql>
+	<sql id="update-participants">
+		update `coco`.`participants` set
+		room_id=#{roomId},
+		member_id=#{memberId},
+		nick_name=#{nickName},
+		where
+		idparticipants=#{idparticipants}
+	</sql>
+	<sql id="delete-participants">
+		delete from participants
+	</sql>
+
+	<!-- 전체 검색 -->
+	<select id="findAllParticipants" resultType="Participants">
+		<include refid="select-participants"></include>
+	</select>
+	
+	<select id="findParticipants" resultType="Participants" parameterType="Participants">
+		<include refid="select-participants"></include>
+		<where>
+			<if test="roomId !=0">
+				room_id = ${roomId}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = ${memberId}
+			</if>
+			<if test="nickName !=null">
+				AND
+				nick_name like '%${nickName}%'
+			</if>
+		</where>
+	</select>
+
+	<insert id="addParticipants" parameterType="Participants"
+		useGeneratedKeys="true" keyProperty="idparticipants">
+		<include refid="insert-participants"></include>
+	</insert>
+
+	<update id="updateParticipants" parameterType="Participants">
+		<include refid="update-participants"></include>
+	</update>
+
+	<delete id="deleteParticipants" parameterType="Participants">
+		<include refid="delete-participants"></include>
+		<where>
+			<if test="roomId !=0">
+				room_id = ${roomId}
+			</if>
+			<if test="memberId !=0">
+				AND
+				member_id = ${memberId}
+			</if>
+			<if test="nickName !=null">
+				AND
+				nick_name like '%${nickName}%'
+			</if>
+		</where>
+	</delete>
+</mapper>

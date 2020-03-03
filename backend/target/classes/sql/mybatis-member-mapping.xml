@@ -20,32 +20,51 @@
 		values(#{rankId},#{isManager},#{isDelete},
 		#{nickname}, #{id},
 		#{password}, #{email}, #{gitUrl}, #{kakaoUrl},
-		#{instagramUrl},now(),now(),#{imageUrl},#{refreshToken})
+		#{instagramUrl},DATE_ADD(NOW(), INTERVAL 9 HOUR),DATE_ADD(NOW(), INTERVAL 9 HOUR),#{imageUrl},#{refreshToken})
 	</sql>
 	<sql id="update-Member">
 		update member set
-		rank_id=#{rankId},
-		is_manager=#{isManager},
-		is_delete=#{isDelete},
-		nickname = #{nickname},
-		password = #{password},
-		email = #{email},
+		<if test="rankId != 0">
+			rank_id=#{rankId},
+		</if>
+		<if test="nickname != null">
+			nickname = #{nickname},
+		</if>
+		<if test="password != null">
+			password = #{password},
+		</if>
+		<if test="email != null">
+			email = #{email},
+		</if>
+		<if test="imageUrl != null">
+			image_url = #{imageUrl},
+		</if>
+		<if test="refreshToken != null">
+			refreshToken = #{refreshToken},
+		</if>
 		git_url = #{gitUrl},
 		kakao_url = #{kakaoUrl},
 		instagram_url = #{instagramUrl},
-		update_created = now(),
-		image_url = #{imageUrl},
-		refreshToken = #{refreshToken}
+		update_created = DATE_ADD(NOW(), INTERVAL 9 HOUR),
+		is_manager=#{isManager},
+		is_delete=#{isDelete}
 		where
-		idmember=#{idmember}
+		<if test="id != null">
+			id = #{id} 
+		</if>
+		<if test="idmember != 0">
+		and
+			idmember = #{idmember}
+		</if>
 	</sql>
 	<sql id="delete-Member">
 		delete from member
 	</sql>
 	
 	<!-- 전체 검색 -->
-	<select id="findIdByRefreshToken" parameterType="string" resultType="integer">
-		select idmember from member where refreshToken=#{value}
+	<select id="findIdByRefreshToken" parameterType="string" resultType="Member">
+		<include refid="select-Member"></include>
+		 where refreshToken=#{value}
 	</select>
 	<update id="updateRefreshToken" parameterType="Member">
 		update member set
@@ -60,9 +79,7 @@
 	<select id="findMember" resultType="Member">
 		<include refid="select-Member"></include>
 		<where>
-			is_manager = ${isManager}
-			AND
-			is_delete = ${isDelete}
+			is_delete = ${isDelete} AND m.rank_id = r.idrank
 			<if test="idmember !=0">
 				AND
 				idmember = ${idmember}
@@ -77,9 +94,7 @@
 			</if>
 			<if test="rankId !=0">
 				AND
-				rank_id = ${rankId}
-				AND
-				m.rank_id = r.idrank
+				rank_id = '${rankId}'
 			</if>
 			<if test="nickname !=null">
 				AND
@@ -131,6 +146,8 @@
 		from `coco`.`member` as m join `coco`.`rank` as r 
 		where  m.rank_id = r.idrank and idmember in (select member_id from `coco`.`like` where post_id = #{value});
 	</select>
+	
+	
 
 	<insert id="addMember" parameterType="Member"
 		useGeneratedKeys="true" keyProperty="idmember">
@@ -139,16 +156,12 @@
 
 	<update id="updateMember" parameterType="Member">
 		<include refid="update-Member"></include>
+		
 	</update>
 
 	<delete id="deleteMember" parameterType="Member">
 		<include refid="delete-Member"></include>
 		<where>
-			m.rank_id = r.idrank
-			AND
-			is_manager = ${isManager}
-			AND
-			is_delete = ${isDelete}
 			<if test="idmember !=0">
 				AND
 				idmember = ${idmember}

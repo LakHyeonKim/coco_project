@@ -18,6 +18,12 @@
 기존의 웹 기술 프로젝트의 SW 개발 **비서의 기능**과 **웹 + 디자인**의 **SNS**적인 부분을 융합하여 
 자신의 포트폴리오를 관리하고 피드백이 가능한 개발자 커뮤니티
 
+* SEE-SAW Crew
+
+  -> 우리정보가 알고싶으면 눌러주세요 ~
+
+  ![](http://52.79.118.55:8888/readmeImage/crewLink.PNG)
+
 
 
 # Before You Begin & Prerequisites
@@ -234,9 +240,15 @@ $ npm run build
   $ kill pid
   ```
 
-  
 
-  
+**static 문서 관리 및 배포**
 
-  
+* application.properties에 해당 코드 입력
 
+  ```properties
+  spring.mvc.static-path-pattern=/**
+  spring.resources.static-locations=file:/home/ubuntu
+  spring.resources.add-mappings=true
+  ```
+
+  context path경로를 지정해주고 정적인 문서를 위 해당경로에 넣어주고 배포

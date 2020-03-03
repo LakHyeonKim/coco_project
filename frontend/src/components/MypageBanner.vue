@@ -1,132 +1,182 @@
 <template>
 	<div id="banner">
 		<div id="imgBannerBox">
-			<img id="imgBanner" src="../assets/back.jpg" />
+			<img
+				id="imgBanner"
+				:src="
+					userInfo.mypage.bannerImagePath == null ||
+					userInfo.mypage.bannerImagePath == ''
+						? '../img/back.jpg'
+						: userInfo.mypage.bannerImagePath
+				"
+			/>
 		</div>
 		<div id="infoBox">
 			<div id="today">
 				today {{ userInfo.mypage.todayVisitedCount }} · total
 				{{ userInfo.mypage.totalVisitedCount }}
 			</div>
-			<div id="info_title">
-				{{ userInfo.mypage.bannerText }}
-			</div>
+			<div id="info_title">{{ userInfo.mypage.bannerText }}</div>
 			<div id="info_desc">
-				<img id="imgUser" :src="userInfo.member.imageUrl" />
+				<img id="imgUser" :src="$store.state.targetImgUrl" />
+				<!-- <img id="imgUser" :src="'../img/icons/user.png'" /> -->
 				<div id="info_desc_mid">
-					<div id="" style="display: inline-block;">
-						<div id="nickname">
-							{{ userInfo.member.nickname }}
+					<div id style="display: inline-block;">
+						<div
+							id="grade_sub"
+							v-for="(grade, idx) in grades"
+							:key="idx"
+						>
+							<div v-if="grade.grade == userInfo.member.grade">
+								<div @click="gradeCheck()">
+									<MypageGrade
+										v-if="userInfo.member.grade != null"
+										:grade="gradeforrank"
+										class="counting_click"
+									>
+										<div slot="click" style="height: 25px;">
+											<img
+												:src="grade.path"
+												alt="rank"
+												style="width: 25px; height: 25px; border-radius: 50%; margin-right: 5px; margin-top: 3px;"
+											/>
+										</div>
+									</MypageGrade>
+								</div>
+							</div>
 						</div>
-						<img
-							v-if="isUser"
-							src="../assets/icon/settings.png"
-							id="settings"
-							@click="showModal = true"
-						/>
-						<div id="isFollow" v-if="!isUser">
-							<button
-								id="f_button"
-								:style="
-									userInfo.isFollew == 1
-										? following_btn
-										: follow_btn
-								"
-								@click="
-									userInfo.isFollew == 1
-										? (showModal_f = true)
-										: follow()
-								"
-							>
-								{{ f_current }}
+
+						<div id="nickname">{{ userInfo.member.nickname }}</div>
+
+						<MypagePWCheck v-if="isUser" style="float: left;">
+							<div slot="click">
 								<img
-									:src="
-										userInfo.isFollew == 1
-											? './img/icons/check_g.png'
-											: './img/icons/plus_w.png'
-									"
-									width="13px"
+									slot="click"
+									src="../assets/icon/settings.png"
+									id="settings"
 								/>
-							</button>
-						</div>
+							</div>
+						</MypagePWCheck>
+						<MypageFollowCheck
+							v-if="!isUser"
+							:nickname="userInfo.member.nickname"
+							:isFollow="userInfo.isFollew"
+							:follow="follow"
+							style="float: left;"
+						>
+							<div slot="click" class="isFollow">
+								<button
+									class="f_button"
+									:style="
+										userInfo.isFollew == 1
+											? following_btn
+											: follow_btn
+									"
+								>
+									{{ f_current }}
+									<img
+										:src="
+											userInfo.isFollew == 1
+												? '../img/icons/check_g.png'
+												: '../img/icons/plus_w.png'
+										"
+										width="13px"
+									/>
+								</button>
+							</div>
+						</MypageFollowCheck>
 					</div>
 				</div>
+
 				<div id="counting">
-					팔로잉 {{ userInfo.followingCount }} · 팔로워
-					{{ userInfo.followerCount }} · 게시글
-					{{ userInfo.totalPostCount }}
+					<div id="grade" v-for="(grade, idx) in grades" :key="idx">
+						<div v-if="grade.grade == userInfo.member.grade">
+							<img
+								:src="grade.path"
+								alt="rank"
+								style="width: 25px; height: 25px; border-radius: 50%; margin-right: 5px;"
+							/>
+						</div>
+					</div>
+					<div id="grade" @click="gradeCheck()">
+						<MypageGrade
+							v-if="userInfo.member.grade != null"
+							:grade="gradeforrank"
+							class="counting_click"
+						>
+							<div slot="click">
+								<span> {{ userInfo.member.grade }}</span>
+							</div>
+						</MypageGrade>
+					</div>
+					<span id="grade" class="counting_sub">·</span>
+					<MemberList
+						:userInfo="userInfo"
+						:followList="followList"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span @click="getFollow(true)"
+								>팔로워 {{ userInfo.followerCount }}</span
+							>
+						</div>
+					</MemberList>
+
+					<span class="counting_sub">·</span>
+					<MemberList
+						:userInfo="userInfo"
+						:followList="followList"
+						class="counting_click"
+					>
+						<div slot="click">
+							<span @click="getFollow(false)"
+								>팔로잉 {{ userInfo.followingCount }}</span
+							>
+						</div>
+					</MemberList>
+
+					<span class="counting_sub">·</span>
+					<span class="counting_sub"
+						>게시글 {{ userInfo.totalPostCount }}</span
+					>
 				</div>
 			</div>
 		</div>
-		<Modal v-if="showModal" @close="showModal = false">
-			<div slot="header">비밀번호 확인</div>
-			<div slot="body">
-				<v-text-field
-					:append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-					:rules="[rules.required, rules.min]"
-					:type="show ? 'text' : 'password'"
-					hint="At least 8 characters"
-					class="input-group--focused"
-					@click:append="show = !show"
-					:counter="counterEn ? counter : false"
-					solo
-					color="rgba(160, 23, 98, 0.5)"
-					v-model="input_pw"
-				></v-text-field>
-			</div>
-			<div slot="footer">
-				<button class="modal-default-button" @click="pwCheck()">
-					확인
-				</button>
-				<button class="modal-default-button" @click="showModal = false">
-					취소
-				</button>
-			</div>
-		</Modal>
-		<Modal v-if="showModal_f" @close="showModal_f = false">
-			<div slot="body">
-				<span id="message">
-					정말 팔로우 취소하시겠습니까?
-				</span>
-			</div>
-			<div slot="footer">
-				<button class="modal-default-button" @click="follow()">
-					확인
-				</button>
-				<button
-					class="modal-default-button"
-					@click="showModal_f = false"
-				>
-					취소
-				</button>
-			</div>
-		</Modal>
 	</div>
 </template>
 
 <script>
 import http from "../http-common";
 import store from "../store";
-import Modal from "./Modal.vue";
+import MypagePWCheck from "./MypagePWCheck.vue";
+import MypageFollowCheck from "./MypageFollowCheck.vue";
+import MypageGrade from "./MypageGrade.vue";
+import MemberList from "./MemberList.vue";
+import "../assets/styles/check_btn.css";
 export default {
 	name: "MypageBanner",
-	components: { Modal },
+	components: {
+		MypagePWCheck,
+		MypageFollowCheck,
+		MemberList,
+		MypageGrade
+	},
 	store,
 	data() {
 		return {
-			checkFollow: false,
-			showModal: false,
-			showModal_f: false,
+			isFollowing: false,
 			isUser: false,
 			userInfo: {
 				mypage: {
 					todayVisitedCount: 0,
 					totalVisitedCount: 0,
-					bannerText: ""
+					bannerText: "",
+					bannerImagePath: ""
 				},
 				member: {
 					imageUrl: "",
-					nickname: ""
+					nickname: "",
+					grade: null
 				},
 				followingCount: 0,
 				followerCount: 0,
@@ -149,96 +199,262 @@ export default {
 				padding: "3px 10px 3px 10px",
 				boxShadow: "0.5px 0.5px 5px rgba(0, 0, 0, 0.2)"
 			},
-			clearable: true,
-			counterEn: true,
-			counter: 16,
-			show: false,
-			password: "Password",
-			rules: {
-				required: value => !!value || "Required.",
-				min: v => v.length >= 8 || "Min 8 characters",
-				emailMatch: () =>
-					"The email and password you entered don't match"
-			},
-			input_pw: ""
+			followList: null,
+			memberFollower: null,
+			memberFollowing: null,
+			grades: [
+				{ grade: "아이언", path: "../img/rank/iron.png" },
+				{ grade: "브론즈", path: "../img/rank/bronze.png" },
+				{ grade: "실버", path: "../img/rank/silver.png" },
+				{ grade: "골드", path: "../img/rank/gold.png" },
+				{ grade: "플래티넘", path: "../img/rank/platinum.png" },
+				{ grade: "다이아", path: "../img/rank/diamond.png" },
+				{ grade: "마스터", path: "../img/rank/master.png" },
+				{ grade: "챌린저", path: "../img/rank/challenger.png" }
+			],
+			gradeforrank: ""
 		};
 	},
 	methods: {
+		gradeCheck() {
+			this.gradeforrank = this.userInfo.member.grade;
+		},
 		pwCheck() {
-			alert(this.input_pw);
 			this.$router.push("/infoModify");
-			// http.post("/api/findByMyPosts/", {
-			// 	idMember: this.$session.get("id"),
-			// 	order: idx
-			// })
-			// 	.then(response => {
-			// 		this.posts = response.data;
-			// 		console.log(this.posts);
-			// 	})
-			// 	.catch(error => {
-			// 		console.log(error);
-			// 	});
 		},
 		follow() {
+			this.dialog = false;
+			// console.log(this.$route.params.no);
+
 			let address = "";
 			if (this.userInfo.isFollew == 1) {
 				address = "/trc/makeUnFollow/";
 				this.userInfo.isFollew = 0;
 				this.f_current = "팔로우";
+				this.userInfo.followerCount--;
 			} else {
 				address = "/trc/makeFollow/";
 				this.userInfo.isFollew = 1;
 				this.f_current = "팔로잉";
+				this.userInfo.followerCount++;
 			}
 			this.showModal_f = false;
 
-			http.post(address, {
-				memberFollower: this.$session.get("id"),
-				memberFollowing: this.$session.get("targetId")
-			})
+			http.post(
+				address,
+				{
+					memberFollower: this.$session.get("id"),
+					memberFollowing: this.$route.params.no
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
 				.then(response => {
 					console.log(response);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									window.location.reload(true);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					}
 				})
 				.catch(error => {
 					console.log(error);
 					if (this.userInfo.isFollew == 1) {
 						this.userInfo.isFollew = 0;
 						this.f_current = "팔로우";
+						this.userInfo.followerCount--;
 					} else {
 						this.userInfo.isFollew = 1;
 						this.f_current = "팔로잉";
+						this.userInfo.followerCount++;
 					}
+				});
+		},
+		getFollow(flag) {
+			this.followList = null;
+			let address = "";
+			if (flag) address = "/api/findByFollowerListMember/";
+			else address = "/api/findByFollowingListMember/";
+
+			http.post(
+				address,
+				{
+					myIdMemeber: this.$session.get("id"),
+					youIdMember: this.$route.params.no
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
+				.then(response => {
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log(ref);
+
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.getFollow(flag);
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						console.log("Banner getFollow()");
+						this.followList = response.data;
+						console.log(this.followList);
+					}
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		},
+		mount() {
+			console.log("MypageBanner : " + this.$route.params.no);
+			const token = this.$session.get("accessToken");
+			const headers = {
+				Authorization: token
+			};
+			console.log("myPage banner headers", headers);
+			if (this.$session.get("id") == this.$route.params.no) {
+				this.isUser = true;
+			}
+			console.log("isUser : " + this.isUser);
+			http.post(
+				"/api/findByMemberHomePageUserID/",
+				{
+					myIdMemeber: this.$session.get("id"),
+					youIdMember: this.$route.params.no
+				},
+				{
+					headers: {
+						Authorization:
+							this.$session.get("accessToken") == undefined
+								? null
+								: this.$session.get("accessToken")
+					}
+				}
+			)
+				.then(response => {
+					console.log("정보확인", response);
+					if (response.status == 203) {
+						console.log("refresh token -> server");
+						http.post(
+							"/jwt/getAccessTokenByRefreshToken/",
+							this.$session.get("refreshToken") == undefined
+								? null
+								: this.$session.get("refreshToken")
+						)
+							.then(ref => {
+								console.log("ref");
+								console.log(ref);
+								console.log(
+									this.$session.get("refreshToken") ==
+										undefined
+										? null
+										: this.$session.get("refreshToken")
+								);
+								if (ref.status == 203) {
+									this.$session.destroy();
+									alert("로그인 정보가 만료되었습니다.");
+									this.$router.push("/");
+								} else {
+									this.$session.set("accessToken", ref.data);
+									this.mount();
+								}
+							})
+							.catch(error => {
+								console.log(error);
+							});
+					} else {
+						this.userInfo = response.data;
+						store.state.tags = this.userInfo.tags;
+
+						if (this.userInfo.member.imageUrl == "")
+							store.state.targetImgUrl = "../img/icons/user.png";
+						else
+							store.state.targetImgUrl = this.userInfo.member.imageUrl;
+
+						console.log("Banner mounted()");
+						console.log(response.data);
+						if (this.userInfo.isFollew == 1) {
+							this.f_current = "팔로잉";
+						} else {
+							this.f_current = "팔로우";
+						}
+					}
+				})
+				.catch(error => {
+					console.log(error);
 				});
 		}
 	},
 	mounted() {
-		if (this.$session.get("id") == this.$session.get("targetId")) {
-			this.isUser = true;
-		}
-		http.post("/api/findByMemberHomePageUserID/", {
-			myIdMemeber: this.$session.get("id"),
-			youIdMember: this.$session.get("targetId")
-		})
-
-			.then(response => {
-				this.userInfo = response.data;
-				store.state.tags = this.userInfo.tags;
-				console.log("Banner mounted()");
-				console.log(response);
-				if (this.userInfo.isFollew == 1) {
-					this.f_current = "팔로잉";
-				} else {
-					this.f_current = "팔로우";
-				}
-			})
-			.catch(error => {
-				console.log(error);
-			});
+		this.mount();
 	}
 };
 </script>
 
 <style>
+.counting_sub,
+.counting_click {
+	float: left;
+}
+.counting_click {
+	cursor: pointer;
+}
+.counting_click:hover {
+	opacity: 0.3;
+}
+.f_button {
+	outline: 0;
+	border: 0;
+}
+.f_button:hover {
+	filter: brightness(95%);
+}
+.f_button:active {
+	filter: brightness(85%);
+}
 #message {
 	font-size: 20px;
 	font-weight: 500;
@@ -269,14 +485,12 @@ export default {
 	margin: 0 auto;
 	text-align: center;
 	height: 35vw;
-	/* text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5); */
 }
 #infoBox {
 	position: relative;
 	display: inline-block;
 	z-index: 1;
 	top: -160px;
-	/* background-color: rgba(0, 0, 0, 0.3); */
 	width: 80%;
 	height: 130px;
 	padding: 10px;
@@ -285,8 +499,10 @@ export default {
 #imgUser {
 	float: left;
 	width: 55px;
+	height: 55px;
+	margin-right: 10px;
+	margin-top: 3px;
 	border-radius: 50%;
-	background-color: white;
 }
 #info_title {
 	font-size: 25px;
@@ -299,13 +515,23 @@ export default {
 	color: black;
 	text-decoration: none;
 }
+#grade {
+	font-size: 15px;
+	/* margin-top: 6px; */
+	float: left;
+	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
+	color: white;
+}
+#grade_sub {
+	display: none;
+}
 #nickname {
 	font-size: 20px;
 	float: left;
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-#isFollow {
+.isFollow {
 	float: left;
 	position: relative;
 }
@@ -316,17 +542,7 @@ export default {
 	text-shadow: 0.8px 0.8px 7px rgba(0, 0, 0, 0.5);
 	color: white;
 }
-#checkFollow {
-	text-shadow: 0 0;
-	margin: 0 auto;
-	z-index: 1;
-	width: 100px;
-	height: 100px;
-	background-color: rgba(255, 255, 255);
-	color: black;
-	border-radius: 5px;
-	box-shadow: 0.5px 0.5px 7px rgba(0, 0, 0, 0.3);
-}
+
 @media screen and (max-width: 600px) {
 	#settings {
 		width: 15px;
@@ -334,14 +550,18 @@ export default {
 	#imgBannerBox {
 		height: 50vw;
 	}
-	#imgUser {
-		width: 50px;
-	}
 	#infoBox {
 		top: -160px;
 	}
 	#banner {
 		height: 50vw;
+	}
+	#grade {
+		display: none;
+	}
+	#grade_sub {
+		display: inline-block;
+		float: left;
 	}
 }
 @media screen and (max-width: 320px) {

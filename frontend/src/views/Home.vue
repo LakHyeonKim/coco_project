@@ -12,10 +12,13 @@
 				</div>
 				<div id="macBackImg">
 					<div class="macCarousel">
-						<img src="../assets/bg_home.jpg" id="macBackImg" />
-						<img src="../assets/bg_drawer.jpg" id="macBackImg" />
-						<img src="../assets/bg_portfolio.jpg" id="macBackImg" />
-						<img src="../assets/bg_post.jpg" id="macBackImg" />
+						<img src="../assets/home/mypage.png" id="macBackImg" />
+						<img
+							src="../assets/home/newsfeed.png"
+							id="macBackImg"
+						/>
+						<img src="../assets/home/newpage.png" id="macBackImg" />
+						<img src="../assets/home/search.png" id="macBackImg" />
 					</div>
 				</div>
 			</div>
@@ -29,11 +32,20 @@
 				</div>
 				<div id="mobileBackImg">
 					<div class="mobileCarousel">
-						<img src="../assets/bg_drawer.jpg" id="mobileBackImg" />
-						<img src="../assets/bg_post.jpg" id="mobileBackImg" />
-						<img src="../assets/bg_home.jpg" id="mobileBackImg" />
 						<img
-							src="../assets/bg_portfolio.jpg"
+							src="../assets/home/mobilemypage.png"
+							id="mobileBackImg"
+						/>
+						<img
+							src="../assets/home/mobilenewsfeed.png"
+							id="mobileBackImg"
+						/>
+						<img
+							src="../assets/home/mobilesearch.png"
+							id="mobileBackImg"
+						/>
+						<img
+							src="../assets/home/mobilealarm.png"
 							id="mobileBackImg"
 						/>
 					</div>
@@ -43,24 +55,21 @@
 			<!-- <RegisterForm id="regiForm"></RegisterForm> -->
 			<LoginForm id="loginForm"></LoginForm>
 		</div>
-		<LoginFormMobile id="mobileloginForm"></LoginFormMobile>
 	</div>
 </template>
 
 <script>
 import LoginForm from "../components/LoginForm";
-import LoginFormMobile from "../components/LoginFormMobile";
 import router from "../router";
 
 export default {
 	name: "home",
 	components: {
-		LoginForm,
-		LoginFormMobile
+		LoginForm
 	},
 	methods: {
 		checkLoggedIn() {
-			if (this.$session.has("jwt")) {
+			if (this.$session.has("accessToken")) {
 				router.push("/newsfeed").catch(err => {
 					err;
 				});
@@ -82,16 +91,13 @@ export default {
 #imgBoxDesk {
 	display: inline-block;
 	position: absolute;
-	margin-top: 110px;
+	margin-top: 120px;
 }
-/* #regiForm {
-	display: inline-block;
-	margin-left: 100px;
-} */
 #loginForm {
 	display: inline-block;
 	position: relative;
 	margin-left: 576px;
+	margin-bottom: 130px;
 }
 #imgBoxMobile {
 	display: none;
@@ -224,6 +230,7 @@ export default {
 	#imgBoxMobile {
 		display: inline-block;
 		position: absolute;
+		margin-top: 70px;
 	}
 	#mobileDiv {
 		position: absolute;
@@ -231,7 +238,7 @@ export default {
 	#mobileImg {
 		width: 270px;
 		position: relative;
-		z-index: 500;
+		z-index: 1;
 	}
 	#mobileBackImg {
 		position: relative;
@@ -349,17 +356,7 @@ export default {
 		justify-content: center;
 		margin: 10px;
 		padding: 5px;
-	}
-}
-@media screen and (max-width: 450px) {
-	#mainBox {
-		display: none;
-	}
-	#blankBox {
-		display: none;
-	}
-	#mobileloginForm {
-		display: block;
+		margin-bottom: 130px;
 	}
 }
 </style>

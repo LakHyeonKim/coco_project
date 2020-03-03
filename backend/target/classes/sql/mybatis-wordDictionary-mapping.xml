@@ -8,19 +8,31 @@
 <mapper namespace="WordDictionary_Mapper">
 
 	<sql id="select-WordDictionary">
-		select idword_dictionary, word,	description, link
+		select idword_dictionary, word,	description, link,thumbnail_src,title
 		from word_dictionary
 	</sql>
 	<sql id="insert-WordDictionary">
 		insert into word_dictionary
-		(word,	description, link)
-		values(#{word},#{description},#{link})
+		(word,	description, link,thumbnail_src,title)
+		values(#{word},#{description},#{link},#{thumbnailSrc},#{title})
 	</sql>
 	<sql id="update-WordDictionary">
 		update word_dictionary set
-		word=#{word},
-		description=#{description},
-		link = #{link}
+		<if test="word !=null">
+				word = '#{word}',
+		</if>
+		<if test="description !=null">
+				description=#{description},
+		</if>
+		<if test="link !=null">
+				link = #{link},
+		</if>
+		<if test="thumbnailSrc !=null">
+				thumbnail_src = #{thumbnailSrc},
+		</if>
+		<if test="title !=null">
+				title=#{title}
+		</if>
 		where
 		idword_dictionary=#{idwordDictionary}
 	</sql>
@@ -35,16 +47,22 @@
 	<select id="findWordDictionary" parameterType="WordDictionary" resultType="WordDictionary" >
 		<include refid="select-WordDictionary"></include>
 		<where>
-			<if test="idwordDictionary != 0">
+			<if test="idwordDictionary!= 0">
 				idword_dictionary = ${idwordDictionary}
 			</if>
-			AND
+			
 			<if test="word !=null">
-				word like '%${word}%'
+				AND
+				word = '${word}'
 			</if>
-			AND
+			
 			<if test="description !=null">
-				description like '%${description}%'
+				AND
+				description = '${description}'
+			</if>
+			<if test="title !=null">
+				AND
+				title = '${title}'
 			</if>
 		</where>
 	</select>

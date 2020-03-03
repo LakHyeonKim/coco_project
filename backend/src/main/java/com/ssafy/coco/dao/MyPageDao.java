@@ -10,5 +10,6 @@ public interface MyPageDao {
 	public int addMypage(Mypage mypage);
 	public int updateMypage(Mypage mypage);
 	public int updateMypageVisitedCount(long idMember);
+	public int updateMypageTodayVisitedReset();
 	public int deleteMypage(Mypage mypage);
 }

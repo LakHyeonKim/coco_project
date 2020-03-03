@@ -4,26 +4,24 @@
 			id="imgMenu"
 			@click="toggleMenu()"
 			:src="
-				isHidden ? './img/icons/menu_w.png' : './img/icons/close_w.png'
+				isHidden
+					? '../img/icons/menu_g.png'
+					: '../img/icons/close_g.png'
 			"
 			width="25px"
 		/>
 		<!-- blur 생각해보기 -->
 		<div id="open" v-if="!isHidden">
-			<div id="search">
-				<v-select
-					label="검색조건"
-					:items="items"
-					color="rgba(0, 0, 0, 0.5)"
-					item-color="black"
-					id="search_sel"
-					style="float: left; width: 80px; font-size: 15px;"
-				/>
-				<input type="text" id="search_text" />
-				<img id="search_img" src="../assets/icon/search_b.png" />
-			</div>
-			<ul id="list" v-for="item in tags" :key="item">
-				<li>#{{ item }}</li>
+			<ul id="list">
+				<li
+					v-for="item in tags"
+					:key="item"
+					class="menu_tags"
+					@click="searchTag(item)"
+					style="float: left;"
+				>
+					#{{ item }}
+				</li>
 			</ul>
 		</div>
 		<div></div>
@@ -34,52 +32,50 @@ import store from "../store";
 export default {
 	name: "MypageMyMenu",
 	store,
+	props: {
+		search: {}
+	},
 	data() {
 		return {
-			items: ["전체", "#", "글제목", "글내용"],
+			items: [
+				{ text: "전체", value: "1" },
+				{ text: "#", value: "2" },
+				{ text: "글제목", value: "3" },
+				{ text: "글내용", value: "4" }
+			],
 			isHidden: true,
 			tags: ""
 		};
 	},
 	methods: {
+		searchTag(item) {
+			this.isHidden = true;
+			this.search(2, item);
+		},
 		toggleMenu() {
 			this.isHidden = !this.isHidden;
 			this.tags = store.state.tags;
 			console.log(this.tags);
 		}
 	}
-	// updated() {
-	// 	console.log("태그가 오나,,?");
-	// 	console.log(store.state.tags);
-	// }
 };
 </script>
 
 <style>
-#search {
-	margin-left: 10px;
-	display: inline-block;
-	width: 300px;
-}
-#search_text {
-	float: left;
-	/* margin-left: 5px; */
-	margin-top: 19px;
-	width: 150px;
-	height: 30px;
-	border-bottom: 0.9px solid rgba(0, 0, 0, 0.4);
-}
-#search_img {
-	margin-top: 15px;
-	float: left;
-	width: 25px;
-}
 #menu {
 	position: fixed;
 	text-align: right;
 	top: 0;
 	right: 0;
 	z-index: 1;
+}
+.menu_tags {
+	cursor: pointer;
+	margin: 3px;
+}
+#list > li:hover {
+	/* box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.267); */
+	background-color: rgba(150, 23, 98, 0.7);
 }
 #imgMenu {
 	right: 0;
@@ -110,8 +106,8 @@ export default {
 	position: relative;
 	right: 20px;
 	top: -10px;
-	width: 300px;
-	height: 300px;
+	width: 200px;
+	height: 200px;
 	padding: 10px;
 	box-shadow: 0.1px 0.1px 5px 0.15px rgba(0, 0, 0, 0.267);
 	border-radius: 15px;
@@ -130,6 +126,7 @@ export default {
 	background-color: rgba(160, 23, 98, 0.5);
 	border-radius: 10px;
 	color: white;
+	height: 100%;
 }
 
 #list::-webkit-scrollbar {

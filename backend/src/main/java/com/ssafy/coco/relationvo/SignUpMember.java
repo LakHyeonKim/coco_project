@@ -8,23 +8,57 @@ import com.ssafy.coco.vo.Member;
 
 public class SignUpMember {
 	private MultipartFile file;
-	long idmember;
-	long rankId;
-	int isManager;
-	int isDelete;
-	String nickname;
-	String id;
-	String password;
-	String email;
-	String gitUrl;
-	String kakaoUrl;
-	String instagramUrl;
-	Timestamp dateCreated;
-	Timestamp updateCreated;
-	String grade;
+	private long idmember;
+	private long rankId;
+	private int isManager;
+	private int isDelete;
+	private String nickname;
+	private String id;
+	private String password;
+	private String email;
+	private String gitUrl;
+	private String kakaoUrl;
+	private String instagramUrl;
+	private Timestamp dateCreated;
+	private Timestamp updateCreated;
+	private String grade;
+	private String imageUrl;
 	
 	
 	
+	public SignUpMember(MultipartFile file, long idmember, long rankId, int isManager, int isDelete, String nickname,
+			String id, String password, String email, String gitUrl, String kakaoUrl, String instagramUrl,
+			Timestamp dateCreated, Timestamp updateCreated, String grade, String imageUrl) {
+		super();
+		this.file = file;
+		this.idmember = idmember;
+		this.rankId = rankId;
+		this.isManager = isManager;
+		this.isDelete = isDelete;
+		this.nickname = nickname;
+		this.id = id;
+		this.password = password;
+		this.email = email;
+		this.gitUrl = gitUrl;
+		this.kakaoUrl = kakaoUrl;
+		this.instagramUrl = instagramUrl;
+		this.dateCreated = dateCreated;
+		this.updateCreated = updateCreated;
+		this.grade = grade;
+		this.imageUrl = imageUrl;
+	}
+
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+
 	public SignUpMember() {
 		super();
 	}
@@ -208,7 +242,7 @@ public class SignUpMember {
 				+ isManager + ", isDelete=" + isDelete + ", nickname=" + nickname + ", id=" + id + ", password="
 				+ password + ", email=" + email + ", gitUrl=" + gitUrl + ", kakaoUrl=" + kakaoUrl + ", instagramUrl="
 				+ instagramUrl + ", dateCreated=" + dateCreated + ", updateCreated=" + updateCreated + ", grade="
-				+ grade + "]";
+				+ grade + ", imageUrl=" + imageUrl + "]";
 	}
 	
 	

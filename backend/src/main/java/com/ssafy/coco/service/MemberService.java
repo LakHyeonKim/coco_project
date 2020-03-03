@@ -15,6 +15,7 @@ public interface MemberService {
 	public List<Member> findFollowingMemberList(long idMemberFollower);
 	public List<Member> findFollowerMemberList(long idMemeberFollowing);
 	public boolean check(String id);
-	public int findIdByRefreshToken(String refToken);
+	public List<Member>  findIdByRefreshToken(String refToken);
 	public int updateRefreshToken(Member member);
+	public int updateMember2(Member member);
 }

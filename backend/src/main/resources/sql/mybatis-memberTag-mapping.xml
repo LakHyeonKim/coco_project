@@ -59,7 +59,7 @@
 	</update>
 	
 	<insert id="addMemberTag" parameterType="MemberTag"
-		useGeneratedKeys="true" keyProperty="idmember_tag">
+		useGeneratedKeys="true" keyProperty="idmemberTag">
 		<include refid="insert-MemberTag"></include>
 	</insert>
 

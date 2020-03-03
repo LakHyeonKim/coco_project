@@ -23,7 +23,7 @@ public class AlarmDaoImpl implements AlarmDao{
 
 	@Override
 	public List<Alarm> findAlarm(Alarm alarm) {
-		return sqlSession.selectList(ns+"findAllAlarm",alarm);
+		return sqlSession.selectList(ns+"findAlarm",alarm);
 	}
 
 	@Override

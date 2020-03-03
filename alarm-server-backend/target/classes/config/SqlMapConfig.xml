@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>	
+	 
+	 <settings>
+	 	<setting name="jdbcTypeForNull" value="NULL"/>
+	 	<setting name="mapUnderscoreToCamelCase" value="true"/>
+	 </settings>
+	
+	<typeAliases>
+		<package name="com.ssafy.vo"/>
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="sql/mybatis-alarm-mapping.xml"/>
+		<mapper resource="sql/mybatis-message-mapping.xml"/>
+		<mapper resource="sql/mybatis-room-mapping.xml"/>
+		<mapper resource="sql/mybatis-participants-mapping.xml"/>
+	</mappers>
+</configuration>

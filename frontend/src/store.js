@@ -7,21 +7,30 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 	state: {
 		token: null,
-		user: "",
+		idmember: 0,
+		id: "",
+		imgUrl: "",
+		grade: "",
+		nickname: "",
+		isManager: 0,
+		isDelete: 0,
+		rankId: 0,
 		loading: false,
 		postDetail: [],
 		idPost: 0,
-		searchtag: "",
-		tags: null
-		// init: true,
-		// memberemail: "",
-		// accessToken: "",
-		// refreshToken: "",
+		searchtag: false,
+		tags: null,
+		parent: null,
+		isCheck: 0,
+		targetImgUrl: "../img/icons/user.png",
+		commentContent: {},
+		commentDelIdx: 0,
+		likeUpdate: 0,
+		postData: null
 	},
 	getters: {
-		userId: function(state) {
-			console.log(jwtDecode(state.token));
-			return jwtDecode(state.token).idmember;
+		decode: function(state) {
+			return jwtDecode(state.token);
 		},
 		isLoggedIn: function(state) {
 			return state.token ? true : false;
@@ -91,14 +100,5 @@ export default new Vuex.Store({
 		saveSearchTag: function(context, data) {
 			context.commit("setSearchTag", data);
 		}
-		// saveInit: function(context) {
-		// 	context.commit("setInit", false);
-		// },
-		// saveMemberEmail: function(context, data) {
-		// 	context.commit("setMemberEmail", data);
-		// },
-		// saveTokens: function(context, data) {
-		// 	context.commit("setTokens", data);
-		// },
 	}
 });

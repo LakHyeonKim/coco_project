@@ -1,16 +1,14 @@
 <template>
 	<div>
 		<MypageBanner />
-		<MypageMyMenu />
 		<MypageMyPost />
 		<MypageFooter />
-		<div id="blank"></div>
+		<div id="mypage_blank"></div>
 	</div>
 </template>
 
 <script>
 import MypageBanner from "@/components/MypageBanner";
-import MypageMyMenu from "@/components/MypageMyMenu";
 import MypageMyPost from "@/components/MypageMyPost";
 import MypageFooter from "@/components/MypageFooter";
 import store from "../store";
@@ -19,12 +17,15 @@ export default {
 	store,
 	components: {
 		MypageBanner,
-		MypageMyMenu,
 		MypageMyPost,
 		MypageFooter
 	},
 	data() {
 		return {};
+	},
+	mounted() {
+		this.$session.set("current", 5);
+		this.$emit("updateCurrent", 5);
 	}
 };
 </script>
@@ -34,9 +35,10 @@ export default {
 * {
 	font-family: "Noto Sans KR", Courier;
 }
+
 @media screen and (max-width: 600px) {
-	#blank {
-		height: 10vw;
+	#mypage_blank {
+		height: 15vw;
 	}
 }
 </style>

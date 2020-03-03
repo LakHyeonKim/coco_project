@@ -2,14 +2,15 @@
 	<div id="footer">
 		<div id="footer_top">
 			<div id="info">
-				<table style="height:120px">
+				<table id="info_table" style="height:120px">
 					<tr>
 						<td class="info_img">
 							<img src="../assets/logo/team.png" width="20px" />
 						</td>
 						<td>
 							<!-- 소개 페이지 연결 -->
-							<a class="link" href="#footer">SEESAW</a> (
+							<button @click="goUs()" class="link">SEESAW</button>
+							(
 							<a
 								class="link"
 								href="https://lab.ssafy.com/webmobile1-sub2/s02p12d105"
@@ -22,15 +23,16 @@
 							<img src="../assets/logo/pin.png" width="20px" />
 						</td>
 						<td>
-							(주)멀티캠퍼스 서울특별시 강남구 언주로 508
-							10-17층<br />(역삼동, 서울상록빌딩)
+							경상북도 구미시 임수동 94-1 창의동 304호 SSAFY<br />
 						</td>
 					</tr>
 					<tr>
 						<td class="info_img">
 							<img src="../assets/logo/phone.png" width="20px" />
 						</td>
-						<td>010-2228-6223</td>
+						<td>
+							054) 여기는-싸피싸피
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -41,12 +43,26 @@
 				<img class="logo" src="../assets/logo/mybatis.png" />
 			</div>
 		</div>
+		<div style="clear: both;"></div>
 		<div id="footer_bottom">© All right Reversed.</div>
+		<!-- <div id="goAdmin" @click="goAdmin()"></div> -->
 	</div>
 </template>
 
 <script>
-export default { name: "MypageFooter" };
+import router from "../router";
+
+export default {
+	name: "MypageFooter",
+	methods: {
+		goUs() {
+			router.push("/cc");
+		},
+		goAdmin() {
+			router.push("/admin");
+		}
+	}
+};
 </script>
 
 <style>
@@ -54,12 +70,13 @@ export default { name: "MypageFooter" };
 #footer {
 	font-family: "Noto Sans KR", sans-serif;
 	background-color: rgba(125, 72, 121, 0.85);
-	height: 300px;
+	/* height: 200px; */
 	text-align: center;
 	color: white;
 	width: 100%;
 	font-weight: 300;
 	font-size: 12px;
+	/* position: relative; */
 }
 
 #footer_top {
@@ -81,10 +98,11 @@ export default { name: "MypageFooter" };
 }
 
 #footer_bottom {
-	position: absolute;
-	bottom: 0;
+	/* position: absolute; */
+	/* bottom: 0; */
 	text-align: center;
 	width: 100%;
+	margin-top: 50px;
 	padding-bottom: 20px;
 }
 
@@ -106,17 +124,35 @@ export default { name: "MypageFooter" };
 	margin-left: 10px;
 	margin-right: 10px;
 }
+#goAdmin {
+	width: 80px;
+	height: 80px;
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0);
+	right: 0;
+	bottom: 0;
+}
+
+#info_table {
+	margin-left: 100px;
+}
 
 @media screen and (max-width: 900px) {
 	#tech,
 	#info {
 		float: none;
-		width: 400px;
-		margin: 0 auto;
+		width: 90vw;
+		margin: 0 5vw;
 	}
 
 	#tech {
 		margin-top: 30px;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	#info_table {
+		margin-left: 0;
 	}
 }
 </style>

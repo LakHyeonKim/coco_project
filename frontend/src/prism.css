@@ -27,7 +27,17 @@ pre[class*="language-"] {
 	-moz-hyphens: none;
 	-ms-hyphens: none;
 	hyphens: none;
-
+	box-shadow: none;
+}
+@media screen and (max-width: 600px) {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		max-height: 100%;
+		max-width: 70vw;
+	}
+	#mark img {
+		width: 70vw;
+	}
 }
 
 /* Code blocks */
@@ -39,7 +49,7 @@ pre[class*="language-"] {
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-	background: #2d2d2d;
+	background: #ffffff;
 }
 
 /* Inline code */

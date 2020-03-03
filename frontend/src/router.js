@@ -15,6 +15,15 @@ import SearchPage from "./views/SearchPage.vue";
 import DetailPage from "./views/DetailPage.vue";
 import FindPassword from "./views/FindPassword.vue";
 import InfoModify from "./views/InfoModify";
+import AlarmPage from "./views/AlarmPage";
+import CodeCoworkers from "./views/CodeCoworkers";
+import Admin from "./views/Admin";
+import AdminPost from "./components/AdminPost";
+import AdminMember from "./components/AdminMember";
+import AdminTag from "./components/AdminTag";
+import AdminComment from "./components/AdminComment";
+import AdminFollow from "./components/AdminFollow";
+import EmailMessage from "./views/EmailMessage";
 
 Vue.use(VueRouter);
 
@@ -24,70 +33,44 @@ const routes = [
 		name: "home",
 		component: Home
 	},
-	// {
-	// 	path: "/post",
-	// 	name: "post",
-	// 	component: PostPage
-	// },
-	// {
-	// 	path: "/portfolio",
-	// 	name: "portfolio",
-	// 	component: PortfolioPage
-	// },
-	// {
-	// 	path: "/login",
-	// 	name: "login",
-	// 	component: Login
-	// },
+
 	{
 		path: "/register",
 		name: "register",
 		component: Register
 	},
-	// {
-	// 	path: "/start",
-	// 	name: "start",
-	// 	component: Start
-	// },
+
 	{
 		path: "/newsfeed",
 		name: "newsfeed",
 		component: NewsFeed
-		// meta: {
-		// 	authRequired: true
-		// }
+
 	},
 	{
-		path: "/myPage",
-		name: "myPage",
-		component: MyPage
-		// meta: {
-		// 	authRequired: true
-		// }
+		path: "/mypage/:no",
+		name: "mypage",
+		component: MyPage,
+		props: true
+	
 	},
 	{
 		path: "/newpage",
 		name: "newpage",
 		component: NewPage
-		// meta: {
-		// 	authRequired: true
-		// }
+		
 	},
 	{
 		path: "/search",
 		name: "search",
 		component: SearchPage
-		// meta: {
-		// 	authRequired: true
-		// }
+		
 	},
 	{
-		path: "/detail",
+		path: "/detail/:idPost",
 		name: "detail",
-		component: DetailPage
-		// meta: {
-		// 	authRequired: true
-		// }
+		component: DetailPage,
+		props: true
+		
 	},
 	{
 		path: "/findpwd",
@@ -100,9 +83,60 @@ const routes = [
 		component: InfoModify
 	},
 	{
+		path: "/alarm",
+		name: "alarm",
+		component: AlarmPage
+	},
+	{
+		path: "/cc",
+		name: "codecoworkers",
+		component: CodeCoworkers
+	},
+	{
+		path: "/admin",
+		name: "admin",
+		component: Admin
+	},
+	{
+		path: "/admin/post/:no",
+		name: "adminpost",
+		component: AdminPost,
+		props: true
+	},
+	{
+		path: "/admin/member/:no",
+		name: "adminmember",
+		component: AdminMember,
+		props: true
+	},
+	{
+		path: "/admin/tag/:no",
+		name: "admintag",
+		component: AdminTag,
+		props: true
+	},
+	{
+		path: "/admin/comment/:no",
+		name: "admincomment",
+		component: AdminComment,
+		props: true
+	},
+	{
+		path: "/admin/follow/:no",
+		name: "adminfollow",
+		component: AdminFollow,
+		props: true
+	},
+	{
 		path: "*",
 		name: "notfound",
 		component: NewsFeed
+	},
+	{
+		path: "/email/:key",
+		name: "emailMessage",
+		component: EmailMessage,
+		props: true
 	}
 ];
 
@@ -112,7 +146,6 @@ const router = new VueRouter({
 	base: process.env.BASE_URL,
 	routes
 });
-
 router.beforeEach(function(to, from, next) {
 	// to: 이동할 url에 해당하는 라우팅 객체
 	if (
