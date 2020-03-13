@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.coco.dao.AlarmDao;
@@ -57,7 +58,8 @@ public class BoardServiceImpl implements BoardService{
 	private LikeDao likeDao;
 	@Autowired
 	private TagDao tagDao;
-
+	
+	@Cacheable(value="Newsfeed", key="#idMember", cacheManager="cacheManager", sync=true)
 	@Override
 	public List<Board> findByAllNewsfeed(long idMember) {
 		List<Post> newsPosts = postDao.findPostByNewsfeed(idMember);

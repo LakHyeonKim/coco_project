@@ -1,10 +1,11 @@
 package com.ssafy.coco.vo;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
-public class Post {
+public class Post implements Serializable{
 	long idpost;
 	long memberId;
 	String postTitle;
@@ -16,8 +17,17 @@ public class Post {
 	int views;
 	String imagePath;
 	String filePath;
-
 	
+	
+	
+
+	public void setDateCreated(String dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	public void setUpdateCreated(String updateCreated) {
+		this.updateCreated = updateCreated;
+	}
 
 	public String getFilePath() {
 		return filePath;
