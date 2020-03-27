@@ -37,9 +37,9 @@ public class MailServiceImpl implements MailService{
 	public void sendMail(String email, String subject, String msg) throws Exception {
 		String charset = "utf-8";
 		String hostSMTP = "smtp.naver.com";
-		String hostSMTPid = "a13975";
-		String hostSMTPpwd = "Tkvlxkfcnf1!!";
-		String fromEmail = "a13975@naver.com";
+		String hostSMTPid = "안알려줌";
+		String hostSMTPpwd = "안알려줌";
+		String fromEmail = "rlafkrgus963@naver.com";
 		String fromName = "이모찌";
 		
 		HtmlEmail mail = new HtmlEmail();
