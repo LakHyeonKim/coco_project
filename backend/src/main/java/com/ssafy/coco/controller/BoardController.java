@@ -3,6 +3,7 @@ package com.ssafy.coco.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -39,10 +40,10 @@ public class BoardController {
 	public ResponseEntity<List<Board>> findByAllNewsfeed(@RequestHeader(value="Authorization")String jwt,@RequestBody long idMember) throws Exception {
 		System.out.println("!!"+jwt);
 		List<Board> answers = boardService.findByAllNewsfeed(idMember);
-			if (answers.isEmpty()) {
-				return new ResponseEntity(HttpStatus.NO_CONTENT);
-			}
-			return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
+		if (answers.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Board>>(answers, HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "사용자가 팔로우 한 사람들의 뉴스피드 다운 스크롤 (뉴스피드 페이지용)", response = List.class)

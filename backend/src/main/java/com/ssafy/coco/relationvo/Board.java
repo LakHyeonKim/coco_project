@@ -1,11 +1,12 @@
 package com.ssafy.coco.relationvo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import com.ssafy.coco.vo.Post;
 
-public class Board {
+public class Board implements Serializable{
 	private Post post;
 	private List<String> tags;
 	private int commentCount;
